@@ -3291,6 +3291,46 @@ footer {
         padding: 0.25rem 0.6rem !important;
         font-size: 0.72rem !important;
     }
+
+    /* Managers grid single column on mobile */
+    .managers-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Control panel: no height limit on mobile — let it scroll naturally */
+    .control-panel {
+        max-height: none !important;
+    }
+
+    /* Tab content: no overflow scroll on mobile — page scrolls instead */
+    .tab-content {
+        overflow-y: visible !important;
+        max-height: none !important;
+    }
+
+    /* Reduce brand area on mobile */
+    .brand-icon {
+        font-size: 1.8rem !important;
+    }
+    .brand-title h1 {
+        font-size: 1.2rem !important;
+    }
+    .brand-title p {
+        font-size: 0.72rem !important;
+    }
+
+    /* Make all interactive items full-width on mobile for easier tapping */
+    .collect-vault-btn {
+        width: auto !important;
+    }
+
+    /* Footer compact */
+    footer {
+        font-size: 0.7rem !important;
+        padding: 0.5rem !important;
+        text-align: center !important;
+    }
 }
 
 /* Force absolute horizontal viewport containment */
@@ -3398,32 +3438,6 @@ html[dir="ltr"] .brand-icon {
 html[dir="ltr"] .stat-box::before {
     right: auto;
     left: 0;
-    .floor-map {
-        min-height: 290px !important;
-    }
-
-    /* 2 columns of Tellers on narrow devices to avoid horizontal overflow */
-    .tellers-zone {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-    
-    .teller-counter.locked {
-        min-height: 90px !important;
-    }
-
-    /* Language selection grid single column layout */
-    .lang-options-grid {
-        grid-template-columns: 1fr !important;
-        gap: 0.75rem !important;
-    }
-
-    /* Modal box mobile viewport height limits & safe-area-aware padding */
-    .modal-box {
-        max-height: 85dvh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
-    }
 }
 
 /* Premium Gold Aesthetics Enhancements */
@@ -4754,13 +4768,65 @@ header, .control-panel, .bank-floor {
     font-weight: 700;
 }
 
-/* Responsive adjustments for gold shop */
+/* Responsive adjustments for gold shop and small mobile */
 @media (max-width: 480px) {
     .gold-upgrades-grid {
         grid-template-columns: 1fr;
     }
     .gold-summary-grid {
         flex-direction: column;
+    }
+
+    /* Floor map shorter on narrow phones */
+    .floor-map {
+        min-height: 290px !important;
+    }
+
+    /* 2 columns of tellers to prevent horizontal overflow */
+    .tellers-zone {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .teller-counter.locked {
+        min-height: 90px !important;
+    }
+
+    /* Language grid single column */
+    .lang-options-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Modal scrollable with safe area */
+    .modal-box {
+        max-height: 85dvh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Managers grid single column on narrow phones */
+    .managers-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Reduce brand section on narrow screens */
+    .brand-icon {
+        font-size: 1.7rem !important;
+    }
+    .brand-title h1 {
+        font-size: 1.15rem !important;
+    }
+
+    /* App container minimal padding */
+    .app-container {
+        padding: 0.5rem !important;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Stat boxes: no min-width to prevent overflow */
+    .stat-box {
+        min-width: 0 !important;
     }
 }
 
