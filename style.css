@@ -3331,6 +3331,50 @@ footer {
         padding: 0.5rem !important;
         text-align: center !important;
     }
+
+    /* Reduce padding inside bank-floor and control-panel panels */
+    .bank-floor, .control-panel {
+        padding: 0.75rem !important;
+    }
+
+    /* Reduce gap between sections (header/floor/control) */
+    .app-container {
+        gap: 0.6rem !important;
+    }
+
+    /* Panel header compact */
+    .panel-header {
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Panel badge: truncate text instead of clipping */
+    .panel-badge {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 45% !important;
+        font-size: 0.68rem !important;
+        padding: 0.1rem 0.45rem !important;
+    }
+
+    /* Panel title slightly smaller */
+    .panel-title {
+        font-size: 0.95rem !important;
+    }
+
+    /* Tab buttons: ensure equal minimum size and better touch area */
+    .tab-btn {
+        min-height: 40px !important;
+        padding: 0.5rem 0.7rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    /* floor-map: reduce padding further */
+    .floor-map {
+        padding: 0.5rem !important;
+        gap: 0.5rem !important;
+    }
 }
 
 /* Force absolute horizontal viewport containment */
