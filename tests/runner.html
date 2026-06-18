@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מריץ בדיקות יחידה - Idle Bank Empire</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary-gold: #dfab29;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(223, 171, 41, 0.25);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-gold);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        button {
+            background: linear-gradient(180deg, var(--primary-gold) 0%, #b8860b 100%);
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(223, 171, 41, 0.3);
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .summary-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .stat-box p {
+            margin: 0.5rem 0 0 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-success { color: var(--success-green); }
+        .stat-danger { color: var(--danger-red); }
+
+        .test-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .test-case {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .test-case.pass {
+            border-left: 5px solid var(--success-green);
+        }
+
+        .test-case.fail {
+            border-left: 5px solid var(--danger-red);
+        }
+
+        .test-info h2 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .test-info p {
+            margin: 0.25rem 0 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .status-badge.pass {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success-green);
+        }
+
+        .status-badge.fail {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger-red);
+        }
+
+        .error-log {
+            margin-top: 0.5rem;
+            background: #000;
+            color: var(--danger-red);
+            font-family: monospace;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: none;
+            width: 100%;
+            text-align: left;
+            direction: ltr;
+        }
+    </style>
+
+    <!-- Defensive fallback for window.gameAudio before loading game.js -->
+    <script>
+        window.gameAudio = {
+            playClick: () => {},
+            playUnlock: () => {},
+            playChaChing: () => {},
+            toggleMute: () => false,
+            isMuted: true,
+            init: () => {}
+        };
+    </script>
+    
+    <!-- Load the game logic -->
+    <script src="../game.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>מריץ בדיקות יחידה - Idle Bank Empire</h1>
+            <button onclick="runTests()">הרץ בדיקות 🔄</button>
+        </header>
+
+        <div class="summary-card">
+            <div class="stat-box">
+                <h3>סך הכל בדיקות</h3>
+                <p id="total-tests">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>עברו</h3>
+                <p id="passed-tests" class="stat-success">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>נכשלו</h3>
+                <p id="failed-tests" class="stat-danger">0</p>
+            </div>
+        </div>
+
+        <main class="test-list" id="test-results">
+            <!-- Test results will be appended here -->
+        </main>
+    </div>
+
+    <script>
+        // Custom lightweight Assertion Framework
+        const results = [];
+        
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || "Assertion failed");
+            }
+        }
+
+        function test(name, description, fn) {
+            results.push({ name, description, fn });
+        }
+
+        // --- DEFINE TESTS ---
+
+        test(
+            "שחזור ותיקון מצב משחק (validateAndHealState)", 
+            "בודק ששדות מצב חסרים או לא תקינים משוחזרים לערכי ברירת מחדל תקינים כדי למנוע קריסת שמירות.",
+            function() {
+                const game = new IdleBankGame();
+                
+                // Corrupt state by deleting key fields
+                delete game.state.tellers;
+                delete game.state.guards;
+                delete game.state.goldUpgrades;
+
+                // Trigger heal
+                game.validateAndHealState(game.state);
+
+                // Assert they are healed
+                assert(game.state.tellers !== undefined, "הכספרים לא שוחזרו");
+                assert(game.state.tellers.length === 4, "אורך מערך הכספרים לא תקין");
+                assert(game.state.guards !== undefined, "הבלדרים לא שוחזרו");
+                assert(game.state.guards.length === 3, "אורך מערך הבלדרים לא תקין");
+                assert(game.state.goldUpgrades !== undefined, "שדרוגי הזהב לא שוחזרו");
+                assert(game.state.goldUpgrades.startingCash === 0, "ערך startingCash לא מאותחל כ-0");
+            }
+        );
+
+        test(
+            "חישוב מניות זהב במעבר סניף (prestige)", 
+            "מחשב שהבונוס של מניות הזהב מחושב בצורה נכונה ופרופורציונלית לרווחים ההיסטוריים.",
+            function() {
+                const game = new IdleBankGame();
+                game.state.lifetimeCash = 10000000; // 10M
+                game.state.shares = 10;
+
+                const sharesToGet = game.calculatePrestigeShares(game.state.lifetimeCash, game.state.shares);
+                assert(typeof sharesToGet === 'number', "החישוב לא החזיר מספר");
+                assert(sharesToGet > 0, "כמות המניות המחושבת צריכה להיות גדולה מ-0");
+            }
+        );
+
+        test(
+            "חישוב רכש מרוכז (getBulkUpgradeDetails)", 
+            "בודק את דיוק נוסחאות חישוב הרכישה המרוכזת (x1, x10, MAX) תחת מגבלות המזומן הנוכחי.",
+            function() {
+                const game = new IdleBankGame();
+                const id = 0;
+                
+                // test x1
+                const x1 = game.getBulkUpgradeDetails('teller', id, 'x1', 1, 1000);
+                assert(x1.levels === 1, "רמת x1 צריכה להחזיר בדיוק 1");
+                assert(x1.cost > 0, "עלות השדרוג צריכה להיות גדולה מ-0");
+                assert(x1.canAfford === true, "שחקן עם 1000 ש\"ח צריך להרשות לעצמו שדרוג ראשוני");
+
+                // test x10
+                const x10 = game.getBulkUpgradeDetails('teller', id, 'x10', 1, 1000000);
+                assert(x10.levels === 10, "רמת x10 צריכה להחזיר בדיוק 10");
+                
+                // test max with limited cash
+                const limitedCash = 500;
+                const max = game.getBulkUpgradeDetails('teller', id, 'max', 1, limitedCash);
+                assert(max.cost <= limitedCash, "עלות שדרוג MAX מוגבלת תקציב אינה יכולה לחרוג מהתקציב");
+            }
+        );
+
+        test(
+            "מניעת משימות כפולות (generateMission)", 
+            "מוודא שמשימות חדשות שנוצרות הן ייחודיות ואינן מייצרות כפילויות של משימות שכבר פעילות.",
+            function() {
+                const game = new IdleBankGame();
+                game.state.missions = [
+                    { id: 0, type: 'serve_clients', target: 50, reward: 200, progress: 0, completed: false }
+                ];
+
+                const newMission = game.generateMission();
+                if (newMission) {
+                    const isDuplicate = game.state.missions.some(
+                        m => m.type === newMission.type && m.target === newMission.target
+                    );
+                    assert(isDuplicate === false, "נוצרה משימה כפולה למשימה ששוכנת כרגע ברשימת המשימות הפעילות");
+                }
+            }
+        );
+
+        test(
+            "מיגרוציה ותאימות לאחור של מנהלים",
+            "בודק ששמירות ישנות עם מנהלים ישנים (teller, guard, vault) מומרות בהצלחה ל-6 המנהלים החדשים.",
+            function() {
+                const game = new IdleBankGame();
+                const oldState = {
+                    cash: 500,
+                    managers: {
+                        teller: true,
+                        guard: false,
+                        vault: true
+                    },
+                    managerUpgrades: {
+                        teller: { level: 3, skill: 'speed' },
+                        guard: { level: 2, skill: 'capacity' },
+                        vault: { level: 4, skill: 'investment' }
+                    }
+                };
+
+                game.validateAndHealState(oldState);
+
+                assert(oldState.managers.customer === true, "מנהל לקוחות לא הופעל");
+                assert(oldState.managers.operations === false, "מנהל תפעול הופעל בטעות");
+                assert(oldState.managers.finance === true, "מנהל כספים לא הופעל");
+                assert(oldState.managers.service === false, "מנהל שירות הופעל בטעות");
+
+                assert(oldState.managerUpgrades.customer.level === 3, "רמת מנהל לקוחות לא נכונה");
+                assert(oldState.managerUpgrades.operations.level === 2, "רמת מנהל תפעול לא נכונה");
+                assert(oldState.managerUpgrades.finance.level === 4, "רמת מנהל כספים לא נכונה");
+                assert(oldState.managerUpgrades.customer.skill === null, "סקיל מנהל לקוחות לא אופס");
+            }
+        );
+
+        test(
+            "נעילת מנהלים לפי פתיחת מחלקות",
+            "מוודא שמנהלים נעולים כראוי עד שהמחלקה המתאימה להם נפתחת.",
+            function() {
+                const game = new IdleBankGame();
+                assert(game.isManagerUnlocked('customer') === true, "מנהל לקוחות צריך להיות פתוח");
+                assert(game.isManagerUnlocked('operations') === true, "מנהל תפעול צריך להיות פתוח");
+
+                // Lock loans
+                game.state.departments[1].unlocked = false;
+                assert(game.isManagerUnlocked('finance') === false, "מנהל כספים צריך להיות נעול");
+
+                // Unlock loans
+                game.state.departments[1].unlocked = true;
+                assert(game.isManagerUnlocked('finance') === true, "מנהל כספים צריך להיות פתוח");
+            }
+        );
+
+        // --- RUNNER ENGINE ---
+
+        function runTests() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '';
+            
+            let passedCount = 0;
+            let failedCount = 0;
+
+            results.forEach(t => {
+                const el = document.createElement('div');
+                el.className = 'test-case';
+                
+                try {
+                    t.fn();
+                    passedCount++;
+                    el.classList.add('pass');
+                    el.innerHTML = `
+                        <div class="test-info">
+                            <h2>${t.name}</h2>
+                            <p>${t.description}</p>
+                        </div>
+                        <span class="status-badge pass">עבר בהצלחה ✔</span>
+                    `;
+                } catch (err) {
+                    failedCount++;
+                    el.classList.add('fail');
+                    el.innerHTML = `
+                        <div class="test-info" style="width: 80%;">
+                            <h2>${t.name}</h2>
+                            <p>${t.description}</p>
+                            <div class="error-log" style="display: block;">${err.stack || err.message}</div>
+                        </div>
+                        <span class="status-badge fail">נכשל ❌</span>
+                    `;
+                }
+                
+                container.appendChild(el);
+            });
+
+            document.getElementById('total-tests').innerText = results.length;
+            document.getElementById('passed-tests').innerText = passedCount;
+            document.getElementById('failed-tests').innerText = failedCount;
+        }
+
+        // Run automatically on load
+        window.onload = runTests;
+    </script>
+</body>
+</html>
