@@ -50,6 +50,18 @@ class EconomyManager {
                 mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.incomeBoost * this.game.state.managerUpgrades.vip.level);
             }
         }
+        // Marketing fix: adBoost when advertising is active
+        if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades && this.game.state.managerUpgrades.marketing) {
+            if (this.game.state.advBudget > 0 && this.game.state.advActive) {
+                const mktLvl = this.game.state.managerUpgrades.marketing.level;
+                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.adBoost * mktLvl);
+            }
+        }
+        // Tech manager EPS boost
+        if (this.game.state.managers && this.game.state.managers.tech && this.game.state.managerUpgrades && this.game.state.managerUpgrades.tech) {
+            const techLvl = this.game.state.managerUpgrades.tech.level;
+            mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.tech.epsBoost * techLvl);
+        }
         return mult;
     }
 
@@ -113,6 +125,10 @@ class EconomyManager {
     getGuardCapacity(level) {
         const baseCap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
         let cap = (this.game.state.managers && this.game.state.managers.operations) ? Math.round(baseCap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR) : baseCap;
+        if (this.game.state.managers && this.game.state.managers.logistics && this.game.state.managerUpgrades && this.game.state.managerUpgrades.logistics) {
+            const logLvl = this.game.state.managerUpgrades.logistics.level;
+            cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.logistics.guardCapBoost * logLvl));
+        }
         return cap;
     }
 
@@ -242,7 +258,12 @@ class EconomyManager {
     getDepartmentReward(id) {
         const d = this.game.state.departments.find(dept => dept.id === id);
         if (!d) return 0;
-        return d.baseReward * this.getTotalMultiplier();
+        let reward = d.baseReward * this.getTotalMultiplier();
+        if (id > 0 && this.game.state.managers && this.game.state.managers.risk && this.game.state.managerUpgrades && this.game.state.managerUpgrades.risk) {
+            const riskLvl = this.game.state.managerUpgrades.risk.level;
+            reward = Math.round(reward * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.risk.deptIncomeBoost * riskLvl));
+        }
+        return reward;
     }
 
     getEarningsPerSecond() {

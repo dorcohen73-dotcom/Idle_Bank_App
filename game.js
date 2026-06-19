@@ -90,7 +90,11 @@ class IdleBankGame {
                 operations: true,  // operations (guard/couriers) starts hired by default to keep automation running
                 service: false,
                 vip: false,
-                marketing: false
+                marketing: false,
+                logistics: false,
+                risk: false,
+                tech: false,
+                compliance: false
             },
             managerUpgrades: {
                 customer: { level: 1, skill: null },
@@ -98,7 +102,11 @@ class IdleBankGame {
                 operations: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                logistics: { level: 1, skill: null },
+                risk: { level: 1, skill: null },
+                tech: { level: 1, skill: null },
+                compliance: { level: 1, skill: null }
             },
 
             departments: [
@@ -284,6 +292,10 @@ class IdleBankGame {
         if (type === 'service') return this.state.departments[2] && this.state.departments[2].unlocked;
         if (type === 'vip') return this.state.departments[3] && this.state.departments[3].unlocked;
         if (type === 'marketing') return this.state.departments[4] && this.state.departments[4].unlocked;
+        if (type === 'logistics') return true;
+        if (type === 'risk') return this.state.departments[1] && this.state.departments[1].unlocked;
+        if (type === 'tech') return this.state.departments[2] && this.state.departments[2].unlocked;
+        if (type === 'compliance') return this.state.departments[3] && this.state.departments[3].unlocked;
         return false;
     }
 
@@ -586,6 +598,10 @@ class IdleBankGame {
         if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades.vip) {
             const vipLvl = this.state.managerUpgrades.vip.level;
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
+        }
+        if (this.state.managers && this.state.managers.compliance && this.state.managerUpgrades && this.state.managerUpgrades.compliance) {
+            const compLvl = this.state.managerUpgrades.compliance.level;
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.compliance.prestigeSharesBoost * compLvl);
         }
         let gain = Math.floor(rawGain) - (this.state.shares || 0);
         return Math.min(1000, Math.max(0, gain));
@@ -970,7 +986,11 @@ class IdleBankGame {
                 operations: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                logistics: { level: 1, skill: null },
+                risk: { level: 1, skill: null },
+                tech: { level: 1, skill: null },
+                compliance: { level: 1, skill: null }
             };
         }
         
@@ -1284,6 +1304,18 @@ class IdleBankGame {
         } else if (type === 'marketing') {
             stat1Val = `+${Math.round(coefs.adBoost * 100 * level)}%`;
             stat2Val = `+${coefs.offlineLimitBoost * level}`;
+        } else if (type === 'logistics') {
+            stat1Val = `+${Math.round(coefs.guardCapBoost * 100 * level)}%`;
+            stat2Val = `Lv ${level}`;
+        } else if (type === 'risk') {
+            stat1Val = `+${Math.round(coefs.deptIncomeBoost * 100 * level)}%`;
+            stat2Val = `Lv ${level}`;
+        } else if (type === 'tech') {
+            stat1Val = `+${Math.round(coefs.epsBoost * 100 * level)}%`;
+            stat2Val = `+${coefs.offlineLimitBoost * level}h`;
+        } else if (type === 'compliance') {
+            stat1Val = `+${Math.round(coefs.prestigeSharesBoost * 100 * level)}%`;
+            stat2Val = `Lv ${level}`;
         }
 
         return {

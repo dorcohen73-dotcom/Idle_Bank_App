@@ -281,7 +281,7 @@ class SaveManager {
             };
         }
 
-        const newMgrKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing'];
+        const newMgrKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing', 'logistics', 'risk', 'tech', 'compliance'];
 
         // managers
         if (!state.managers || typeof state.managers !== 'object') {
@@ -291,7 +291,11 @@ class SaveManager {
                 operations: true,
                 service: false,
                 vip: false,
-                marketing: false
+                marketing: false,
+                logistics: false,
+                risk: false,
+                tech: false,
+                compliance: false
             };
         } else {
             newMgrKeys.forEach(k => {
@@ -309,7 +313,11 @@ class SaveManager {
                 operations: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                logistics: { level: 1, skill: null },
+                risk: { level: 1, skill: null },
+                tech: { level: 1, skill: null },
+                compliance: { level: 1, skill: null }
             };
         } else {
             newMgrKeys.forEach(k => {
@@ -544,10 +552,14 @@ class SaveManager {
         if (timePassedSec < 15) return;
 
         let offlineCashEarned = 0;
-        let limitHours = 8; 
+        let limitHours = 8;
         if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
             limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * this.game.state.managerUpgrades.marketing.level); // +1 hour per level
         }
+        const techMgr = this.game.state.managers && this.game.state.managers.tech && this.game.state.managerUpgrades && this.game.state.managerUpgrades.tech;
+        const techLvl = techMgr ? (this.game.state.managerUpgrades.tech.level || 1) : 0;
+        const techOfflineBonus = this.game.state.managers && this.game.state.managers.tech ? (GAME_CONFIG.MANAGER_COEFFICIENTS.tech.offlineLimitBoost * techLvl) : 0;
+        limitHours += techOfflineBonus;
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.offlineEarnings) {
             limitHours += (this.game.state.goldUpgrades.offlineEarnings * 2); // +2 hours per level
         }

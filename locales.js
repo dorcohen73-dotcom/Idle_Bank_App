@@ -103,7 +103,11 @@ const translations = {
                 operations: "מנהל תפעול",
                 service: "מנהל שירות",
                 vip: "מנהל VIP",
-                marketing: "מנהל שיווק"
+                marketing: "מנהל שיווק",
+                logistics: "מנהל לוגיסטיקה",
+                risk: "מנהל סיכונים",
+                tech: "מנהל טכנולוגיה",
+                compliance: "מנהל ציות"
             },
             descs: {
                 customer: "+6% מהירות לקוחות | +3% שביעות רצון (לכל רמה)",
@@ -111,7 +115,11 @@ const translations = {
                 operations: "+4% מהירות בלדרים | +3% מהירות כספרים (לכל רמה)",
                 service: "+5% קיבולת עמדות | +4% רווח בסיסי (לכל רמה)",
                 vip: "+7% הכנסות מחלקות | +4% מניות זהב בפרסטיז' (לכל רמה)",
-                marketing: "+10% בונוס פרסום | +1 שעה אופליין מקסימלית (לכל רמה)"
+                marketing: "+10% בונוס פרסום | +1 שעה אופליין מקסימלית (לכל רמה)",
+                logistics: "+20% קיבולת שומר (לכל רמה)",
+                risk: "+12% הכנסות מחלקות מתקדמות (לכל רמה)",
+                tech: "+5% EPS | +2 שעות אופליין (לכל רמה)",
+                compliance: "+8% מניות זהב בפרסטיג׳ (לכל רמה)"
             }
         },
         departments: {
@@ -292,7 +300,11 @@ const translations = {
                 operations: "Operations Manager",
                 service: "Service Manager",
                 vip: "VIP Manager",
-                marketing: "Marketing Manager"
+                marketing: "Marketing Manager",
+                logistics: "Logistics Manager",
+                risk: "Risk Manager",
+                tech: "Tech Manager",
+                compliance: "Compliance Manager"
             },
             descs: {
                 customer: "+6% Client Speed | +3% Satisfaction (per level)",
@@ -300,7 +312,11 @@ const translations = {
                 operations: "+4% Courier Speed | +3% Teller Speed (per level)",
                 service: "+5% Counter Capacity | +4% Base Yield (per level)",
                 vip: "+7% Dept Yields | +4% Golden Shares in Prestige (per level)",
-                marketing: "+10% Ad Campaign Bonus | +1 Hour Max Offline Time (per level)"
+                marketing: "+10% Ad Campaign Bonus | +1 Hour Max Offline Time (per level)",
+                logistics: "+20% Guard Capacity (per level)",
+                risk: "+12% Advanced Dept Income (per level)",
+                tech: "+5% EPS | +2 Offline Hours (per level)",
+                compliance: "+8% Golden Shares in Prestige (per level)"
             }
         },
         departments: {
@@ -481,7 +497,11 @@ const translations = {
                 operations: "Gerente de Operaciones",
                 service: "Gerente de Servicio",
                 vip: "Gerente VIP",
-                marketing: "Gerente de Marketing"
+                marketing: "Gerente de Marketing",
+                logistics: "Gerente de Logística",
+                risk: "Gerente de Riesgos",
+                tech: "Gerente de Tecnología",
+                compliance: "Gerente de Cumplimiento"
             },
             descs: {
                 customer: "+6% Vel. de Clientes | +3% Satisfacción (por nivel)",
@@ -489,7 +509,11 @@ const translations = {
                 operations: "+4% Vel. de Guardias | +3% Vel. de Cajeros (por nivel)",
                 service: "+5% Capacidad de Cajeros | +4% Rend. Base (por nivel)",
                 vip: "+7% Rend. de Deptos | +4% Acciones de Oro (por nivel)",
-                marketing: "+10% Bono de Publicidad | +1 Hora de Tiempo Offline (por nivel)"
+                marketing: "+10% Bono de Publicidad | +1 Hora de Tiempo Offline (por nivel)",
+                logistics: "+20% Capacidad de Guardia (por nivel)",
+                risk: "+12% Ingresos de Deptos Avanzados (por nivel)",
+                tech: "+5% EPS | +2 Horas Offline (por nivel)",
+                compliance: "+8% Acciones de Oro en Prestigio (por nivel)"
             }
         },
         departments: {
@@ -670,7 +694,11 @@ const translations = {
                 operations: "Операционный менеджер",
                 service: "Менеджер по сервису",
                 vip: "VIP менеджер",
-                marketing: "Менеджер по маркетингу"
+                marketing: "Менеджер по маркетингу",
+                logistics: "Менеджер по логистике",
+                risk: "Менеджер по рискам",
+                tech: "Технический менеджер",
+                compliance: "Менеджер по соответствию"
             },
             descs: {
                 customer: "+6% Скорость клиентов | +3% Удовлетворенность (за ур.)",
@@ -678,7 +706,11 @@ const translations = {
                 operations: "+4% Скорость инкасс. | +3% Скор. кассиров (за ур.)",
                 service: "+5% Вместимость касс | +4% Базовый доход (за ур.)",
                 vip: "+7% Доход отделов | +4% Золотые акции при престиже (за ур.)",
-                marketing: "+10% Бонус рекламы | +1 час оффлайн времени (за ур.)"
+                marketing: "+10% Бонус рекламы | +1 час оффлайн времени (за ур.)",
+                logistics: "+20% Вместимость охраны (за уровень)",
+                risk: "+12% Доход продвинутых отделов (за уровень)",
+                tech: "+5% EPS | +2 часа оффлайн (за уровень)",
+                compliance: "+8% Золотые акции в престиже (за уровень)"
             }
         },
         departments: {

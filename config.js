@@ -41,8 +41,8 @@ const GAME_CONFIG = {
     QUEUE_BASE_CAPACITY: 5,
     QUEUE_CAPACITY_STEP: 5,
     QUEUE_BRANCH_BONUS_FACTOR: 5,
-    QUEUE_BASE_UPGRADE_COST: 150,
-    QUEUE_UPGRADE_COST_GROWTH: 5.2,
+    QUEUE_BASE_UPGRADE_COST: 100,
+    QUEUE_UPGRADE_COST_GROWTH: 2.0,
 
     // Timers & Intervals
     EVENT_INTERVAL_SEC: 300,
@@ -54,7 +54,7 @@ const GAME_CONFIG = {
 
     // Branches and prestige constants
     BRANCHES: [
-        { name: "סיטיבנק (סניף מקומי)", baseMultiplier: 1, minCashToPrestige: 50000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
+        { name: "סיטיבנק (סניף מקומי)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
         { name: "אייץ'-אס-בי-סי (סניף פיננסי)", baseMultiplier: 5, minCashToPrestige: 1000000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
         { name: "ג'יי פי מורגן (וול סטריט)", baseMultiplier: 30, minCashToPrestige: 50000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
         { name: "גולדמן זקס (אימפריית השקעות)", baseMultiplier: 200, minCashToPrestige: 1000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
@@ -64,12 +64,16 @@ const GAME_CONFIG = {
     GUARD_UNLOCK_COSTS: [0, 4000, 120000],
     
     MANAGER_COSTS: {
-        customer: 1000,
+        customer: 800,
         finance: 25000,
         operations: 5000,
         service: 150000,
         vip: 2500000,
-        marketing: 30000000
+        marketing: 30000000,
+        logistics: 60000,
+        risk: 800000,
+        tech: 8000000,
+        compliance: 200000000
     },
 
     MANAGER_UPGRADE_COSTS: {
@@ -78,7 +82,11 @@ const GAME_CONFIG = {
         finance: [0, 75000, 250000, 800000, 2500000],
         service: [0, 450000, 1500000, 5000000, 15000000],
         vip: [0, 7500000, 25000000, 80000000, 250000000],
-        marketing: [0, 90000000, 300000000, 1000000000, 3000000000]
+        marketing: [0, 90000000, 300000000, 1000000000, 3000000000],
+        logistics: [0, 200000, 650000, 2000000, 6000000],
+        risk: [0, 2400000, 8000000, 25000000, 80000000],
+        tech: [0, 24000000, 80000000, 250000000, 750000000],
+        compliance: [0, 600000000, 2000000000, 6000000000, 18000000000]
     },
 
     MANAGER_UPGRADE_COSTS_DEFAULT: [0, 15000, 80000, 400000, 2000000],
@@ -93,7 +101,7 @@ const GAME_CONFIG = {
         eventBonus: 30,
         managerDiscount: 50
     },
-    STARTING_CASH_OPTIONS: [150, 1000, 5000, 25000, 100000],
+    STARTING_CASH_OPTIONS: [180, 1000, 5000, 25000, 100000],
     PRESTIGE_ASSETS_DIVIDER: 8,
     DEPT_ID_CASH: 0,
     DEPT_ID_LOANS: 1,
@@ -101,12 +109,16 @@ const GAME_CONFIG = {
     DEPT_ID_STOCK: 3,
     DEPT_ID_LAUNDERING: 4,
     MANAGER_COEFFICIENTS: {
-        customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.03 },
-        finance: { incomeBoost: 0.05 },
+        customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.06 },
+        finance: { incomeBoost: 0.10 },
         operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03 },
-        service: { capacityBoost: 0.05, incomeBoost: 0.04 },
+        service: { capacityBoost: 0.05, incomeBoost: 0.08 },
         vip: { incomeBoost: 0.07, prestigeBoost: 0.04 },
-        marketing: { adBoost: 0.10, offlineLimitBoost: 1 }
+        marketing: { adBoost: 0.10, offlineLimitBoost: 1 },
+        logistics: { guardCapBoost: 0.20 },
+        risk: { deptIncomeBoost: 0.12 },
+        tech: { epsBoost: 0.05, offlineLimitBoost: 2 },
+        compliance: { prestigeSharesBoost: 0.08 }
     }
 };
 
@@ -118,6 +130,10 @@ Object.freeze(GAME_CONFIG.MANAGER_COSTS);
 Object.freeze(GAME_CONFIG.MANAGER_UPGRADE_COSTS);
 Object.freeze(GAME_CONFIG.GOLD_UPGRADE_COSTS);
 Object.freeze(GAME_CONFIG.STARTING_CASH_OPTIONS);
+Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.logistics);
+Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.risk);
+Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.tech);
+Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.compliance);
 Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS);
 Object.keys(GAME_CONFIG.MANAGER_COEFFICIENTS).forEach(k => Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS[k]));
 Object.freeze(GAME_CONFIG);
