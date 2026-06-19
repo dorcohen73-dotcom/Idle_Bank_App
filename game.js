@@ -45,8 +45,8 @@ class IdleBankGame {
         this.cachedEps = 0;
         
         this.state = {
-            cash: 150,                     // Starting cash
-            lifetimeCash: 150,             // For prestige calculations
+            cash: 180,                     // Starting cash
+            lifetimeCash: 180,             // For prestige calculations
             shares: 0,                     // Golden Shares
             currentBranch: 0,              // 0: Jerusalem, 1: Tel Aviv, 2: NY, 3: London
             maxBranchUnlocked: 0,
@@ -103,7 +103,7 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 5000 },
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
                 { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
                 { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
                 { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
@@ -122,8 +122,11 @@ class IdleBankGame {
             advActive: false,
             queueUpgradeLevel: 1,
 
-            lastSaveTime: Date.now()
+            lastSaveTime: Date.now(),
+            lastWeeklyReward: 0
         };
+
+        this._contextualAdPending = null;
 
         this.customerQueue = [];
         this.maxQueueLength = 20;
@@ -578,13 +581,14 @@ class IdleBankGame {
     }
 
     calculatePrestigeShares() {
-        const assets = this.calculateTotalAssets();
-        let gain = Math.floor(assets / GAME_CONFIG.PRESTIGE_ASSETS_DIVIDER);
+        const lifetimeCash = this.state.lifetimeCash || 180;
+        let rawGain = 10 * Math.sqrt(lifetimeCash / 30000);
         if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades.vip) {
             const vipLvl = this.state.managerUpgrades.vip.level;
-            gain = Math.floor(gain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl));
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
         }
-        return Math.max(3, gain);
+        let gain = Math.floor(rawGain) - (this.state.shares || 0);
+        return Math.max(0, gain);
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -608,7 +612,7 @@ class IdleBankGame {
         const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
         const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
         
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 150) + Number.EPSILON) * 100) / 100;
+        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
         const savedShares = this.state.shares;
         const savedMaxBranch = this.state.maxBranchUnlocked;
         const savedGoldUpgrades = this.state.goldUpgrades;
@@ -627,7 +631,7 @@ class IdleBankGame {
         this.state.missionsCompleted = savedMissionsCompleted;
 
         // Reset cash based on starting cash options in GAME_CONFIG
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 150) + Number.EPSILON) * 100) / 100;
+        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
         this.state.lifetimeCash = this.state.cash;
 
         // Generate initial missions
@@ -808,6 +812,7 @@ class IdleBankGame {
                     if (t.customerType === 'vip' || t.customerType === 'rich') {
                         if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
                         this.state.stats.vipServed++;
+                        this._contextualAdPending = 'vip';
                     }
                     this.missionsDirty = true;
                     
@@ -1046,8 +1051,17 @@ class IdleBankGame {
 
     // --- ENCAPSULATION API METHODS FOR MVC COMPLIANCE ---
     addCash(amount) {
+        const prev = this.state.lifetimeCash;
         this.state.cash = Math.round((this.state.cash + amount + Number.EPSILON) * 100) / 100;
         this.state.lifetimeCash = Math.round((this.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+        // Trigger contextual ad on cash milestones
+        const MILESTONES = [5000, 50000, 500000, 5000000, 50000000, 500000000];
+        for (const m of MILESTONES) {
+            if (prev < m && this.state.lifetimeCash >= m) {
+                this._contextualAdPending = 'milestone';
+                break;
+            }
+        }
         this.saveGame();
     }
 

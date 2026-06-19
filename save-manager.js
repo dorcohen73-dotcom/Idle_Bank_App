@@ -196,7 +196,7 @@ class SaveManager {
         const isString = (v) => typeof v === 'string';
 
         // General numbers
-        if (!isNum(state.cash) || state.cash < 0) state.cash = 150;
+        if (!isNum(state.cash) || state.cash < 0) state.cash = 180;
         else state.cash = roundCents(state.cash);
 
         if (!isNum(state.lifetimeCash) || state.lifetimeCash < 0) state.lifetimeCash = state.cash;
@@ -211,6 +211,7 @@ class SaveManager {
 
         // Timers
         if (!isNum(state.boost2xTimeLeft) || state.boost2xTimeLeft < 0) state.boost2xTimeLeft = 0;
+        if (!isNum(state.lastWeeklyReward) || state.lastWeeklyReward < 0) state.lastWeeklyReward = 0;
         if (!isNum(state.tellerSpeedBoostTimer) || state.tellerSpeedBoostTimer < 0) state.tellerSpeedBoostTimer = 0;
         if (!isNum(state.tellerSpeedBoostFactor) || state.tellerSpeedBoostFactor < 1) state.tellerSpeedBoostFactor = 1;
         if (!isNum(state.advBudget) || state.advBudget < 0) state.advBudget = 0;
@@ -381,7 +382,7 @@ class SaveManager {
         // departments
         const defaultDepartments = [
             { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 5000 },
+            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
             { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
             { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
             { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }

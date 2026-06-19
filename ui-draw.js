@@ -1,4 +1,4 @@
-﻿(function(window) {
+(function(window) {
 // Visual Drawing & Formatting Module for Idle Bank Empire
 
 var svgCache = {};
@@ -19,6 +19,7 @@ var lastShares = -1;
 var lastMultiplier = -1;
 var lastBranch = -1;
 var lastLang = '';
+var lastGuardStatusText = '';
 
 var cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
 var cachedFallback = ' מפלצתי';
@@ -356,7 +357,10 @@ function rebuildTellersDOM() {
                 lvl: div.querySelector(`#teller-lvl-lbl-${t.id}`),
                 collect: div.querySelector(`#teller-collect-${t.id}`),
                 client: div.querySelector(`#teller-client-${t.id}`),
-                lastPercent: -1
+                lastPercent: -1,
+                lastLevel: -1,
+                lastCollectDisabled: null,
+                lastVaultFullAlert: null
             };
 
             // Handle manual process start if NO manager
@@ -466,9 +470,22 @@ function draw() {
         if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
             DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
             DOM_CACHE.boostBtn.classList.add('active');
+            DOM_CACHE.boostBtn.classList.remove('offer');
         } else {
-            DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "⚡ BOOST x2";
-            DOM_CACHE.boostBtn.classList.remove('active');
+            const nowMs = Date.now();
+            const offerEnd = window._boostOfferEndTime || 0;
+            if (offerEnd > nowMs) {
+                const offerSec = Math.ceil((offerEnd - nowMs) / 1000);
+                const offerLang = (game.state && game.state.language) || 'he';
+                DOM_CACHE.boostBtn.innerText = offerLang === 'he'
+                    ? `⚡ הצעה! ${formatTime(offerSec)}`
+                    : `⚡ OFFER! ${formatTime(offerSec)}`;
+                DOM_CACHE.boostBtn.classList.add('offer');
+                DOM_CACHE.boostBtn.classList.remove('active');
+            } else {
+                DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "⚡ BOOST x2";
+                DOM_CACHE.boostBtn.classList.remove('active', 'offer');
+            }
         }
     }
 
@@ -563,7 +580,10 @@ function draw() {
 
         if (tNode) {
             const tData = game.getTellerRenderData(t.id);
-            if (lvlLabel) lvlLabel.innerText = `${tObj.levelLabel} ${tData.level}`;
+            if (lvlLabel && tData.level !== tCache.lastLevel) {
+                lvlLabel.innerText = `${tObj.levelLabel} ${tData.level}`;
+                tCache.lastLevel = tData.level;
+            }
 
             if (tData.isProcessing) {
                 tNode.classList.add('processing');
@@ -612,18 +632,26 @@ function draw() {
                 }
             }
 
-            if (tData.fillPercent >= 100) {
-                tNode.classList.add('vault-full-alert');
-            } else {
-                tNode.classList.remove('vault-full-alert');
+            const isFull = tData.fillPercent >= 100;
+            if (isFull !== tCache.lastVaultFullAlert) {
+                if (isFull) {
+                    tNode.classList.add('vault-full-alert');
+                } else {
+                    tNode.classList.remove('vault-full-alert');
+                }
+                tCache.lastVaultFullAlert = isFull;
             }
 
             if (collectBtn) {
                 const vaultSpace = vaultData.capacity - vaultData.cashStored;
-                if (tData.cashStored <= 0 || vaultSpace <= 0) {
-                    collectBtn.classList.add('disabled');
-                } else {
-                    collectBtn.classList.remove('disabled');
+                const isDisabled = tData.cashStored <= 0 || vaultSpace <= 0;
+                if (isDisabled !== tCache.lastCollectDisabled) {
+                    if (isDisabled) {
+                        collectBtn.classList.add('disabled');
+                    } else {
+                        collectBtn.classList.remove('disabled');
+                    }
+                    tCache.lastCollectDisabled = isDisabled;
                 }
             }
         }
@@ -761,7 +789,11 @@ function draw() {
                 stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
             }
             
-            DOM_CACHE.guardStatus.innerText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
+            const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
+            if (lastGuardStatusText !== newGuardStatusText) {
+                DOM_CACHE.guardStatus.innerText = newGuardStatusText;
+                lastGuardStatusText = newGuardStatusText;
+            }
         }
     } else {
         DOM_CACHE.securityPath.style.display = 'none';

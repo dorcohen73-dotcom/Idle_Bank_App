@@ -5,6 +5,10 @@ var soundInitialized = false;
 var autoSaveTimer = 0;
 var eventTimer = 0;
 var tabRefreshTimer = 0;
+var contextualOfferTimeout = null;
+var contextualBannerShown = false;
+var boostOfferEndTime = 0;
+var boostOfferNextTime = 0;
 
 function applyLanguage(lang) {
     window.gameLanguage = lang;
@@ -942,6 +946,136 @@ function handleMissionRedirect(missionType, targetId) {
     }, 150);
 }
 
+function showContextualAdBanner(type) {
+    if (game.state.boost2xTimeLeft > 0) return;
+    if (document.querySelector('.modal-overlay.active')) return;
+    if (contextualBannerShown) return;
+
+    const lang = (game.state && game.state.language) || 'he';
+    const existing = document.getElementById('contextual-offer-banner');
+    if (existing) existing.remove();
+
+    const msgs = {
+        vip: lang === 'he' ? '💎 לקוח VIP שורת! הכפל רווח עם פרסומת?' : '💎 VIP served! Double your reward?',
+        milestone: lang === 'he' ? '🎉 יעד כסף הושג! הפעל בוסט x2?' : '🎉 Cash milestone! Activate x2 boost?'
+    };
+    const msg = msgs[type] || msgs.vip;
+
+    const banner = document.createElement('div');
+    banner.id = 'contextual-offer-banner';
+    banner.innerHTML = `
+        <span style="font-size:0.82rem; color:var(--text-main); flex:1;">${msg}</span>
+        <button id="ctx-offer-yes" style="background:var(--primary-gold,#dfab29); color:#000; border:none; padding:0.28rem 0.7rem; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:700; white-space:nowrap;">🎬 צפה</button>
+        <button id="ctx-offer-no" style="background:transparent; border:1px solid var(--border-color,rgba(255,255,255,0.1)); color:var(--text-muted,#9ca3af); padding:0.28rem 0.5rem; border-radius:8px; font-size:0.78rem; cursor:pointer;">✕</button>
+    `;
+    Object.assign(banner.style, {
+        display: 'flex', alignItems: 'center', gap: '0.6rem',
+        position: 'fixed', bottom: '70px', left: '50%', transform: 'translateX(-50%)',
+        background: 'var(--surface-color,rgba(20,24,36,0.95))',
+        border: '1px solid var(--primary-gold,#dfab29)',
+        borderRadius: '12px', padding: '0.65rem 0.85rem',
+        zIndex: '2000', maxWidth: '340px', width: '90%',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.5)', animation: 'slideUpIn 0.3s ease'
+    });
+
+    document.body.appendChild(banner);
+    contextualBannerShown = true;
+
+    const removeBanner = () => {
+        if (banner.parentNode) banner.remove();
+        contextualBannerShown = false;
+        if (contextualOfferTimeout) clearTimeout(contextualOfferTimeout);
+    };
+
+    document.getElementById('ctx-offer-yes').addEventListener('click', () => {
+        initSound();
+        removeBanner();
+        playAd(() => {
+            game.addBoost2x(2);
+            draw();
+            spawnFloating(lang === 'he' ? '⚡ בוסט x2 הופעל!' : '⚡ Boost x2 activated!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    document.getElementById('ctx-offer-no').addEventListener('click', () => {
+        initSound();
+        removeBanner();
+    });
+
+    contextualOfferTimeout = setTimeout(removeBanner, 9000);
+}
+
+function openWeeklyRewardModal() {
+    const lang = (game.state && game.state.language) || 'he';
+    const modal = document.getElementById('weekly-modal');
+    if (!modal) return;
+
+    const titleEl = document.getElementById('weekly-modal-title');
+    const textEl = document.getElementById('weekly-modal-text');
+    const statsBox = document.getElementById('weekly-stats-box');
+
+    if (titleEl) titleEl.innerText = lang === 'he' ? '🏆 שבוע מצוין!' : '🏆 Great Week!';
+    if (textEl) textEl.innerText = lang === 'he'
+        ? 'עברת שבוע מלא של ניהול אימפריה. הצוות שלך ממתין לדרבן!'
+        : 'A full week of running your empire! Your team is ready for a boost!';
+
+    if (statsBox) {
+        const eps = game.getEarningsPerSecond ? game.getEarningsPerSecond() : 0;
+        const served = (game.state.stats && game.state.stats.clientsServed) || 0;
+        const shares = game.state.shares || 0;
+        statsBox.innerHTML = lang === 'he'
+            ? `💰 רווח לשנייה: <strong>${formatMoney(eps)}</strong><br>👥 לקוחות שטופלו: <strong>${served.toLocaleString()}</strong><br>⭐ מניות זהב: <strong>${shares}</strong>`
+            : `💰 EPS: <strong>${formatMoney(eps)}</strong><br>👥 Clients served: <strong>${served.toLocaleString()}</strong><br>⭐ Gold shares: <strong>${shares}</strong>`;
+    }
+
+    const adBtn = document.getElementById('weekly-ad-btn');
+    const closeBtn = document.getElementById('weekly-close-btn');
+
+    if (adBtn) {
+        adBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            playAd(() => {
+                game.addBoost2x(8);
+                game.state.lastWeeklyReward = Date.now();
+                draw();
+                spawnFloating(lang === 'he' ? '⚡ בוסט 8 שעות!' : '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            });
+        };
+    }
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            game.state.lastWeeklyReward = Date.now();
+        };
+    }
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            initSound();
+            modal.classList.remove('active');
+            game.state.lastWeeklyReward = Date.now();
+        }
+    };
+
+    modal.classList.add('active');
+}
+
+function checkWeeklyReward() {
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const last = (game.state && game.state.lastWeeklyReward) || 0;
+    if (Date.now() - last >= ONE_WEEK_MS) {
+        const tryShow = () => {
+            if (!document.querySelector('.modal-overlay.active')) {
+                openWeeklyRewardModal();
+            } else {
+                setTimeout(tryShow, 1500);
+            }
+        };
+        setTimeout(tryShow, 4000);
+    }
+}
+
 function tick(timestamp) {
     try {
         const dt = (timestamp - lastTime) / 1000.0;
@@ -951,6 +1085,34 @@ function tick(timestamp) {
 
         game.update(cappedDt);
         updateActiveCoins(cappedDt);
+
+        // Contextual ad offer
+        if (game._contextualAdPending) {
+            const pendingType = game._contextualAdPending;
+            game._contextualAdPending = null;
+            showContextualAdBanner(pendingType);
+        }
+
+        // Boost offer window management
+        {
+            const now = Date.now();
+            if (game.state.boost2xTimeLeft > 0) {
+                // Boost active — reset offer cycle to start fresh after boost ends
+                boostOfferEndTime = 0;
+                boostOfferNextTime = 0;
+            } else {
+                if (boostOfferEndTime > 0 && now > boostOfferEndTime) {
+                    // Offer expired — schedule next window in 15-30 min
+                    boostOfferEndTime = 0;
+                    boostOfferNextTime = now + (900 + Math.random() * 900) * 1000;
+                } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
+                    // Start new offer window: 10-20 min duration
+                    boostOfferEndTime = now + (600 + Math.random() * 600) * 1000;
+                    boostOfferNextTime = 0;
+                }
+            }
+            window._boostOfferEndTime = boostOfferEndTime;
+        }
 
         eventTimer += cappedDt;
         if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
@@ -1382,6 +1544,13 @@ function initUIEvents() {
     document.addEventListener('click', triggerFirstInteraction);
     document.addEventListener('touchstart', triggerFirstInteraction);
     document.addEventListener('keydown', triggerFirstInteraction);
+
+    // Check weekly reward on game start
+    setTimeout(() => {
+        if (window.game && window.game.state) {
+            checkWeeklyReward();
+        }
+    }, 2000);
 }
 
     // Exports
