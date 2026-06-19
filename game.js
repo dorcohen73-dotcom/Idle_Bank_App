@@ -588,7 +588,7 @@ class IdleBankGame {
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
         }
         let gain = Math.floor(rawGain) - (this.state.shares || 0);
-        return Math.max(0, gain);
+        return Math.min(1000, Math.max(0, gain));
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
