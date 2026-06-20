@@ -5228,6 +5228,104 @@ header, .control-panel, .bank-floor {
     font-size: 0.78rem !important;
     border-radius: 8px !important;
   }
+
+  /* --- Boost Button: icon-only בפורטרייט --- */
+  #boost-btn {
+    font-size: 0 !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    letter-spacing: 0 !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  #boost-btn::before {
+    content: "⚡";
+    font-size: 1.4rem;
+    display: block;
+    line-height: 1;
+  }
+  #boost-btn.offer::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 9px;
+    height: 9px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 1.5px solid rgba(10,12,20,0.8);
+  }
+  #boost-btn.active::before {
+    content: "⚡";
+  }
+  #boost-btn.active::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 9px;
+    height: 9px;
+    background: #10b981;
+    border-radius: 50%;
+    border: 1.5px solid rgba(10,12,20,0.8);
+  }
+
+  /* --- Vault Mini Bar: בולטת יותר --- */
+  .vault-mini-bar {
+    border: 1.5px solid rgba(223, 171, 41, 0.65) !important;
+    background: rgba(18, 24, 40, 0.97) !important;
+    box-shadow: 0 0 14px rgba(223, 171, 41, 0.18), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  .vault-mini-label {
+    font-size: 0.68rem !important;
+    color: rgba(223, 171, 41, 0.8) !important;
+    font-weight: 600 !important;
+  }
+  .vault-mini-pct-wrap {
+    font-size: 1rem !important;
+  }
+  .vault-mini-track {
+    height: 8px !important;
+  }
+  .vault-mini-details {
+    font-size: 0.65rem !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+  .vault-mini-collect {
+    min-height: 38px !important;
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.7rem !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  /* --- Buy Buttons: גדולים וברורים --- */
+  .buy-btn {
+    min-width: 82px !important;
+    min-height: 50px !important;
+    font-size: 0.88rem !important;
+    font-weight: 900 !important;
+    border-radius: 12px !important;
+    padding: 0.45rem 0.6rem !important;
+    box-shadow: 0 3px 10px rgba(223, 171, 41, 0.35) !important;
+  }
+  .buy-btn:disabled {
+    box-shadow: none !important;
+    opacity: 0.45 !important;
+  }
+
+  /* --- Header buttons row: compact row בפורטרייט --- */
+  .header-buttons-row {
+    align-self: flex-end !important;
+    flex-shrink: 0 !important;
+  }
 }
 
 /* Responsive adjustments for gold shop and small mobile */
@@ -5239,9 +5337,17 @@ header, .control-panel, .bank-floor {
         flex-direction: column;
     }
 
-    /* Floor map shorter on narrow phones */
+    /* Floor map shorter on narrow phones (landscape only — portrait overrides below) */
     .floor-map {
         min-height: 290px !important;
+    }
+    /* Portrait: keep floor compact at 110px */
+    @media (orientation: portrait) {
+        .floor-map {
+            min-height: 110px !important;
+            height: 110px !important;
+            max-height: 110px !important;
+        }
     }
 
     /* 2 columns of tellers to prevent horizontal overflow */
