@@ -5016,82 +5016,97 @@ header, .control-panel, .bank-floor {
     display: none !important;
   }
 
-  /* --- Vault Mini Bar: בולטת ומובחנת כמו לוח בקרה של כספת --- */
+  /* --- Vault Mini Bar: פאנל כספת — 3 שורות --- */
   .vault-mini-bar {
     display: flex !important;
-    align-items: center !important;
-    gap: 0.55rem !important;
-    background: linear-gradient(135deg, rgba(18, 24, 42, 0.98) 0%, rgba(12, 18, 32, 0.98) 100%) !important;
-    border: 2px solid rgba(223, 171, 41, 0.6) !important;
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+    background: linear-gradient(135deg, rgba(18,24,42,0.98) 0%, rgba(12,18,32,0.99) 100%) !important;
+    border: 2px solid rgba(223, 171, 41, 0.65) !important;
     border-radius: 14px !important;
-    padding: 0.55rem 0.7rem !important;
-    margin-top: 0.25rem !important;
-    box-shadow: 0 0 18px rgba(223, 171, 41, 0.15), inset 0 1px 0 rgba(255,255,255,0.06) !important;
-    min-height: 62px !important;
+    padding: 0.6rem 0.75rem !important;
+    margin-top: 0.2rem !important;
+    box-shadow: 0 0 20px rgba(223,171,41,0.12), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06) !important;
   }
 
-  .vault-mini-left {
+  /* שורה 1: אייקון + שם + אחוז + כפתור רוקן */
+  .vault-mini-top {
     display: flex !important;
-    flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
-    gap: 2px !important;
-    min-width: 48px !important;
+    gap: 0.45rem !important;
+  }
+
+  .vault-mini-icon {
+    font-size: 1.5rem !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
   }
 
   .vault-mini-label {
-    font-size: 0.75rem !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
     color: #dfab29 !important;
-    font-weight: 700 !important;
-    white-space: nowrap !important;
-    letter-spacing: 0.3px !important;
+    letter-spacing: 0.5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .vault-mini-spacer {
+    flex: 1 !important;
   }
 
   .vault-mini-pct-wrap {
-    font-size: 1.15rem !important;
+    font-size: 1.1rem !important;
     font-weight: 900 !important;
     color: #f3d052 !important;
     line-height: 1 !important;
-    text-shadow: 0 0 8px rgba(243,208,82,0.4) !important;
+    text-shadow: 0 0 10px rgba(243,208,82,0.45) !important;
+    flex-shrink: 0 !important;
   }
 
-  .vault-mini-center {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 5px !important;
-    min-width: 0 !important;
+  .vault-mini-collect {
+    background: linear-gradient(135deg, #1e3a5f, #1e4976) !important;
+    border: 1.5px solid rgba(96,165,250,0.5) !important;
+    color: #93c5fd !important;
+    border-radius: 9px !important;
+    padding: 0.3rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    touch-action: manipulation !important;
   }
 
+  /* שורה 2: פס מילוי */
   .vault-mini-track {
     width: 100% !important;
-    height: 9px !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-radius: 5px !important;
+    height: 8px !important;
+    background: rgba(255,255,255,0.07) !important;
+    border-radius: 4px !important;
     overflow: hidden !important;
-    border: 1px solid rgba(255,255,255,0.06) !important;
   }
 
   .vault-mini-fill {
     height: 100% !important;
     width: 0% !important;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
-    border-radius: 5px !important;
-    transition: width 0.4s ease, background 0.4s ease !important;
+    background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa) !important;
+    border-radius: 4px !important;
+    transition: width 0.5s ease, background 0.5s ease !important;
   }
 
+  /* שורה 3: סכומים */
   .vault-mini-details {
-    font-size: 0.68rem !important;
-    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.7rem !important;
+    color: rgba(255,255,255,0.6) !important;
+    line-height: 1 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    line-height: 1 !important;
   }
 
   .vault-mini-sep {
-    margin: 0 3px !important;
-    color: rgba(255, 255, 255, 0.3) !important;
+    margin: 0 4px !important;
+    color: rgba(255,255,255,0.25) !important;
   }
 
   #vault-mini-yield {
@@ -5099,14 +5114,17 @@ header, .control-panel, .bank-floor {
     font-weight: 600 !important;
   }
 
-  .vault-mini-collect {
-    padding: 0.45rem 0.65rem !important;
-    font-size: 0.78rem !important;
-    font-weight: 800 !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    border-radius: 10px !important;
-    min-height: 44px !important;
+  /* --- קופות בפורטרייט: נראות טובה יותר --- */
+  .teller-counter {
+    border: 1.5px solid rgba(223,171,41,0.3) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(160deg, rgba(25,30,48,0.95), rgba(15,20,35,0.98)) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+  }
+
+  .teller-counter.locked {
+    border-color: rgba(100,100,130,0.3) !important;
+    background: linear-gradient(160deg, rgba(18,22,38,0.9), rgba(12,16,28,0.95)) !important;
   }
 
   /* --- Bank Floor: Simulation Area קומפקטי --- */
