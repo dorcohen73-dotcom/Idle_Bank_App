@@ -1060,7 +1060,7 @@ function showContextualAdBanner(type) {
     `;
     Object.assign(banner.style, {
         display: 'flex', alignItems: 'center', gap: '0.6rem',
-        position: 'fixed', bottom: '70px', left: '50%', transform: 'translateX(-50%)',
+        position: 'fixed', bottom: '70px', left: '0', right: '0', margin: '0 auto',
         background: 'var(--surface-color,rgba(20,24,36,0.95))',
         border: '1px solid var(--primary-gold,#dfab29)',
         borderRadius: '12px', padding: '0.65rem 0.85rem',
