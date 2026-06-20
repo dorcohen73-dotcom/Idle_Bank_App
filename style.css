@@ -4988,15 +4988,44 @@ header, .control-panel, .bank-floor {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(10, 15, 25, 0.8);
-    border: 1px solid rgba(223, 171, 41, 0.3);
-    border-radius: 10px;
-    padding: 0.4rem 0.75rem;
-    margin-top: 0.25rem;
+    background: rgba(10, 15, 25, 0.88);
+    border: 1px solid rgba(223, 171, 41, 0.4);
+    border-radius: 12px;
+    padding: 0.45rem 0.75rem;
+    margin-top: 0.3rem;
+  }
+
+  .vault-mini-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    min-width: 42px;
+  }
+
+  .vault-mini-label {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+  }
+
+  .vault-mini-pct-wrap {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #dfab29;
+    line-height: 1;
+  }
+
+  .vault-mini-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
   }
 
   .vault-mini-track {
-    flex: 1;
+    width: 100%;
     height: 6px;
     background: rgba(255, 255, 255, 0.07);
     border-radius: 3px;
@@ -5008,13 +5037,32 @@ header, .control-panel, .bank-floor {
     width: 0%;
     background: #3b82f6;
     border-radius: 3px;
-    transition: width 0.4s ease;
+    transition: width 0.4s ease, background 0.4s ease;
+  }
+
+  .vault-mini-details {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+  }
+
+  .vault-mini-sep {
+    margin: 0 2px;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  #vault-mini-yield {
+    color: #10b981;
   }
 
   .vault-mini-collect {
     padding: 0.3rem 0.6rem !important;
     font-size: 0.7rem !important;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* --- Bank Floor: Simulation Area קומפקטי --- */
@@ -5029,11 +5077,16 @@ header, .control-panel, .bank-floor {
 
   .floor-map {
     min-height: 0 !important;
-    height: 155px !important;
-    max-height: 155px !important;
-    padding: 0.5rem !important;
-    gap: 0.4rem !important;
+    height: 110px !important;
+    max-height: 110px !important;
+    padding: 0.4rem 0.5rem !important;
+    gap: 0.3rem !important;
     overflow: hidden !important;
+  }
+
+  /* queue-wrapper מוסתר בפורטרייט — אין מקום ב-110px */
+  .queue-wrapper {
+    display: none !important;
   }
 
   /* Tellers: גלילה אופקית */
@@ -5054,83 +5107,17 @@ header, .control-panel, .bank-floor {
   }
 
   .teller-counter {
-    flex: 0 0 110px !important;
-    min-width: 110px !important;
-    max-width: 110px !important;
-  }
-
-  /* --- כספת: גלויה בפורטרייט, קומפקטית ללא גרפיקה --- */
-  .vault-zone {
-    display: flex !important;
-    flex-direction: column !important;
+    flex: 0 0 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
     min-height: 0 !important;
-    padding: 0.6rem 0.75rem !important;
-    gap: 0.4rem !important;
-    border-radius: 14px !important;
-  }
-
-  .vault-graphic {
-    display: none !important;
-  }
-
-  .vault-info {
-    width: 100% !important;
-    gap: 0.4rem !important;
-  }
-
-  .vault-title {
-    font-size: 0.95rem !important;
-  }
-
-  .vault-subtitle {
-    display: none !important;
-  }
-
-  .vault-top-row {
-    gap: 0.5rem !important;
-    flex-wrap: nowrap !important;
-  }
-
-  .vault-title-container {
-    gap: 2px !important;
-  }
-
-  .vault-progress-row {
-    margin-top: 0 !important;
-  }
-
-  .vault-stats-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.35rem !important;
-    margin-top: 0.25rem !important;
-  }
-
-  /* מסתיר את כרטיס הנפח (מיותר בפורטרייט) */
-  .vault-stat-card.volume-card {
-    display: none !important;
-  }
-
-  .vault-stat-card {
-    padding: 0.35rem 0.6rem !important;
+    height: 86px !important;
     border-radius: 10px !important;
   }
 
-  .vault-stat-icon {
-    font-size: 0.9rem !important;
-  }
-
-  .vault-stat-label {
-    font-size: 0.6rem !important;
-  }
-
-  .vault-stat-value {
-    font-size: 0.82rem !important;
-  }
-
-  .collect-vault-btn {
-    padding: 0.4rem 0.7rem !important;
-    font-size: 0.72rem !important;
-    white-space: nowrap !important;
+  /* --- כספת: מוסתרת בפורטרייט — vault-mini-bar ב-header מחליפה אותה --- */
+  .vault-zone {
+    display: none !important;
   }
 
   .security-path {
@@ -5309,8 +5296,8 @@ header, .control-panel, .bank-floor {
 @media (max-width: 480px) and (orientation: portrait) {
   .floor-map {
     min-height: 0 !important;
-    height: 155px !important;
-    max-height: 155px !important;
+    height: 110px !important;
+    max-height: 110px !important;
   }
 }
 

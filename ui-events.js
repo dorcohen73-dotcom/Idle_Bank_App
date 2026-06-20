@@ -1277,7 +1277,7 @@ function syncBottomNav(activeTab) {
 }
 
 // עדכון vault mini bar ב-portrait
-function updateVaultMiniBar(pct, isReady) {
+function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour) {
     const miniPct = document.getElementById('vault-mini-pct');
     const miniFill = document.getElementById('vault-mini-fill');
     const miniBtn = document.getElementById('vault-mini-btn');
@@ -1287,6 +1287,24 @@ function updateVaultMiniBar(pct, isReady) {
     if (miniBtn) {
         miniBtn.disabled = !isReady;
         miniBtn.style.opacity = isReady ? '1' : '0.4';
+    }
+    // פרטים נוספים: stored / capacity + yield/hour
+    const miniStored = document.getElementById('vault-mini-stored');
+    const miniCap = document.getElementById('vault-mini-cap');
+    const miniYield = document.getElementById('vault-mini-yield');
+    const fmt = (typeof window.formatMoney === 'function') ? window.formatMoney : (v => '$' + Math.round(v));
+    if (miniStored && cashStored !== undefined) miniStored.textContent = fmt(cashStored);
+    if (miniCap && capacity !== undefined) miniCap.textContent = fmt(capacity);
+    if (miniYield && yieldPerHour !== undefined) miniYield.textContent = '+' + fmt(yieldPerHour) + '/h';
+    // צבע fill לפי מצב
+    if (miniFill) {
+        if (pct >= 95) {
+            miniFill.style.background = '#ef4444';
+        } else if (pct >= 60) {
+            miniFill.style.background = '#dfab29';
+        } else {
+            miniFill.style.background = '#3b82f6';
+        }
     }
 }
 

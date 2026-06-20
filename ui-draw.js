@@ -914,7 +914,7 @@ function draw() {
         if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
         // עדכון vault mini bar ב-portrait mode
         if (typeof window.updateVaultMiniBar === 'function') {
-            window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0);
+            window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0, vaultData.cashStored, vaultData.capacity, vaultData.yieldPerHour);
         }
     }
     

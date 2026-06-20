@@ -112,9 +112,19 @@
 
             <!-- Portrait Vault Mini Bar -->
             <div class="vault-mini-bar" id="vault-mini-bar">
-              <span>🛡️ <span id="vault-mini-pct">0%</span></span>
-              <div class="vault-mini-track">
-                <div id="vault-mini-fill" class="vault-mini-fill"></div>
+              <div class="vault-mini-left">
+                <span class="vault-mini-label">🛡️ כספת</span>
+                <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
+              </div>
+              <div class="vault-mini-center">
+                <div class="vault-mini-track">
+                  <div id="vault-mini-fill" class="vault-mini-fill"></div>
+                </div>
+                <div class="vault-mini-details">
+                  <span id="vault-mini-stored">$0</span> / <span id="vault-mini-cap">$0</span>
+                  <span class="vault-mini-sep">·</span>
+                  <span id="vault-mini-yield">+$0/h</span>
+                </div>
               </div>
               <button class="btn-secondary vault-mini-collect" id="vault-mini-btn">🚛 רוקן</button>
             </div>
