@@ -295,13 +295,13 @@ function renderManagersTab() {
     const lang = game.state.language || 'he';
     const tObj = translations[lang].managers;
 
-    const managersKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing'];
+    const managersKeys = ['customer', 'operations', 'finance', 'service', 'vip', 'marketing'];
     const managerConfigs = {
         customer: { theme: 'theme-gold', gem: '👑', img: 'manager-1.png' },
         finance: { theme: 'theme-blue', gem: '💎', img: 'manager-2.png' },
         operations: { theme: 'theme-purple', gem: '🔮', img: 'manager-3.png' },
         service: { theme: 'theme-amber', gem: '🔸', img: 'manager-4.png' },
-        vip: { theme: 'theme-red', gem: '��', img: 'manager-5.png' },
+        vip: { theme: 'theme-red', gem: '💰', img: 'manager-5.png' },
         marketing: { theme: 'theme-green', gem: '🔹', img: 'manager-6.png' }
     };
 
@@ -328,9 +328,9 @@ function renderManagersTab() {
 
         if (!isUnlocked) {
             // Locked Manager layout
-            const deptName = (type === 'finance' ? translations[lang].departments.names[1] : 
-                              (type === 'service' ? translations[lang].departments.names[2] : 
-                               (type === 'vip' ? translations[lang].departments.names[3] : 
+            const deptName = (type === 'finance' ? translations[lang].departments.names[1] :
+                              (type === 'service' ? translations[lang].departments.names[2] :
+                               (type === 'vip' ? translations[lang].departments.names[3] :
                                 (type === 'marketing' ? translations[lang].departments.names[4] : ''))));
 
             bodyHtml = `

@@ -196,7 +196,7 @@ class SaveManager {
         const isString = (v) => typeof v === 'string';
 
         // General numbers
-        if (!isNum(state.cash) || state.cash < 0) state.cash = 150;
+        if (!isNum(state.cash) || state.cash < 0) state.cash = 180;
         else state.cash = roundCents(state.cash);
 
         if (!isNum(state.lifetimeCash) || state.lifetimeCash < 0) state.lifetimeCash = state.cash;
@@ -211,13 +211,41 @@ class SaveManager {
 
         // Timers
         if (!isNum(state.boost2xTimeLeft) || state.boost2xTimeLeft < 0) state.boost2xTimeLeft = 0;
+        if (!isNum(state.lastWeeklyReward) || state.lastWeeklyReward < 0) state.lastWeeklyReward = 0;
         if (!isNum(state.tellerSpeedBoostTimer) || state.tellerSpeedBoostTimer < 0) state.tellerSpeedBoostTimer = 0;
         if (!isNum(state.tellerSpeedBoostFactor) || state.tellerSpeedBoostFactor < 1) state.tellerSpeedBoostFactor = 1;
         if (!isNum(state.advBudget) || state.advBudget < 0) state.advBudget = 0;
         if (!isBool(state.advActive)) state.advActive = false;
         if (!isNum(state.queueUpgradeLevel) || state.queueUpgradeLevel < 1) state.queueUpgradeLevel = 1;
+        else if (state.queueUpgradeLevel > GAME_CONFIG.QUEUE_MAX_LEVEL) state.queueUpgradeLevel = GAME_CONFIG.QUEUE_MAX_LEVEL;
         if (!isNum(state.missionsCompleted) || state.missionsCompleted < 0) state.missionsCompleted = 0;
         if (!isNum(state.lastSaveTime)) state.lastSaveTime = Date.now();
+
+        // Fortune Wheel
+        if (!isNum(state.lastSpinTime) || state.lastSpinTime < 0) state.lastSpinTime = 0;
+
+        // VIP Visitor
+        if (!isNum(state.nextVipVisit) || state.nextVipVisit < 0) state.nextVipVisit = 0;
+        if (!isBool(state.vipVisitActive)) state.vipVisitActive = false;
+        if (!isNum(state.vipVisitExpiry) || state.vipVisitExpiry < 0) state.vipVisitExpiry = 0;
+        if (!isNum(state.vipServedTotal) || state.vipServedTotal < 0) state.vipServedTotal = 0;
+
+        // Daily Challenges
+        if (!isNum(state.lastDailyReset) || state.lastDailyReset < 0) state.lastDailyReset = 0;
+        if (!Array.isArray(state.dailyChallenges)) {
+            state.dailyChallenges = [];
+        } else {
+            state.dailyChallenges = state.dailyChallenges.filter(c => c && typeof c === 'object' && isString(c.type));
+            state.dailyChallenges.forEach(c => {
+                if (!isNum(c.target) || c.target <= 0) c.target = 1;
+                if (!isNum(c.progress) || c.progress < 0) c.progress = 0;
+                if (!isBool(c.completed)) c.completed = false;
+                if (!isBool(c.claimed)) c.claimed = false;
+                if (!isNum(c.startProgress) || c.startProgress < 0) c.startProgress = 0;
+                if (!c.reward || typeof c.reward !== 'object') c.reward = { type: 'gold', amount: 1 };
+                if (!isNum(c.reward.amount) || c.reward.amount < 1) c.reward.amount = 1;
+            });
+        }
 
         // goldUpgrades
         const goldUpgradeMaxLevels = {
@@ -280,6 +308,36 @@ class SaveManager {
             };
         }
 
+        // Migration: שמירות ישנות שמכילות logistics/risk/tech/compliance — העבר רמות למנהלים הבולעים
+        if (state.managers && state.managerUpgrades) {
+            if (state.managers.logistics && state.managerUpgrades.logistics) {
+                state.managers.operations = state.managers.operations || true;
+                if (state.managerUpgrades.operations && state.managerUpgrades.logistics.level > 1) {
+                    state.managerUpgrades.operations.level = Math.max(state.managerUpgrades.operations.level || 1, state.managerUpgrades.logistics.level);
+                }
+            }
+            if (state.managers.risk && state.managerUpgrades.risk) {
+                if (state.managerUpgrades.finance && state.managerUpgrades.risk.level > 1) {
+                    state.managerUpgrades.finance.level = Math.max(state.managerUpgrades.finance.level || 1, state.managerUpgrades.risk.level);
+                }
+            }
+            if (state.managers.tech && state.managerUpgrades.tech) {
+                if (state.managerUpgrades.service && state.managerUpgrades.tech.level > 1) {
+                    state.managerUpgrades.service.level = Math.max(state.managerUpgrades.service.level || 1, state.managerUpgrades.tech.level);
+                }
+            }
+            if (state.managers.compliance && state.managerUpgrades.compliance) {
+                if (state.managerUpgrades.vip && state.managerUpgrades.compliance.level > 1) {
+                    state.managerUpgrades.vip.level = Math.max(state.managerUpgrades.vip.level || 1, state.managerUpgrades.compliance.level);
+                }
+            }
+            // נקה מפתחות ישנים
+            ['logistics', 'risk', 'tech', 'compliance'].forEach(k => {
+                delete state.managers[k];
+                delete state.managerUpgrades[k];
+            });
+        }
+
         const newMgrKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing'];
 
         // managers
@@ -316,6 +374,7 @@ class SaveManager {
                     state.managerUpgrades[k] = { level: 1, skill: null };
                 } else {
                     if (!isNum(state.managerUpgrades[k].level) || state.managerUpgrades[k].level < 1) state.managerUpgrades[k].level = 1;
+                    if (state.managerUpgrades[k].level > 5) state.managerUpgrades[k].level = 5; // CAP: max manager level is 5
                     state.managerUpgrades[k].skill = null; // Skill paths are obsolete
                 }
             });
@@ -381,7 +440,7 @@ class SaveManager {
         // departments
         const defaultDepartments = [
             { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 5000 },
+            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
             { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
             { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
             { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
@@ -527,11 +586,17 @@ class SaveManager {
 
     calculateOfflineEarnings() {
         this.game.offlineEarningsReport = 0;
-        
+
         // Anti-Cheat: calculate delta using verified server time if available
         const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
         const lastSaveTime = this.game.state.lastSaveTime;
-        
+
+        // Guard: if lastSaveTime is 0 (new game / corrupted), skip offline earnings and anchor timestamp
+        if (!lastSaveTime || lastSaveTime === 0) {
+            this.game.state.lastSaveTime = now;
+            return;
+        }
+
         const timePassedMs = now - lastSaveTime;
         if (timePassedMs < -60000) {
             this.game.cheatWarning = true;
@@ -543,10 +608,15 @@ class SaveManager {
         if (timePassedSec < 15) return;
 
         let offlineCashEarned = 0;
-        let limitHours = 8; 
+        let limitHours = 8;
         if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
             limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * this.game.state.managerUpgrades.marketing.level); // +1 hour per level
         }
+        // Offline limit boost from service manager (merged from tech)
+        const svcMgr = this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service;
+        const svcLvl = svcMgr ? (this.game.state.managerUpgrades.service.level || 1) : 0;
+        const svcOfflineBonus = svcMgr ? (GAME_CONFIG.MANAGER_COEFFICIENTS.service.offlineLimitBoost * svcLvl) : 0;
+        limitHours += svcOfflineBonus;
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.offlineEarnings) {
             limitHours += (this.game.state.goldUpgrades.offlineEarnings * 2); // +2 hours per level
         }

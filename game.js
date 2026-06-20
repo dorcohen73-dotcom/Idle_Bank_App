@@ -45,8 +45,8 @@ class IdleBankGame {
         this.cachedEps = 0;
         
         this.state = {
-            cash: 150,                     // Starting cash
-            lifetimeCash: 150,             // For prestige calculations
+            cash: 180,                     // Starting cash
+            lifetimeCash: 180,             // For prestige calculations
             shares: 0,                     // Golden Shares
             currentBranch: 0,              // 0: Jerusalem, 1: Tel Aviv, 2: NY, 3: London
             maxBranchUnlocked: 0,
@@ -86,16 +86,16 @@ class IdleBankGame {
 
             managers: {
                 customer: false,
-                finance: false,
                 operations: true,  // operations (guard/couriers) starts hired by default to keep automation running
+                finance: false,
                 service: false,
                 vip: false,
                 marketing: false
             },
             managerUpgrades: {
                 customer: { level: 1, skill: null },
-                finance: { level: 1, skill: null },
                 operations: { level: 1, skill: null },
+                finance: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
                 marketing: { level: 1, skill: null }
@@ -103,7 +103,7 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 5000 },
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
                 { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
                 { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
                 { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
@@ -116,14 +116,32 @@ class IdleBankGame {
                 tellerUpgrades: 0,
                 guardUpgrades: 0,
                 vaultUpgrades: 0,
-                vipServed: 0
+                vipServed: 0,
+                cashSpent: 0
             },
             advBudget: 0,
             advActive: false,
             queueUpgradeLevel: 1,
 
-            lastSaveTime: Date.now()
+            lastSaveTime: Date.now(),
+            lastWeeklyReward: 0,
+
+            // Fortune Wheel
+            lastSpinTime: 0,
+
+            // VIP Visitor
+            nextVipVisit: 0,
+            vipVisitActive: false,
+            vipVisitExpiry: 0,
+            vipServedTotal: 0,
+
+            // Daily Challenges
+            dailyChallenges: [],
+            lastDailyReset: 0
         };
+
+        this._contextualAdPending = null;
+        this.tempQueueBonus = 0;
 
         this.customerQueue = [];
         this.maxQueueLength = 20;
@@ -145,6 +163,10 @@ class IdleBankGame {
 
     calculateOfflineEarnings() {
         this.saveManager.calculateOfflineEarnings();
+    }
+
+    validateAndHealState(state) {
+        this.saveManager.validateAndHealState(state);
     }
 
     // --- ECONOMY DELEGATES ---
@@ -428,7 +450,7 @@ class IdleBankGame {
 
     upgradeQueue() {
         const level = this.state.queueUpgradeLevel || 1;
-        if (level >= 4) return false;
+        if (level >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
 
         const cost = this.getQueueUpgradeCost(level);
         if (this.spendCash(cost)) {
@@ -455,7 +477,7 @@ class IdleBankGame {
 
     upgradeQueueBulk(mode) {
         const queueLvl = this.state.queueUpgradeLevel || 1;
-        if (queueLvl >= 4) return false;
+        if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
 
         const details = this.getBulkUpgradeDetails('queue', null, mode, queueLvl, this.state.cash);
         if (details.canAfford && details.levels > 0) {
@@ -578,13 +600,15 @@ class IdleBankGame {
     }
 
     calculatePrestigeShares() {
-        const assets = this.calculateTotalAssets();
-        let gain = Math.floor(assets / GAME_CONFIG.PRESTIGE_ASSETS_DIVIDER);
-        if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades.vip) {
+        const lifetimeCash = this.state.lifetimeCash || 180;
+        let rawGain = 10 * Math.sqrt(lifetimeCash / 30000);
+        if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
             const vipLvl = this.state.managerUpgrades.vip.level;
-            gain = Math.floor(gain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl));
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
         }
-        return Math.max(3, gain);
+        let gain = Math.floor(rawGain) - (this.state.shares || 0);
+        return Math.min(1000, Math.max(0, gain));
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -593,14 +617,16 @@ class IdleBankGame {
         if (doubleShares) {
             // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
             sharesGained *= 3;
+            // CAP: after tripling, clamp to 1000 per prestige event
+            sharesGained = Math.min(1000, sharesGained);
         }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
             this.isResetting = false;
             return false;
         }
 
-        // Apply Prestige
-        this.state.shares += sharesGained;
+        // Apply Prestige — total shares capped at 3000
+        this.state.shares = Math.min(3000, (this.state.shares || 0) + sharesGained);
         this.state.currentBranch = targetBranchIndex;
         this.state.maxBranchUnlocked = Math.max(this.state.maxBranchUnlocked || 0, targetBranchIndex);
         
@@ -608,13 +634,15 @@ class IdleBankGame {
         const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
         const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
         
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 150) + Number.EPSILON) * 100) / 100;
+        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
         const savedShares = this.state.shares;
         const savedMaxBranch = this.state.maxBranchUnlocked;
         const savedGoldUpgrades = this.state.goldUpgrades;
         const savedLanguage = this.state.language;
         const savedStats = this.state.stats;
         const savedMissionsCompleted = this.state.missionsCompleted;
+        const savedLastWeeklyReward = this.state.lastWeeklyReward;
+        const savedLastSpinTime = this.state.lastSpinTime;
 
         this.initDefaultState();
 
@@ -625,9 +653,11 @@ class IdleBankGame {
         this.state.language = savedLanguage;
         this.state.stats = savedStats;
         this.state.missionsCompleted = savedMissionsCompleted;
+        this.state.lastWeeklyReward = savedLastWeeklyReward;
+        this.state.lastSpinTime = savedLastSpinTime;
 
         // Reset cash based on starting cash options in GAME_CONFIG
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 150) + Number.EPSILON) * 100) / 100;
+        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
         this.state.lifetimeCash = this.state.cash;
 
         // Generate initial missions
@@ -689,7 +719,7 @@ class IdleBankGame {
 
         const advBudget = this.state.advBudget || 0;
         if (advBudget > 0) {
-            const costThisFrame = (advBudget / 60) * dt;
+            const costThisFrame = advBudget * dt / 60;
             if (this.state.cash >= costThisFrame) {
                 this.state.cash = Math.round((this.state.cash - costThisFrame + Number.EPSILON) * 100) / 100;
                 this.state.advActive = true;
@@ -697,8 +727,6 @@ class IdleBankGame {
                 const eps = this.getEarningsPerSecond();
                 if (eps > (advBudget / 60)) {
                     this.state.advActive = true;
-                    this.state.cash = Math.max(0, this.state.cash - costThisFrame);
-                    this.state.cash = Math.round((this.state.cash + Number.EPSILON) * 100) / 100;
                 } else {
                     this.state.advBudget = 0;
                     this.state.advActive = false;
@@ -808,6 +836,7 @@ class IdleBankGame {
                     if (t.customerType === 'vip' || t.customerType === 'rich') {
                         if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
                         this.state.stats.vipServed++;
+                        this._contextualAdPending = 'vip';
                     }
                     this.missionsDirty = true;
                     
@@ -925,6 +954,32 @@ class IdleBankGame {
             this.checkMissions();
             this.missionsDirty = false;
         }
+
+        // VIP Visitor logic
+        const nowMs = Date.now();
+        if (!this.state.vipVisitActive) {
+            if (!this.state.nextVipVisit || this.state.nextVipVisit === 0) {
+                this.state.nextVipVisit = nowMs + (600 + Math.random() * 300) * 1000;
+            } else if (nowMs >= this.state.nextVipVisit) {
+                if (this.state.boost2xTimeLeft <= 0) {
+                    this.state.vipVisitActive = true;
+                    this.state.vipVisitExpiry = nowMs + 25000;
+                    if (typeof window.triggerVipVisitBanner === 'function') {
+                        window.triggerVipVisitBanner();
+                    }
+                } else {
+                    // Boost פעיל — דחה ב-2 דקות
+                    this.state.nextVipVisit = nowMs + 120000;
+                }
+            }
+        } else if (this.state.vipVisitExpiry && nowMs > this.state.vipVisitExpiry) {
+            this.state.vipVisitActive = false;
+            this.state.nextVipVisit = nowMs + (600 + Math.random() * 300) * 1000;
+            this.state.vipVisitExpiry = 0;
+            if (typeof window.removeVipVisitBanner === 'function') {
+                window.removeVipVisitBanner();
+            }
+        }
     }
 
     buyGoldUpgrade(type) {
@@ -968,7 +1023,7 @@ class IdleBankGame {
                 marketing: { level: 1, skill: null }
             };
         }
-        
+
         const mgr = this.state.managerUpgrades[type];
         if (!mgr) return false;
         if (mgr.level >= 5) return false;
@@ -1046,8 +1101,17 @@ class IdleBankGame {
 
     // --- ENCAPSULATION API METHODS FOR MVC COMPLIANCE ---
     addCash(amount) {
+        const prev = this.state.lifetimeCash;
         this.state.cash = Math.round((this.state.cash + amount + Number.EPSILON) * 100) / 100;
         this.state.lifetimeCash = Math.round((this.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+        // Trigger contextual ad on cash milestones
+        const MILESTONES = [5000, 50000, 500000, 5000000, 50000000, 500000000];
+        for (const m of MILESTONES) {
+            if (prev < m && this.state.lifetimeCash >= m) {
+                this._contextualAdPending = 'milestone';
+                break;
+            }
+        }
         this.saveGame();
     }
 
@@ -1251,22 +1315,25 @@ class IdleBankGame {
         // Stats calculation
         let stat1Val = '';
         let stat2Val = '';
+        if (!coefs) {
+            return { type, isUnlocked, isHired, cost, level, extraHourly, stat1Val, stat2Val };
+        }
         if (type === 'customer') {
             stat1Val = `+${Math.round(coefs.spawnIntervalBoost * 100 * level)}%`;
             stat2Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
         } else if (type === 'finance') {
             const lang = this.state.language || 'he';
             stat1Val = lang === 'he' ? 'אוטומטי' : (lang === 'es' ? 'Auto' : (lang === 'ru' ? 'Авто' : 'Auto'));
-            stat2Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
+            stat2Val = `+${Math.round(coefs.deptIncomeBoost * 100 * level)}%`;
         } else if (type === 'operations') {
             stat1Val = `+${Math.round(coefs.guardSpeedBoost * 100 * level)}%`;
-            stat2Val = `+${Math.round(coefs.tellerSpeedBoost * 100 * level)}%`;
+            stat2Val = `+${Math.round(coefs.guardCapBoost * 100 * level)}%`;
         } else if (type === 'service') {
             stat1Val = `+${Math.round(coefs.capacityBoost * 100 * level)}%`;
-            stat2Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
+            stat2Val = `+${Math.round(coefs.epsBoost * 100 * level)}%`;
         } else if (type === 'vip') {
             stat1Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
-            stat2Val = `+${Math.round(coefs.prestigeBoost * 100 * level)}%`;
+            stat2Val = `+${Math.round(coefs.prestigeSharesBoost * 100 * level)}%`;
         } else if (type === 'marketing') {
             stat1Val = `+${Math.round(coefs.adBoost * 100 * level)}%`;
             stat2Val = `+${coefs.offlineLimitBoost * level}`;

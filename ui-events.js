@@ -5,6 +5,10 @@ var soundInitialized = false;
 var autoSaveTimer = 0;
 var eventTimer = 0;
 var tabRefreshTimer = 0;
+var contextualOfferTimeout = null;
+var contextualBannerShown = false;
+var boostOfferEndTime = 0;
+var boostOfferNextTime = 0;
 
 function applyLanguage(lang) {
     window.gameLanguage = lang;
@@ -56,16 +60,42 @@ function applyLanguage(lang) {
     if (DOM_CACHE.labelVaultVolumeTitle) DOM_CACHE.labelVaultVolumeTitle.innerText = tObj.vaultVolume;
     if (DOM_CACHE.labelCollectVaultBtn) DOM_CACHE.labelCollectVaultBtn.innerText = tObj.collectVault;
     
-    if (DOM_CACHE.tabBtnUpgrades) DOM_CACHE.tabBtnUpgrades.innerText = tObj.tabUpgrades;
-    if (DOM_CACHE.tabBtnManagers) DOM_CACHE.tabBtnManagers.innerText = tObj.tabManagers;
-    if (DOM_CACHE.tabBtnDepartments) DOM_CACHE.tabBtnDepartments.innerText = tObj.tabDepartments;
-    if (DOM_CACHE.tabBtnMissions) {
-        const baseText = tObj.tabMissions.replace('🏆', '').trim();
-        DOM_CACHE.tabBtnMissions.innerHTML = `${baseText} <span aria-hidden="true">🏆</span>`;
-    }
-    if (DOM_CACHE.tabBtnBranches) DOM_CACHE.tabBtnBranches.innerText = tObj.tabBranches;
+    const updateTabLabel = (btn, text) => {
+        if (!btn) return;
+        const lbl = btn.querySelector('.tab-label');
+        const cleanText = text.replace(/🏆|📅|📆/g, '').trim();
+        if (lbl) lbl.innerText = cleanText;
+        else btn.innerText = cleanText;
+    };
     
-    if (DOM_CACHE.labelFooter) DOM_CACHE.labelFooter.innerText = tObj.footerText;
+    updateTabLabel(DOM_CACHE.tabBtnUpgrades, tObj.tabUpgrades);
+    updateTabLabel(DOM_CACHE.tabBtnManagers, tObj.tabManagers);
+    updateTabLabel(DOM_CACHE.tabBtnDepartments, tObj.tabDepartments);
+    updateTabLabel(DOM_CACHE.tabBtnMissions, tObj.tabMissions);
+    updateTabLabel(DOM_CACHE.tabBtnBranches, tObj.tabBranches);
+    
+    const tabBtnDaily = document.getElementById('tab-btn-daily');
+    if (tObj.dailyTabBtn) updateTabLabel(tabBtnDaily, tObj.dailyTabBtn);
+    
+    if (DOM_CACHE.labelFooter) {
+        const flavorEl = document.getElementById('footer-flavor');
+        if (flavorEl) {
+            const flavors = tObj.footer_flavors;
+            if (flavors && flavors.length) {
+                if (window._footerFlavorInterval) clearInterval(window._footerFlavorInterval);
+                let fi = 0;
+                flavorEl.textContent = flavors[fi];
+                window._footerFlavorInterval = setInterval(function() {
+                    fi = (fi + 1) % flavors.length;
+                    flavorEl.textContent = flavors[fi];
+                }, 8000);
+            } else {
+                flavorEl.textContent = tObj.footerText;
+            }
+        } else {
+            DOM_CACHE.labelFooter.innerText = tObj.footerText;
+        }
+    }
     if (DOM_CACHE.bulkLabelText) {
         DOM_CACHE.bulkLabelText.innerText = tObj.bulkLabel;
     }
@@ -118,29 +148,35 @@ function applyLanguage(lang) {
 function applyTheme(themeName) {
     const root = document.documentElement;
     if (themeName === 'white') {
-        root.style.setProperty('--bg-color', '#f3f4f6');
-        root.style.setProperty('--surface-color', 'rgba(255, 255, 255, 0.85)');
+        root.style.setProperty('--bg-color', '#faf9f6');
+        root.style.setProperty('--surface-color', 'rgba(244, 242, 237, 0.92)');
         root.style.setProperty('--surface-hover', 'rgba(255, 255, 255, 0.98)');
-        root.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.1)');
-        root.style.setProperty('--text-main', '#1f2937');
-        root.style.setProperty('--text-muted', '#6b7280');
-        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(223, 171, 41, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)';
+        root.style.setProperty('--border-color', 'rgba(184, 134, 11, 0.25)');
+        root.style.setProperty('--border-glow', 'rgba(184, 134, 11, 0.08)');
+        root.style.setProperty('--text-main', '#2c2a25');
+        root.style.setProperty('--text-muted', '#7a766a');
+        root.style.setProperty('--glass-blur', 'blur(12px)');
+        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(250, 249, 246, 1) 0px, transparent 100%)';
     } else if (themeName === 'blue') {
-        root.style.setProperty('--bg-color', '#0a1128');
-        root.style.setProperty('--surface-color', 'rgba(12, 24, 68, 0.75)');
-        root.style.setProperty('--surface-hover', 'rgba(20, 38, 100, 0.9)');
-        root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.1)');
+        root.style.setProperty('--bg-color', '#080c1d');
+        root.style.setProperty('--surface-color', 'rgba(13, 22, 54, 0.78)');
+        root.style.setProperty('--surface-hover', 'rgba(20, 32, 75, 0.92)');
+        root.style.setProperty('--border-color', 'rgba(223, 171, 41, 0.22)');
+        root.style.setProperty('--border-glow', 'rgba(223, 171, 41, 0.12)');
         root.style.setProperty('--text-main', '#f3f4f6');
         root.style.setProperty('--text-muted', '#9ca3af');
-        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(0, 100, 255, 0.12) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%)';
+        root.style.setProperty('--glass-blur', 'blur(16px)');
+        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(223, 171, 41, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%)';
     } else {
-        root.style.setProperty('--bg-color', '#0c0e14');
-        root.style.setProperty('--surface-color', 'rgba(20, 24, 36, 0.7)');
-        root.style.setProperty('--surface-hover', 'rgba(30, 36, 52, 0.85)');
-        root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.08)');
+        root.style.setProperty('--bg-color', '#06070a');
+        root.style.setProperty('--surface-color', 'rgba(13, 15, 23, 0.82)');
+        root.style.setProperty('--surface-hover', 'rgba(22, 25, 38, 0.95)');
+        root.style.setProperty('--border-color', 'rgba(168, 85, 247, 0.35)');
+        root.style.setProperty('--border-glow', 'rgba(223, 171, 41, 0.25)');
         root.style.setProperty('--text-main', '#f3f4f6');
         root.style.setProperty('--text-muted', '#9ca3af');
-        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(223, 171, 41, 0.05) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(20, 24, 36, 0.3) 0px, transparent 100%)';
+        root.style.setProperty('--glass-blur', 'blur(12px)');
+        document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(223, 171, 41, 0.12) 0px, transparent 50%)';
     }
     
     document.querySelectorAll('.theme-option-btn-choice').forEach(btn => {
@@ -820,6 +856,43 @@ function initSound() {
     }
 }
 
+function triggerMilestoneConfetti(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const container = document.getElementById('floating-container') || document.body;
+    
+    const colors = ['#dfab29', '#ffd700', '#10b981', '#3b82f6', '#ec4899', '#a855f7'];
+    
+    for (let i = 0; i < 45; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'confetti-particle';
+        
+        // Random velocity and direction
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 40 + Math.random() * 110;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance - (30 + Math.random() * 40); // bias upwards
+        
+        particle.style.setProperty('--dx', `${dx}px`);
+        particle.style.setProperty('--dy', `${dy}px`);
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        
+        // Random style details
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        const size = 5 + Math.random() * 6;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        if (Math.random() > 0.5) {
+            particle.style.borderRadius = '0px'; // squares
+        }
+        
+        container.appendChild(particle);
+        setTimeout(() => particle.remove(), 1200);
+    }
+}
+
 function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type, extraId) {
     const afterCash = game.state.cash;
     const spent = beforeCash - afterCash;
@@ -856,6 +929,14 @@ function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type,
     const x = (e && e.clientX) ? e.clientX : (rect.left + rect.width / 2);
     const y = (e && e.clientY) ? e.clientY : rect.top;
     
+    // Trigger card gold flash animation
+    const card = btn.closest('.upgrade-card');
+    if (card) {
+        card.classList.remove('sparkle-flash');
+        void card.offsetWidth; // trigger reflow
+        card.classList.add('sparkle-flash');
+    }
+    
     if (spent > 0) {
         spawnFloating(`-$${formatMoney(spent)}`, x, y, 'red');
     }
@@ -872,6 +953,19 @@ function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type,
             setTimeout(() => {
                 spawnFloating(`LEVEL UP! +${levelDiff} ⚡`, x, y - 25, 'gold');
             }, 150);
+            
+            // Check for Milestone celebration
+            if (type === 'teller') {
+                const milestones = [10, 25, 50, 100];
+                const reached = milestones.find(m => beforeLevelOrUnlocked < m && afterLevelOrUnlocked >= m);
+                if (reached) {
+                    setTimeout(() => {
+                        triggerMilestoneConfetti(btn);
+                        spawnFloating(`MILESTONE Lv ${reached}! 🏆🎉`, x, y - 55, '#dfab29');
+                        if (typeof rebuildTellersDOM === 'function') rebuildTellersDOM();
+                    }, 250);
+                }
+            }
         }
     }
 }
@@ -942,6 +1036,140 @@ function handleMissionRedirect(missionType, targetId) {
     }, 150);
 }
 
+function showContextualAdBanner(type) {
+    if (game.state.boost2xTimeLeft > 0) return;
+    if (document.querySelector('.modal-overlay.active')) return;
+    if (contextualBannerShown) return;
+
+    const lang = (game.state && game.state.language) || 'he';
+    const existing = document.getElementById('contextual-offer-banner');
+    if (existing) existing.remove();
+
+    const msgs = {
+        vip: lang === 'he' ? '💎 לקוח VIP שורת! הכפל רווח עם פרסומת?' : '💎 VIP served! Double your reward?',
+        milestone: lang === 'he' ? '🎉 יעד כסף הושג! הפעל בוסט x2?' : '🎉 Cash milestone! Activate x2 boost?'
+    };
+    const msg = msgs[type] || msgs.vip;
+
+    const banner = document.createElement('div');
+    banner.id = 'contextual-offer-banner';
+    banner.innerHTML = `
+        <span style="font-size:0.82rem; color:var(--text-main); flex:1;">${msg}</span>
+        <button id="ctx-offer-yes" style="background:var(--primary-gold,#dfab29); color:#000; border:none; padding:0.28rem 0.7rem; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:700; white-space:nowrap;">🎬 צפה</button>
+        <button id="ctx-offer-no" style="background:transparent; border:1px solid var(--border-color,rgba(255,255,255,0.1)); color:var(--text-muted,#9ca3af); padding:0.28rem 0.5rem; border-radius:8px; font-size:0.78rem; cursor:pointer;">✕</button>
+    `;
+    Object.assign(banner.style, {
+        display: 'flex', alignItems: 'center', gap: '0.6rem',
+        position: 'fixed', bottom: '70px', left: '50%', transform: 'translateX(-50%)',
+        background: 'var(--surface-color,rgba(20,24,36,0.95))',
+        border: '1px solid var(--primary-gold,#dfab29)',
+        borderRadius: '12px', padding: '0.65rem 0.85rem',
+        zIndex: '2000', maxWidth: '340px', width: '90%',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.5)', animation: 'slideUpIn 0.3s ease'
+    });
+
+    document.body.appendChild(banner);
+    contextualBannerShown = true;
+
+    const removeBanner = () => {
+        if (banner.parentNode) banner.remove();
+        contextualBannerShown = false;
+        if (contextualOfferTimeout) clearTimeout(contextualOfferTimeout);
+    };
+
+    document.getElementById('ctx-offer-yes').addEventListener('click', () => {
+        initSound();
+        removeBanner();
+        playAd(() => {
+            game.addBoost2x(2);
+            draw();
+            spawnFloating(lang === 'he' ? '⚡ בוסט x2 הופעל!' : '⚡ Boost x2 activated!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    document.getElementById('ctx-offer-no').addEventListener('click', () => {
+        initSound();
+        removeBanner();
+    });
+
+    contextualOfferTimeout = setTimeout(removeBanner, 9000);
+}
+
+function openWeeklyRewardModal() {
+    const lang = (game.state && game.state.language) || 'he';
+    const modal = document.getElementById('weekly-modal');
+    if (!modal) return;
+
+    const titleEl = document.getElementById('weekly-modal-title');
+    const textEl = document.getElementById('weekly-modal-text');
+    const statsBox = document.getElementById('weekly-stats-box');
+
+    if (titleEl) titleEl.innerText = lang === 'he' ? '🏆 שבוע מצוין!' : '🏆 Great Week!';
+    if (textEl) textEl.innerText = lang === 'he'
+        ? 'עברת שבוע מלא של ניהול אימפריה. הצוות שלך ממתין לדרבן!'
+        : 'A full week of running your empire! Your team is ready for a boost!';
+
+    if (statsBox) {
+        const eps = game.getEarningsPerSecond ? game.getEarningsPerSecond() : 0;
+        const served = (game.state.stats && game.state.stats.clientsServed) || 0;
+        const shares = game.state.shares || 0;
+        statsBox.innerHTML = lang === 'he'
+            ? `💰 רווח לשנייה: <strong>${formatMoney(eps)}</strong><br>👥 לקוחות שטופלו: <strong>${served.toLocaleString()}</strong><br>⭐ מניות זהב: <strong>${shares}</strong>`
+            : `💰 EPS: <strong>${formatMoney(eps)}</strong><br>👥 Clients served: <strong>${served.toLocaleString()}</strong><br>⭐ Gold shares: <strong>${shares}</strong>`;
+    }
+
+    const adBtn = document.getElementById('weekly-ad-btn');
+    const closeBtn = document.getElementById('weekly-close-btn');
+
+    if (adBtn) {
+        adBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            playAd(() => {
+                game.addBoost2x(8);
+                game.state.lastWeeklyReward = Date.now();
+                draw();
+                spawnFloating(lang === 'he' ? '⚡ בוסט 8 שעות!' : '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            });
+        };
+    }
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            game.state.lastWeeklyReward = Date.now();
+        };
+    }
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            initSound();
+            modal.classList.remove('active');
+            game.state.lastWeeklyReward = Date.now();
+        }
+    };
+
+    modal.classList.add('active');
+}
+
+function checkWeeklyReward() {
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const last = (game.state && game.state.lastWeeklyReward) || 0;
+    if (Date.now() - last >= ONE_WEEK_MS) {
+        let weeklyRetries = 0;
+        const MAX_WEEKLY_RETRIES = 10;
+        const tryShow = () => {
+            if (weeklyRetries >= MAX_WEEKLY_RETRIES) return;
+            if (!document.querySelector('.modal-overlay.active')) {
+                openWeeklyRewardModal();
+            } else {
+                weeklyRetries++;
+                setTimeout(tryShow, 1500);
+            }
+        };
+        setTimeout(tryShow, 4000);
+    }
+}
+
 function tick(timestamp) {
     try {
         const dt = (timestamp - lastTime) / 1000.0;
@@ -951,6 +1179,34 @@ function tick(timestamp) {
 
         game.update(cappedDt);
         updateActiveCoins(cappedDt);
+
+        // Contextual ad offer
+        if (game._contextualAdPending) {
+            const pendingType = game._contextualAdPending;
+            game._contextualAdPending = null;
+            showContextualAdBanner(pendingType);
+        }
+
+        // Boost offer window management
+        {
+            const now = Date.now();
+            if (game.state.boost2xTimeLeft > 0) {
+                // Boost active — reset offer cycle to start fresh after boost ends
+                boostOfferEndTime = 0;
+                boostOfferNextTime = 0;
+            } else {
+                if (boostOfferEndTime > 0 && now > boostOfferEndTime) {
+                    // Offer expired — schedule next window in 15-30 min
+                    boostOfferEndTime = 0;
+                    boostOfferNextTime = now + (900 + Math.random() * 900) * 1000;
+                } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
+                    // Start new offer window: 10-20 min duration
+                    boostOfferEndTime = now + (600 + Math.random() * 600) * 1000;
+                    boostOfferNextTime = 0;
+                }
+            }
+            window._boostOfferEndTime = boostOfferEndTime;
+        }
 
         eventTimer += cappedDt;
         if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
@@ -1013,6 +1269,27 @@ function tick(timestamp) {
     }
 }
 
+// סנכרון Bottom Navigation עם הטאבים
+function syncBottomNav(activeTab) {
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === activeTab);
+    });
+}
+
+// עדכון vault mini bar ב-portrait
+function updateVaultMiniBar(pct, isReady) {
+    const miniPct = document.getElementById('vault-mini-pct');
+    const miniFill = document.getElementById('vault-mini-fill');
+    const miniBtn = document.getElementById('vault-mini-btn');
+    if (!miniPct) return;
+    miniPct.textContent = Math.round(pct) + '%';
+    if (miniFill) miniFill.style.width = pct + '%';
+    if (miniBtn) {
+        miniBtn.disabled = !isReady;
+        miniBtn.style.opacity = isReady ? '1' : '0.4';
+    }
+}
+
 let uiEventsInitialized = false;
 
 function initUIEvents() {
@@ -1069,6 +1346,14 @@ function initUIEvents() {
         DOM_CACHE.analyticsBtn.addEventListener('click', () => {
             initSound();
             openAnalyticsModal();
+        });
+    }
+
+    const fortuneWheelBtn = document.getElementById('fortune-wheel-btn');
+    if (fortuneWheelBtn) {
+        fortuneWheelBtn.addEventListener('click', () => {
+            initSound();
+            openFortuneWheel();
         });
     }
 
@@ -1148,14 +1433,14 @@ function initUIEvents() {
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const tabId = btn.getAttribute('data-tab');
-            
+
             tabButtons.forEach(b => b.classList.remove('active'));
             tabPanes.forEach(p => p.classList.remove('active'));
 
             btn.classList.add('active');
             const targetPane = document.getElementById(`tab-${tabId}`);
             if (targetPane) targetPane.classList.add('active');
-            
+
             if (DOM_CACHE.bulkSelector) {
                 if (tabId === 'upgrades' || tabId === 'managers') {
                     DOM_CACHE.bulkSelector.style.display = 'flex';
@@ -1163,19 +1448,49 @@ function initUIEvents() {
                     DOM_CACHE.bulkSelector.style.display = 'none';
                 }
             }
-            
+
+            if (tabId === 'daily' && typeof window.renderDailyChallengesSection === 'function') {
+                window.renderDailyChallengesSection();
+            }
+
             if (tabId === 'upgrades' && typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
             else if (tabId === 'managers' && typeof window.renderManagersTab === 'function') window.renderManagersTab();
             else if (tabId === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
             else if (tabId === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+            else if (tabId === 'daily' && typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
             else if (tabId === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
-            
+
+            // סנכרון Bottom Nav
+            syncBottomNav(tabId);
+
             initSound();
             if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
                 window.gameAudio.playClick();
             }
         });
     });
+
+    // Bottom Nav click handlers
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            // מפעיל את הלוגיקה הקיימת של הטאבים
+            const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+            if (existingTabBtn) {
+                existingTabBtn.click();
+            }
+            syncBottomNav(tab);
+        });
+    });
+
+    // Vault Mini Btn — מחובר לאותה לוגיקה של collect vault
+    const vaultMiniBtn = document.getElementById('vault-mini-btn');
+    if (vaultMiniBtn) {
+        vaultMiniBtn.addEventListener('click', () => {
+            const mainVaultBtn = document.getElementById('collect-vault-btn');
+            if (mainVaultBtn) mainVaultBtn.click();
+        });
+    }
 
     if (DOM_CACHE.bulkSelector) {
         DOM_CACHE.bulkSelector.addEventListener('click', (e) => {
@@ -1295,7 +1610,8 @@ function initUIEvents() {
                 playAd(() => {
                     game.prestige(target, true);
                     game.saveGame();
-                    
+
+                    if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
                     const firstTabBtn = document.querySelector('.tab-btn');
                     if (firstTabBtn) firstTabBtn.click();
                     
@@ -1313,7 +1629,8 @@ function initUIEvents() {
                 prestigeModal.classList.remove('active');
                 game.prestige(target, false);
                 game.saveGame();
-                
+
+                if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
                 const firstTabBtn = document.querySelector('.tab-btn');
                 if (firstTabBtn) firstTabBtn.click();
                 
@@ -1382,7 +1699,458 @@ function initUIEvents() {
     document.addEventListener('click', triggerFirstInteraction);
     document.addEventListener('touchstart', triggerFirstInteraction);
     document.addEventListener('keydown', triggerFirstInteraction);
+
+    // Decoration interactions (Living Bank Simulator)
+    const camera = document.querySelector('.security-camera');
+    if (camera) {
+        camera.style.cursor = 'pointer';
+        camera.addEventListener('click', (e) => {
+            initSound();
+            camera.classList.remove('camera-wiggle');
+            void camera.offsetWidth; // trigger reflow
+            camera.classList.add('camera-wiggle');
+            
+            const bonus = 10 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = camera.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+            draw();
+        });
+    }
+
+    const atm = document.querySelector('.atm-machine');
+    if (atm) {
+        atm.style.cursor = 'pointer';
+        atm.addEventListener('click', (e) => {
+            initSound();
+            atm.classList.remove('atm-vibrate');
+            void atm.offsetWidth; // trigger reflow
+            atm.classList.add('atm-vibrate');
+            
+            // Create falling/sliding receipt
+            const receipt = document.createElement('div');
+            receipt.className = 'atm-receipt';
+            receipt.innerText = '$' + (15 * (game.state.currentBranch + 1));
+            atm.appendChild(receipt);
+            setTimeout(() => receipt.remove(), 1200);
+
+            const bonus = 15 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = atm.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+            draw();
+        });
+    }
+
+    const plants = document.querySelectorAll('.potted-plant');
+    plants.forEach(plant => {
+        plant.style.cursor = 'pointer';
+        plant.addEventListener('click', (e) => {
+            initSound();
+            plant.classList.remove('plant-shake');
+            void plant.offsetWidth; // trigger reflow
+            plant.classList.add('plant-shake');
+            
+            // Create falling leaf
+            const leaf = document.createElement('div');
+            leaf.className = 'falling-leaf';
+            leaf.innerText = '🍃';
+            plant.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 1500);
+
+            const bonus = 2 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = plant.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            draw();
+        });
+    });
+
+    // Check weekly reward on game start
+    setTimeout(() => {
+        if (window.game && window.game.state) {
+            checkWeeklyReward();
+        }
+    }, 2000);
 }
+
+    // ==========================================
+    // FORTUNE WHEEL
+    // ==========================================
+
+    function _wheelWeightedRandom(prizes) {
+        const totalWeight = prizes.reduce((s, p) => s + p.weight, 0);
+        let rand = Math.random() * totalWeight;
+        for (const prize of prizes) {
+            rand -= prize.weight;
+            if (rand <= 0) return prize;
+        }
+        return prizes[prizes.length - 1];
+    }
+
+    function openFortuneWheel() {
+        initSound();
+        const lang = (game.state && game.state.language) || 'he';
+        const tObj = translations[lang] || translations.he;
+
+        const modal = document.getElementById('fortune-wheel-modal');
+        if (!modal) return;
+
+        const now = Date.now();
+        const lastSpin = game.state.lastSpinTime || 0;
+        const cooldownMs = 86400000;
+        const timeLeft = cooldownMs - (now - lastSpin);
+        const canSpin = timeLeft <= 0;
+
+        const spinBtn = document.getElementById('fortune-spin-btn');
+        const cooldownEl = document.getElementById('fortune-cooldown');
+        const resultEl = document.getElementById('fortune-result');
+        const prizeListEl = document.getElementById('fortune-prize-list');
+
+        if (resultEl) resultEl.style.display = 'none';
+
+        if (prizeListEl) {
+            prizeListEl.innerHTML = '';
+            GAME_CONFIG.WHEEL_PRIZES.forEach(p => {
+                const li = document.createElement('div');
+                li.className = 'wheel-prize-item';
+                const label = (tObj.wheelPrizes && tObj.wheelPrizes[p.label]) || p.label;
+                
+                let valDesc = '';
+                const l = (game.state && game.state.language) || 'he';
+                if (p.type === 'cash') {
+                    const mins = Math.floor(p.value / 60);
+                    valDesc = l === 'he' ? `💵 +${mins} דקות רווח` : l === 'es' ? `💵 +${mins}m Efectivo` : l === 'ru' ? `💵 +${mins}m Прибыль` : `💵 +${mins}m EPS`;
+                } else if (p.type === 'boost') {
+                    valDesc = l === 'he' ? `⚡ +${p.value} שעות בוסט` : l === 'es' ? `⚡ +${p.value}h Boost` : l === 'ru' ? `⚡ +${p.value}h Буст` : `⚡ +${p.value}h Boost`;
+                } else if (p.type === 'gold' || p.type === 'shares') {
+                    valDesc = l === 'he' ? `🏅 +${p.value} מניות` : l === 'es' ? `🏅 +${p.value} Acciones` : l === 'ru' ? `🏅 +${p.value} Акций` : `🏅 +${p.value} Shares`;
+                }
+
+                li.innerHTML = `<span class="wheel-prize-label">${label}<span style="display:block; font-size:0.75rem; color:#a3e635; font-weight:600; margin-top:0.2rem; letter-spacing:0.5px;">${valDesc}</span></span><span class="wheel-prize-weight">${p.weight}%</span>`;
+                prizeListEl.appendChild(li);
+            });
+        }
+
+        if (spinBtn) {
+            if (canSpin) {
+                spinBtn.disabled = false;
+                spinBtn.textContent = tObj.fortuneWheelSpinBtn || 'סובב!';
+                if (cooldownEl) cooldownEl.style.display = 'none';
+            } else {
+                spinBtn.disabled = true;
+                const hoursLeft = Math.floor(timeLeft / 3600000);
+                const minsLeft = Math.floor((timeLeft % 3600000) / 60000);
+                const hStr = hoursLeft.toString().padStart(2, '0');
+                const mStr = minsLeft.toString().padStart(2, '0');
+                const cdText = (tObj.fortuneWheelCooldown && tObj.fortuneWheelCooldown(hStr, mStr)) || `${hStr}:${mStr}`;
+                spinBtn.textContent = cdText;
+                if (cooldownEl) { cooldownEl.textContent = cdText; cooldownEl.style.display = 'block'; }
+            }
+
+            spinBtn.onclick = () => {
+                if (spinBtn.disabled) return;
+                initSound();
+
+                spinBtn.disabled = true;
+                spinBtn.textContent = tObj.fortuneWheelSpinning || 'מסתובב...';
+
+                const wheelEl = document.getElementById('fortune-wheel-graphic');
+                if (wheelEl) {
+                    wheelEl.classList.remove('wheel-spin');
+                    void wheelEl.offsetWidth;
+                    wheelEl.classList.add('wheel-spin');
+                }
+
+                setTimeout(() => {
+                    const prize = _wheelWeightedRandom(GAME_CONFIG.WHEEL_PRIZES);
+                    let prizeText = '';
+                    const lang2 = (game.state && game.state.language) || 'he';
+                    const tObj2 = translations[lang2] || translations.he;
+                    const prizeLabel = (tObj2.wheelPrizes && tObj2.wheelPrizes[prize.label]) || prize.label;
+
+                    if (prize.type === 'cash') {
+                        const amount = Math.round(game.getEarningsPerSecond() * prize.value);
+                        game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
+                        game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+                        prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
+                        spawnFloating(`+${formatMoney(amount)}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'green');
+                    } else if (prize.type === 'boost') {
+                        game.addBoost2x(prize.value);
+                        prizeText = `${prizeLabel}: +${prize.value}h BOOST`;
+                        spawnFloating(`⚡ +${prize.value}h`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
+                    } else if (prize.type === 'gold') {
+                        game.state.shares = (game.state.shares || 0) + prize.value;
+                        const goldLabel = tObj2.dailyRewardGold ? tObj2.dailyRewardGold(prize.value) : `+${prize.value}`;
+                        prizeText = `${prizeLabel}: ${goldLabel}`;
+                        spawnFloating(`🥇 ${goldLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
+                    } else if (prize.type === 'shares') {
+                        game.state.shares = (game.state.shares || 0) + prize.value;
+                        const sharesLabel = tObj2.dailyRewardShares ? tObj2.dailyRewardShares(prize.value) : `+${prize.value}`;
+                        prizeText = `${prizeLabel}: ${sharesLabel}`;
+                        spawnFloating(`📈 ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
+                    }
+
+                    game.state.lastSpinTime = Date.now();
+                    game.saveGame();
+                    draw();
+
+                    if (resultEl) {
+                        const titleText = (tObj2.fortuneWheelPrizeTitle || 'זכית ב') + ':';
+                        resultEl.innerHTML = `<div class="wheel-result-title">${titleText}</div><div class="wheel-result-prize">${prizeText}</div>`;
+                        resultEl.style.display = 'block';
+                    }
+
+                    const spinBtn2 = document.getElementById('fortune-spin-btn');
+                    if (spinBtn2) {
+                        const newTimeLeft2 = 86400000;
+                        const h2 = Math.floor(newTimeLeft2 / 3600000).toString().padStart(2, '0');
+                        const m2 = '00';
+                        const cd2 = tObj2.fortuneWheelCooldown ? tObj2.fortuneWheelCooldown(h2, m2) : `${h2}:${m2}`;
+                        spinBtn2.textContent = cd2;
+                        if (cooldownEl) { cooldownEl.textContent = cd2; cooldownEl.style.display = 'block'; }
+                    }
+                }, 3000);
+            };
+        }
+
+        modal.classList.add('active');
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                initSound();
+                modal.classList.remove('active');
+            }
+        };
+
+        const closeBtn = document.getElementById('fortune-close-btn');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                initSound();
+                modal.classList.remove('active');
+            };
+        }
+    }
+
+    // ==========================================
+    // VIP VISITOR BANNER
+    // ==========================================
+
+    var vipBannerCountdownInterval = null;
+
+    function triggerVipVisitBanner() {
+        if (document.querySelector('.modal-overlay.active')) {
+            // מודל פתוח — דחה את הבאנר
+            setTimeout(triggerVipVisitBanner, 2000);
+            return;
+        }
+
+        const lang = (game.state && game.state.language) || 'he';
+        const tObj = translations[lang] || translations.he;
+
+        const existing = document.getElementById('vip-visit-banner');
+        if (existing) existing.remove();
+
+        const banner = document.createElement('div');
+        banner.id = 'vip-visit-banner';
+        banner.className = 'vip-visit-banner';
+
+        const title = tObj.vipBannerTitle || 'לקוח VIP פנימה!';
+        const serveText = tObj.vipServeBtn || 'שרת (כסף)';
+        const premiumText = tObj.vipPremiumBtn || 'VIP Premium';
+
+        banner.innerHTML = `
+            <div class="vip-banner-row">
+                <span class="vip-banner-icon">💎</span>
+                <div class="vip-banner-content">
+                    <span class="vip-banner-title">${title}</span>
+                    <span class="vip-banner-timer" id="vip-banner-timer">25</span>
+                </div>
+            </div>
+            <div class="vip-banner-btns">
+                <button class="vip-serve-btn" id="vip-serve-cash">${serveText}</button>
+                <button class="vip-serve-btn vip-premium-btn" id="vip-serve-premium">${premiumText}</button>
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        let secsLeft = 25;
+        const timerEl = document.getElementById('vip-banner-timer');
+
+        if (vipBannerCountdownInterval) clearInterval(vipBannerCountdownInterval);
+        vipBannerCountdownInterval = setInterval(() => {
+            secsLeft--;
+            const lang2 = (game.state && game.state.language) || 'he';
+            const tObj2 = translations[lang2] || translations.he;
+            if (timerEl) {
+                timerEl.textContent = tObj2.vipBannerTimer ? tObj2.vipBannerTimer(secsLeft) : secsLeft + 's';
+            }
+            if (secsLeft <= 0) {
+                clearInterval(vipBannerCountdownInterval);
+                removeVipVisitBanner();
+            }
+        }, 1000);
+
+        document.getElementById('vip-serve-cash').addEventListener('click', () => {
+            initSound();
+            serveVipVisitor(false);
+        });
+        document.getElementById('vip-serve-premium').addEventListener('click', () => {
+            initSound();
+            serveVipVisitor(true);
+        });
+    }
+
+    function removeVipVisitBanner() {
+        if (vipBannerCountdownInterval) {
+            clearInterval(vipBannerCountdownInterval);
+            vipBannerCountdownInterval = null;
+        }
+        const banner = document.getElementById('vip-visit-banner');
+        if (banner) banner.remove();
+    }
+
+    function serveVipVisitor(withAd) {
+        removeVipVisitBanner();
+        game.state.vipVisitActive = false;
+        game.state.nextVipVisit = Date.now() + (600 + Math.random() * 300) * 1000;
+        game.state.vipVisitExpiry = 0;
+        game.state.vipServedTotal = (game.state.vipServedTotal || 0) + 1;
+        game.missionsDirty = true;
+
+        const lang = (game.state && game.state.language) || 'he';
+        const tObj = translations[lang] || translations.he;
+
+        if (withAd) {
+            playAd(() => {
+                game.state.shares = (game.state.shares || 0) + 1;
+                const msg = (tObj.vipRewardGold) || 'קיבלת מניית זהב!';
+                spawnFloating('🥇 ' + msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
+                game.saveGame();
+                draw();
+            });
+        } else {
+            const reward = Math.round(game.getEarningsPerSecond() * 180);
+            game.state.cash = Math.round((game.state.cash + reward + Number.EPSILON) * 100) / 100;
+            game.state.lifetimeCash = Math.round((game.state.lifetimeCash + reward + Number.EPSILON) * 100) / 100;
+            const msg = tObj.vipRewardCash ? tObj.vipRewardCash(formatMoney(reward)) : `+${formatMoney(reward)}`;
+            spawnFloating('💎 ' + msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'green');
+            game.saveGame();
+            draw();
+        }
+    }
+
+    // ==========================================
+    // DAILY CHALLENGES
+    // ==========================================
+
+    function renderDailyChallengesSection() {
+        if (!window.game || !window.game.state) return;
+        if (!window.dailyChallengeController) return;
+
+        window.dailyChallengeController.checkAndReset();
+
+        const lang = (game.state && game.state.language) || 'he';
+        const tObj = translations[lang] || translations.he;
+        const container = document.getElementById('daily-challenges-content');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // Countdown to midnight
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setHours(24, 0, 0, 0);
+        const msToMidnight = tomorrow - now;
+        const hToMidnight = Math.floor(msToMidnight / 3600000).toString().padStart(2, '0');
+        const mToMidnight = Math.floor((msToMidnight % 3600000) / 60000).toString().padStart(2, '0');
+        const resetText = tObj.dailyResetLabel ? tObj.dailyResetLabel(hToMidnight, mToMidnight) : `${hToMidnight}:${mToMidnight}`;
+
+        const headerEl = document.createElement('div');
+        headerEl.className = 'daily-header';
+        headerEl.innerHTML = `
+            <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || ''}</span>
+            <span class="daily-reset-timer">${resetText}</span>
+        `;
+        container.appendChild(headerEl);
+
+        const challenges = game.state.dailyChallenges || [];
+
+        if (challenges.length === 0) {
+            const emptyEl = document.createElement('div');
+            emptyEl.style.color = 'var(--text-muted)';
+            emptyEl.style.textAlign = 'center';
+            emptyEl.style.padding = '1rem';
+            emptyEl.textContent = lang === 'he' ? 'טוען אתגרים...' : 'Loading...';
+            container.appendChild(emptyEl);
+            return;
+        }
+
+        challenges.forEach((c, idx) => {
+            const typeLabel = (tObj.dailyChallengeTypes && tObj.dailyChallengeTypes[c.type]) || c.type;
+            const pct = c.target > 0 ? Math.min(100, Math.floor((c.progress / c.target) * 100)) : 0;
+            const rewardText = c.reward && c.reward.type === 'gold'
+                ? (tObj.dailyRewardGold ? tObj.dailyRewardGold(c.reward.amount) : `+${c.reward.amount} gold`)
+                : (tObj.dailyRewardShares ? tObj.dailyRewardShares(c.reward.amount) : `+${c.reward.amount}`);
+
+            const card = document.createElement('div');
+            card.className = 'daily-challenge-card' + (c.completed ? ' completed' : '') + (c.claimed ? ' claimed' : '');
+            card.innerHTML = `
+                <div class="daily-challenge-top">
+                    <span class="daily-challenge-type">${typeLabel}</span>
+                    <span class="daily-challenge-reward">${rewardText}</span>
+                </div>
+                <div class="daily-progress-bar-wrap">
+                    <div class="daily-progress-bar-fill" style="width:${pct}%"></div>
+                </div>
+                <div class="daily-challenge-bottom">
+                    <span class="daily-progress-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>
+                    ${c.completed && !c.claimed
+                        ? `<button class="daily-claim-btn" data-idx="${idx}">${tObj.dailyClaimBtn || 'קבל פרס'}</button>`
+                        : c.claimed
+                            ? `<span class="daily-claimed-label">${tObj.dailyClaimedLabel || 'נאסף'}</span>`
+                            : `<span class="daily-pct-label">${pct}%</span>`
+                    }
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        container.querySelectorAll('.daily-claim-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                initSound();
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                const claimed = window.dailyChallengeController.claimReward(idx);
+                if (claimed) {
+                    const lang2 = (game.state && game.state.language) || 'he';
+                    const tObj2 = translations[lang2] || translations.he;
+                    const c = game.state.dailyChallenges[idx];
+                    let msg = '+1';
+                    if (c && c.reward) {
+                        msg = c.reward.type === 'gold'
+                            ? (tObj2.dailyRewardGold ? tObj2.dailyRewardGold(c.reward.amount) : `+${c.reward.amount}`)
+                            : (tObj2.dailyRewardShares ? tObj2.dailyRewardShares(c.reward.amount) : `+${c.reward.amount}`);
+                    }
+                    spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
+                    if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') window.gameAudio.playUnlock();
+                    renderDailyChallengesSection();
+                    draw();
+                }
+            });
+        });
+    }
+
+    // ==========================================
+    // END OF NEW FEATURES
+    // ==========================================
 
     // Exports
     window.applyLanguage = applyLanguage;
@@ -1394,6 +2162,68 @@ function initUIEvents() {
     window.openAnalyticsModal = openAnalyticsModal;
     window.handleCrowdEvent = handleCrowdEvent;
     window.handleSecurityEvent = handleSecurityEvent;
+    window.startPromoRecording = function(durationMs = 15000) {
+        // Create a 'Start Recording' button to satisfy Chrome's user gesture requirement
+        const startBtn = document.createElement('button');
+        startBtn.innerHTML = '🔴 התחל הקלטה עכשיו!';
+        startBtn.style.cssText = 'position:fixed; top:40%; left:50%; transform:translate(-50%, -50%); z-index:999999; padding:20px 40px; font-size:24px; font-weight:bold; background:#e74c3c; color:white; border:4px solid white; border-radius:15px; cursor:pointer; box-shadow:0 10px 40px rgba(0,0,0,0.8);';
+        
+        startBtn.onclick = async () => {
+            startBtn.remove(); // Remove this button
+            
+            // Optimize for recording: force English and remove heavy backdrop filter
+            if (game) { game.state.language = 'en'; draw(); }
+            const s = document.createElement('style');
+            s.innerHTML = '* { backdrop-filter: none !important; }';
+            document.head.appendChild(s);
+
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { frameRate: { ideal: 60 } },
+                    audio: false
+                });
+                let mediaRecorder;
+                try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 8000000 }); }
+                catch(e) { mediaRecorder = new MediaRecorder(stream); }
+                
+                const chunks = [];
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Show a giant download button on screen to bypass browser auto-download blocks
+                    const btn = document.createElement('button');
+                    btn.innerHTML = '🎥 הסרטון מוכן! לחץ כאן להורדה';
+                    btn.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:999999; padding:20px 40px; font-size:24px; font-weight:bold; background:#4CAF50; color:white; border:4px solid white; border-radius:15px; cursor:pointer; box-shadow:0 10px 40px rgba(0,0,0,0.8);';
+                    
+                    btn.onclick = () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'idle_bank_promo_en.webm';
+                        document.body.appendChild(a);
+                        a.click();
+                        btn.innerHTML = '✅ מעולה! הקובץ יורד';
+                        setTimeout(() => btn.remove(), 3000);
+                    };
+                    document.body.appendChild(btn);
+
+                    stream.getTracks().forEach(track => track.stop());
+                    console.log("🎬 Promo Recording ready! Waiting for user to click download button.");
+                    s.remove(); // Restore styling after recording
+                };
+                mediaRecorder.start();
+                console.log(`🎥 Recording started! Will automatically stop and download after ${durationMs / 1000} seconds.`);
+                setTimeout(() => mediaRecorder.stop(), durationMs);
+            } catch(err) {
+                console.error("Screen recording was cancelled or failed:", err);
+                s.remove();
+            }
+        };
+        document.body.appendChild(startBtn);
+        console.log("Waiting for user to click the start button...");
+    };
+
     window.handleRescueEvent = handleRescueEvent;
     window.handleRushHoursEvent = handleRushHoursEvent;
     window.handleInvestorEvent = handleInvestorEvent;
@@ -1405,5 +2235,12 @@ function initUIEvents() {
     window.handleMissionRedirect = handleMissionRedirect;
     window.tick = tick;
     window.initUIEvents = initUIEvents;
+    window.syncBottomNav = syncBottomNav;
+    window.updateVaultMiniBar = updateVaultMiniBar;
+    window.openFortuneWheel = openFortuneWheel;
+    window.triggerVipVisitBanner = triggerVipVisitBanner;
+    window.removeVipVisitBanner = removeVipVisitBanner;
+    window.serveVipVisitor = serveVipVisitor;
+    window.renderDailyChallengesSection = renderDailyChallengesSection;
 })(window);
 

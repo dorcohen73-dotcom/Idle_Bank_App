@@ -41,8 +41,9 @@ const GAME_CONFIG = {
     QUEUE_BASE_CAPACITY: 5,
     QUEUE_CAPACITY_STEP: 5,
     QUEUE_BRANCH_BONUS_FACTOR: 5,
-    QUEUE_BASE_UPGRADE_COST: 150,
-    QUEUE_UPGRADE_COST_GROWTH: 5.2,
+    QUEUE_BASE_UPGRADE_COST: 100,
+    QUEUE_UPGRADE_COST_GROWTH: 2.0,
+    QUEUE_MAX_LEVEL: 6,
 
     // Timers & Intervals
     EVENT_INTERVAL_SEC: 300,
@@ -54,7 +55,7 @@ const GAME_CONFIG = {
 
     // Branches and prestige constants
     BRANCHES: [
-        { name: "סיטיבנק (סניף מקומי)", baseMultiplier: 1, minCashToPrestige: 50000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
+        { name: "סיטיבנק (סניף מקומי)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
         { name: "אייץ'-אס-בי-סי (סניף פיננסי)", baseMultiplier: 5, minCashToPrestige: 1000000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
         { name: "ג'יי פי מורגן (וול סטריט)", baseMultiplier: 30, minCashToPrestige: 50000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
         { name: "גולדמן זקס (אימפריית השקעות)", baseMultiplier: 200, minCashToPrestige: 1000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
@@ -64,9 +65,9 @@ const GAME_CONFIG = {
     GUARD_UNLOCK_COSTS: [0, 4000, 120000],
     
     MANAGER_COSTS: {
-        customer: 1000,
-        finance: 25000,
+        customer: 800,
         operations: 5000,
+        finance: 25000,
         service: 150000,
         vip: 2500000,
         marketing: 30000000
@@ -93,7 +94,7 @@ const GAME_CONFIG = {
         eventBonus: 30,
         managerDiscount: 50
     },
-    STARTING_CASH_OPTIONS: [150, 1000, 5000, 25000, 100000],
+    STARTING_CASH_OPTIONS: [180, 1000, 5000, 25000, 100000],
     PRESTIGE_ASSETS_DIVIDER: 8,
     DEPT_ID_CASH: 0,
     DEPT_ID_LOANS: 1,
@@ -101,13 +102,23 @@ const GAME_CONFIG = {
     DEPT_ID_STOCK: 3,
     DEPT_ID_LAUNDERING: 4,
     MANAGER_COEFFICIENTS: {
-        customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.03 },
-        finance: { incomeBoost: 0.05 },
-        operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03 },
-        service: { capacityBoost: 0.05, incomeBoost: 0.04 },
-        vip: { incomeBoost: 0.07, prestigeBoost: 0.04 },
+        customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.06 },
+        finance: { incomeBoost: 0.10, deptIncomeBoost: 0.12 },
+        operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03, guardCapBoost: 0.20 },
+        service: { capacityBoost: 0.05, incomeBoost: 0.08, epsBoost: 0.05, offlineLimitBoost: 2 },
+        vip: { incomeBoost: 0.07, prestigeBoost: 0.04, prestigeSharesBoost: 0.08 },
         marketing: { adBoost: 0.10, offlineLimitBoost: 1 }
-    }
+    },
+
+    WHEEL_PRIZES: [
+        { type: 'cash',   label: 'cash_small',  weight: 35, value: 120 },
+        { type: 'cash',   label: 'cash_big',    weight: 20, value: 300 },
+        { type: 'boost',  label: 'boost_2x',    weight: 20, value: 2   },
+        { type: 'gold',   label: 'gold_1',      weight: 12, value: 1   },
+        { type: 'gold',   label: 'gold_2',      weight: 6,  value: 2   },
+        { type: 'shares', label: 'shares_1',    weight: 5,  value: 1   },
+        { type: 'shares', label: 'shares_3',    weight: 2,  value: 3   }
+    ]
 };
 
 Object.freeze(GAME_CONFIG.BRANCHES);
@@ -120,4 +131,6 @@ Object.freeze(GAME_CONFIG.GOLD_UPGRADE_COSTS);
 Object.freeze(GAME_CONFIG.STARTING_CASH_OPTIONS);
 Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS);
 Object.keys(GAME_CONFIG.MANAGER_COEFFICIENTS).forEach(k => Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS[k]));
+GAME_CONFIG.WHEEL_PRIZES.forEach(p => Object.freeze(p));
+Object.freeze(GAME_CONFIG.WHEEL_PRIZES);
 Object.freeze(GAME_CONFIG);

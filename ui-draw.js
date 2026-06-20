@@ -1,8 +1,8 @@
-﻿(function(window) {
+(function(window) {
 // Visual Drawing & Formatting Module for Idle Bank Empire
 
-var svgCache = {};
-var svgCacheKeys = [];
+// LRU cache for SVG/HTML client portraits — Map preserves insertion order, giving O(1) lookup and eviction
+var svgCache = new Map();
 var activeCoins = [];
 var TELLER_DOM_CACHE = {};
 var prevQueueLength = -1;
@@ -19,6 +19,7 @@ var lastShares = -1;
 var lastMultiplier = -1;
 var lastBranch = -1;
 var lastLang = '';
+var lastGuardStatusText = '';
 
 var cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
 var cachedFallback = ' מפלצתי';
@@ -98,11 +99,12 @@ function getClientSVG(type, seed) {
     const cleanType = type.replace(/[^a-zA-Z0-9]/g, '');
     const cacheKey = `${cleanType}_${seed}`;
     
-    if (svgCache[cacheKey]) {
-        const idx = svgCacheKeys.indexOf(cacheKey);
-        if (idx > -1) svgCacheKeys.splice(idx, 1);
-        svgCacheKeys.push(cacheKey);
-        return svgCache[cacheKey];
+    if (svgCache.has(cacheKey)) {
+        // LRU: move to end by delete+re-set (Map preserves insertion order)
+        const cached = svgCache.get(cacheKey);
+        svgCache.delete(cacheKey);
+        svgCache.set(cacheKey, cached);
+        return cached;
     }
 
     // Choose which client portrait (1 to 10) to show based on client type and seed
@@ -136,12 +138,11 @@ function getClientSVG(type, seed) {
         </div>
     `;
     
-    if (svgCacheKeys.length >= GAME_CONFIG.SVG_CACHE_MAX_SIZE) {
-        const oldestKey = svgCacheKeys.shift();
-        delete svgCache[oldestKey];
+    if (svgCache.size >= GAME_CONFIG.SVG_CACHE_MAX_SIZE) {
+        // Evict the oldest entry (first key in Map iteration order)
+        svgCache.delete(svgCache.keys().next().value);
     }
-    svgCache[cacheKey] = resultHtml;
-    svgCacheKeys.push(cacheKey);
+    svgCache.set(cacheKey, resultHtml);
     
     return resultHtml;
 }
@@ -235,25 +236,27 @@ function updateActiveCoins(dt) {
         
         c.progress += dt;
         const t = Math.min(1.0, c.progress / c.duration);
-        const easeT = t * t * (3 - 2 * t);
+        // Custom bezier easing for quick throw and decelerating fall
+        const easeT = t * (2 - t);
         
         const currentX = c.startX + (c.endX - c.startX) * easeT;
-        // Parabolic arc Y-offset: throw the coins/cash upward in a nice curve
-        const arcY = -80 * Math.sin(t * Math.PI);
+        // Parabolic arc Y-offset: throw upward by arcHeight in a nice curve
+        const arcY = -c.arcHeight * Math.sin(t * Math.PI);
         const currentY = c.startY + (c.endY - c.startY) * easeT + arcY;
         
         // Custom scale and rotation depending on type (coin vs cash)
         let transformStr = "";
         if (c.type === 'cash') {
-            // Cash wiggles naturally instead of spinning like a wheel
-            const wiggle = Math.sin(t * Math.PI * 2) * 15;
-            transformStr = `scale(${1.2 - t * 0.3}) rotate(${wiggle}deg)`;
+            // Cash wiggles naturally with custom phase to look organic
+            const wiggle = Math.sin(t * Math.PI * 4.5 + c.randomPhase) * 22;
+            transformStr = `scale(${1.2 - t * 0.25}) rotate(${wiggle}deg)`;
         } else {
-            // Coins spin 360 degrees
-            transformStr = `scale(${1.1 - t * 0.3}) rotate(${t * 360}deg)`;
+            // Coins spin 360 degrees plus random starting angle
+            const spin = c.randomPhase * 40 + t * 480;
+            transformStr = `scale(${1.1 - t * 0.25}) rotate(${spin}deg)`;
         }
         
-        c.element.style.cssText = `left:${currentX}px;top:${currentY}px;transform:${transformStr};opacity:${1.0 - t * 0.7};display:block;`;
+        c.element.style.cssText = `left:${currentX}px;top:${currentY}px;transform:${transformStr};opacity:${1.0 - t * 0.65};display:block;`;
         
         if (t >= 1.0) {
             c.element.style.cssText = 'display:none;opacity:0;';
@@ -292,8 +295,8 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
         coin.style.display = 'none';
         coin.style.opacity = '0';
 
-        const offsetX = (Math.random() - 0.5) * 20;
-        const offsetY = (Math.random() - 0.5) * 20;
+        const offsetX = (Math.random() - 0.5) * 35;
+        const offsetY = (Math.random() - 0.5) * 35;
 
         activeCoins.push({
             poolObj: coinObj,
@@ -302,12 +305,14 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
             startY: startY,
             endX: endX + offsetX,
             endY: endY + offsetY,
-            duration: 0.6,
+            duration: 0.65,
             progress: 0,
-            delay: i * 0.05,
+            delay: i * 0.04,
             type: type,
             isLast: i === count - 1,
-            playedSound: false
+            playedSound: false,
+            arcHeight: 60 + Math.random() * 80,
+            randomPhase: Math.random() * Math.PI * 2
         });
     }
 }
@@ -336,7 +341,7 @@ function rebuildTellersDOM() {
                 <div class="gold-plaque">
                     <div class="plaque-header">
                         <span class="plaque-title">${translations[lang].tellerLabel} ${t.id + 1}</span>
-                        <span class="plaque-level" id="teller-lvl-lbl-${t.id}">${translations[lang].levelLabel} ${t.level}</span>
+                        <span class="plaque-level${t.level >= 10 ? ' milestone-active' : ''}" id="teller-lvl-lbl-${t.id}">${translations[lang].levelLabel} ${t.level}</span>
                     </div>
                     <div class="plaque-body">
                         <div class="plaque-cash" id="teller-cash-${t.id}">$0</div>
@@ -356,7 +361,10 @@ function rebuildTellersDOM() {
                 lvl: div.querySelector(`#teller-lvl-lbl-${t.id}`),
                 collect: div.querySelector(`#teller-collect-${t.id}`),
                 client: div.querySelector(`#teller-client-${t.id}`),
-                lastPercent: -1
+                lastPercent: -1,
+                lastLevel: -1,
+                lastCollectDisabled: null,
+                lastVaultFullAlert: null
             };
 
             // Handle manual process start if NO manager
@@ -466,9 +474,22 @@ function draw() {
         if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
             DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
             DOM_CACHE.boostBtn.classList.add('active');
+            DOM_CACHE.boostBtn.classList.remove('offer');
         } else {
-            DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "⚡ BOOST x2";
-            DOM_CACHE.boostBtn.classList.remove('active');
+            const nowMs = Date.now();
+            const offerEnd = window._boostOfferEndTime || 0;
+            if (offerEnd > nowMs) {
+                const offerSec = Math.ceil((offerEnd - nowMs) / 1000);
+                const offerLang = (game.state && game.state.language) || 'he';
+                DOM_CACHE.boostBtn.innerText = offerLang === 'he'
+                    ? `⚡ הצעה! ${formatTime(offerSec)}`
+                    : `⚡ OFFER! ${formatTime(offerSec)}`;
+                DOM_CACHE.boostBtn.classList.add('offer');
+                DOM_CACHE.boostBtn.classList.remove('active');
+            } else {
+                DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "⚡ BOOST x2";
+                DOM_CACHE.boostBtn.classList.remove('active', 'offer');
+            }
         }
     }
 
@@ -563,7 +584,15 @@ function draw() {
 
         if (tNode) {
             const tData = game.getTellerRenderData(t.id);
-            if (lvlLabel) lvlLabel.innerText = `${tObj.levelLabel} ${tData.level}`;
+            if (lvlLabel && tData.level !== tCache.lastLevel) {
+                lvlLabel.innerText = `${tObj.levelLabel} ${tData.level}`;
+                if (tData.level >= 10) {
+                    lvlLabel.classList.add('milestone-active');
+                } else {
+                    lvlLabel.classList.remove('milestone-active');
+                }
+                tCache.lastLevel = tData.level;
+            }
 
             if (tData.isProcessing) {
                 tNode.classList.add('processing');
@@ -604,26 +633,47 @@ function draw() {
                     if (tData.isProcessing) {
                         clientSlot.classList.add('active');
                         clientSlot.innerHTML = getClientSVG(tData.customerType, tData.customerSeed);
+                        
+                        // VIP & Rich serving glow effects
+                        tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
+                        if (tData.customerType === 'vip') {
+                            tNode.classList.add('vip-serving-glow');
+                            const rect = tNode.getBoundingClientRect();
+                            spawnFloating('★ VIP ★', rect.left + rect.width / 2, rect.top + 20, 'rgba(192, 132, 252, 1)');
+                        } else if (tData.customerType === 'rich') {
+                            tNode.classList.add('rich-serving-glow');
+                            const rect = tNode.getBoundingClientRect();
+                            spawnFloating('$$ RICH $$', rect.left + rect.width / 2, rect.top + 20, 'rgba(251, 191, 36, 1)');
+                        }
                     } else {
                         clientSlot.classList.remove('active');
                         clientSlot.innerHTML = '';
+                        tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                     }
                     prevTellerClientStates[tData.id] = cacheKey;
                 }
             }
 
-            if (tData.fillPercent >= 100) {
-                tNode.classList.add('vault-full-alert');
-            } else {
-                tNode.classList.remove('vault-full-alert');
+            const isFull = tData.fillPercent >= 100;
+            if (isFull !== tCache.lastVaultFullAlert) {
+                if (isFull) {
+                    tNode.classList.add('vault-full-alert');
+                } else {
+                    tNode.classList.remove('vault-full-alert');
+                }
+                tCache.lastVaultFullAlert = isFull;
             }
 
             if (collectBtn) {
                 const vaultSpace = vaultData.capacity - vaultData.cashStored;
-                if (tData.cashStored <= 0 || vaultSpace <= 0) {
-                    collectBtn.classList.add('disabled');
-                } else {
-                    collectBtn.classList.remove('disabled');
+                const isDisabled = tData.cashStored <= 0 || vaultSpace <= 0;
+                if (isDisabled !== tCache.lastCollectDisabled) {
+                    if (isDisabled) {
+                        collectBtn.classList.add('disabled');
+                    } else {
+                        collectBtn.classList.remove('disabled');
+                    }
+                    tCache.lastCollectDisabled = isDisabled;
                 }
             }
         }
@@ -761,7 +811,11 @@ function draw() {
                 stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
             }
             
-            DOM_CACHE.guardStatus.innerText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
+            const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
+            if (lastGuardStatusText !== newGuardStatusText) {
+                DOM_CACHE.guardStatus.innerText = newGuardStatusText;
+                lastGuardStatusText = newGuardStatusText;
+            }
         }
     } else {
         DOM_CACHE.securityPath.style.display = 'none';
@@ -858,6 +912,10 @@ function draw() {
     if (vPercent !== lastVaultPercent) {
         lastVaultPercent = vPercent;
         if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
+        // עדכון vault mini bar ב-portrait mode
+        if (typeof window.updateVaultMiniBar === 'function') {
+            window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0);
+        }
     }
     
     if (vPercent >= 95) {
@@ -881,7 +939,7 @@ function draw() {
 
     const newVaultStatsHtml = `
         <div>
-            ${tObj.vaultVolume}: <span class="vault-current-value">${formatMoney(vaultData.cashStored)}</span> / <span class="vault-limit-label">${formatMoney(vCap)}</span>
+            <span class="vault-current-value">${formatMoney(vaultData.cashStored)}</span> / <span class="vault-limit-label">${formatMoney(vCap)}</span>
         </div>
     `;
     if (prevVaultStatsHtml !== newVaultStatsHtml) {
@@ -892,7 +950,7 @@ function draw() {
     // Update new premium elements: capacity label, yield per hour, progress label
     const elVaultCapValue = DOM_CACHE.vaultCapValue;
     if (elVaultCapValue) {
-        const newCapText = `$${formatMoney(vCap)}`;
+        const newCapText = formatMoney(vCap);
         if (elVaultCapValue.innerText !== newCapText) {
             elVaultCapValue.innerText = newCapText;
         }
@@ -900,7 +958,7 @@ function draw() {
 
     const elVaultYieldValue = DOM_CACHE.vaultYieldValue;
     if (elVaultYieldValue) {
-        const newYieldText = `+$${formatMoney(vaultData.yieldPerHour)}`;
+        const newYieldText = `+${formatMoney(vaultData.yieldPerHour)}`;
         if (elVaultYieldValue.innerText !== newYieldText) {
             elVaultYieldValue.innerText = newYieldText;
         }
