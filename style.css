@@ -5029,8 +5029,8 @@ header, .control-panel, .bank-floor {
 
   .floor-map {
     min-height: 0 !important;
-    height: 200px !important;
-    max-height: 200px !important;
+    height: 155px !important;
+    max-height: 155px !important;
     padding: 0.5rem !important;
     gap: 0.4rem !important;
     overflow: hidden !important;
@@ -5059,9 +5059,78 @@ header, .control-panel, .bank-floor {
     max-width: 110px !important;
   }
 
-  /* אלמנטים מוסתרים ב-portrait */
+  /* --- כספת: גלויה בפורטרייט, קומפקטית ללא גרפיקה --- */
   .vault-zone {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    padding: 0.6rem 0.75rem !important;
+    gap: 0.4rem !important;
+    border-radius: 14px !important;
+  }
+
+  .vault-graphic {
     display: none !important;
+  }
+
+  .vault-info {
+    width: 100% !important;
+    gap: 0.4rem !important;
+  }
+
+  .vault-title {
+    font-size: 0.95rem !important;
+  }
+
+  .vault-subtitle {
+    display: none !important;
+  }
+
+  .vault-top-row {
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .vault-title-container {
+    gap: 2px !important;
+  }
+
+  .vault-progress-row {
+    margin-top: 0 !important;
+  }
+
+  .vault-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.35rem !important;
+    margin-top: 0.25rem !important;
+  }
+
+  /* מסתיר את כרטיס הנפח (מיותר בפורטרייט) */
+  .vault-stat-card.volume-card {
+    display: none !important;
+  }
+
+  .vault-stat-card {
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 10px !important;
+  }
+
+  .vault-stat-icon {
+    font-size: 0.9rem !important;
+  }
+
+  .vault-stat-label {
+    font-size: 0.6rem !important;
+  }
+
+  .vault-stat-value {
+    font-size: 0.82rem !important;
+  }
+
+  .collect-vault-btn {
+    padding: 0.4rem 0.7rem !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
   }
 
   .security-path {
@@ -5118,6 +5187,59 @@ header, .control-panel, .bank-floor {
   }
   .bottom-nav-btn .nav-icon {
     font-size: 1.15rem;
+  }
+
+  /* --- כרטיסי שדרוג: layout מובייל --- */
+  .upgrade-card {
+    padding: 0.65rem 0.75rem !important;
+    gap: 0.6rem !important;
+    border-radius: 14px !important;
+  }
+
+  .card-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .card-title {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+
+  .card-desc {
+    font-size: 0.7rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .card-stats {
+    font-size: 0.68rem !important;
+  }
+
+  /* כפתור Buy — גדול יותר, קריא */
+  .buy-btn {
+    min-width: 76px !important;
+    min-height: 46px !important;
+    padding: 0.4rem 0.55rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+    border-radius: 10px !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* bulk selector */
+  .bulk-upgrade-selector {
+    padding: 0.4rem 0.6rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .bulk-btn-option {
+    min-height: 36px !important;
+    padding: 0.25rem 0.7rem !important;
+    font-size: 0.78rem !important;
+    border-radius: 8px !important;
   }
 }
 
@@ -5187,8 +5309,8 @@ header, .control-panel, .bank-floor {
 @media (max-width: 480px) and (orientation: portrait) {
   .floor-map {
     min-height: 0 !important;
-    height: 200px !important;
-    max-height: 200px !important;
+    height: 155px !important;
+    max-height: 155px !important;
   }
 }
 
