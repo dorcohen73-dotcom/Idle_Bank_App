@@ -4939,16 +4939,47 @@ header, .control-panel, .bank-floor {
 
   /* --- App Container --- */
   .app-container {
-    padding: 0.5rem 0.5rem 0 0.5rem !important;
-    gap: 0.5rem !important;
+    padding: 0.4rem 0.4rem 0 0.4rem !important;
+    gap: 0.4rem !important;
   }
 
-  /* --- Header: קומפקטי ב-2 שורות --- */
+  /* --- Header: brand + כפתורים בשורה אחת, stats בשורה שניה --- */
   header {
-    padding: 0.5rem 0.75rem !important;
-    gap: 0.4rem !important;
+    padding: 0.4rem 0.6rem !important;
+    gap: 0.35rem !important;
     flex-direction: column !important;
     align-items: stretch !important;
+  }
+
+  /* stats-bar: grid — brand שמאל, כפתורים ימין (שורה 1), stats מלא (שורה 2) */
+  .stats-bar {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    gap: 0.3rem 0.5rem !important;
+    flex-wrap: unset !important;
+  }
+
+  .brand-section {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .header-buttons-row {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-content: flex-end !important;
+    gap: 0.35rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .stats-row {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.35rem !important;
   }
 
   .brand-title p {
@@ -4956,113 +4987,126 @@ header, .control-panel, .bank-floor {
   }
 
   .brand-icon {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
   }
 
   .brand-title h1 {
-    font-size: 1rem !important;
-  }
-
-  .stats-row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.4rem !important;
+    font-size: 0.9rem !important;
   }
 
   .stat-box {
     min-width: 0 !important;
-    padding: 0.3rem 0.5rem !important;
+    padding: 0.25rem 0.45rem !important;
   }
 
   .stat-value {
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
   }
 
-  .header-buttons-row {
-    justify-content: flex-end !important;
-    gap: 0.5rem !important;
+  .stat-label {
+    font-size: 0.6rem !important;
   }
 
-  /* --- Vault Mini Bar --- */
+  .stat-sub {
+    font-size: 0.62rem !important;
+  }
+
+  /* מסתיר שורת Prestige preview — חוסך גובה */
+  #prestige-preview-label {
+    display: none !important;
+  }
+
+  /* --- Vault Mini Bar: בולטת ומובחנת כמו לוח בקרה של כספת --- */
   .vault-mini-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(10, 15, 25, 0.88);
-    border: 1px solid rgba(223, 171, 41, 0.4);
-    border-radius: 12px;
-    padding: 0.45rem 0.75rem;
-    margin-top: 0.3rem;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    background: linear-gradient(135deg, rgba(18, 24, 42, 0.98) 0%, rgba(12, 18, 32, 0.98) 100%) !important;
+    border: 2px solid rgba(223, 171, 41, 0.6) !important;
+    border-radius: 14px !important;
+    padding: 0.55rem 0.7rem !important;
+    margin-top: 0.25rem !important;
+    box-shadow: 0 0 18px rgba(223, 171, 41, 0.15), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    min-height: 62px !important;
   }
 
   .vault-mini-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    min-width: 42px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    min-width: 48px !important;
   }
 
   .vault-mini-label {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.5);
-    white-space: nowrap;
+    font-size: 0.75rem !important;
+    color: #dfab29 !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.3px !important;
   }
 
   .vault-mini-pct-wrap {
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: #dfab29;
-    line-height: 1;
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+    color: #f3d052 !important;
+    line-height: 1 !important;
+    text-shadow: 0 0 8px rgba(243,208,82,0.4) !important;
   }
 
   .vault-mini-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    min-width: 0 !important;
   }
 
   .vault-mini-track {
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.07);
-    border-radius: 3px;
-    overflow: hidden;
+    width: 100% !important;
+    height: 9px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 5px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
   }
 
   .vault-mini-fill {
-    height: 100%;
-    width: 0%;
-    background: #3b82f6;
-    border-radius: 3px;
-    transition: width 0.4s ease, background 0.4s ease;
+    height: 100% !important;
+    width: 0% !important;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+    border-radius: 5px !important;
+    transition: width 0.4s ease, background 0.4s ease !important;
   }
 
   .vault-mini-details {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.5);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1;
+    font-size: 0.68rem !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1 !important;
   }
 
   .vault-mini-sep {
-    margin: 0 2px;
-    color: rgba(255, 255, 255, 0.25);
+    margin: 0 3px !important;
+    color: rgba(255, 255, 255, 0.3) !important;
   }
 
   #vault-mini-yield {
-    color: #10b981;
+    color: #34d399 !important;
+    font-weight: 600 !important;
   }
 
   .vault-mini-collect {
-    padding: 0.3rem 0.6rem !important;
-    font-size: 0.7rem !important;
-    white-space: nowrap;
-    flex-shrink: 0;
+    padding: 0.45rem 0.65rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    border-radius: 10px !important;
+    min-height: 44px !important;
   }
 
   /* --- Bank Floor: Simulation Area קומפקטי --- */
@@ -5308,17 +5352,34 @@ header, .control-panel, .bank-floor {
 
   /* --- Buy Buttons: גדולים וברורים --- */
   .buy-btn {
-    min-width: 82px !important;
-    min-height: 50px !important;
-    font-size: 0.88rem !important;
+    min-width: 88px !important;
+    min-height: 58px !important;
+    font-size: 0.92rem !important;
     font-weight: 900 !important;
-    border-radius: 12px !important;
-    padding: 0.45rem 0.6rem !important;
-    box-shadow: 0 3px 10px rgba(223, 171, 41, 0.35) !important;
+    border-radius: 14px !important;
+    padding: 0.5rem 0.65rem !important;
+    box-shadow: 0 4px 14px rgba(223, 171, 41, 0.45), inset 0 2px 4px rgba(255,255,255,0.25) !important;
+    line-height: 1.3 !important;
+    letter-spacing: 0 !important;
   }
-  .buy-btn:disabled {
+  .buy-btn:not(.disabled) {
+    background: linear-gradient(160deg, #f3d052 0%, #dfab29 50%, #b8860b 100%) !important;
+    border: 1.5px solid #ffe699 !important;
+    color: #0c0e1d !important;
+  }
+  .buy-btn.disabled, .buy-btn:disabled {
     box-shadow: none !important;
-    opacity: 0.45 !important;
+    opacity: 0.4 !important;
+  }
+
+  /* כרטיסי שדרוג: הכפתור לא מתכווץ */
+  .upgrade-card {
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+  .card-left-section {
+    min-width: 0 !important;
+    flex: 1 !important;
   }
 
   /* --- Header buttons row: compact row בפורטרייט --- */
