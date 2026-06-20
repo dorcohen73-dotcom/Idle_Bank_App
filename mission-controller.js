@@ -61,12 +61,12 @@ class MissionController {
             });
         }
 
-        // Hire Managers (Only if not all 6 managers are hired)
+        // Hire Managers (Only if not all 10 managers are hired)
         const hiredMgrsCount = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
-        if (hiredMgrsCount < 6) {
+        if (hiredMgrsCount < 10) {
             pool.push({
                 type: 'hire_managers',
-                target: () => Math.min(6, hiredMgrsCount + 1),
+                target: () => Math.min(10, hiredMgrsCount + 1),
                 reward: (t) => Math.round(1000 * scale + referenceCash * 0.25)
             });
         }
@@ -277,3 +277,129 @@ class MissionController {
 }
 
 window.MissionController = MissionController;
+
+class DailyChallengeController {
+    constructor(game) {
+        this.game = game;
+    }
+
+    _generate3Challenges() {
+        const branchIndex = this.game.state.currentBranch || 0;
+        const eps = Math.max(this.game.getEarningsPerSecond(), 10);
+
+        const pool = [
+            {
+                type: 'daily_earn_cash',
+                target: Math.round(eps * 3600 * 4),
+                reward: { type: 'gold', amount: 1 }
+            },
+            {
+                type: 'daily_clients',
+                target: Math.round(500 * Math.pow(2, branchIndex)),
+                reward: { type: 'gold', amount: 1 }
+            },
+            {
+                type: 'daily_spend',
+                target: Math.round(eps * 1800 * 3),
+                reward: { type: 'shares', amount: 1 }
+            },
+            {
+                type: 'daily_vip',
+                target: Math.max(10, Math.round(20 * Math.pow(1.8, branchIndex))),
+                reward: { type: 'gold', amount: 2 }
+            },
+            {
+                type: 'daily_eps',
+                target: Math.round(eps * 6),
+                reward: { type: 'shares', amount: 2 }
+            }
+        ];
+
+        // ערבוב ובחירת 3 שונות
+        const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+        const chosen = shuffled.slice(0, 3);
+
+        return chosen.map(c => ({
+            type: c.type,
+            target: Math.max(1, c.target),
+            reward: c.reward,
+            progress: 0,
+            startProgress: this._getStartProgress(c.type),
+            completed: false,
+            claimed: false
+        }));
+    }
+
+    _getStartProgress(type) {
+        const s = this.game.state;
+        switch (type) {
+            case 'daily_earn_cash': return s.lifetimeCash || 0;
+            case 'daily_clients':   return (s.stats && s.stats.clientsServed) || 0;
+            case 'daily_spend':     return (s.stats && s.stats.cashSpent) || 0;
+            case 'daily_vip':       return s.vipServedTotal || (s.stats && s.stats.vipServed) || 0;
+            case 'daily_eps':       return 0; // EPS נוכחי, לא delta
+            default: return 0;
+        }
+    }
+
+    checkAndReset() {
+        const now = Date.now();
+        const todayMidnight = new Date();
+        todayMidnight.setHours(0, 0, 0, 0);
+
+        if (!this.game.state.lastDailyReset || this.game.state.lastDailyReset < todayMidnight.getTime()) {
+            this.game.state.dailyChallenges = this._generate3Challenges();
+            this.game.state.lastDailyReset = now;
+        }
+
+        // עדכון progress
+        this.game.state.dailyChallenges.forEach(c => {
+            if (c.completed) return;
+
+            let currentProgress = 0;
+            const s = this.game.state;
+
+            switch (c.type) {
+                case 'daily_earn_cash':
+                    currentProgress = (s.lifetimeCash || 0) - (c.startProgress || 0);
+                    break;
+                case 'daily_clients':
+                    currentProgress = ((s.stats && s.stats.clientsServed) || 0) - (c.startProgress || 0);
+                    break;
+                case 'daily_spend':
+                    currentProgress = ((s.stats && s.stats.cashSpent) || 0) - (c.startProgress || 0);
+                    break;
+                case 'daily_vip':
+                    currentProgress = (s.vipServedTotal || (s.stats && s.stats.vipServed) || 0) - (c.startProgress || 0);
+                    break;
+                case 'daily_eps':
+                    currentProgress = this.game.getEarningsPerSecond();
+                    break;
+            }
+
+            c.progress = Math.max(0, Math.min(c.target, currentProgress));
+            if (isNaN(c.progress)) c.progress = 0;
+            if (c.progress >= c.target) {
+                c.progress = c.target;
+                c.completed = true;
+            }
+        });
+    }
+
+    claimReward(index) {
+        const c = this.game.state.dailyChallenges[index];
+        if (!c || !c.completed || c.claimed) return false;
+        c.claimed = true;
+
+        if (c.reward.type === 'gold') {
+            this.game.state.shares = (this.game.state.shares || 0) + c.reward.amount;
+        } else if (c.reward.type === 'shares') {
+            this.game.state.shares = (this.game.state.shares || 0) + c.reward.amount;
+        }
+
+        this.game.saveGame();
+        return true;
+    }
+}
+
+window.DailyChallengeController = DailyChallengeController;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bank-empire-bcb56b78c0';
+const CACHE_NAME = 'bank-empire-3d5e969b20';
 const ASSETS = [
   './',
   './index.html',
@@ -102,8 +102,10 @@ self.addEventListener('fetch', (e) => {
     );
   } else {
     // Network First strategy for HTML, JS, CSS, JSON, manifest
+    // Set cache: 'reload' for GET requests to bypass browser cache and hit the network
+    const fetchOptions = e.request.method === 'GET' ? { cache: 'reload' } : undefined;
     e.respondWith(
-      fetch(e.request)
+      fetch(e.request, fetchOptions)
         .then((response) => {
           if (response && response.ok) {
             const responseClone = response.clone();

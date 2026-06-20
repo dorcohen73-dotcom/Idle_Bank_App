@@ -295,18 +295,14 @@ function renderManagersTab() {
     const lang = game.state.language || 'he';
     const tObj = translations[lang].managers;
 
-    const managersKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing', 'logistics', 'risk', 'tech', 'compliance'];
+    const managersKeys = ['customer', 'operations', 'finance', 'service', 'vip', 'marketing'];
     const managerConfigs = {
         customer: { theme: 'theme-gold', gem: '👑', img: 'manager-1.png' },
         finance: { theme: 'theme-blue', gem: '💎', img: 'manager-2.png' },
         operations: { theme: 'theme-purple', gem: '🔮', img: 'manager-3.png' },
         service: { theme: 'theme-amber', gem: '🔸', img: 'manager-4.png' },
         vip: { theme: 'theme-red', gem: '💰', img: 'manager-5.png' },
-        marketing: { theme: 'theme-green', gem: '🔹', img: 'manager-6.png' },
-        logistics: { theme: 'theme-teal', gem: '🚚', img: 'manager-3.png' },
-        risk: { theme: 'theme-purple', gem: '⚠️', img: 'manager-5.png' },
-        tech: { theme: 'theme-blue', gem: '💻', img: 'manager-2.png' },
-        compliance: { theme: 'theme-red', gem: '⚖️', img: 'manager-6.png' }
+        marketing: { theme: 'theme-green', gem: '🔹', img: 'manager-6.png' }
     };
 
     const grid = document.createElement('div');
@@ -335,10 +331,7 @@ function renderManagersTab() {
             const deptName = (type === 'finance' ? translations[lang].departments.names[1] :
                               (type === 'service' ? translations[lang].departments.names[2] :
                                (type === 'vip' ? translations[lang].departments.names[3] :
-                                (type === 'marketing' ? translations[lang].departments.names[4] :
-                                 (type === 'risk' ? translations[lang].departments.names[1] :
-                                  (type === 'tech' ? translations[lang].departments.names[2] :
-                                   (type === 'compliance' ? translations[lang].departments.names[3] : '')))))));
+                                (type === 'marketing' ? translations[lang].departments.names[4] : ''))));
 
             bodyHtml = `
                 <div class="mgr-body-row">
@@ -404,18 +397,6 @@ function renderManagersTab() {
             } else if (type === 'marketing') {
                 stat1Lbl = statLabels[lang].ad_bonus;
                 stat2Lbl = statLabels[lang].offline_time;
-            } else if (type === 'logistics') {
-                stat1Lbl = lang === 'he' ? 'קיבולת שומר' : 'Guard capacity';
-                stat2Lbl = lang === 'he' ? 'רמה' : 'Level';
-            } else if (type === 'risk') {
-                stat1Lbl = lang === 'he' ? 'הכנסות מחלקות' : 'Dept income';
-                stat2Lbl = lang === 'he' ? 'רמה' : 'Level';
-            } else if (type === 'tech') {
-                stat1Lbl = lang === 'he' ? 'EPS כולל' : 'Total EPS';
-                stat2Lbl = lang === 'he' ? 'שעות אופליין' : 'Offline hours';
-            } else if (type === 'compliance') {
-                stat1Lbl = lang === 'he' ? 'מניות בפרסטיג׳' : 'Prestige shares';
-                stat2Lbl = lang === 'he' ? 'רמה' : 'Level';
             }
 
             bodyHtml = `

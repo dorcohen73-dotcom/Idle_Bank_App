@@ -177,6 +177,12 @@
         window.game = new window.IdleBankGame();
         delete window.IdleBankGame;
 
+        // Instantiate Daily Challenge Controller
+        if (typeof window.DailyChallengeController === 'function') {
+            window.dailyChallengeController = new window.DailyChallengeController(window.game);
+            window.dailyChallengeController.checkAndReset();
+        }
+
         // Register event listeners
         initUIEvents();
 
@@ -264,9 +270,16 @@
 
         // Register PWA Service Worker (with file:// protocol protection)
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registered', reg))
+            navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                .then(reg => {
+                    console.log('Service Worker registered', reg);
+                    reg.update();
+                })
                 .catch(err => console.error('Service Worker registration failed', err));
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
         }
     });
 

@@ -43,6 +43,7 @@ const GAME_CONFIG = {
     QUEUE_BRANCH_BONUS_FACTOR: 5,
     QUEUE_BASE_UPGRADE_COST: 100,
     QUEUE_UPGRADE_COST_GROWTH: 2.0,
+    QUEUE_MAX_LEVEL: 6,
 
     // Timers & Intervals
     EVENT_INTERVAL_SEC: 300,
@@ -65,15 +66,11 @@ const GAME_CONFIG = {
     
     MANAGER_COSTS: {
         customer: 800,
-        finance: 25000,
         operations: 5000,
+        finance: 25000,
         service: 150000,
         vip: 2500000,
-        marketing: 30000000,
-        logistics: 60000,
-        risk: 800000,
-        tech: 8000000,
-        compliance: 200000000
+        marketing: 30000000
     },
 
     MANAGER_UPGRADE_COSTS: {
@@ -82,11 +79,7 @@ const GAME_CONFIG = {
         finance: [0, 75000, 250000, 800000, 2500000],
         service: [0, 450000, 1500000, 5000000, 15000000],
         vip: [0, 7500000, 25000000, 80000000, 250000000],
-        marketing: [0, 90000000, 300000000, 1000000000, 3000000000],
-        logistics: [0, 200000, 650000, 2000000, 6000000],
-        risk: [0, 2400000, 8000000, 25000000, 80000000],
-        tech: [0, 24000000, 80000000, 250000000, 750000000],
-        compliance: [0, 600000000, 2000000000, 6000000000, 18000000000]
+        marketing: [0, 90000000, 300000000, 1000000000, 3000000000]
     },
 
     MANAGER_UPGRADE_COSTS_DEFAULT: [0, 15000, 80000, 400000, 2000000],
@@ -110,16 +103,22 @@ const GAME_CONFIG = {
     DEPT_ID_LAUNDERING: 4,
     MANAGER_COEFFICIENTS: {
         customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.06 },
-        finance: { incomeBoost: 0.10 },
-        operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03 },
-        service: { capacityBoost: 0.05, incomeBoost: 0.08 },
-        vip: { incomeBoost: 0.07, prestigeBoost: 0.04 },
-        marketing: { adBoost: 0.10, offlineLimitBoost: 1 },
-        logistics: { guardCapBoost: 0.20 },
-        risk: { deptIncomeBoost: 0.12 },
-        tech: { epsBoost: 0.05, offlineLimitBoost: 2 },
-        compliance: { prestigeSharesBoost: 0.08 }
-    }
+        finance: { incomeBoost: 0.10, deptIncomeBoost: 0.12 },
+        operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03, guardCapBoost: 0.20 },
+        service: { capacityBoost: 0.05, incomeBoost: 0.08, epsBoost: 0.05, offlineLimitBoost: 2 },
+        vip: { incomeBoost: 0.07, prestigeBoost: 0.04, prestigeSharesBoost: 0.08 },
+        marketing: { adBoost: 0.10, offlineLimitBoost: 1 }
+    },
+
+    WHEEL_PRIZES: [
+        { type: 'cash',   label: 'cash_small',  weight: 35, value: 120 },
+        { type: 'cash',   label: 'cash_big',    weight: 20, value: 300 },
+        { type: 'boost',  label: 'boost_2x',    weight: 20, value: 2   },
+        { type: 'gold',   label: 'gold_1',      weight: 12, value: 1   },
+        { type: 'gold',   label: 'gold_2',      weight: 6,  value: 2   },
+        { type: 'shares', label: 'shares_1',    weight: 5,  value: 1   },
+        { type: 'shares', label: 'shares_3',    weight: 2,  value: 3   }
+    ]
 };
 
 Object.freeze(GAME_CONFIG.BRANCHES);
@@ -130,10 +129,8 @@ Object.freeze(GAME_CONFIG.MANAGER_COSTS);
 Object.freeze(GAME_CONFIG.MANAGER_UPGRADE_COSTS);
 Object.freeze(GAME_CONFIG.GOLD_UPGRADE_COSTS);
 Object.freeze(GAME_CONFIG.STARTING_CASH_OPTIONS);
-Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.logistics);
-Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.risk);
-Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.tech);
-Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS.compliance);
 Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS);
 Object.keys(GAME_CONFIG.MANAGER_COEFFICIENTS).forEach(k => Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS[k]));
+GAME_CONFIG.WHEEL_PRIZES.forEach(p => Object.freeze(p));
+Object.freeze(GAME_CONFIG.WHEEL_PRIZES);
 Object.freeze(GAME_CONFIG);

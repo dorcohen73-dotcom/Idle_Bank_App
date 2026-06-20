@@ -57,10 +57,10 @@ class EconomyManager {
                 mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.adBoost * mktLvl);
             }
         }
-        // Tech manager EPS boost
-        if (this.game.state.managers && this.game.state.managers.tech && this.game.state.managerUpgrades && this.game.state.managerUpgrades.tech) {
-            const techLvl = this.game.state.managerUpgrades.tech.level;
-            mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.tech.epsBoost * techLvl);
+        // Service manager EPS boost (merged from tech)
+        if (this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service) {
+            const svcLvl = this.game.state.managerUpgrades.service.level;
+            mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.epsBoost * svcLvl);
         }
         return mult;
     }
@@ -125,9 +125,10 @@ class EconomyManager {
     getGuardCapacity(level) {
         const baseCap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
         let cap = (this.game.state.managers && this.game.state.managers.operations) ? Math.round(baseCap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR) : baseCap;
-        if (this.game.state.managers && this.game.state.managers.logistics && this.game.state.managerUpgrades && this.game.state.managerUpgrades.logistics) {
-            const logLvl = this.game.state.managerUpgrades.logistics.level;
-            cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.logistics.guardCapBoost * logLvl));
+        // Guard capacity boost (merged from logistics into operations)
+        if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
+            const opsCapLvl = this.game.state.managerUpgrades.operations.level;
+            cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.operations.guardCapBoost * opsCapLvl));
         }
         return cap;
     }
@@ -197,7 +198,7 @@ class EconomyManager {
     getBulkUpgradeDetails(type, id, mode, currentLevel, cash) {
         const startLevel = currentLevel;
         let maxLvl = 999;
-        if (type === 'queue') maxLvl = 4;
+        if (type === 'queue') maxLvl = GAME_CONFIG.QUEUE_MAX_LEVEL;
         if (type === 'manager') maxLvl = 5;
 
         let levels = 0;
@@ -259,9 +260,10 @@ class EconomyManager {
         const d = this.game.state.departments.find(dept => dept.id === id);
         if (!d) return 0;
         let reward = d.baseReward * this.getTotalMultiplier();
-        if (id > 0 && this.game.state.managers && this.game.state.managers.risk && this.game.state.managerUpgrades && this.game.state.managerUpgrades.risk) {
-            const riskLvl = this.game.state.managerUpgrades.risk.level;
-            reward = Math.round(reward * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.risk.deptIncomeBoost * riskLvl));
+        // Department income boost (merged from risk into finance)
+        if (id > 0 && this.game.state.managers && this.game.state.managers.finance && this.game.state.managerUpgrades && this.game.state.managerUpgrades.finance) {
+            const finLvl = this.game.state.managerUpgrades.finance.level;
+            reward = Math.round(reward * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.deptIncomeBoost * finLvl));
         }
         return reward;
     }

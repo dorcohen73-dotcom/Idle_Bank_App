@@ -103,23 +103,15 @@ const translations = {
                 operations: "מנהל תפעול",
                 service: "מנהל שירות",
                 vip: "מנהל VIP",
-                marketing: "מנהל שיווק",
-                logistics: "מנהל לוגיסטיקה",
-                risk: "מנהל סיכונים",
-                tech: "מנהל טכנולוגיה",
-                compliance: "מנהל ציות"
+                marketing: "מנהל שיווק"
             },
             descs: {
-                customer: "+6% מהירות לקוחות | +3% שביעות רצון (לכל רמה)",
-                finance: "ריקון כספת אוטומטי | +5% הכנסות הבנק (לכל רמה)",
-                operations: "+4% מהירות בלדרים | +3% מהירות כספרים (לכל רמה)",
-                service: "+5% קיבולת עמדות | +4% רווח בסיסי (לכל רמה)",
-                vip: "+7% הכנסות מחלקות | +4% מניות זהב בפרסטיז' (לכל רמה)",
-                marketing: "+10% בונוס פרסום | +1 שעה אופליין מקסימלית (לכל רמה)",
-                logistics: "+20% קיבולת שומר (לכל רמה)",
-                risk: "+12% הכנסות מחלקות מתקדמות (לכל רמה)",
-                tech: "+5% EPS | +2 שעות אופליין (לכל רמה)",
-                compliance: "+8% מניות זהב בפרסטיג׳ (לכל רמה)"
+                customer: "+6% מהירות לקוחות | +6% הכנסות (לכל רמה)",
+                finance: "ריקון כספת אוטומטי | +12% הכנסות מחלקות (לכל רמה)",
+                operations: "+4% מהירות בלדרים | +20% קיבולת שומר (לכל רמה)",
+                service: "+5% קיבולת עמדות | +5% EPS | +2 שעות אופליין (לכל רמה)",
+                vip: "+7% הכנסות מחלקות | +8% מניות זהב בפרסטיג' (לכל רמה)",
+                marketing: "+10% בונוס פרסום | +1 שעה אופליין מקסימלית (לכל רמה)"
             }
         },
         departments: {
@@ -300,23 +292,15 @@ const translations = {
                 operations: "Operations Manager",
                 service: "Service Manager",
                 vip: "VIP Manager",
-                marketing: "Marketing Manager",
-                logistics: "Logistics Manager",
-                risk: "Risk Manager",
-                tech: "Tech Manager",
-                compliance: "Compliance Manager"
+                marketing: "Marketing Manager"
             },
             descs: {
-                customer: "+6% Client Speed | +3% Satisfaction (per level)",
-                finance: "Auto-collects vault | +5% Bank Yield (per level)",
-                operations: "+4% Courier Speed | +3% Teller Speed (per level)",
-                service: "+5% Counter Capacity | +4% Base Yield (per level)",
-                vip: "+7% Dept Yields | +4% Golden Shares in Prestige (per level)",
-                marketing: "+10% Ad Campaign Bonus | +1 Hour Max Offline Time (per level)",
-                logistics: "+20% Guard Capacity (per level)",
-                risk: "+12% Advanced Dept Income (per level)",
-                tech: "+5% EPS | +2 Offline Hours (per level)",
-                compliance: "+8% Golden Shares in Prestige (per level)"
+                customer: "+6% Client Speed | +6% Income (per level)",
+                finance: "Auto-collects vault | +12% Dept Income (per level)",
+                operations: "+4% Courier Speed | +20% Guard Capacity (per level)",
+                service: "+5% Counter Capacity | +5% EPS | +2 Offline Hours (per level)",
+                vip: "+7% Dept Yields | +8% Golden Shares in Prestige (per level)",
+                marketing: "+10% Ad Campaign Bonus | +1 Hour Max Offline Time (per level)"
             }
         },
         departments: {
@@ -497,23 +481,15 @@ const translations = {
                 operations: "Gerente de Operaciones",
                 service: "Gerente de Servicio",
                 vip: "Gerente VIP",
-                marketing: "Gerente de Marketing",
-                logistics: "Gerente de Logística",
-                risk: "Gerente de Riesgos",
-                tech: "Gerente de Tecnología",
-                compliance: "Gerente de Cumplimiento"
+                marketing: "Gerente de Marketing"
             },
             descs: {
-                customer: "+6% Vel. de Clientes | +3% Satisfacción (por nivel)",
-                finance: "Bóveda automática | +5% Rendimiento (por nivel)",
-                operations: "+4% Vel. de Guardias | +3% Vel. de Cajeros (por nivel)",
-                service: "+5% Capacidad de Cajeros | +4% Rend. Base (por nivel)",
-                vip: "+7% Rend. de Deptos | +4% Acciones de Oro (por nivel)",
-                marketing: "+10% Bono de Publicidad | +1 Hora de Tiempo Offline (por nivel)",
-                logistics: "+20% Capacidad de Guardia (por nivel)",
-                risk: "+12% Ingresos de Deptos Avanzados (por nivel)",
-                tech: "+5% EPS | +2 Horas Offline (por nivel)",
-                compliance: "+8% Acciones de Oro en Prestigio (por nivel)"
+                customer: "+6% Vel. de Clientes | +6% Ingresos (por nivel)",
+                finance: "Bóveda automática | +12% Ingresos de Deptos (por nivel)",
+                operations: "+4% Vel. de Guardias | +20% Capacidad de Guardia (por nivel)",
+                service: "+5% Capacidad de Cajeros | +5% EPS | +2 Horas Offline (por nivel)",
+                vip: "+7% Rend. de Deptos | +8% Acciones de Oro en Prestigio (por nivel)",
+                marketing: "+10% Bono de Publicidad | +1 Hora de Tiempo Offline (por nivel)"
             }
         },
         departments: {
@@ -694,23 +670,15 @@ const translations = {
                 operations: "Операционный менеджер",
                 service: "Менеджер по сервису",
                 vip: "VIP менеджер",
-                marketing: "Менеджер по маркетингу",
-                logistics: "Менеджер по логистике",
-                risk: "Менеджер по рискам",
-                tech: "Технический менеджер",
-                compliance: "Менеджер по соответствию"
+                marketing: "Менеджер по маркетингу"
             },
             descs: {
-                customer: "+6% Скорость клиентов | +3% Удовлетворенность (за ур.)",
-                finance: "Авто-сбор сейфа | +5% Доход банка (за уровень)",
-                operations: "+4% Скорость инкасс. | +3% Скор. кассиров (за ур.)",
-                service: "+5% Вместимость касс | +4% Базовый доход (за ур.)",
-                vip: "+7% Доход отделов | +4% Золотые акции при престиже (за ур.)",
-                marketing: "+10% Бонус рекламы | +1 час оффлайн времени (за ур.)",
-                logistics: "+20% Вместимость охраны (за уровень)",
-                risk: "+12% Доход продвинутых отделов (за уровень)",
-                tech: "+5% EPS | +2 часа оффлайн (за уровень)",
-                compliance: "+8% Золотые акции в престиже (за уровень)"
+                customer: "+6% Скорость клиентов | +6% Доход (за ур.)",
+                finance: "Авто-сбор сейфа | +12% Доход отделов (за уровень)",
+                operations: "+4% Скорость инкасс. | +20% Вместимость охраны (за ур.)",
+                service: "+5% Вместимость касс | +5% EPS | +2 часа оффлайн (за ур.)",
+                vip: "+7% Доход отделов | +8% Золотые акции при престиже (за ур.)",
+                marketing: "+10% Бонус рекламы | +1 час оффлайн времени (за ур.)"
             }
         },
         departments: {
@@ -793,6 +761,44 @@ const translations = {
 
 // Extend translations dynamically for advanced features
 Object.assign(translations.he, {
+    manager_bio_customer: "דני כהן. פותח את הדלת לכולם — גם לאלה שרק רוצים להשתמש בשירותים. תמיד מחייך. תמיד.",
+    manager_bio_finance: "מרים לוי. רואה כל לקוח כשורה בגיליון אקסל. לפעמים שוכחת שיש גם בשר ודם שם.",
+    manager_bio_operations: "עמי ביטון. ישן עם לוח גאנט. מתעורר עם לוח גאנט. לא ברור מתי הוא אוכל.",
+    manager_bio_service: "רחל גולדברג. זוכרת את שם הכלב של כל לקוח. לא בטוחה שהיא זוכרת את שם הבוס שלה.",
+    manager_bio_vip: "שרית מזרחי. כל לקוח הוא 'כמו בן משפחה'. גם זה שמחכה 40 דקות מחוץ לדלת.",
+    manager_bio_marketing: "ניר פרץ. שרף שלושה תקציבים על קמפיינים. אחד מהם עבד. הוא דיבר על זה שנה שלמה.",
+    customer_names: [
+        "מר אברהם לוי",
+        "גב' מרים כהן",
+        "מר יוסי בן-דוד",
+        "גב' רחל גרינברג",
+        "מר דוד פרץ",
+        "גב' שרה אזולאי",
+        "מר משה ביטון",
+        "גב' רות שפירא",
+        "מר אלי מזרחי",
+        "גב' נעמי ברקוביץ",
+        "ד\"ר לוי שהמשכנתא שלו גדולה מהבית",
+        "פרופ' כהן שפרש לגמלאות פעמיים",
+        "עו\"ד ורד שמגיעה רק בסוף יום",
+        "רו\"ח בן-שלום שמצא עוד ניכוי",
+        "ד\"ר פרץ שמסביר לקופאי איך לעבוד",
+        "יוסי שחיכה בתור 40 דקות ולא זכר למה",
+        "מרים שביקשה לדבר עם המנהל הממונה על המנהל",
+        "שמשון שמשלם הכל במטבעות",
+        "גב' ורד שצילמה את כל הטפסים בנייד",
+        "מר כהן שבא ביום חג ותמה שסגור"
+    ],
+    footer_flavors: [
+        "הבורד הסכים: הבונוס השנתי יחולק ב-2027. אולי.",
+        "הכספת פתוחה. הבלדרים ממתינים. הקפה קר.",
+        "הלקוח תמיד צודק. הלקוח גם תמיד בתור.",
+        "אין בנק ללא כספת. אין כספת ללא כספר. אין כספר ללא קפה.",
+        "מנהל הסיכונים ביקש לא לפתוח חלונות. מסיבות ביטחוניות.",
+        "מנהל הציות בדק. מנהל הציות בדק שוב. מנהל הציות יחזור אליך.",
+        "משמרת הלילה דיווחה: הכספת מלאה. שוב. תענוג.",
+        "מנכ\"ל יקר, הכלכלה מסתדרת. לפחות בסניף שלנו."
+    ],
     boostBtn: "⚡ בוסט פי 2",
     boostModalTitle: "🎬 מאיץ הכנסות כפול (2x BOOST)",
     boostModalText: "צפה בסרטון פרסומת קצר כדי להפעיל מאיץ הכנסות פי 2 לכלל פעילות הבנק למשך 4 שעות! ניתן לצבור זמן צפייה (עד 8 שעות).",
@@ -961,6 +967,44 @@ Object.assign(translations.he, {
 });
 
 Object.assign(translations.en, {
+    manager_bio_customer: "Danny Cohen. Opens the door for everyone — including those who just want to use the bathroom. Always smiling. Always.",
+    manager_bio_finance: "Miriam Levy. Sees every client as a spreadsheet row. Occasionally forgets there's a human there.",
+    manager_bio_operations: "Ami Biton. Sleeps with a Gantt chart. Wakes with a Gantt chart. Unclear when he eats.",
+    manager_bio_service: "Rachel Goldberg. Remembers every client's dog's name. Less certain she remembers the boss's name.",
+    manager_bio_vip: "Sarit Mizrahi. Every client is 'like family'. Including the one who's been outside for 40 minutes.",
+    manager_bio_marketing: "Nir Peretz. Burned three budgets on campaigns. One worked. He talked about it for a year.",
+    customer_names: [
+        "Mr. Abraham Levy",
+        "Ms. Miriam Cohen",
+        "Mr. Joseph Ben-David",
+        "Ms. Rachel Greenberg",
+        "Mr. David Peretz",
+        "Ms. Sarah Azoulay",
+        "Mr. Moses Biton",
+        "Ms. Ruth Shapiro",
+        "Mr. Eli Mizrahi",
+        "Ms. Naomi Berkowitz",
+        "Dr. Levy whose mortgage is bigger than his house",
+        "Prof. Cohen who has retired twice",
+        "Atty. Vered who arrives only at closing time",
+        "CPA Ben-Shalom who found another deduction",
+        "Dr. Peretz who explains to the teller how to do their job",
+        "Joe who waited 40 minutes and forgot why he came",
+        "Mary who asked to speak to the manager's manager",
+        "Samson who pays everything in coins",
+        "Ms. Rose who photographed every form on her phone",
+        "Mr. Cohen who came on a holiday and was surprised it was closed"
+    ],
+    footer_flavors: [
+        "The board agreed: annual bonuses distributed in 2027. Maybe.",
+        "Vault open. Couriers waiting. Coffee cold.",
+        "The customer is always right. The customer is also always in line.",
+        "No bank without a vault. No vault without a teller. No teller without coffee.",
+        "Risk Manager asked not to open windows. For security reasons.",
+        "Compliance checked. Compliance checked again. Compliance will get back to you.",
+        "Night shift reported: vault full. Again. Delightful.",
+        "Dear CEO, the economy is doing fine. At least in our branch."
+    ],
     boostBtn: "⚡ BOOST x2",
     boostModalTitle: "🎬 Double Income Boost (2x BOOST)",
     boostModalText: "Watch a short sponsored ad to double all income for 4 hours! You can stack watch time up to 8 hours.",
@@ -1129,6 +1173,44 @@ Object.assign(translations.en, {
 });
 
 Object.assign(translations.es, {
+    manager_bio_customer: "Danny Cohen. Abre la puerta a todos, incluso a los que solo quieren usar el baño. Siempre sonriendo.",
+    manager_bio_finance: "Miriam Levy. Ve a cada cliente como una fila en una hoja de cálculo. A veces olvida que son personas.",
+    manager_bio_operations: "Ami Biton. Duerme con un diagrama de Gantt. Despierta con uno. No está claro cuándo come.",
+    manager_bio_service: "Rachel Goldberg. Recuerda el nombre del perro de cada cliente. No tan segura del nombre del jefe.",
+    manager_bio_vip: "Sarit Mizrahi. Cada cliente es 'como de la familia'. Incluso el que lleva 40 minutos esperando afuera.",
+    manager_bio_marketing: "Nir Peretz. Quemó tres presupuestos en campañas. Una funcionó. Lo mencionó todo el año.",
+    customer_names: [
+        "Sr. Abraham Levy",
+        "Sra. Miriam Cohen",
+        "Sr. José Ben-David",
+        "Sra. Rachel Greenberg",
+        "Sr. David Pérez",
+        "Sra. Sara Azoulay",
+        "Sr. Moisés Biton",
+        "Sra. Ruth Shapiro",
+        "Sr. Eli Mizrahi",
+        "Sra. Naomi Berkowitz",
+        "Dr. Levy cuya hipoteca es más grande que su casa",
+        "Prof. Cohen que se ha jubilado dos veces",
+        "Abog. Vered que solo llega al cierre",
+        "Cont. Ben-Shalom que encontró otra deducción",
+        "Dr. Pérez que explica al cajero cómo hacer su trabajo",
+        "José que esperó 40 minutos y olvidó para qué vino",
+        "María que pidió hablar con el jefe del jefe",
+        "Sansón que paga todo con monedas",
+        "Sra. Rosa que fotografió todos los formularios",
+        "Sr. Cohen que vino en festivo y se sorprendió que estaba cerrado"
+    ],
+    footer_flavors: [
+        "La junta acordó: bonos anuales en 2027. Quizás.",
+        "Bóveda abierta. Guardias esperando. Café frío.",
+        "El cliente siempre tiene razón. El cliente también siempre está en la cola.",
+        "No hay banco sin bóveda. No hay bóveda sin cajero. No hay cajero sin café.",
+        "El gerente de riesgos pidió no abrir ventanas. Por razones de seguridad.",
+        "Cumplimiento revisó. Cumplimiento revisó de nuevo. Cumplimiento volverá contigo.",
+        "El turno de noche reportó: bóveda llena. De nuevo. Encantador.",
+        "Estimado CEO, la economía va bien. Al menos en nuestra sucursal."
+    ],
     boostBtn: "⚡ MULTIPLICAR x2",
     boostModalTitle: "🎬 Multiplicador de Ingresos (x2 BOOST)",
     boostModalText: "¡Mira un anuncio patrocinado para duplicar todos los ingresos por 4 horas! Puedes acumular tiempo hasta 8 horas.",
@@ -1296,7 +1378,213 @@ Object.assign(translations.es, {
     }
 });
 
+// Fortune Wheel, VIP Visitor & Daily Challenges strings
+Object.assign(translations.he, {
+    // Fortune Wheel
+    fortuneWheelBtn: "גלגל מזל",
+    fortuneWheelTitle: "גלגל המזל היומי",
+    fortuneWheelSubtitle: "סובב פעם ביום וזכה בפרס!",
+    fortuneWheelSpinBtn: "סובב!",
+    fortuneWheelSpinning: "מסתובב...",
+    fortuneWheelCooldown: (h, m) => `חוזר בעוד ${h}:${m}`,
+    fortuneWheelPrizeTitle: "זכית ב",
+    fortuneWheelClose: "סגור",
+    wheelPrizes: {
+        cash_small: "כסף",
+        cash_big: "כסף גדול",
+        boost_2x: "בוסט x2",
+        gold_1: "זהב x1",
+        gold_2: "זהב x2",
+        shares_1: "שיתוף x1",
+        shares_3: "שיתופים x3"
+    },
+    // VIP Visitor
+    vipBannerTitle: "לקוח VIP פנימה!",
+    vipBannerTimer: (s) => `${s} שניות`,
+    vipServeBtn: "שרת (פרס כסף)",
+    vipPremiumBtn: "VIP Premium (פרסומת + זהב)",
+    vipRewardCash: (amt) => `קיבלת +${amt} ממזומן`,
+    vipRewardGold: "קיבלת מניית זהב!",
+    // Daily Challenges
+    dailyTabBtn: "אתגרי יום",
+    dailyChallengesTitle: "אתגרי היום",
+    dailyChallengesSubtitle: "3 אתגרים קשים שמתאפסים בחצות",
+    dailyClaimBtn: "קבל פרס",
+    dailyClaimedLabel: "נאסף",
+    dailyResetLabel: (h, m) => `מתאפס בעוד ${h}:${m}`,
+    dailyChallengeTypes: {
+        daily_earn_cash: "הרוויח כסף",
+        daily_clients: "שרת לקוחות",
+        daily_spend: "הוצא על שדרוגים",
+        daily_vip: "שרת לקוחות VIP",
+        daily_eps: "הגע ל-EPS"
+    },
+    dailyRewardGold: (n) => `+${n} זהב`,
+    dailyRewardShares: (n) => `+${n} מניות`
+});
+
+Object.assign(translations.en, {
+    fortuneWheelBtn: "Fortune Wheel",
+    fortuneWheelTitle: "Daily Fortune Wheel",
+    fortuneWheelSubtitle: "Spin once a day to win a prize!",
+    fortuneWheelSpinBtn: "Spin!",
+    fortuneWheelSpinning: "Spinning...",
+    fortuneWheelCooldown: (h, m) => `Returns in ${h}:${m}`,
+    fortuneWheelPrizeTitle: "You won",
+    fortuneWheelClose: "Close",
+    wheelPrizes: {
+        cash_small: "Cash",
+        cash_big: "Big Cash",
+        boost_2x: "Boost x2",
+        gold_1: "Gold x1",
+        gold_2: "Gold x2",
+        shares_1: "Share x1",
+        shares_3: "Shares x3"
+    },
+    vipBannerTitle: "VIP Client Inside!",
+    vipBannerTimer: (s) => `${s} seconds`,
+    vipServeBtn: "Serve (Cash Prize)",
+    vipPremiumBtn: "VIP Premium (Ad + Gold)",
+    vipRewardCash: (amt) => `Received +${amt} cash`,
+    vipRewardGold: "Received a Gold Share!",
+    dailyTabBtn: "Daily",
+    dailyChallengesTitle: "Daily Challenges",
+    dailyChallengesSubtitle: "3 hard challenges that reset at midnight",
+    dailyClaimBtn: "Claim Reward",
+    dailyClaimedLabel: "Claimed",
+    dailyResetLabel: (h, m) => `Resets in ${h}:${m}`,
+    dailyChallengeTypes: {
+        daily_earn_cash: "Earn Cash",
+        daily_clients: "Serve Clients",
+        daily_spend: "Spend on Upgrades",
+        daily_vip: "Serve VIP Clients",
+        daily_eps: "Reach EPS"
+    },
+    dailyRewardGold: (n) => `+${n} Gold`,
+    dailyRewardShares: (n) => `+${n} Shares`
+});
+
+Object.assign(translations.es, {
+    fortuneWheelBtn: "Ruleta de Fortuna",
+    fortuneWheelTitle: "Ruleta de la Fortuna Diaria",
+    fortuneWheelSubtitle: "Gira una vez al dia para ganar un premio!",
+    fortuneWheelSpinBtn: "Girar!",
+    fortuneWheelSpinning: "Girando...",
+    fortuneWheelCooldown: (h, m) => `Vuelve en ${h}:${m}`,
+    fortuneWheelPrizeTitle: "Ganaste",
+    fortuneWheelClose: "Cerrar",
+    wheelPrizes: {
+        cash_small: "Efectivo",
+        cash_big: "Gran Efectivo",
+        boost_2x: "Boost x2",
+        gold_1: "Oro x1",
+        gold_2: "Oro x2",
+        shares_1: "Accion x1",
+        shares_3: "Acciones x3"
+    },
+    vipBannerTitle: "Cliente VIP adentro!",
+    vipBannerTimer: (s) => `${s} segundos`,
+    vipServeBtn: "Atender (Premio en Efectivo)",
+    vipPremiumBtn: "VIP Premium (Anuncio + Oro)",
+    vipRewardCash: (amt) => `Recibiste +${amt} efectivo`,
+    vipRewardGold: "Recibiste una Accion de Oro!",
+    dailyTabBtn: "Diario",
+    dailyChallengesTitle: "Desafios Diarios",
+    dailyChallengesSubtitle: "3 desafios que se reinician a medianoche",
+    dailyClaimBtn: "Reclamar Premio",
+    dailyClaimedLabel: "Reclamado",
+    dailyResetLabel: (h, m) => `Se reinicia en ${h}:${m}`,
+    dailyChallengeTypes: {
+        daily_earn_cash: "Ganar Efectivo",
+        daily_clients: "Atender Clientes",
+        daily_spend: "Gastar en Mejoras",
+        daily_vip: "Atender Clientes VIP",
+        daily_eps: "Alcanzar EPS"
+    },
+    dailyRewardGold: (n) => `+${n} Oro`,
+    dailyRewardShares: (n) => `+${n} Acciones`
+});
+
 Object.assign(translations.ru, {
+    fortuneWheelBtn: "Колесо Фортуны",
+    fortuneWheelTitle: "Ежедневное Колесо Фортуны",
+    fortuneWheelSubtitle: "Крутите раз в день и выигрывайте приз!",
+    fortuneWheelSpinBtn: "Крутить!",
+    fortuneWheelSpinning: "Вращается...",
+    fortuneWheelCooldown: (h, m) => `Вернется через ${h}:${m}`,
+    fortuneWheelPrizeTitle: "Вы выиграли",
+    fortuneWheelClose: "Закрыть",
+    wheelPrizes: {
+        cash_small: "Наличные",
+        cash_big: "Большие наличные",
+        boost_2x: "Буст x2",
+        gold_1: "Золото x1",
+        gold_2: "Золото x2",
+        shares_1: "Акция x1",
+        shares_3: "Акции x3"
+    },
+    vipBannerTitle: "VIP-клиент внутри!",
+    vipBannerTimer: (s) => `${s} секунд`,
+    vipServeBtn: "Обслужить (Наличные)",
+    vipPremiumBtn: "VIP Премиум (Реклама + Золото)",
+    vipRewardCash: (amt) => `Получено +${amt} наличных`,
+    vipRewardGold: "Получена Золотая Акция!",
+    dailyTabBtn: "Ежедневно",
+    dailyChallengesTitle: "Ежедневные задания",
+    dailyChallengesSubtitle: "3 сложных задания, сбрасываемых в полночь",
+    dailyClaimBtn: "Забрать награду",
+    dailyClaimedLabel: "Получено",
+    dailyResetLabel: (h, m) => `Сбросится через ${h}:${m}`,
+    dailyChallengeTypes: {
+        daily_earn_cash: "Заработать наличные",
+        daily_clients: "Обслужить клиентов",
+        daily_spend: "Потратить на улучшения",
+        daily_vip: "Обслужить VIP-клиентов",
+        daily_eps: "Достичь EPS"
+    },
+    dailyRewardGold: (n) => `+${n} Золото`,
+    dailyRewardShares: (n) => `+${n} Акции`
+});
+
+Object.assign(translations.ru, {
+    manager_bio_customer: "Дэнни Коэн. Открывает дверь всем, даже тем, кто просто хочет в туалет. Всегда улыбается. Всегда.",
+    manager_bio_finance: "Мирьям Леви. Видит каждого клиента как строку в таблице. Иногда забывает, что там тоже люди.",
+    manager_bio_operations: "Ами Битон. Спит с диаграммой Ганта. Просыпается с ней. Неясно, когда он ест.",
+    manager_bio_service: "Рахель Голдберг. Помнит имя собаки каждого клиента. С именем босса — сложнее.",
+    manager_bio_vip: "Сарит Мизрахи. Каждый клиент — 'как родной'. Включая того, кто ждёт у двери уже 40 минут.",
+    manager_bio_marketing: "Нир Перец. Сжёг три бюджета на кампании. Одна сработала. Он говорит об этом целый год.",
+    customer_names: [
+        "Г-н Абрахам Леви",
+        "Г-жа Мирьям Коэн",
+        "Г-н Йосеф Бен-Давид",
+        "Г-жа Рахель Гринберг",
+        "Г-н Давид Перец",
+        "Г-жа Сара Азулай",
+        "Г-н Моше Битон",
+        "Г-жа Рут Шапиро",
+        "Г-н Эли Мизрахи",
+        "Г-жа Наоми Беркович",
+        "Д-р Леви, чья ипотека больше его дома",
+        "Проф. Коэн, который уже дважды вышел на пенсию",
+        "Адв. Вэред, которая приходит только перед закрытием",
+        "Бухг. Бен-Шалом, нашедший ещё один вычет",
+        "Д-р Перец, объясняющий кассиру, как работать",
+        "Йоси, ждавший 40 минут и забывший зачем",
+        "Мария, попросившая позвать начальника начальника",
+        "Шимшон, платящий всё монетами",
+        "Г-жа Вэред, сфотографировавшая каждый бланк",
+        "Г-н Коэн, пришедший в праздник и удивившийся, что закрыто"
+    ],
+    footer_flavors: [
+        "Совет директоров решил: бонусы выплатят в 2027-м. Может быть.",
+        "Сейф открыт. Инкассаторы ждут. Кофе остыл.",
+        "Клиент всегда прав. Клиент также всегда в очереди.",
+        "Нет банка без сейфа. Нет сейфа без кассира. Нет кассира без кофе.",
+        "Менеджер по рискам попросил не открывать окна. По соображениям безопасности.",
+        "Комплаенс проверил. Комплаенс проверил ещё раз. Комплаенс вернётся к вам.",
+        "Ночная смена доложила: сейф полон. Снова. Замечательно.",
+        "Дорогой гендиректор, экономика в порядке. По крайней мере, в нашем филиале."
+    ],
     boostBtn: "⚡ УСКОРЕНИЕ x2",
     boostModalTitle: "🎬 Удвоение Доходов (2x BOOST)",
     boostModalText: "Посмотрите короткую рекламу спонсора, чтобы удвоить весь доход на 4 часа! Время суммируется до 8 часов.",
