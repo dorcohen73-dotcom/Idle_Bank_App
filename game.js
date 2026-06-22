@@ -103,10 +103,10 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
-                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
-                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
-                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 50, cost: 15000 },
+                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 200, cost: 500000 },
+                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 800, cost: 25000000 },
+                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 3000, cost: 5000000000 }
             ],
 
             missions: [],
@@ -137,7 +137,19 @@ class IdleBankGame {
 
             // Daily Challenges
             dailyChallenges: [],
-            lastDailyReset: 0
+            lastDailyReset: 0,
+
+            // Daily Login Bonus
+            lastLoginDate: 0,
+            loginStreak: 0,
+            pendingLoginReward: null,
+
+            // Branch Welcome Bonus
+            visitedBranches: [],
+
+            // Tutorial
+            tutorialStep: 0,
+            tutorialCompleted: false
         };
 
         this._contextualAdPending = null;
@@ -364,6 +376,8 @@ class IdleBankGame {
             window.gameAudio.playClick();
             if (type === 'teller') {
                 this.recalculateEps();
+            } else if (type === 'vault' && this.economyManager) {
+                this.economyManager._cachedVaultCap = null;
             }
             this.saveGame();
             return true;
@@ -397,6 +411,8 @@ class IdleBankGame {
                 window.gameAudio.playClick();
                 if (type === 'teller') {
                     this.recalculateEps();
+                } else if (type === 'vault' && this.economyManager) {
+                    this.economyManager._cachedVaultCap = null;
                 }
                 this.saveGame();
                 return true;
@@ -600,15 +616,36 @@ class IdleBankGame {
     }
 
     calculatePrestigeShares() {
+        // H-06: cache result — invalidate only when lifetimeCash or shares change
         const lifetimeCash = this.state.lifetimeCash || 180;
-        let rawGain = 10 * Math.sqrt(lifetimeCash / 30000);
-        if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
-            const vipLvl = this.state.managerUpgrades.vip.level;
+        const shares = this.state.shares || 0;
+        const vipHired = !!(this.state.managers && this.state.managers.vip);
+        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
+        const cacheKey = `${lifetimeCash}:${shares}:${vipHired}:${vipLvl}`;
+        if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
+            return this._cachedPrestigeShares;
+        }
+        let rawGain = 10 * Math.pow(lifetimeCash / 100000, 0.45);
+        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
         }
-        let gain = Math.floor(rawGain) - (this.state.shares || 0);
-        return Math.min(1000, Math.max(0, gain));
+        let gain = Math.floor(rawGain) - shares;
+        const result = Math.min(10000, Math.max(0, gain));
+        this._cachedPrestigeSharesKey = cacheKey;
+        this._cachedPrestigeShares = result;
+        return result;
+    }
+
+    getDailyLoginReward(streak) {
+        const eps = this.getEarningsPerSecond();
+        if (streak >= 30) return { type: 'shares', value: 10 };
+        if (streak >= 14) return { type: 'shares', value: 3 };
+        if (streak >= 7)  return { type: 'shares', value: 1 };
+        if (streak >= 5)  return { type: 'boost', value: 1800 };
+        if (streak >= 3)  return { type: 'gold', value: 1 };
+        if (streak >= 2)  return { type: 'cash', value: eps * 1800 };
+        return { type: 'cash', value: eps * 300 };
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -617,24 +654,27 @@ class IdleBankGame {
         if (doubleShares) {
             // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
             sharesGained *= 3;
-            // CAP: after tripling, clamp to 1000 per prestige event
-            sharesGained = Math.min(1000, sharesGained);
+            // CAP: after tripling, clamp to 10000 per prestige event
+            sharesGained = Math.min(10000, sharesGained);
         }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
             this.isResetting = false;
             return false;
         }
 
-        // Apply Prestige — total shares capped at 3000
-        this.state.shares = Math.min(3000, (this.state.shares || 0) + sharesGained);
+        // Apply Prestige — total shares capped at 100000
+        this.state.shares = Math.min(100000, (this.state.shares || 0) + sharesGained);
         this.state.currentBranch = targetBranchIndex;
         this.state.maxBranchUnlocked = Math.max(this.state.maxBranchUnlocked || 0, targetBranchIndex);
         
         // Reset cash based on starting cash options in GAME_CONFIG
         const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
         const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
-        
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
+
+        // Branch Welcome Bonus: check before reset
+        const isNewBranch = !this.state.visitedBranches || !this.state.visitedBranches.includes(targetBranchIndex);
+        const welcomeBonusCash = isNewBranch ? (this.getEarningsPerSecond() * 60) : 0;
+
         const savedShares = this.state.shares;
         const savedMaxBranch = this.state.maxBranchUnlocked;
         const savedGoldUpgrades = this.state.goldUpgrades;
@@ -643,7 +683,11 @@ class IdleBankGame {
         const savedMissionsCompleted = this.state.missionsCompleted;
         const savedLastWeeklyReward = this.state.lastWeeklyReward;
         const savedLastSpinTime = this.state.lastSpinTime;
+        const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
+        const savedLoginDate = this.state.lastLoginDate || 0;
+        const savedLoginStreak = this.state.loginStreak || 0;
 
+        if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
         this.initDefaultState();
 
         this.state.shares = savedShares;
@@ -655,6 +699,14 @@ class IdleBankGame {
         this.state.missionsCompleted = savedMissionsCompleted;
         this.state.lastWeeklyReward = savedLastWeeklyReward;
         this.state.lastSpinTime = savedLastSpinTime;
+        this.state.lastLoginDate = savedLoginDate;
+        this.state.loginStreak = savedLoginStreak;
+
+        // Restore visitedBranches and add targetBranch if new
+        if (!savedVisitedBranches.includes(targetBranchIndex)) {
+            savedVisitedBranches.push(targetBranchIndex);
+        }
+        this.state.visitedBranches = savedVisitedBranches;
 
         // Reset cash based on starting cash options in GAME_CONFIG
         this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
@@ -677,6 +729,17 @@ class IdleBankGame {
         
         window.gameAudio.playUnlock();
         this.recalculateEps();
+
+        // Branch Welcome Bonus: add after recalculateEps so EPS is fresh
+        if (isNewBranch && welcomeBonusCash > 0) {
+            this.state.cash = Math.round((this.state.cash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
+            this.state.lifetimeCash = Math.round((this.state.lifetimeCash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
+            if (typeof window.showToast === 'function') {
+                const branchName = (this.branches && this.branches[targetBranchIndex]) ? this.branches[targetBranchIndex].name : ('סניף ' + targetBranchIndex);
+                window.showToast('ברוכים הבאים ל' + branchName + '! קיבלת $' + Math.round(welcomeBonusCash).toLocaleString() + ' כמתנת פתיחה', 'success');
+            }
+        }
+
         this.isResetting = false;
         this.saveGame(true); // Force save immediately during prestige
         return true;
@@ -839,7 +902,28 @@ class IdleBankGame {
                         this._contextualAdPending = 'vip';
                     }
                     this.missionsDirty = true;
-                    
+
+                    // vip_marathon tracking: count consecutive VIP/rich clients; reset on normal client
+                    this.state.missions.forEach(m => {
+                        if (m.type === 'vip_marathon' && !m.completed) {
+                            if (t.customerType === 'vip' || t.customerType === 'rich') {
+                                m.consecutiveVip = (m.consecutiveVip || 0) + 1;
+                            } else {
+                                m.consecutiveVip = 0; // streak broken
+                            }
+                        }
+                    });
+
+                    // boost_run tracking: accumulate cash earned while boost is active
+                    if (this.state.boost2xTimeLeft > 0) {
+                        this.state.boost2xUsedEver = true;
+                        this.state.missions.forEach(m => {
+                            if (m.type === 'boost_run' && !m.completed) {
+                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + finalRewardForTick;
+                            }
+                        });
+                    }
+
                     t.cashStored = Math.round((t.cashStored + finalRewardForTick + Number.EPSILON) * 100) / 100;
 
                     const cap = this.getTellerCapacity(t.level);
@@ -918,6 +1002,11 @@ class IdleBankGame {
                 }
 
                 case 'depositing': {
+                    // C-12: if vault is completely full before timer expires, go idle immediately
+                    if (vaultCapacity - this.state.vault.cashStored <= 0) {
+                        g.state = 'idle';
+                        break;
+                    }
                     g.timer -= dt;
                     if (g.timer <= 0) {
                         const spaceInVault = vaultCapacity - this.state.vault.cashStored;
@@ -934,6 +1023,8 @@ class IdleBankGame {
                                 g.timer = 0.5;
                             } else {
                                 g.state = 'idle';
+                                // guard_trips tracking: count completed deposit trips
+                                this.state.guardTripsTotal = (this.state.guardTripsTotal || 0) + 1;
                             }
                         }
                     }
@@ -1003,6 +1094,10 @@ class IdleBankGame {
         if (this.state.shares >= cost) {
             this.state.shares -= cost;
             this.state.goldUpgrades[type]++;
+            if ((type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') && this.economyManager) {
+                this.economyManager._cachedVaultCap = null;
+                this.economyManager._cachedTellerCap = null;
+            }
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();
@@ -1171,11 +1266,16 @@ class IdleBankGame {
     triggerTempQueueBonus(amount, durationMs) {
         // NOTE: tempQueueBonus is intentionally a volatile property on the game instance.
         // It does not persist across page reloads. If a reload occurs while active,
-        // the bonus resets. The Math.max(0, ...) guard below prevents negative values 
+        // the bonus resets. The Math.max(0, ...) guard below prevents negative values
         // if a timeout clears after a reload/reset.
         this.tempQueueBonus = (this.tempQueueBonus || 0) + amount;
-        setTimeout(() => {
+        if (this._tempQueueBonusTimeout) {
+            clearTimeout(this._tempQueueBonusTimeout);
+            this._tempQueueBonusTimeout = null;
+        }
+        this._tempQueueBonusTimeout = setTimeout(() => {
             this.tempQueueBonus = Math.max(0, (this.tempQueueBonus || 0) - amount);
+            this._tempQueueBonusTimeout = null;
         }, durationMs);
     }
 

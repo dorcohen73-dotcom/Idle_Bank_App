@@ -21,6 +21,17 @@ var lastBranch = -1;
 var lastLang = '';
 var lastGuardStatusText = '';
 
+function getVaultTargetRect() {
+    let targetEl = DOM_CACHE.vaultGraphic;
+    if (window.innerWidth <= 768) {
+        const miniIcon = document.querySelector('.vault-mini-icon');
+        if (miniIcon && window.getComputedStyle(miniIcon).display !== 'none') {
+            targetEl = miniIcon;
+        }
+    }
+    return targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
+}
+
 var cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
 var cachedFallback = ' מפלצתי';
 var cachedLang = 'he';
@@ -180,7 +191,7 @@ function initCoinPool() {
     for (let i = 0; i < COIN_POOL_SIZE; i++) {
         const coin = document.createElement('div');
         coin.className = 'flying-coin';
-        coin.style.cssText = 'display:none;opacity:0;';
+        coin.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;';
         floatContainer.appendChild(coin);
         coinPool.push({
             element: coin,
@@ -321,6 +332,7 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
 function rebuildTellersDOM() {
     const lang = game.state.language || 'he';
     DOM_CACHE.tellersZone.innerHTML = '';
+    DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
     
     // Reset cached teller elements
     for (let id = 0; id < 4; id++) {
@@ -383,7 +395,7 @@ function rebuildTellersDOM() {
                 const collected = game.collectTellerCash(t.id);
                 if (collected > 0) {
                     const rectBtn = collectBtn.getBoundingClientRect();
-                    const rectVault = DOM_CACHE.vaultGraphic.getBoundingClientRect();
+                    const rectVault = getVaultTargetRect();
                     animateCoins(rectBtn, rectVault, 6, 'coin');
                     spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
                 }
@@ -444,6 +456,27 @@ function draw() {
         lastMultiplier = mult;
         DOM_CACHE.multiplier.innerText = mult.toFixed(1) + 'x';
     }
+
+    // Ad Boost UI logic
+    if (DOM_CACHE.btnWatchAd && DOM_CACHE.adBoostTimer) {
+        if (game.state.boost2xTimeLeft > 0) {
+            DOM_CACHE.btnWatchAd.classList.add('hidden');
+            DOM_CACHE.adBoostTimer.classList.remove('hidden');
+            
+            const hours = Math.floor(game.state.boost2xTimeLeft / 3600);
+            const minutes = Math.floor((game.state.boost2xTimeLeft % 3600) / 60);
+            const seconds = Math.floor(game.state.boost2xTimeLeft % 60);
+            
+            const hStr = hours < 10 ? '0' + hours : hours;
+            const mStr = minutes < 10 ? '0' + minutes : minutes;
+            const sStr = seconds < 10 ? '0' + seconds : seconds;
+            
+            DOM_CACHE.adBoostTimer.innerText = `${tObj.timeLeftLabel || 'נותרו'}: ${hStr}:${mStr}:${sStr}`;
+        } else {
+            DOM_CACHE.btnWatchAd.classList.remove('hidden');
+            DOM_CACHE.adBoostTimer.classList.add('hidden');
+        }
+    }
     
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
         lastBranch = game.state.currentBranch;
@@ -459,7 +492,7 @@ function draw() {
         if (budget === 0) {
             DOM_CACHE.advSlider.value = 0;
         } else {
-            DOM_CACHE.advSlider.value = Math.round(1000 * Math.pow(budget / maxBudget, 1/3));
+            DOM_CACHE.advSlider.value = Math.round(1000 * (budget / maxBudget));
         }
         
         const maxLabelEl = DOM_CACHE.advLimitMax;
@@ -480,9 +513,9 @@ function draw() {
             const offerEnd = window._boostOfferEndTime || 0;
             if (offerEnd > nowMs) {
                 const offerSec = Math.ceil((offerEnd - nowMs) / 1000);
-                const offerLang = (game.state && game.state.language) || 'he';
-                DOM_CACHE.boostBtn.innerText = offerLang === 'he'
-                    ? `⚡ הצעה! ${formatTime(offerSec)}`
+                const boostOfferFn = tObj.boostOfferText;
+                DOM_CACHE.boostBtn.innerText = typeof boostOfferFn === 'function'
+                    ? boostOfferFn(formatTime(offerSec))
                     : `⚡ OFFER! ${formatTime(offerSec)}`;
                 DOM_CACHE.boostBtn.classList.add('offer');
                 DOM_CACHE.boostBtn.classList.remove('active');
@@ -557,7 +590,7 @@ function draw() {
                 
                 if (!existingNode) {
                     existingNode = document.createElement('div');
-                    existingNode.className = `customer-avatar`;
+                    existingNode.className = `visual-client-icon`;
                     existingNode.setAttribute('data-id', clientId);
                     existingNode.innerHTML = getClientSVG(client.type, client.seed);
                 }
@@ -598,13 +631,13 @@ function draw() {
                 tNode.classList.add('processing');
                 if (tData.progressPercent !== tCache.lastPercent) {
                     tCache.lastPercent = tData.progressPercent;
-                    if (progressFill) progressFill.style.width = `${tData.progressPercent}%`;
+                    if (progressFill) progressFill.style.transform = `scaleX(${tData.progressPercent / 100})`;
                 }
             } else {
                 tNode.classList.remove('processing');
                 if (tCache.lastPercent !== 0) {
                     tCache.lastPercent = 0;
-                    if (progressFill) progressFill.style.width = '0%';
+                    if (progressFill) progressFill.style.transform = 'scaleX(0)';
                 }
             }
 
@@ -640,6 +673,10 @@ function draw() {
                             tNode.classList.add('vip-serving-glow');
                             const rect = tNode.getBoundingClientRect();
                             spawnFloating('★ VIP ★', rect.left + rect.width / 2, rect.top + 20, 'rgba(192, 132, 252, 1)');
+                            // Confetti burst on VIP arrival
+                            spawnFloating('🎊', rect.left + rect.width / 2 - 20, rect.top, 'rgba(192, 132, 252, 1)');
+                            spawnFloating('🎊', rect.left + rect.width / 2 + 20, rect.top + 10, 'rgba(251, 191, 36, 1)');
+                            spawnFloating('🎊', rect.left + rect.width / 2, rect.top + 5, 'rgba(16, 185, 129, 1)');
                         } else if (tData.customerType === 'rich') {
                             tNode.classList.add('rich-serving-glow');
                             const rect = tNode.getBoundingClientRect();
@@ -708,7 +745,8 @@ function draw() {
                 runner = document.createElement('div');
                 runner.className = 'guard-runner';
                 runner.setAttribute('data-guard-id', gData.id);
-                
+                runner.style.willChange = 'transform';
+
                 const avatarEl = document.createElement('div');
                 avatarEl.className = 'guard-runner-avatar';
                 runner.appendChild(avatarEl);
@@ -780,17 +818,11 @@ function draw() {
             const unlockedCount = unlockedGuards.length;
             const totalCount = game.state.guards.length;
             
-            // Map the language-specific singular/plural label
-            let courierLabel = "";
-            if (lang === 'he') {
-                courierLabel = unlockedCount > 1 ? "בלדרים" : "בלדר";
-            } else if (lang === 'es') {
-                courierLabel = unlockedCount > 1 ? "Mensajeros" : "Mensajero";
-            } else if (lang === 'ru') {
-                courierLabel = unlockedCount > 1 ? "Курьеры" : "Курьер";
-            } else {
-                courierLabel = unlockedCount > 1 ? "Couriers" : "Courier";
-            }
+            // Map the language-specific singular/plural label (from locales.js)
+            const tObjLang = translations[lang];
+            const courierLabel = unlockedCount > 1
+                ? (tObjLang.guardsLabel || "Couriers")
+                : (tObjLang.guardLabel || "Courier");
             
             // Get raw state text
             let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
@@ -873,7 +905,7 @@ function draw() {
             } else if (prevState === 'moving_to_vault' && gData.state === 'depositing') {
                 const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
                 const rectGuard = runner ? runner.getBoundingClientRect() : (DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null);
-                const rectVault = DOM_CACHE.vaultGraphic ? DOM_CACHE.vaultGraphic.getBoundingClientRect() : null;
+                const rectVault = getVaultTargetRect();
                 
                 reads.push({
                     type: 'depositing',

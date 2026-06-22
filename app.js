@@ -109,6 +109,8 @@
         window.DOM_CACHE.analyticsBtn = document.getElementById('analytics-btn');
         window.DOM_CACHE.langBtn = document.getElementById('lang-btn');
         window.DOM_CACHE.langModal = document.getElementById('lang-modal');
+        window.DOM_CACHE.btnWatchAd = document.getElementById('btn-watch-ad');
+        window.DOM_CACHE.adBoostTimer = document.getElementById('ad-boost-timer');
         window.DOM_CACHE.langModalClose = document.getElementById('lang-modal-close');
         window.DOM_CACHE.bulkSelector = document.getElementById('global-bulk-selector');
         window.DOM_CACHE.customerLine = document.getElementById('customer-line');
@@ -263,6 +265,16 @@
             window.renderBranchesTab();
         }
 
+        // Hide Splash Screen
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) {
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                splashScreen.style.visibility = 'hidden';
+                setTimeout(() => splashScreen.remove(), 800);
+            }, 800);
+        }
+
         // Start tick loop
         window.lastTime = performance.now();
         cancelAnimationFrame(window.rafId);
@@ -278,6 +290,9 @@
                 .catch(err => console.error('Service Worker registration failed', err));
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (typeof window.game !== 'undefined' && window.game && typeof window.game.saveGame === 'function') {
+                    window.game.saveGame(true);
+                }
                 window.location.reload();
             });
         }

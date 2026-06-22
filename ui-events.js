@@ -10,6 +10,49 @@ var contextualBannerShown = false;
 var boostOfferEndTime = 0;
 var boostOfferNextTime = 0;
 
+// Focus trap: map from modal element -> keydown handler, for clean removal on close
+var _focusTrapHandlers = new Map();
+
+function _getFocusableElements(container) {
+    return Array.from(container.querySelectorAll(
+        'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(el => !el.closest('[hidden]') && el.offsetParent !== null);
+}
+
+function trapFocus(modal) {
+    if (_focusTrapHandlers.has(modal)) return; // already trapped
+    const handler = function(e) {
+        if (e.key !== 'Tab') return;
+        const focusable = _getFocusableElements(modal);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+            if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            }
+        } else {
+            if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    };
+    _focusTrapHandlers.set(modal, handler);
+    modal.addEventListener('keydown', handler);
+    // Move focus to first focusable element inside modal
+    const focusable = _getFocusableElements(modal);
+    if (focusable.length > 0) focusable[0].focus();
+}
+
+function releaseFocus(modal) {
+    const handler = _focusTrapHandlers.get(modal);
+    if (!handler) return;
+    modal.removeEventListener('keydown', handler);
+    _focusTrapHandlers.delete(modal);
+}
+
 function applyLanguage(lang) {
     window.gameLanguage = lang;
     if (typeof updateCachedSuffixes === 'function') {
@@ -449,7 +492,16 @@ const EVENT_HANDLERS = {
     security: handleSecurityEvent,
     rescue: handleRescueEvent,
     rush_hours: handleRushHoursEvent,
-    investor: handleInvestorEvent
+    investor: handleInvestorEvent,
+    audit: handleAuditEvent,
+    maintenance: handleMaintenanceEvent,
+    power_outage: handlePowerOutageEvent,
+    robbery_attempt: handleRobberyAttemptEvent,
+    celebrity_visit: handleCelebrityVisitEvent,
+    lottery_winner: handleLotteryWinnerEvent,
+    competitor_news: handleCompetitorNewsEvent,
+    economic_boom: handleEconomicBoomEvent,
+    atm_malfunction: handleAtmMalfunctionEvent
 };
 
 function handleCrowdEvent(container, lang, tObj, eObj, eventModal) {
@@ -747,6 +799,511 @@ function handleInvestorEvent(container, lang, tObj, eObj, eventModal) {
     container.appendChild(btnC);
 }
 
+// ===== 9 NEW EVENT HANDLERS =====
+
+function handleAuditEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(800 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        spawnFloating(lang === 'he' ? 'ביקורת הסתיימה נקי!' : 'Audit closed clean!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        const penalty = Math.round(game.state.cash * 0.08);
+        game.spendCash(penalty);
+        game.addShares(3);
+        spawnFloating(lang === 'he' ? `-${formatMoney(penalty)} | +3 מניות זהב` : `-${formatMoney(penalty)} | +3 Gold Shares`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            if (Math.random() < 0.5) {
+                const bonus = Math.round(game.getEarningsPerSecond() * 120 * game.getEventBonusMultiplier());
+                game.addCash(bonus);
+                spawnFloating(`+${formatMoney(bonus)} APPEAL WON!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            } else {
+                const fine = Math.round(game.state.cash * 0.16);
+                game.spendCash(fine);
+                spawnFloating(`-${formatMoney(fine)} Appeal lost!`, window.innerWidth / 2, window.innerHeight / 2, 'red');
+            }
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(600 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.025));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        spawnFloating(lang === 'he' ? 'ציוד תוקן!' : 'Equipment fixed!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        game.triggerSpeedBoost(300, 0.7);
+        spawnFloating(lang === 'he' ? '-30% מהירות לכ-5 דקות' : '-30% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            game.triggerSpeedBoost(120, 1.0);
+            spawnFloating(lang === 'he' ? 'קבלן הגיע!' : 'Contractor arrived!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1200 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        spawnFloating(lang === 'he' ? 'גנרטור פעיל!' : 'Generator running!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        game.triggerSpeedBoost(300, 0.5);
+        spawnFloating(lang === 'he' ? '50% תפוקה לכ-5 דקות' : '50% output for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            spawnFloating(lang === 'he' ? 'גנרטור ממומן! פעילות מלאה' : 'Generator funded! Full activity', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleRobberyAttemptEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1500 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        const bounty = Math.round(game.getEarningsPerSecond() * 180 * game.getEventBonusMultiplier());
+        game.addCash(bounty);
+        spawnFloating(`+${formatMoney(bounty)} Security Bounty!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        spawnFloating(lang === 'he' ? 'משטרה בדרך!' : 'Police en route!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            const insuranceBonus = Math.round(game.getEarningsPerSecond() * 240 * game.getEventBonusMultiplier());
+            game.addCash(insuranceBonus);
+            spawnFloating(`+${formatMoney(insuranceBonus)} Insurance!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleCelebrityVisitEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2000 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.05));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        // VIP visit: give a speed boost (faster tellers = more clients served effectively)
+        game.triggerSpeedBoost(3600, 1.15);
+        spawnFloating(lang === 'he' ? 'VIP +15% מהירות לשעה!' : 'VIP +15% speed for 1 hour!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        const reward = Math.round(game.getEarningsPerSecond() * 120 * game.getEventBonusMultiplier());
+        game.addCash(reward);
+        spawnFloating(`+${formatMoney(reward)}`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            game.triggerSpeedBoost(3600, 1.15);
+            const bonus = Math.round(game.getEarningsPerSecond() * 180 * game.getEventBonusMultiplier());
+            game.addCash(bonus);
+            spawnFloating(`VIP BOOST + +${formatMoney(bonus)}`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleLotteryWinnerEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2500 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        // Investment package: large speed boost simulating recurring income
+        const investPayout = Math.round(game.getEarningsPerSecond() * 30 * 6 * game.getEventBonusMultiplier());
+        game.addCash(investPayout);
+        game.triggerSpeedBoost(3600, 1.3);
+        spawnFloating(`+${formatMoney(investPayout)} INVESTMENT!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        const payout = Math.round(game.getEarningsPerSecond() * 60 * game.getEventBonusMultiplier());
+        game.addCash(payout);
+        spawnFloating(`+${formatMoney(payout)} DEPOSIT!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            const investPayout = Math.round(game.getEarningsPerSecond() * 30 * 6 * game.getEventBonusMultiplier());
+            const stdPayout = Math.round(game.getEarningsPerSecond() * 60 * game.getEventBonusMultiplier());
+            game.addCash(investPayout + stdPayout);
+            game.triggerSpeedBoost(3600, 1.3);
+            spawnFloating(`+${formatMoney(investPayout + stdPayout)} VIP PACKAGE!`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleCompetitorNewsEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1800 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        // More clients = faster processing speed + queue bonus
+        game.triggerSpeedBoost(3600, 1.5);
+        game.triggerTempQueueBonus(10, 3600000);
+        spawnFloating(lang === 'he' ? 'לקוחות גל! x1.5 לשעה' : 'Client wave! x1.5 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        game.triggerSpeedBoost(1800, 1.05);
+        spawnFloating(lang === 'he' ? '+5% לקוחות לחצי שעה' : '+5% clients for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            game.triggerSpeedBoost(3600, 2.0);
+            game.triggerTempQueueBonus(15, 3600000);
+            spawnFloating(lang === 'he' ? 'לקוחות גל! x2 לשעה' : 'Client wave! x2 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleEconomicBoomEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2200 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.05));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        game.triggerSpeedBoost(3600, 1.2);
+        spawnFloating(lang === 'he' ? 'EPS +20% לשעה!' : 'EPS +20% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        game.triggerSpeedBoost(1800, 1.1);
+        spawnFloating(lang === 'he' ? 'EPS +10% לחצי שעה' : 'EPS +10% for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            game.triggerSpeedBoost(3600, 1.3);
+            spawnFloating(lang === 'he' ? 'EPS +30% לשעה!' : 'EPS +30% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1000 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+
+    const btnA = document.createElement('button');
+    btnA.className = 'event-option-btn';
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add('disabled');
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener('click', () => {
+        if (!canAfford) return;
+        initSound();
+        game.spendCash(cost);
+        eventModal.classList.remove('active');
+        // ATMs fixed: bonus customers arrive (speed boost + queue expansion)
+        game.triggerSpeedBoost(600, 1.3);
+        game.triggerTempQueueBonus(8, 600000);
+        spawnFloating(lang === 'he' ? 'ATM חזרו לפעולה!' : 'ATMs back online!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    });
+
+    const btnB = document.createElement('button');
+    btnB.className = 'event-option-btn';
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        // Temporary slowdown while ATMs are offline
+        game.triggerSpeedBoost(300, 0.8);
+        spawnFloating(lang === 'he' ? '-20% מהירות לכ-5 דקות' : '-20% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+    });
+
+    const btnC = document.createElement('button');
+    btnC.className = 'event-option-btn ad-option';
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener('click', () => {
+        initSound();
+        eventModal.classList.remove('active');
+        playAd(() => {
+            game.triggerSpeedBoost(600, 1.25);
+            game.triggerTempQueueBonus(8, 600000);
+            spawnFloating(lang === 'he' ? 'ATM מתוקנים — גל לקוחות!' : 'ATMs fixed — client wave!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        });
+    });
+
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+}
+
+// ===== END NEW EVENT HANDLERS =====
+
 function triggerRandomEvent() {
     if (document.querySelector('.modal-overlay.active')) return;
     
@@ -756,37 +1313,42 @@ function triggerRandomEvent() {
     let eventType = 'crowd';
     const rescueThreshold = 2000 * Math.pow(6, game.state.currentBranch);
     const currentEps = game.getEarningsPerSecond();
-    if (game.state.cash < rescueThreshold && 
-        game.state.vault.cashStored < rescueThreshold && 
+    if (game.state.cash < rescueThreshold &&
+        game.state.vault.cashStored < rescueThreshold &&
         currentEps * 30 < rescueThreshold) {
         eventType = 'rescue';
     } else {
-        const rand = Math.random();
-        if (rand < 0.25) {
-            eventType = 'crowd';
-        } else if (rand < 0.50) {
-            eventType = 'security';
-        } else if (rand < 0.75) {
-            eventType = 'rush_hours';
-        } else {
-            eventType = 'investor';
-        }
+        // Pool of all normal events with equal weight
+        const normalEvents = [
+            'crowd', 'security', 'rush_hours', 'investor',
+            'audit', 'maintenance', 'power_outage', 'robbery_attempt',
+            'celebrity_visit', 'lottery_winner', 'competitor_news',
+            'economic_boom', 'atm_malfunction'
+        ];
+        eventType = normalEvents[Math.floor(Math.random() * normalEvents.length)];
     }
-    
+
     const eventModal = document.getElementById('event-modal');
     if (!eventModal) return;
     const modalBox = eventModal.querySelector('.modal-box');
     if (!modalBox) return;
-    
-    modalBox.classList.remove('event-crowd', 'event-security', 'event-rescue', 'event-rush_hours', 'event-investor');
+
+    // Remove all known event classes
+    const allEventClasses = [
+        'event-crowd', 'event-security', 'event-rescue', 'event-rush_hours', 'event-investor',
+        'event-audit', 'event-maintenance', 'event-power_outage', 'event-robbery_attempt',
+        'event-celebrity_visit', 'event-lottery_winner', 'event-competitor_news',
+        'event-economic_boom', 'event-atm_malfunction'
+    ];
+    modalBox.classList.remove(...allEventClasses);
     modalBox.classList.add(`event-${eventType}`);
-    
+
     const iconEl = document.getElementById('event-icon');
     const titleEl = document.getElementById('event-title');
     const textEl = document.getElementById('event-text');
     const container = document.getElementById('event-options-container');
     if (!iconEl || !titleEl || !textEl || !container) return;
-    
+
     const eventCashValEl = document.getElementById('event-cash-val');
     if (eventCashValEl) {
         const labelText = tObj.cashLabel || 'יתרת מזומנים';
@@ -795,19 +1357,38 @@ function triggerRandomEvent() {
             displayBox.innerHTML = `${labelText}: <span id="event-cash-val" style="color:var(--money-green); font-family:'Outfit', sans-serif;">${formatMoney(game.state.cash)}</span>`;
         }
     }
-    
-    const eObj = tObj.events[eventType];
-    
-    iconEl.innerText = eventType === 'crowd' ? '👥' : (eventType === 'security' ? '🚨' : (eventType === 'rush_hours' ? '⚡' : (eventType === 'investor' ? '💼' : '🏛️')));
+
+    // Resolve event text: new events live in events_extended, originals in events
+    const eObj = (tObj.events && tObj.events[eventType])
+        || (tObj.events_extended && tObj.events_extended[eventType]);
+    if (!eObj) return;
+
+    const EVENT_ICONS = {
+        crowd: '👥',
+        security: '🚨',
+        rescue: '🏛️',
+        rush_hours: '⚡',
+        investor: '💼',
+        audit: '📋',
+        maintenance: '🔧',
+        power_outage: '🔌',
+        robbery_attempt: '🚔',
+        celebrity_visit: '🌟',
+        lottery_winner: '🎰',
+        competitor_news: '📰',
+        economic_boom: '📈',
+        atm_malfunction: '💳'
+    };
+    iconEl.innerText = EVENT_ICONS[eventType] || '📢';
     titleEl.innerText = eObj.title;
     textEl.innerText = eObj.desc;
     container.innerHTML = '';
-    
+
     const handler = EVENT_HANDLERS[eventType];
     if (handler) {
         handler(container, lang, tObj, eObj, eventModal);
     }
-    
+
     eventModal.classList.add('active');
 }
 
@@ -1005,12 +1586,32 @@ function handleMissionRedirect(missionType, targetId) {
             break;
         case 'hire_managers':
         case 'upgrade_managers':
+        case 'manager_hire':
+        case 'all_managers':
             tabName = 'managers';
             selector = '.mgr-buy-btn';
             break;
         case 'unlock_departments':
+        case 'department_unlock':
             tabName = 'departments';
             selector = '.dept-action-btn:not(.active)';
+            break;
+        case 'vip_marathon':
+        case 'serve_rich_vip':
+            tabName = 'upgrades';
+            selector = '.buy-btn[data-type="teller"][data-id="0"]';
+            break;
+        case 'teller_max':
+            tabName = 'upgrades';
+            selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
+            break;
+        case 'guard_trips':
+            tabName = 'upgrades';
+            selector = '.buy-btn[data-type="guard"][data-id="0"]';
+            break;
+        case 'boost_run':
+            tabName = 'upgrades';
+            selector = '.buy-btn[data-type="teller"][data-id="0"]';
             break;
     }
 
@@ -1308,11 +1909,173 @@ function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour) {
     }
 }
 
+function showLoginRewardModal() {
+    if (!window.game || !window.game.state || !window.game.state.pendingLoginReward) return;
+    const modal = document.getElementById('login-reward-modal');
+    if (!modal) return;
+
+    const reward = window.game.state.pendingLoginReward;
+    const streak = window.game.state.loginStreak || 1;
+    const lang = (window.game.state.language) || 'he';
+
+    const streakEl = document.getElementById('login-streak-count');
+    const amountEl = document.getElementById('login-reward-amount');
+    const descEl = document.getElementById('login-reward-desc');
+    const titleEl = document.getElementById('login-reward-title');
+
+    if (titleEl) titleEl.innerText = lang === 'he' ? 'בונוס כניסה יומי!' : 'Daily Login Bonus!';
+    if (streakEl) streakEl.innerText = streak;
+
+    let displayText = '';
+    let descText = '';
+
+    if (reward.type === 'cash') {
+        displayText = '+$' + formatMoney(reward.value);
+        descText = lang === 'he' ? 'מזומן לחשבון' : 'Cash credited';
+    } else if (reward.type === 'boost') {
+        const mins = Math.round(reward.value / 60);
+        displayText = '+' + mins + (lang === 'he' ? ' דקות בוסט x2' : ' min Boost x2');
+        descText = lang === 'he' ? 'בוסט הכנסות כפולות' : 'Double earnings boost';
+    } else if (reward.type === 'gold') {
+        displayText = '+' + reward.value + (lang === 'he' ? ' מניות זהב' : ' Gold Shares');
+        descText = lang === 'he' ? 'מניות זהב נוספו' : 'Gold shares added';
+    } else if (reward.type === 'shares') {
+        displayText = '+' + reward.value + (lang === 'he' ? ' מניות זהב' : ' Gold Shares');
+        descText = lang === 'he' ? 'מניות זהב נוספו' : 'Gold shares added';
+    }
+
+    if (amountEl) amountEl.innerText = displayText;
+    if (descEl) descEl.innerText = descText;
+
+    const collectBtn = document.getElementById('login-reward-collect-btn');
+    if (collectBtn) {
+        collectBtn.innerText = lang === 'he' ? 'אסוף!' : 'Collect!';
+        collectBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            _applyLoginReward(reward);
+        };
+    }
+
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            initSound();
+            modal.classList.remove('active');
+            _applyLoginReward(reward);
+        }
+    };
+
+    modal.classList.add('active');
+}
+
+function _applyLoginReward(reward) {
+    if (!reward) return;
+    if (reward.type === 'cash') {
+        window.game.addCash(Math.round(reward.value));
+        spawnFloating('+$' + formatMoney(reward.value), window.innerWidth / 2, window.innerHeight / 2, 'green');
+    } else if (reward.type === 'boost') {
+        window.game.addBoost2x(reward.value / 3600);
+        spawnFloating('BOOST x2 +' + Math.round(reward.value / 60) + 'min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    } else if (reward.type === 'gold' || reward.type === 'shares') {
+        window.game.addShares(reward.value);
+        spawnFloating('+' + reward.value + ' Shares', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+    }
+    window.game.state.pendingLoginReward = null;
+    window.game.saveGame();
+    draw();
+}
+
+// ==========================================
+// PRESTIGE CEREMONY
+// ==========================================
+
+function triggerPrestigeCeremony(sharesGained, branchName, callback) {
+    const overlay = document.createElement('div');
+    overlay.className = 'prestige-ceremony-overlay';
+    overlay.setAttribute('aria-live', 'polite');
+    overlay.setAttribute('role', 'status');
+
+    const line1 = document.createElement('div');
+    line1.className = 'ceremony-line1';
+    line1.style.cssText = 'font-size:1.5rem; margin-bottom:0.5rem; opacity:0; transition:opacity 0.4s ease;';
+    line1.innerText = branchName + ' מתאפס...';
+
+    const line2 = document.createElement('div');
+    line2.className = 'ceremony-line2';
+    line2.style.cssText = 'font-size:2.5rem; margin:0.5rem 0; opacity:0; transition:opacity 0.4s ease;';
+    line2.innerText = '0';
+
+    const line3 = document.createElement('div');
+    line3.className = 'ceremony-line3';
+    line3.style.cssText = 'font-size:1rem; color:#dfab29; opacity:0; transition:opacity 0.4s ease;';
+    line3.innerText = 'מניות זהב';
+
+    overlay.appendChild(line1);
+    overlay.appendChild(line2);
+    overlay.appendChild(line3);
+    document.body.appendChild(overlay);
+
+    // Phase 1: show "branch resetting..."
+    setTimeout(() => { line1.style.opacity = '1'; }, 50);
+
+    // Phase 2: counter animation + fireworks
+    setTimeout(() => {
+        line2.style.opacity = '1';
+        line3.style.opacity = '1';
+        // Fireworks particle effect during prestige ceremony
+        ['🎆','✨','🌟','💫','🎇'].forEach(function(emoji, i) {
+            setTimeout(function() {
+                spawnFloating(emoji, Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1, window.innerHeight * 0.3, 'gold');
+            }, i * 200);
+        });
+        const duration = 1000;
+        const startTime = Date.now();
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            const current = Math.floor(progress * sharesGained);
+            line2.innerText = '+' + current;
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                line2.innerText = '+' + sharesGained;
+            }
+        };
+        requestAnimationFrame(animate);
+    }, 500);
+
+    // Phase 3: fade out and invoke callback
+    setTimeout(() => {
+        overlay.style.transition = 'opacity 0.5s ease';
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            if (typeof callback === 'function') callback();
+        }, 500);
+    }, 2000);
+}
+
 let uiEventsInitialized = false;
+
+function initFocusTrapObserver() {
+    // MutationObserver על כל modal-overlay — מפעיל/משחרר focus trap בהוספה/הסרת class 'active'
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        const obs = new MutationObserver(() => {
+            if (modal.classList.contains('active')) {
+                trapFocus(modal);
+            } else {
+                releaseFocus(modal);
+            }
+        });
+        obs.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
+}
 
 function initUIEvents() {
     if (uiEventsInitialized) return;
     uiEventsInitialized = true;
+    initFocusTrapObserver();
     if (DOM_CACHE.resetBtn) {
         DOM_CACHE.resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1438,7 +2201,7 @@ function initUIEvents() {
             const dynamicMax = game.getAdMaxBudget();
             let budget = 0;
             if (sliderVal > 0) {
-                budget = Math.round(dynamicMax * Math.pow(sliderVal / 1000, 3));
+                budget = Math.round(dynamicMax * (sliderVal / 1000));
                 budget = Math.max(1, Math.round(budget));
             }
             game.setAdvBudget(budget);
@@ -1535,6 +2298,7 @@ function initUIEvents() {
             initSound();
             const type = btn.getAttribute('data-type');
             const id = parseInt(btn.getAttribute('data-id'));
+            if (isNaN(id) && (type === 'teller' || type === 'guard')) return;
             const action = btn.getAttribute('data-action');
 
             const beforeCash = game.state.cash;
@@ -1604,6 +2368,21 @@ function initUIEvents() {
         });
     }
 
+    if (DOM_CACHE.btnWatchAd) {
+        DOM_CACHE.btnWatchAd.addEventListener('click', () => {
+            initSound();
+            playAd(() => {
+                game.state.boost2xTimeLeft = 4 * 3600; // 4 hours in seconds
+                game.recalculateEps();
+                game.saveGame();
+                draw();
+                if (typeof window.showToast === 'function') {
+                    window.showToast('בוסט הופעל! רווחי הבנק הוכפלו ל-4 שעות.', 'success');
+                }
+            });
+        });
+    }
+
     if (DOM_CACHE.offlineModalClaimBtn) {
         DOM_CACHE.offlineModalClaimBtn.addEventListener('click', () => {
             initSound();
@@ -1624,16 +2403,18 @@ function initUIEvents() {
             initSound();
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
+                const sharesPreview = game.calculatePrestigeShares() * 3;
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ('סניף ' + target);
                 prestigeModal.classList.remove('active');
                 playAd(() => {
-                    game.prestige(target, true);
-                    game.saveGame();
-
-                    if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
-                    const firstTabBtn = document.querySelector('.tab-btn');
-                    if (firstTabBtn) firstTabBtn.click();
-                    
-                    draw();
+                    triggerPrestigeCeremony(Math.min(1000, sharesPreview), branchName, () => {
+                        game.prestige(target, true);
+                        game.saveGame();
+                        if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
+                        const firstTabBtn = document.querySelector('.tab-btn');
+                        if (firstTabBtn) firstTabBtn.click();
+                        draw();
+                    });
                 });
             }
         });
@@ -1644,15 +2425,17 @@ function initUIEvents() {
             initSound();
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
+                const sharesPreview = game.calculatePrestigeShares();
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ('סניף ' + target);
                 prestigeModal.classList.remove('active');
-                game.prestige(target, false);
-                game.saveGame();
-
-                if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
-                const firstTabBtn = document.querySelector('.tab-btn');
-                if (firstTabBtn) firstTabBtn.click();
-                
-                draw();
+                triggerPrestigeCeremony(sharesPreview, branchName, () => {
+                    game.prestige(target, false);
+                    game.saveGame();
+                    if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
+                    const firstTabBtn = document.querySelector('.tab-btn');
+                    if (firstTabBtn) firstTabBtn.click();
+                    draw();
+                });
             }
         });
     }
@@ -1676,6 +2459,8 @@ function initUIEvents() {
                 const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
                 animateCoins(rectBtn, rectCashBox, 8, 'cash');
                 spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green');
+                // Gold coins rain effect on vault collect
+                spawnVaultCoins(collected, rectBtn);
                 game.saveGame();
                 draw();
             }
@@ -1799,6 +2584,10 @@ function initUIEvents() {
             checkWeeklyReward();
         }
     }, 2000);
+
+    // Initialize tutorial system
+    initTutorialEvents();
+    maybeStartTutorial();
 }
 
     // ==========================================
@@ -1879,6 +2668,9 @@ function initUIEvents() {
                 if (spinBtn.disabled) return;
                 initSound();
 
+                const hintEl = document.getElementById('fortune-spin-hint');
+                if (hintEl) hintEl.style.display = 'none';
+
                 spinBtn.disabled = true;
                 spinBtn.textContent = tObj.fortuneWheelSpinning || 'מסתובב...';
 
@@ -1897,7 +2689,7 @@ function initUIEvents() {
                     const prizeLabel = (tObj2.wheelPrizes && tObj2.wheelPrizes[prize.label]) || prize.label;
 
                     if (prize.type === 'cash') {
-                        const amount = Math.round(game.getEarningsPerSecond() * prize.value);
+                        const amount = Math.max(prize.minValue || 0, Math.round(game.getEarningsPerSecond() * prize.value));
                         game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
                         game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
                         prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
@@ -1981,15 +2773,23 @@ function initUIEvents() {
         banner.id = 'vip-visit-banner';
         banner.className = 'vip-visit-banner';
 
-        const title = tObj.vipBannerTitle || 'לקוח VIP פנימה!';
         const serveText = tObj.vipServeBtn || 'שרת (כסף)';
         const premiumText = tObj.vipPremiumBtn || 'VIP Premium';
+
+        // Pick a random VIP personality for this visit
+        const personalities = tObj.vipPersonalities;
+        const vip = personalities && personalities.length
+            ? personalities[Math.floor(Math.random() * personalities.length)]
+            : null;
+        const vipName   = vip ? vip.name   : (tObj.vipBannerTitle || 'לקוח VIP');
+        const vipDialog = vip ? vip.dialog : '';
 
         banner.innerHTML = `
             <div class="vip-banner-row">
                 <span class="vip-banner-icon">💎</span>
                 <div class="vip-banner-content">
-                    <span class="vip-banner-title">${title}</span>
+                    <span class="vip-banner-title">${vipName}</span>
+                    ${vipDialog ? `<span class="vip-banner-dialog">"${vipDialog}"</span>` : ''}
                     <span class="vip-banner-timer" id="vip-banner-timer">25</span>
                 </div>
             </div>
@@ -2242,6 +3042,162 @@ function initUIEvents() {
         console.log("Waiting for user to click the start button...");
     };
 
+    // ==========================================
+    // PARTICLE EFFECTS — spawnVaultCoins
+    // ==========================================
+
+    function spawnVaultCoins(amount, btnRect) {
+        if (!btnRect) return;
+        const count = Math.min(8, Math.max(2, Math.floor(Math.log10(amount + 1))));
+        const cx = btnRect.left + btnRect.width / 2;
+        const cy = btnRect.top;
+        for (var i = 0; i < count; i++) {
+            (function(idx) {
+                setTimeout(function() {
+                    const drift = (Math.random() - 0.5) * 80;
+                    spawnFloating('💰', cx + drift, cy - 10 - Math.random() * 20, 'gold');
+                }, idx * 80);
+            })(i);
+        }
+    }
+
+    // ==========================================
+    // TUTORIAL SYSTEM
+    // ==========================================
+
+    var TUTORIAL_STEPS = [
+        { target: '#teller-collect-0', text: 'לחצי על כפתור "אסוף" בדלפק לאסוף את הכסף שנצבר שם' },
+        { target: '.vault-graphic', text: 'לחצי על כפתור "רוקן כספת" לאסוף את הכסף שנצבר בכספת' },
+        { target: '[data-tab="upgrades"]', text: 'כאן תוכלי לשדרג את הדלפקים ולהגדיל את ההכנסה' },
+        { target: '.guard-hire-btn, #upgrade-guard-0, [data-type="guard"]', text: 'הבלדרים מעבירים כסף מהדלפקים לכספת אוטומטית — שדרגי אותם!' },
+        { target: '[data-tab="departments"]', text: 'מחלקות מגדילות את ההכנסה בכפולות — פתחי אותן בהקדם' },
+        { target: '[data-tab="managers"]', text: 'מנהלים עובדים בשבילך גם כשאת לא כאן — שכרי מנהלים!' },
+        { target: '.prestige-btn, [data-tab="branches"]', text: 'כשתצברי מספיק כסף תוכלי לעשות Prestige ולקבל מניות זהב שמגדילות את כל ההכנסה לצמיתות' }
+    ];
+
+    var currentTutorialStep = 0;
+
+    function _positionTutorialVisuals(targetEl) {
+        var spotlight = document.getElementById('tutorial-spotlight');
+        var arrow     = document.getElementById('tutorial-arrow');
+        var hand      = document.getElementById('tutorial-hand');
+
+        if (!targetEl) {
+            if (spotlight) spotlight.style.display = 'none';
+            if (arrow)     arrow.style.display     = 'none';
+            if (hand)      hand.style.display      = 'none';
+            return;
+        }
+
+        var rect = targetEl.getBoundingClientRect();
+        var pad  = 8;
+
+        if (spotlight) {
+            spotlight.style.left    = (rect.left   - pad) + 'px';
+            spotlight.style.top     = (rect.top    - pad) + 'px';
+            spotlight.style.width   = (rect.width  + pad * 2) + 'px';
+            spotlight.style.height  = (rect.height + pad * 2) + 'px';
+            spotlight.style.display = 'block';
+        }
+
+        if (arrow) {
+            var abovePx = rect.top - 50;
+            if (abovePx < 20) {
+                arrow.textContent   = '▲';
+                arrow.style.top     = (rect.bottom + 10) + 'px';
+            } else {
+                arrow.textContent   = '▼';
+                arrow.style.top     = abovePx + 'px';
+            }
+            arrow.style.left    = (rect.left + rect.width / 2 - 16) + 'px';
+            arrow.style.display = 'block';
+        }
+
+        if (hand) {
+            hand.style.left    = (rect.left + rect.width  / 2 - 16) + 'px';
+            hand.style.top     = (rect.top  + rect.height / 2 - 16) + 'px';
+            hand.style.display = 'block';
+        }
+    }
+
+    function showTutorialStep(stepIndex) {
+        if (!window.game || !window.game.state) return;
+        if (window.game.state.tutorialCompleted) return;
+        if (stepIndex >= TUTORIAL_STEPS.length) {
+            completeTutorial();
+            return;
+        }
+        currentTutorialStep = stepIndex;
+        window.game.state.tutorialStep = stepIndex;
+
+        var overlay = document.getElementById('tutorial-overlay');
+        var textEl  = document.getElementById('tutorial-text');
+        if (!overlay || !textEl) return;
+
+        var step = TUTORIAL_STEPS[stepIndex];
+        textEl.textContent = step.text;
+        overlay.style.display = 'flex';
+
+        var target = document.querySelector(step.target);
+        if (target) {
+            try { target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e) {}
+            // Delay positioning slightly so scrollIntoView settles first
+            setTimeout(function() { _positionTutorialVisuals(target); }, 120);
+        } else {
+            _positionTutorialVisuals(null);
+        }
+    }
+
+    function completeTutorial() {
+        if (!window.game || !window.game.state) return;
+        window.game.state.tutorialCompleted = true;
+        window.game.state.tutorialStep = TUTORIAL_STEPS.length;
+        var overlay = document.getElementById('tutorial-overlay');
+        if (overlay) overlay.style.display = 'none';
+        _positionTutorialVisuals(null);
+        if (window.game.saveGame) window.game.saveGame();
+    }
+
+    function initTutorialEvents() {
+        var nextBtn = document.getElementById('tutorial-next');
+        var skipBtn = document.getElementById('tutorial-skip');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                initSound();
+                showTutorialStep(currentTutorialStep + 1);
+            });
+        }
+        if (skipBtn) {
+            skipBtn.addEventListener('click', function() {
+                initSound();
+                completeTutorial();
+            });
+        }
+    }
+
+    function maybeStartTutorial() {
+        if (!window.game || !window.game.state) return;
+        if (window.game.state.tutorialCompleted) return;
+        // שחקן ותיק עם save קיים — דלג על tutorial
+        var isVeteran = (window.game.state.lifetimeCash > 5000 ||
+                         window.game.state.shares > 0 ||
+                         window.game.state.missionsCompleted > 0);
+        if (isVeteran) {
+            window.game.state.tutorialCompleted = true;
+            return;
+        }
+        // התחל מהשלב שנשמר, אם יש
+        var savedStep = window.game.state.tutorialStep || 0;
+        setTimeout(function() {
+            showTutorialStep(savedStep);
+        }, 2000);
+    }
+
+    window.showTutorialStep = showTutorialStep;
+    window.completeTutorial = completeTutorial;
+    window.maybeStartTutorial = maybeStartTutorial;
+    window.spawnVaultCoins = spawnVaultCoins;
+
     window.handleRescueEvent = handleRescueEvent;
     window.handleRushHoursEvent = handleRushHoursEvent;
     window.handleInvestorEvent = handleInvestorEvent;
@@ -2260,5 +3216,7 @@ function initUIEvents() {
     window.removeVipVisitBanner = removeVipVisitBanner;
     window.serveVipVisitor = serveVipVisitor;
     window.renderDailyChallengesSection = renderDailyChallengesSection;
+    window.showLoginRewardModal = showLoginRewardModal;
+    window.triggerPrestigeCeremony = triggerPrestigeCeremony;
 })(window);
 

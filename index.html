@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>אימפריית הבנקים - משחק Idle Bank יוקרתי</title>
     <meta name="description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
@@ -23,6 +23,14 @@
     <link rel="apple-touch-icon" href="תמונות/icon.png">
 </head>
 <body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-logo" aria-hidden="true">🏦</div>
+        <h1 class="splash-title">אימפריית הבנקים</h1>
+        <p class="splash-subtitle">טוען את חווית ה-VIP...</p>
+        <div class="splash-loader"></div>
+    </div>
 
     <div class="app-container">
         
@@ -306,6 +314,17 @@
                                 <span class="daily-challenges-icon" aria-hidden="true">📅</span>
                                 <h3 class="daily-challenges-title" id="daily-challenges-title">אתגרי היום</h3>
                             </div>
+                            
+                            <!-- Ad Boost Section -->
+                            <div class="ad-boost-wrapper" id="ad-boost-wrapper">
+                                <div class="ad-boost-info">
+                                    <h4 class="ad-boost-title" id="label-ad-boost-title"><span aria-hidden="true">📺</span> בוסט הכנסות x2</h4>
+                                    <p class="ad-boost-desc" id="label-ad-boost-desc">צפה בפרסומת והכפל את רווחי הבנק ל-4 שעות!</p>
+                                </div>
+                                <button class="ad-boost-btn" id="btn-watch-ad">צפה בפרסומת</button>
+                                <div class="ad-boost-timer hidden" id="ad-boost-timer">נותרו: 04:00:00</div>
+                            </div>
+                            
                             <div id="daily-challenges-content">
                                 <!-- Dynamic daily challenges inserted here -->
                             </div>
@@ -324,6 +343,18 @@
         <footer role="contentinfo">
             <p id="label-footer"><span id="footer-flavor">אימפריית הבנקים © 2026 - משחק Idle פרימיום. כל הזכויות שמורות.</span></p>
         </footer>
+    </div>
+
+    <!-- Daily Login Reward Modal -->
+    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true" aria-labelledby="login-reward-title">
+        <div class="modal-box">
+            <div class="modal-icon" aria-hidden="true">🎁</div>
+            <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
+            <p class="modal-text" id="login-reward-streak-text">רצף: <strong id="login-streak-count">1</strong> ימים</p>
+            <div class="modal-amount" id="login-reward-amount">+$0</div>
+            <p class="modal-text" id="login-reward-desc" style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;"></p>
+            <button class="modal-close-btn" id="login-reward-collect-btn" style="margin-top:1.25rem;">אסוף!</button>
+        </div>
     </div>
 
     <!-- Offline Earnings Welcome Modal -->
@@ -488,23 +519,25 @@
 
             <div class="fortune-wheel-graphic" id="fortune-wheel-graphic" aria-hidden="true">
                 <div class="wheel-segments">
-                    <div class="wheel-seg seg-1"><span style="display:block;font-size:1.4rem">💰</span><span style="font-size:0.65rem;font-weight:900">+2m</span></div>
-                    <div class="wheel-seg seg-2"><span style="display:block;font-size:1.4rem">💸</span><span style="font-size:0.65rem;font-weight:900">+5m</span></div>
-                    <div class="wheel-seg seg-3"><span style="display:block;font-size:1.4rem">⚡</span><span style="font-size:0.65rem;font-weight:900">+2h</span></div>
-                    <div class="wheel-seg seg-4"><span style="display:block;font-size:1.4rem">🏅</span><span style="font-size:0.65rem;font-weight:900">+1</span></div>
-                    <div class="wheel-seg seg-5"><span style="display:block;font-size:1.4rem">🏅</span><span style="font-size:0.65rem;font-weight:900">+2</span></div>
-                    <div class="wheel-seg seg-6"><span style="display:block;font-size:1.4rem">📈</span><span style="font-size:0.65rem;font-weight:900">+1</span></div>
-                    <div class="wheel-seg seg-7"><span style="display:block;font-size:1.4rem">📈</span><span style="font-size:0.65rem;font-weight:900">+3</span></div>
+                    <div class="wheel-seg seg-1"><span style="display:block;font-size:1.8rem">💰</span><span style="font-size:0.65rem;font-weight:900">+2m</span></div>
+                    <div class="wheel-seg seg-2"><span style="display:block;font-size:1.8rem">💸</span><span style="font-size:0.65rem;font-weight:900">+5m</span></div>
+                    <div class="wheel-seg seg-3"><span style="display:block;font-size:1.8rem">⚡</span><span style="font-size:0.65rem;font-weight:900">+2h</span></div>
+                    <div class="wheel-seg seg-4"><span style="display:block;font-size:1.8rem">🏅</span><span style="font-size:0.65rem;font-weight:900">+1</span></div>
+                    <div class="wheel-seg seg-5"><span style="display:block;font-size:1.8rem">🏅</span><span style="font-size:0.65rem;font-weight:900">+2</span></div>
+                    <div class="wheel-seg seg-6"><span style="display:block;font-size:1.8rem">📈</span><span style="font-size:0.65rem;font-weight:900">+1</span></div>
+                    <div class="wheel-seg seg-7"><span style="display:block;font-size:1.8rem">📈</span><span style="font-size:0.65rem;font-weight:900">+3</span></div>
                 </div>
                 <div class="wheel-pointer" aria-hidden="true">▼</div>
             </div>
+
+            <p class="fortune-spin-hint" id="fortune-spin-hint" style="font-size:0.8rem; color:#9ca3af; margin:0 0 0.5rem; text-align:center;">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>
 
             <div id="fortune-result" class="fortune-result" style="display:none;"></div>
             <div id="fortune-prize-list" class="fortune-prize-list"></div>
             <div id="fortune-cooldown" class="fortune-cooldown" style="display:none;"></div>
 
             <button class="modal-close-btn fortune-spin-btn" id="fortune-spin-btn">סובב!</button>
-            <button class="modal-cancel-btn" id="fortune-close-btn" style="margin-top:0.5rem;">סגור</button>
+            <button class="fortune-close-btn-styled" id="fortune-close-btn" style="margin-top:0.75rem; width:100%; padding:0.6rem; border-radius:10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#f87171; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;">✕ סגור וחזור למשחק</button>
         </div>
     </div>
 
@@ -523,6 +556,20 @@
     </div>
 
     <script src="audio.js" defer></script>
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="tutorial-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="מדריך למשחק">
+        <div id="tutorial-spotlight" class="tutorial-spotlight" style="display:none;"></div>
+        <div id="tutorial-arrow" class="tutorial-arrow" style="display:none;">▼</div>
+        <div id="tutorial-hand" class="tutorial-hand" style="display:none;">👆</div>
+        <div class="tutorial-tooltip">
+            <p id="tutorial-text"></p>
+            <div class="tutorial-buttons">
+                <button id="tutorial-next">הבנתי</button>
+                <button id="tutorial-skip">דלג על המדריך</button>
+            </div>
+        </div>
+    </div>
+
     <script src="locales.js" defer></script>
     <script src="economy-manager.js" defer></script>
     <script src="save-manager.js" defer></script>

@@ -1,6 +1,9 @@
 class EconomyManager {
     constructor(game) {
         this.game = game;
+        this.cachedTotalMult = 1;
+        this._cachedVaultCap = null;
+        this._cachedTellerCap = null;
     }
 
     getPrestigeMultiplier() {
@@ -139,12 +142,15 @@ class EconomyManager {
 
     // Vault Formulas
     getVaultCapacity(level) {
+        // H-05: cache vault capacity — invalidated in recalculateEps() and after upgrades
+        if (this._cachedVaultCap !== null) return this._cachedVaultCap;
         let cap = Math.round(GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1));
-        
+
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.vaultCapacityBoost) {
             cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost)); // +10% per level
         }
-        
+
+        this._cachedVaultCap = cap;
         return cap;
     }
 
@@ -274,7 +280,11 @@ class EconomyManager {
 
     recalculateEps() {
         let totalVal = 0;
-        const baseRewardWithMultiplier = this.getCurrentBaseReward() * this.getTotalMultiplier();
+        const freshMult = this.getTotalMultiplier();
+        this.cachedTotalMult = freshMult;
+        this._cachedVaultCap = null;
+        this._cachedTellerCap = null;
+        const baseRewardWithMultiplier = this.getCurrentBaseReward() * freshMult;
         this.game.state.tellers.forEach(t => {
             if (t.unlocked) {
                 const speed = this.getTellerSpeed(t.level);

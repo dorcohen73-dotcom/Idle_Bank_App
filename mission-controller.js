@@ -61,12 +61,12 @@ class MissionController {
             });
         }
 
-        // Hire Managers (Only if not all 10 managers are hired)
+        // Hire Managers (Only if not all 6 managers are hired)
         const hiredMgrsCount = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
-        if (hiredMgrsCount < 10) {
+        if (hiredMgrsCount < 6) {
             pool.push({
                 type: 'hire_managers',
-                target: () => Math.min(10, hiredMgrsCount + 1),
+                target: () => Math.min(6, hiredMgrsCount + 1),
                 reward: (t) => Math.round(1000 * scale + referenceCash * 0.25)
             });
         }
@@ -125,6 +125,85 @@ class MissionController {
             });
         }
 
+        // === NEW MISSION TYPES ===
+
+        // 1. vip_marathon — only if VIP dept (index 2) is unlocked
+        const vipDeptUnlocked = this.game.state.departments && this.game.state.departments[2] && this.game.state.departments[2].unlocked;
+        if (vipDeptUnlocked) {
+            pool.push({
+                type: 'vip_marathon',
+                target: () => 20,
+                reward: () => ({ type: 'shares', amount: 2 })
+            });
+        }
+
+        // 2. department_unlock — only if there's a locked dept AND player has >= 50% of its cost
+        const lockedDepts = (this.game.state.departments || []).filter(d => d && !d.unlocked);
+        if (lockedDepts.length > 0) {
+            const cheapestLocked = lockedDepts.reduce((min, d) => d.cost < min.cost ? d : min, lockedDepts[0]);
+            const playerHasHalfCost = this.game.state.cash >= cheapestLocked.cost * 0.5;
+            if (playerHasHalfCost) {
+                pool.push({
+                    type: 'department_unlock',
+                    target: () => 1,
+                    reward: () => Math.round(this.game.getEarningsPerSecond() * 300)
+                });
+            }
+        }
+
+        // 3. manager_hire — only if at least 1 manager is already hired and there are managers left to hire
+        const alreadyHiredCount = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
+        const managersLeftToHire = 6 - alreadyHiredCount;
+        if (alreadyHiredCount >= 1 && managersLeftToHire >= 1) {
+            pool.push({
+                type: 'manager_hire',
+                target: () => Math.min(3, managersLeftToHire),
+                reward: () => ({ type: 'shares', amount: 1 })
+            });
+        }
+
+        // 4. teller_max — only if highest teller level >= 5
+        const unlockedTellerLevels = (this.game.state.tellers || []).filter(t => t && t.unlocked).map(t => t.level);
+        const highestTellerLevel = unlockedTellerLevels.length > 0 ? Math.max(...unlockedTellerLevels) : 0;
+        if (highestTellerLevel >= 5) {
+            pool.push({
+                type: 'teller_max',
+                target: () => 10,
+                reward: () => ({ type: 'gold', amount: 1 })
+            });
+        }
+
+        // 5. boost_run — only if boost2x has ever been activated (timeLeft > 0 or boost2xUsedEver flag)
+        const boostEverUsed = (this.game.state.boost2xTimeLeft > 0) || (this.game.state.boost2xUsedEver === true);
+        if (boostEverUsed) {
+            const boostEps = this.game.getEarningsPerSecond();
+            const boostTarget = Math.round(boostEps * 1800);
+            pool.push({
+                type: 'boost_run',
+                target: () => Math.max(500, boostTarget),
+                reward: () => Math.round(boostEps * 600)
+            });
+        }
+
+        // 6. guard_trips — only if at least 1 guard is unlocked
+        const unlockedGuardsCount = (this.game.state.guards || []).filter(g => g && g.unlocked).length;
+        if (unlockedGuardsCount >= 1) {
+            pool.push({
+                type: 'guard_trips',
+                target: () => 50,
+                reward: () => ({ type: 'gold', amount: 1 })
+            });
+        }
+
+        // 7. all_managers — only if at least 4 managers are hired (late game)
+        if (alreadyHiredCount >= 4 && alreadyHiredCount < 6) {
+            pool.push({
+                type: 'all_managers',
+                target: () => 6,
+                reward: () => ({ type: 'shares', amount: 3 })
+            });
+        }
+
         // Pick random mission template ensuring no duplicate active types
         const activeTypes = (this.game.state.missions || []).map(m => m.type);
         let availablePool = pool.filter(t => !activeTypes.includes(t.type));
@@ -154,6 +233,7 @@ class MissionController {
             target: targetVal,
             targetId: targetId,
             progress: 0,
+            // reward may be a number (cash) or { type:'shares'/'gold', amount:N }
             reward: rewardVal,
             completed: false,
             claimed: false
@@ -237,6 +317,67 @@ class MissionController {
                     currentProgress = currentLevels - m.startProgress;
                     break;
                 }
+
+                // === NEW MISSION TRACKING ===
+
+                case 'vip_marathon':
+                    // Counts consecutive VIP clients served; resets if a non-VIP is served between them.
+                    // Relies on game loop calling m.consecutiveVip counter updates externally.
+                    currentProgress = m.consecutiveVip || 0;
+                    break;
+
+                case 'department_unlock': {
+                    // Track whether a new department was unlocked after mission start
+                    const deptCountNow = (this.game.state.departments || []).filter(d => d && d.unlocked).length;
+                    if (m.startProgress === undefined) {
+                        m.startProgress = deptCountNow;
+                    }
+                    currentProgress = deptCountNow > m.startProgress ? 1 : 0;
+                    break;
+                }
+
+                case 'manager_hire': {
+                    // Count managers hired since mission start
+                    const hiredNow = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
+                    if (m.startProgress === undefined) {
+                        m.startProgress = hiredNow;
+                    }
+                    currentProgress = hiredNow - m.startProgress;
+                    break;
+                }
+
+                case 'teller_max': {
+                    // Progress = highest level among unlocked tellers (target is 10)
+                    const tellerLevels = (this.game.state.tellers || []).filter(t => t && t.unlocked).map(t => t.level);
+                    currentProgress = tellerLevels.length > 0 ? Math.max(...tellerLevels) : 0;
+                    break;
+                }
+
+                case 'boost_run': {
+                    // Accumulate cash earned while boost2x is active
+                    if (m.startProgress === undefined) {
+                        m.startProgress = 0;
+                    }
+                    // boostCashAccumulator is updated by the game loop when boost is active
+                    currentProgress = m.boostCashAccumulator || 0;
+                    break;
+                }
+
+                case 'guard_trips': {
+                    // guardTripsTotal is incremented externally when a guard transitions depositing -> idle
+                    currentProgress = this.game.state.guardTripsTotal || 0;
+                    if (m.startProgress === undefined) {
+                        m.startProgress = currentProgress;
+                    }
+                    currentProgress = (this.game.state.guardTripsTotal || 0) - m.startProgress;
+                    break;
+                }
+
+                case 'all_managers': {
+                    const totalHired = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
+                    currentProgress = totalHired;
+                    break;
+                }
             }
 
             m.progress = Math.min(m.target, currentProgress);
@@ -254,16 +395,28 @@ class MissionController {
 
     claimMissionReward(id) {
         const mIndex = this.game.state.missions.findIndex(m => m.id === id);
-        if (mIndex === -1) return 0;
+        if (mIndex === -1) return { type: 'none', amount: 0 };
 
         const m = this.game.state.missions[mIndex];
-        if (!m.completed || m.claimed) return 0;
+        if (!m.completed || m.claimed) return { type: 'none', amount: 0 };
 
         m.claimed = true;
-        const rewardAmt = m.reward;
+        const reward = m.reward;
 
-        this.game.state.cash = Math.round((this.game.state.cash + rewardAmt + Number.EPSILON) * 100) / 100;
-        this.game.state.lifetimeCash = Math.round((this.game.state.lifetimeCash + rewardAmt + Number.EPSILON) * 100) / 100;
+        let result;
+        if (reward && typeof reward === 'object' && reward.type) {
+            // Shares / gold reward
+            const shareAmt = reward.amount || 1;
+            this.game.state.shares = (this.game.state.shares || 0) + shareAmt;
+            result = { type: reward.type, amount: shareAmt };
+        } else {
+            // Cash reward (legacy: reward is a number)
+            const rewardAmt = typeof reward === 'number' ? reward : 0;
+            this.game.state.cash = Math.round((this.game.state.cash + rewardAmt + Number.EPSILON) * 100) / 100;
+            this.game.state.lifetimeCash = Math.round((this.game.state.lifetimeCash + rewardAmt + Number.EPSILON) * 100) / 100;
+            result = { type: 'cash', amount: rewardAmt };
+        }
+
         this.game.state.missionsCompleted++;
 
         // Remove and replace with a fresh mission
@@ -272,7 +425,7 @@ class MissionController {
 
         this.game.missionsDirty = true;
         this.game.saveGame();
-        return rewardAmt;
+        return result;
     }
 }
 
@@ -391,9 +544,11 @@ class DailyChallengeController {
         if (!c || !c.completed || c.claimed) return false;
         c.claimed = true;
 
-        if (c.reward.type === 'gold') {
-            this.game.state.shares = (this.game.state.shares || 0) + c.reward.amount;
-        } else if (c.reward.type === 'shares') {
+        // NOTE: reward.type 'gold' and 'shares' both add to state.shares (gold shares).
+        // 'gold' is the legacy name used in daily challenge definitions; both types
+        // represent the same prestige currency. Do not rename 'gold' without updating
+        // _generate3Challenges() and all UI rendering that reads c.reward.type.
+        if (c.reward.type === 'gold' || c.reward.type === 'shares') {
             this.game.state.shares = (this.game.state.shares || 0) + c.reward.amount;
         }
 
