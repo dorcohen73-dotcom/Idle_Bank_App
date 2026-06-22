@@ -159,25 +159,86 @@ function getClientSVG(type, seed) {
 }
 
 // Unified floating text animator
-function spawnFloating(text, x, y, type = 'gold') {
-    const floatContainer = DOM_CACHE.floatingContainer;
+var floatingTextPool = [];
+const FLOATING_POOL_SIZE = 40;
+var activeFloatingText = [];
+
+function initFloatingPool() {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById('floating-container');
     if (!floatContainer) return;
+    
+    for (let i = 0; i < FLOATING_POOL_SIZE; i++) {
+        const div = document.createElement('div');
+        div.className = 'floating-cash';
+        div.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;position:absolute;left:0;top:0;';
+        floatContainer.appendChild(div);
+        floatingTextPool.push({
+            element: div,
+            active: false
+        });
+    }
+}
 
-    const floatDiv = document.createElement('div');
-    floatDiv.className = 'floating-cash';
-    
-    if (type === 'gold') floatDiv.style.color = 'var(--primary-gold)';
-    else if (type === 'red' || type === 'danger') floatDiv.style.color = 'var(--danger-red)';
-    else if (type === 'green' || type === 'money') floatDiv.style.color = 'var(--green-light)';
-    else floatDiv.style.color = type;
-    
-    floatDiv.innerText = text;
-    
-    floatDiv.style.left = `${x}px`;
-    floatDiv.style.top = `${y}px`;
+function getFloatingFromPool() {
+    if (floatingTextPool.length === 0) initFloatingPool();
+    for (let i = 0; i < floatingTextPool.length; i++) {
+        if (!floatingTextPool[i].active) return floatingTextPool[i];
+    }
+    if (activeFloatingText.length > 0) {
+        const oldest = activeFloatingText[0];
+        activeFloatingText.shift();
+        oldest.poolObj.active = false;
+        oldest.element.style.display = 'none';
+        return oldest.poolObj;
+    }
+    return floatingTextPool[0];
+}
 
-    floatContainer.appendChild(floatDiv);
-    setTimeout(() => floatDiv.remove(), 1200);
+function spawnFloating(text, x, y, type = 'gold') {
+    const floatObj = getFloatingFromPool();
+    if (!floatObj) return;
+    floatObj.active = true;
+    const div = floatObj.element;
+    
+    let colorStr = type;
+    if (type === 'gold') colorStr = 'var(--primary-gold)';
+    else if (type === 'red' || type === 'danger') colorStr = 'var(--danger-red)';
+    else if (type === 'green' || type === 'money') colorStr = 'var(--green-light)';
+    
+    div.innerText = text;
+    
+    activeFloatingText.push({
+        poolObj: floatObj,
+        element: div,
+        startX: x,
+        startY: y,
+        colorStr: colorStr,
+        progress: 0,
+        duration: 1.2
+    });
+}
+
+function updateFloatingText(dt) {
+    for (let i = activeFloatingText.length - 1; i >= 0; i--) {
+        const f = activeFloatingText[i];
+        f.progress += dt;
+        const t = Math.min(1.0, f.progress / f.duration);
+        
+        const easeT = 1 - Math.pow(1 - t, 3);
+        const currentY = f.startY - easeT * 50;
+        
+        let opacity = 1;
+        if (t < 0.15) opacity = t / 0.15;
+        else if (t > 0.7) opacity = 1 - ((t - 0.7) / 0.3);
+        
+        f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};will-change:transform,opacity;position:absolute;left:0;top:0;`;
+        
+        if (t >= 1.0) {
+            f.element.style.display = 'none';
+            f.poolObj.active = false;
+            activeFloatingText.splice(i, 1);
+        }
+    }
 }
 
 // updateActiveCoins handles updating all coin animations per tick (requestAnimationFrame) to prevent memory leaks and setTimeout issues when backgrounded.
@@ -240,34 +301,36 @@ function updateActiveCoins(dt) {
         if (c.delay > 0) {
             c.delay -= dt;
             if (c.delay <= 0) {
-                c.element.style.cssText = `left:${c.startX}px;top:${c.startY}px;opacity:1;display:block;`;
+                c.element.style.cssText = `transform:translate3d(${c.startX}px,${c.startY}px,0);opacity:1;display:block;position:absolute;left:0;top:0;`;
             }
             continue;
         }
         
         c.progress += dt;
         const t = Math.min(1.0, c.progress / c.duration);
-        // Custom bezier easing for quick throw and decelerating fall
         const easeT = t * (2 - t);
         
         const currentX = c.startX + (c.endX - c.startX) * easeT;
-        // Parabolic arc Y-offset: throw upward by arcHeight in a nice curve
         const arcY = -c.arcHeight * Math.sin(t * Math.PI);
         const currentY = c.startY + (c.endY - c.startY) * easeT + arcY;
         
-        // Custom scale and rotation depending on type (coin vs cash)
         let transformStr = "";
-        if (c.type === 'cash') {
-            // Cash wiggles naturally with custom phase to look organic
+        let opacity = 1.0 - t * 0.65;
+        
+        if (c.type === 'particle') {
+            const spin = c.randomPhase * 40 + t * 360;
+            const scale = 1.0 - t * 0.8;
+            transformStr = `scale(${scale}) rotate(${spin}deg)`;
+            opacity = 1.0 - Math.pow(t, 2);
+        } else if (c.type === 'cash') {
             const wiggle = Math.sin(t * Math.PI * 4.5 + c.randomPhase) * 22;
             transformStr = `scale(${1.2 - t * 0.25}) rotate(${wiggle}deg)`;
         } else {
-            // Coins spin 360 degrees plus random starting angle
             const spin = c.randomPhase * 40 + t * 480;
             transformStr = `scale(${1.1 - t * 0.25}) rotate(${spin}deg)`;
         }
         
-        c.element.style.cssText = `left:${currentX}px;top:${currentY}px;transform:${transformStr};opacity:${1.0 - t * 0.65};display:block;`;
+        c.element.style.cssText = `transform:translate3d(${currentX}px,${currentY}px,0) ${transformStr};opacity:${opacity};display:block;position:absolute;left:0;top:0;will-change:transform,opacity;`;
         
         if (t >= 1.0) {
             c.element.style.cssText = 'display:none;opacity:0;';
@@ -280,6 +343,41 @@ function updateActiveCoins(dt) {
             }
             activeCoins.splice(i, 1);
         }
+    }
+}
+
+function spawnParticles(x, y, count = 10, type = 'gold') {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById('floating-container');
+    if (!floatContainer) return;
+    if (coinPool.length === 0) initCoinPool();
+
+    for (let i = 0; i < count; i++) {
+        const coinObj = getCoinFromPool();
+        if (!coinObj) continue;
+        coinObj.active = true;
+        const coin = coinObj.element;
+        coin.innerText = type === 'star' ? '✨' : (type === 'sparkle' ? '🌟' : '💰');
+        coin.style.display = 'none';
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 40 + Math.random() * 80;
+        
+        activeCoins.push({
+            poolObj: coinObj,
+            element: coin,
+            startX: x,
+            startY: y,
+            endX: x + Math.cos(angle) * distance,
+            endY: y + Math.sin(angle) * distance,
+            duration: 0.6 + Math.random() * 0.4,
+            progress: 0,
+            delay: 0,
+            type: 'particle',
+            isLast: false,
+            playedSound: true,
+            arcHeight: -20 + Math.random() * 40,
+            randomPhase: Math.random() * Math.PI * 2
+        });
     }
 }
 
@@ -666,17 +764,13 @@ function draw() {
                     if (tData.isProcessing) {
                         clientSlot.classList.add('active');
                         clientSlot.innerHTML = getClientSVG(tData.customerType, tData.customerSeed);
-                        
-                        // VIP & Rich serving glow effects
+
+                        // VIP & Rich serving glow effects — batch read then write
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                         if (tData.customerType === 'vip') {
                             tNode.classList.add('vip-serving-glow');
                             const rect = tNode.getBoundingClientRect();
                             spawnFloating('★ VIP ★', rect.left + rect.width / 2, rect.top + 20, 'rgba(192, 132, 252, 1)');
-                            // Confetti burst on VIP arrival
-                            spawnFloating('🎊', rect.left + rect.width / 2 - 20, rect.top, 'rgba(192, 132, 252, 1)');
-                            spawnFloating('🎊', rect.left + rect.width / 2 + 20, rect.top + 10, 'rgba(251, 191, 36, 1)');
-                            spawnFloating('🎊', rect.left + rect.width / 2, rect.top + 5, 'rgba(16, 185, 129, 1)');
                         } else if (tData.customerType === 'rich') {
                             tNode.classList.add('rich-serving-glow');
                             const rect = tNode.getBoundingClientRect();

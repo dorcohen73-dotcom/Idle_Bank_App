@@ -147,11 +147,12 @@ class SaveManager {
         // Construct final JSON string by inserting checksum directly to avoid a second expensive stringify
         const finalJsonStr = jsonStr.slice(0, -1) + `,"checksum":"${checksum}"}`;
         
-        // CRIT-1: Prevent stack overflow for large saves by encoding bytes using a loop
+        // CRIT-1: Prevent stack overflow for large saves by encoding bytes in chunks
         const bytes = new TextEncoder().encode(finalJsonStr);
         let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
+        const chunkSize = 8192;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
         }
         const encryptedState = btoa(binary);
         try {

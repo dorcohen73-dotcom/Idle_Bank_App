@@ -1,6 +1,16 @@
 (function(window) {
 // Tab Rendering & Updates Module for Idle Bank Empire
 
+var _buyBtnCache = null;
+var _lastManagersHash = null;
+var _lastBranchesHash = null;
+
+function invalidateTabHashes() {
+    _lastManagersHash = null;
+    _lastBranchesHash = null;
+    _buyBtnCache = null;
+}
+
 // Helper to create a visual separator HR
 function createSeparator(container) {
     const hr = document.createElement('hr');
@@ -105,6 +115,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 function renderUpgradesTab() {
     const container = document.getElementById('tab-upgrades');
     if (!container) return;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -291,6 +302,14 @@ const statLabels = {
 function renderManagersTab() {
     const container = document.getElementById('tab-managers');
     if (!container) return;
+    const hash = JSON.stringify({
+        managers: game.state.managers,
+        managerUpgrades: game.state.managerUpgrades,
+        cash: Math.floor(game.state.cash / 1000)
+    });
+    if (hash === _lastManagersHash) return;
+    _lastManagersHash = hash;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -679,6 +698,14 @@ function renderDepartmentsTab() {
 function renderBranchesTab() {
     const container = document.getElementById('tab-branches');
     if (!container) return;
+    const hash = JSON.stringify({
+        currentBranch: game.state.currentBranch,
+        shares: game.state.shares,
+        cash: Math.floor(game.state.cash / 1000)
+    });
+    if (hash === _lastBranchesHash) return;
+    _lastBranchesHash = hash;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -1129,6 +1156,7 @@ function renderMissionsTab() {
 
 // Refresh all active tabs
 function refreshAllTabs() {
+    invalidateTabHashes();
     const activeTabEl = document.querySelector('.tab-btn.active');
     const activeTab = activeTabEl ? activeTabEl.getAttribute('data-tab') : 'upgrades';
     if (activeTab === 'upgrades') renderUpgradesTab();
@@ -1148,7 +1176,8 @@ function updateButtonAffordability() {
     if (activeTab === 'upgrades') {
         const container = document.getElementById('tab-upgrades');
         if (!container) return;
-        const buttons = container.querySelectorAll('.buy-btn');
+        if (!_buyBtnCache) _buyBtnCache = container.querySelectorAll('.buy-btn');
+        const buttons = _buyBtnCache;
         buttons.forEach(btn => {
             const type = btn.getAttribute('data-type');
             const id = parseInt(btn.getAttribute('data-id'));
@@ -1380,6 +1409,7 @@ function updateButtonAffordability() {
     window.renderMissionsTab = renderMissionsTab;
     window.refreshAllTabs = refreshAllTabs;
     window.updateButtonAffordability = updateButtonAffordability;
+    window.invalidateTabHashes = invalidateTabHashes;
 })(window);
 
 

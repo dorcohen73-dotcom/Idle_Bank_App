@@ -173,12 +173,13 @@ function applyLanguage(lang) {
 
     const activeTabEl = document.querySelector('.tab-btn.active');
     const activeTab = activeTabEl ? activeTabEl.getAttribute('data-tab') : 'upgrades';
+    if (typeof window.invalidateTabHashes === 'function') window.invalidateTabHashes();
     if (activeTab === 'upgrades' && typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
     else if (activeTab === 'managers' && typeof window.renderManagersTab === 'function') window.renderManagersTab();
     else if (activeTab === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
     else if (activeTab === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
     else if (activeTab === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
-    
+
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
     if (DOM_CACHE.securityPath) DOM_CACHE.securityPath.title = tObj.tooltips.guard;
     if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
@@ -1442,36 +1443,37 @@ function triggerMilestoneConfetti(element) {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const container = document.getElementById('floating-container') || document.body;
-    
+
     const colors = ['#dfab29', '#ffd700', '#10b981', '#3b82f6', '#ec4899', '#a855f7'];
-    
-    for (let i = 0; i < 45; i++) {
+    const MAX_CONFETTI = window.innerWidth <= 768 ? 15 : 30;
+
+    const particles = [];
+    for (let i = 0; i < MAX_CONFETTI; i++) {
         const particle = document.createElement('div');
         particle.className = 'confetti-particle';
-        
-        // Random velocity and direction
+
         const angle = Math.random() * Math.PI * 2;
         const distance = 40 + Math.random() * 110;
         const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance - (30 + Math.random() * 40); // bias upwards
-        
+        const dy = Math.sin(angle) * distance - (30 + Math.random() * 40);
+
         particle.style.setProperty('--dx', `${dx}px`);
         particle.style.setProperty('--dy', `${dy}px`);
         particle.style.left = `${centerX}px`;
         particle.style.top = `${centerY}px`;
-        
-        // Random style details
+
         particle.style.background = colors[Math.floor(Math.random() * colors.length)];
         const size = 5 + Math.random() * 6;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         if (Math.random() > 0.5) {
-            particle.style.borderRadius = '0px'; // squares
+            particle.style.borderRadius = '0px';
         }
-        
+
         container.appendChild(particle);
-        setTimeout(() => particle.remove(), 1200);
+        particles.push(particle);
     }
+    setTimeout(() => particles.forEach(p => p.remove()), 1200);
 }
 
 function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type, extraId) {
@@ -1520,6 +1522,9 @@ function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type,
     
     if (spent > 0) {
         spawnFloating(`-$${formatMoney(spent)}`, x, y, 'red');
+        if (typeof spawnParticles === 'function') {
+            spawnParticles(x, y, 8, 'sparkle');
+        }
     }
     
     if (isUnlock) {
@@ -1780,6 +1785,7 @@ function tick(timestamp) {
 
         game.update(cappedDt);
         updateActiveCoins(cappedDt);
+        if (typeof updateFloatingText === 'function') updateFloatingText(cappedDt);
 
         // Contextual ad offer
         if (game._contextualAdPending) {
@@ -2234,6 +2240,7 @@ function initUIEvents() {
                 window.renderDailyChallengesSection();
             }
 
+            if (typeof window.invalidateTabHashes === 'function') window.invalidateTabHashes();
             if (tabId === 'upgrades' && typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
             else if (tabId === 'managers' && typeof window.renderManagersTab === 'function') window.renderManagersTab();
             else if (tabId === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
@@ -2759,7 +2766,7 @@ function initUIEvents() {
     function triggerVipVisitBanner() {
         if (document.querySelector('.modal-overlay.active')) {
             // מודל פתוח — דחה את הבאנר
-            setTimeout(triggerVipVisitBanner, 2000);
+            window._vipBannerRetryTimeout = setTimeout(triggerVipVisitBanner, 2000);
             return;
         }
 
@@ -2831,6 +2838,10 @@ function initUIEvents() {
         if (vipBannerCountdownInterval) {
             clearInterval(vipBannerCountdownInterval);
             vipBannerCountdownInterval = null;
+        }
+        if (window._vipBannerRetryTimeout) {
+            clearTimeout(window._vipBannerRetryTimeout);
+            window._vipBannerRetryTimeout = null;
         }
         const banner = document.getElementById('vip-visit-banner');
         if (banner) banner.remove();

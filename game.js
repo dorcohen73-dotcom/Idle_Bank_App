@@ -777,7 +777,7 @@ class IdleBankGame {
 
     // --- GAME LOOP UPDATE ---
     update(dt) {
-        this.tickTimer('boost2xTimeLeft', dt);
+        this.tickTimer('boost2xTimeLeft', dt, () => { if (this.economyManager) this.economyManager.cachedTotalMult = null; });
         this.tickTimer('tellerSpeedBoostTimer', dt, () => this.recalculateEps());
 
         const advBudget = this.state.advBudget || 0;
@@ -1189,6 +1189,7 @@ class IdleBankGame {
         const secondsToAdd = hours * 3600;
         const maxSeconds = 8 * 3600;
         this.state.boost2xTimeLeft = Math.min(maxSeconds, (this.state.boost2xTimeLeft || 0) + secondsToAdd);
+        if (this.economyManager) this.economyManager.cachedTotalMult = null;
         window.gameAudio.playUnlock();
         this.saveGame();
         return true;

@@ -1,7 +1,7 @@
 class EconomyManager {
     constructor(game) {
         this.game = game;
-        this.cachedTotalMult = 1;
+        this.cachedTotalMult = null;
         this._cachedVaultCap = null;
         this._cachedTellerCap = null;
     }
@@ -26,6 +26,9 @@ class EconomyManager {
     }
 
     getTotalMultiplier() {
+        if (this.cachedTotalMult !== null && this.cachedTotalMult !== undefined) {
+            return this.cachedTotalMult;
+        }
         let mult = this.getBranchMultiplier() * this.getPrestigeMultiplier();
         
         // Add premiumYield gold upgrade boost (+10% per level)
@@ -65,6 +68,7 @@ class EconomyManager {
             const svcLvl = this.game.state.managerUpgrades.service.level;
             mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.epsBoost * svcLvl);
         }
+        this.cachedTotalMult = mult;
         return mult;
     }
 
@@ -280,10 +284,10 @@ class EconomyManager {
 
     recalculateEps() {
         let totalVal = 0;
-        const freshMult = this.getTotalMultiplier();
-        this.cachedTotalMult = freshMult;
+        this.cachedTotalMult = null;
         this._cachedVaultCap = null;
         this._cachedTellerCap = null;
+        const freshMult = this.getTotalMultiplier();
         const baseRewardWithMultiplier = this.getCurrentBaseReward() * freshMult;
         this.game.state.tellers.forEach(t => {
             if (t.unlocked) {

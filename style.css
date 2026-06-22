@@ -551,23 +551,21 @@ header {
     min-height: 240px;
 }
 
-/* 4 Tellers on 1st row, 3 Tellers on 2nd row on desktop */
+/* Up to 4 Tellers per row on desktop */
 @media (min-width: 769px) {
     .tellers-zone {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 0.75rem;
     }
     .teller-counter {
         min-width: 0;
-        max-width: none;
-        flex: none;
-    }
-    .teller-counter:nth-child(-n+4) {
-        grid-column: span 3;
+        flex: 1 1 calc(25% - 0.75rem);
+        max-width: calc(25% - 0.75rem);
     }
     .teller-counter:nth-child(n+5) {
-        grid-column: span 4;
+        max-width: calc(33.333% - 0.75rem);
     }
 }
 
@@ -5547,6 +5545,463 @@ header, .control-panel, .bank-floor {
     100% { transform: translate(0, 0); }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LUXURY DASHBOARD REDESIGN — Premium Cards & Glassmorphism
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Override header base to column layout */
+header {
+    background: rgba(7, 9, 16, 0.88) !important;
+    backdrop-filter: blur(28px) saturate(1.6) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(1.6) !important;
+    border: 1px solid rgba(223, 171, 41, 0.14) !important;
+    border-radius: 22px !important;
+    padding: 1rem 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.85rem !important;
+    align-items: stretch !important;
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 0 0 1px rgba(223, 171, 41, 0.07) !important;
+}
+
+/* ── Top bar: Brand left, Buttons right ── */
+.luxury-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+/* ── Dashboard grid ──
+   Mobile: cash full-width top row, secondary cards side-by-side below
+   Desktop: cash takes 60%, secondary cards take 40% on the right
+*/
+.luxury-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.65rem;
+}
+
+@media (min-width: 560px) {
+    .luxury-dashboard {
+        grid-template-columns: 3fr 2fr;
+        grid-template-rows: 1fr;
+    }
+    .secondary-cards-grid {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: 1fr 1fr !important;
+    }
+}
+
+@media (min-width: 900px) {
+    .luxury-dashboard {
+        grid-template-columns: 5fr 3fr;
+    }
+}
+
+/* ════════════════════════════════
+   PREMIUM CARD — BASE STYLES
+   ════════════════════════════════ */
+.premium-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        145deg,
+        rgba(16, 20, 32, 0.82) 0%,
+        rgba(10, 12, 22, 0.92) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition:
+        transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.28s ease,
+        border-color 0.28s ease;
+}
+
+.premium-card:hover {
+    transform: translateY(-4px) scale(1.01);
+}
+
+/* ════════════════════════════════
+   HERO CASH CARD
+   ════════════════════════════════ */
+.cash-hero-card {
+    min-height: 108px;
+    padding: 1.2rem 1.5rem;
+    border-color: rgba(16, 185, 129, 0.22);
+    box-shadow:
+        0 6px 32px rgba(0, 0, 0, 0.45),
+        0 0 48px rgba(16, 185, 129, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cash-hero-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 90% 10%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, rgba(5, 150, 105, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.cash-hero-card:hover {
+    border-color: rgba(16, 185, 129, 0.42);
+    box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.55),
+        0 0 70px rgba(16, 185, 129, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+/* Sweeping shimmer */
+.cash-card-shimmer {
+    position: absolute;
+    top: 0;
+    right: -120%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+        100deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.045) 50%,
+        transparent 80%
+    );
+    animation: luxury-shimmer 5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes luxury-shimmer {
+    0%   { right: -120%; opacity: 0; }
+    10%  { opacity: 1; }
+    45%  { right: 160%; opacity: 1; }
+    46%  { opacity: 0; }
+    100% { right: 160%; opacity: 0; }
+}
+
+/* Background decorative ring */
+.cash-card-bg-ring {
+    position: absolute;
+    left: -28px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(16, 185, 129, 0.11);
+    animation: ring-breathe 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cash-card-bg-ring::after {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(16, 185, 129, 0.07);
+}
+
+@keyframes ring-breathe {
+    0%, 100% { transform: translateY(-50%) scale(1);    opacity: 0.55; }
+    50%       { transform: translateY(-50%) scale(1.10); opacity: 0.9; }
+}
+
+/* Cash card content wrapper */
+.cash-card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Top row: label + live badge */
+.cash-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cash-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(52, 211, 153, 0.8);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.cash-live-badge {
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(52, 211, 153, 0.85);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 5px;
+    padding: 1px 5px;
+    animation: live-blink 2.2s ease-in-out infinite;
+}
+
+@keyframes live-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+}
+
+/* The hero number */
+.cash-amount {
+    font-size: 2.25rem;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-shadow:
+        0 0 40px rgba(16, 185, 129, 0.28),
+        0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* EPS sub-row */
+.cash-eps {
+    display: flex;
+    align-items: center;
+    gap: 0.28rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--money-green);
+    margin-top: 0.05rem;
+}
+
+.eps-arrow {
+    font-size: 0.62rem;
+    display: inline-block;
+    animation: eps-float 1.8s ease-in-out infinite;
+    color: var(--green-light);
+}
+
+@keyframes eps-float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-2.5px); }
+}
+
+/* ════════════════════════════════
+   SECONDARY CARDS GRID
+   ════════════════════════════════ */
+.secondary-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0.65rem;
+}
+
+/* ── Single secondary card ── */
+.secondary-card {
+    padding: 0.9rem 1rem;
+    border-color: rgba(223, 171, 41, 0.14);
+    box-shadow:
+        0 4px 22px rgba(0, 0, 0, 0.35),
+        0 0 32px rgba(223, 171, 41, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.18rem;
+    min-height: 80px;
+}
+
+.secondary-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 85% 5%, rgba(223, 171, 41, 0.07) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+.secondary-card:hover {
+    border-color: rgba(223, 171, 41, 0.32);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 50px rgba(223, 171, 41, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Gold top-edge accent line */
+.secondary-card-accent {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(223, 171, 41, 0.7), transparent);
+    border-radius: 0 0 2px 2px;
+}
+
+.multiplier-accent {
+    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.65), transparent);
+}
+
+/* Icon + label row */
+.secondary-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.secondary-icon {
+    font-size: 0.85rem;
+    filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.55));
+    line-height: 1;
+}
+
+.secondary-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.38);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* Main value in secondary card */
+.secondary-value {
+    font-size: 1.45rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    color: var(--primary-gold);
+    text-shadow: 0 0 24px rgba(223, 171, 41, 0.32);
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+/* Multiplier card colour override */
+.multiplier-card .secondary-value,
+.multiplier-value-wrap {
+    color: #c4b5fd !important;
+    text-shadow: 0 0 22px rgba(167, 139, 250, 0.32) !important;
+    font-size: 1.2rem !important;
+}
+
+.multiplier-card::before {
+    background: radial-gradient(ellipse at 85% 5%, rgba(167, 139, 250, 0.07) 0%, transparent 55%) !important;
+}
+
+.multiplier-card:hover {
+    border-color: rgba(167, 139, 250, 0.28) !important;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 50px rgba(167, 139, 250, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Prestige hint under shares value */
+.prestige-hint-text {
+    font-size: 0.58rem;
+    color: rgba(148, 163, 184, 0.65);
+    line-height: 1.35;
+    margin-top: 0.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ════════════════════════════════
+   RESPONSIVE — PORTRAIT MOBILE
+   ════════════════════════════════ */
+@media (max-width: 559px), (orientation: portrait) and (max-width: 768px) {
+    header {
+        padding: 0.55rem 0.7rem !important;
+        gap: 0.55rem !important;
+        border-radius: 16px !important;
+    }
+
+    .luxury-dashboard {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto !important;
+        gap: 0.5rem !important;
+    }
+
+    .secondary-cards-grid {
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 1fr !important;
+    }
+
+    .cash-hero-card {
+        min-height: 86px !important;
+        padding: 0.8rem 1rem !important;
+    }
+
+    .cash-amount {
+        font-size: 1.72rem !important;
+    }
+
+    .cash-eps {
+        font-size: 0.72rem !important;
+    }
+
+    .secondary-card {
+        min-height: 72px !important;
+        padding: 0.65rem 0.8rem !important;
+    }
+
+    .secondary-value {
+        font-size: 1.18rem !important;
+    }
+
+    .multiplier-card .secondary-value,
+    .multiplier-value-wrap {
+        font-size: 1rem !important;
+    }
+
+    .luxury-topbar {
+        gap: 0.35rem;
+    }
+
+    .brand-title p {
+        display: none !important;
+    }
+
+    .brand-icon {
+        font-size: 1.3rem !important;
+    }
+
+    .brand-title h1 {
+        font-size: 0.9rem !important;
+    }
+
+    .header-buttons-row {
+        gap: 0.3rem !important;
+    }
+
+    #prestige-preview-label {
+        display: none !important;
+    }
+}
+
+/* Narrow phone (<360px) — shrink further */
+@media (max-width: 360px) {
+    .cash-amount {
+        font-size: 1.45rem !important;
+    }
+    .secondary-value {
+        font-size: 1rem !important;
+    }
+    .multiplier-card .secondary-value,
+    .multiplier-value-wrap {
+        font-size: 0.88rem !important;
+    }
+}
+
 /* Falling Leaf */
 .falling-leaf {
     position: absolute;
@@ -6529,4 +6984,74 @@ header, .control-panel, .bank-floor {
 @keyframes loadingBar {
     0% { left: -50%; }
     100% { left: 100%; }
+}
+/* ==========================================================
+   PREMIUM ANIMATIONS (Mobile Optimized)
+   ========================================================== */
+
+/* 1. Button Click Ripple & Scale */
+.buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+}
+
+.buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {
+    transform: scale(0.92);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* 2. Premium Card Hover (3D Effect) */
+.upgrade-card.feature-card, .manager-card, .department-card {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.upgrade-card.feature-card:hover, .manager-card:hover, .department-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 20px rgba(223, 171, 41, 0.15);
+    border-color: rgba(223, 171, 41, 0.5);
+    z-index: 10;
+}
+
+/* 3. Vault Animation (Pulse & Open glow) */
+.vault-graphic {
+    transition: transform 0.2s ease, filter 0.3s ease;
+}
+.vault-graphic.vault-full {
+    animation: vaultPulse 1.5s infinite alternate;
+}
+@keyframes vaultPulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.3)); }
+    100% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.8)); }
+}
+.vault-graphic:active {
+    transform: scale(0.9);
+}
+
+/* 4. Premium Toast Achievement Sweep */
+.custom-toast {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--primary-gold);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(223, 171, 41, 0.3);
+    animation: toastPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.custom-toast::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -150%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-25deg);
+    animation: shinySweep 2.5s infinite;
+}
+
+@keyframes toastPop {
+    0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes shinySweep {
+    0% { left: -150%; }
+    50% { left: 200%; }
+    100% { left: 200%; }
 }
