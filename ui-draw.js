@@ -536,6 +536,7 @@ function draw() {
     if (game.state.cash !== lastCash || lang !== lastLang) {
         lastCash = game.state.cash;
         DOM_CACHE.cash.innerText = formatMoney(game.state.cash);
+        if (typeof window.checkPrestigeTip === 'function') window.checkPrestigeTip();
     }
     
     const currentEps = game.getEarningsPerSecond();

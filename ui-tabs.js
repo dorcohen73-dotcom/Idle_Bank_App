@@ -495,6 +495,11 @@ function renderManagersTab() {
 
             game.hireManager(type);
 
+            // Discovery tip on first manager hire
+            if (!beforeHired && game.state.managers[type] && typeof window.showDiscoveryTip === 'function') {
+                window.showDiscoveryTip('manager');
+            }
+
             handlePurchaseFeedback(btn, e, beforeCash, beforeHired, 'hire-manager', type);
             renderManagersTab();
         });
@@ -687,6 +692,11 @@ function renderDepartmentsTab() {
             const beforeUnlocked = dept ? dept.unlocked : false;
 
             game.unlockDepartment(idx);
+
+            // Discovery tip on first department unlock
+            if (!beforeUnlocked && typeof window.showDiscoveryTip === 'function') {
+                window.showDiscoveryTip('dept');
+            }
 
             handlePurchaseFeedback(btn, e, beforeCash, beforeUnlocked, 'unlock-dept', idx);
             renderDepartmentsTab();
