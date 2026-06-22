@@ -183,6 +183,9 @@ function applyLanguage(lang) {
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
     if (DOM_CACHE.securityPath) DOM_CACHE.securityPath.title = tObj.tooltips.guard;
     if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
+    if (DOM_CACHE.vaultGraphicLabel) DOM_CACHE.vaultGraphicLabel.innerText = tObj.vaultBankLabel || 'BANK';
+    if (DOM_CACHE.cashLiveBadge) DOM_CACHE.cashLiveBadge.innerText = tObj.cashLiveBadge || '● LIVE';
+    if (DOM_CACHE.splashSubtitle) DOM_CACHE.splashSubtitle.innerText = tObj.splashSubtitle || 'טוען את חווית ה-VIP...';
 
     updateMuteButton();
     rebuildTellersDOM();
@@ -2083,6 +2086,12 @@ function initUIEvents() {
     uiEventsInitialized = true;
     initFocusTrapObserver();
     if (DOM_CACHE.resetBtn) {
+        const confirmCheck = document.getElementById('reset-confirm-checkbox');
+        if (confirmCheck) {
+            confirmCheck.addEventListener('change', (e) => {
+                DOM_CACHE.resetBtn.disabled = !e.target.checked;
+            });
+        }
         DOM_CACHE.resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             initSound();
@@ -2652,6 +2661,35 @@ function initUIEvents() {
 
                 li.innerHTML = `<span class="wheel-prize-label">${label}<span style="display:block; font-size:0.75rem; color:#a3e635; font-weight:600; margin-top:0.2rem; letter-spacing:0.5px;">${valDesc}</span></span><span class="wheel-prize-weight">${p.weight}%</span>`;
                 prizeListEl.appendChild(li);
+            });
+        }
+
+        const segmentsContainer = document.getElementById('wheel-segments-container');
+        if (segmentsContainer && segmentsContainer.childElementCount === 0) {
+            GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
+                if (index >= 7) return;
+                const seg = document.createElement('div');
+                seg.className = `wheel-seg seg-${index + 1}`;
+                
+                let icon = '🎁';
+                let text = '';
+                
+                if (p.type === 'cash') {
+                    icon = p.value <= 300 ? '💰' : '💸';
+                    text = `+${Math.floor(p.value / 60)}m`;
+                } else if (p.type === 'boost') {
+                    icon = '⚡';
+                    text = `+${p.value}h`;
+                } else if (p.type === 'gold') {
+                    icon = '🏅';
+                    text = `+${p.value}`;
+                } else if (p.type === 'shares') {
+                    icon = '📈';
+                    text = `+${p.value}`;
+                }
+
+                seg.innerHTML = `<span style="display:block;font-size:1.8rem" aria-hidden="true">${icon}</span><span style="font-size:0.65rem;font-weight:900">${text}</span>`;
+                segmentsContainer.appendChild(seg);
             });
         }
 

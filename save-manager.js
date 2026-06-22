@@ -75,15 +75,21 @@ class SaveManager {
             window.refreshAllTabs();
         }
 
-        // Show daily login reward modal if pending (after offline modal, with slight delay)
+        // Show daily login reward modal if pending — wait until no other modal is open
         if (this.game.state.pendingLoginReward) {
             const hasOffline = this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0;
-            const delay = hasOffline ? 3500 : 1500;
-            setTimeout(() => {
+            const initialDelay = hasOffline ? 2000 : 1500;
+            const tryShow = (retriesLeft) => {
+                if (!retriesLeft) return;
+                if (document.querySelector('.modal-overlay.active')) {
+                    setTimeout(() => tryShow(retriesLeft - 1), 1500);
+                    return;
+                }
                 if (typeof window.showLoginRewardModal === 'function') {
                     window.showLoginRewardModal();
                 }
-            }, delay);
+            };
+            setTimeout(() => tryShow(8), initialDelay);
         }
     }
 

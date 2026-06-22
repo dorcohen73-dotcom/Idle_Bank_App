@@ -7,6 +7,9 @@ const translations = {
         mute: "השתק",
         unmute: "בטל השתקה",
         vaultVolume: "נפח",
+        vaultBankLabel: "בנק",
+        cashLiveBadge: "● פעיל",
+        splashSubtitle: "טוען את חווית ה-VIP...",
         tooltips: {
             adv: "קמפיין שיווק ממומן להבאת לקוחות",
             guard: "לחץ כדי לשלוח את הבלדר ידנית",
@@ -216,6 +219,9 @@ const translations = {
         mute: "Mute",
         unmute: "Unmute",
         vaultVolume: "Volume",
+        vaultBankLabel: "BANK",
+        cashLiveBadge: "● LIVE",
+        splashSubtitle: "Loading VIP experience...",
         tooltips: {
             adv: "Sponsored marketing campaign to attract clients",
             guard: "Click to send the courier manually",
@@ -425,6 +431,9 @@ const translations = {
         mute: "Silenciar",
         unmute: "Desactivar silencio",
         vaultVolume: "Volumen",
+        vaultBankLabel: "BANCO",
+        cashLiveBadge: "● VIVO",
+        splashSubtitle: "Cargando experiencia VIP...",
         tooltips: {
             adv: "Campaña de marketing patrocinada para atraer clientes",
             guard: "Haz clic para enviar al guardia manualmente",
@@ -634,6 +643,9 @@ const translations = {
         mute: "Выключить звук",
         unmute: "Включить звук",
         vaultVolume: "Объем",
+        vaultBankLabel: "БАНК",
+        cashLiveBadge: "● ОНЛАЙН",
+        splashSubtitle: "Загрузка VIP-опыта...",
         tooltips: {
             adv: "Рекламная кампания для привлечения клиентов",
             guard: "Нажмите, чтобы отправить инкассатора вручную",

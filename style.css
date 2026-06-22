@@ -2738,6 +2738,7 @@ footer {
 
 .adv-title {
     color: var(--text-main);
+    cursor: pointer;
 }
 
 .adv-value {
@@ -4897,8 +4898,17 @@ header, .control-panel, .bank-floor {
     -webkit-backdrop-filter: blur(16px);
     z-index: 200;
     padding-bottom: env(safe-area-inset-bottom);
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .bottom-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .bottom-nav-btn {
@@ -4907,7 +4917,8 @@ header, .control-panel, .bank-floor {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    flex: 1;
+    flex: 0 0 auto;
+    min-width: 64px;
     height: 60px;
     background: none;
     border: none;
@@ -4918,7 +4929,8 @@ header, .control-panel, .bank-floor {
     transition: color 0.2s ease;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    padding: 0;
+    padding: 0 4px;
+    scroll-snap-align: start;
   }
 
   .bottom-nav-btn.active {
@@ -5228,10 +5240,6 @@ header, .control-panel, .bank-floor {
     display: none !important;
   }
 
-  /* 6 כפתורים ב-bottom nav — font קטן יותר */
-  .bottom-nav-btn {
-    font-size: 0.56rem;
-  }
   .bottom-nav-btn .nav-icon {
     font-size: 1.15rem;
   }
@@ -7000,6 +7008,201 @@ header {
 }
 
 /* 2. Premium Card Hover (3D Effect) */
+#tutorial-skip:hover { color: #d1d5db; }
+
+.tutorial-highlight-pulse {
+    outline: 3px solid #3b82f6 !important;
+    outline-offset: 4px !important;
+    border-radius: 6px;
+}
+
+/* ==========================================================
+   UI/UX OVERHAUL (Juice, Visual Queue, Feature Cards, Splash)
+   ========================================================== */
+
+/* 1. Floating Text Animation (Juice) */
+.floating-text {
+    position: absolute;
+    pointer-events: none;
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
+    z-index: 1000;
+    animation: floatUpFade 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes floatUpFade {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    20% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+    80% { transform: translateY(-30px) scale(1); opacity: 0.8; }
+    100% { transform: translateY(-40px) scale(0.9); opacity: 0; }
+}
+
+/* Glowing Affordable Buttons */
+.upgrade-btn.affordable, .plaque-collect-btn.affordable {
+    animation: pulse-glow-btn 2s infinite alternate;
+}
+
+@keyframes pulse-glow-btn {
+    0% { box-shadow: 0 0 5px rgba(223, 171, 41, 0.2); }
+    100% { box-shadow: 0 0 15px rgba(223, 171, 41, 0.6), inset 0 0 5px rgba(223, 171, 41, 0.3); }
+}
+
+/* 2. Visual Queue */
+.queue-zone {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 2px;
+    height: 30px;
+    padding: 0 10px;
+}
+
+.visual-client-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    animation: slideInClient 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transform-origin: bottom center;
+}
+
+@keyframes slideInClient {
+    0% { transform: translateX(20px) scale(0.5); opacity: 0; }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+/* 3. Feature Cards (Managers & Departments) */
+.feature-card {
+    background: radial-gradient(circle at top left, rgba(28, 38, 57, 0.8) 0%, rgba(10, 14, 23, 0.95) 100%);
+    border: 1px solid rgba(223, 171, 41, 0.15);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.feature-card:hover {
+    border-color: rgba(223, 171, 41, 0.4);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.6), 0 0 15px rgba(223, 171, 41, 0.1);
+    transform: translateY(-2px);
+}
+
+.feature-card-icon {
+    font-size: 2.5rem;
+    min-width: 60px;
+    text-align: center;
+    filter: drop-shadow(0 0 10px rgba(223, 171, 41, 0.3));
+}
+
+.feature-card-content {
+    flex: 1;
+}
+
+.feature-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 4px;
+}
+
+.feature-card-desc {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    line-height: 1.4;
+}
+
+.feature-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+/* 4. Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.splash-logo {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: bounceLogo 2s infinite ease-in-out;
+    filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.5));
+}
+
+@keyframes bounceLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.splash-title {
+    color: var(--color-gold);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.splash-subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin-bottom: 40px;
+}
+
+.splash-loader {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.splash-loader::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; height: 100%; width: 50%;
+    background: var(--color-gold);
+    animation: loadingBar 2s infinite ease-in-out;
+    border-radius: 4px;
+}
+
+@keyframes loadingBar {
+    0% { left: -50%; }
+    100% { left: 100%; }
+}
+/* ==========================================================
+   PREMIUM ANIMATIONS (Mobile Optimized)
+   ========================================================== */
+
+/* 1. Button Click Ripple & Scale */
+.buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+}
+
+.buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {
+    transform: scale(0.92);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* 2. Premium Card Hover (3D Effect) */
 .upgrade-card.feature-card, .manager-card, .department-card {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -7051,7 +7254,5 @@ header {
 }
 
 @keyframes shinySweep {
-    0% { left: -150%; }
-    50% { left: 200%; }
-    100% { left: 200%; }
-}
+.weekly-stats-box { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.75rem 1rem; margin: 0.75rem 0; text-align: right; font-size: 0.88rem; line-height: 1.8; }
+.weekly-prestige-options { margin-top: 1rem; }

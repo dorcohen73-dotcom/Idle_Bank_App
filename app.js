@@ -91,7 +91,10 @@
         langModalText: null,
         settingsDangerTitle: null,
         settingsThemeTitle: null,
-        labelAdvControl: null
+        labelAdvControl: null,
+        vaultGraphicLabel: null,
+        cashLiveBadge: null,
+        splashSubtitle: null
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -170,6 +173,9 @@
         window.DOM_CACHE.settingsDangerTitle = document.getElementById('settings-danger-title');
         window.DOM_CACHE.settingsThemeTitle = document.getElementById('settings-theme-title');
         window.DOM_CACHE.labelAdvControl = document.getElementById('label-adv-control');
+        window.DOM_CACHE.vaultGraphicLabel = document.getElementById('vault-graphic-label');
+        window.DOM_CACHE.cashLiveBadge = document.getElementById('cash-live-badge');
+        window.DOM_CACHE.splashSubtitle = document.getElementById('splash-subtitle');
 
         // Instantiate game logic and secure global IdleBankGame class
         if (typeof window.IdleBankGame !== 'function') {
