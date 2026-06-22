@@ -239,6 +239,12 @@ function applyTheme(themeName) {
 
 var AdService = {
     _isShowing: false,
+    lastWatchedAt: 0,
+    AD_OFFER_COOLDOWN_MS: 7 * 60 * 1000,
+    isInCooldown: function() {
+        return AdService.lastWatchedAt > 0 &&
+            (Date.now() - AdService.lastWatchedAt) < AdService.AD_OFFER_COOLDOWN_MS;
+    },
     show: function(callback) {
         if (AdService._isShowing) return;
         AdService._isShowing = true;
@@ -283,6 +289,7 @@ var AdService = {
                 if (timeLeft <= 0) {
                     clearInterval(interval);
                     AdService._isShowing = false;
+                    AdService.lastWatchedAt = Date.now();
                     if (overlay.parentNode) {
                         document.body.removeChild(overlay);
                     }
@@ -880,7 +887,8 @@ function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         game.spendCash(cost);
         eventModal.classList.remove('active');
-        spawnFloating(lang === 'he' ? 'ציוד תוקן!' : 'Equipment fixed!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        game.triggerSpeedBoost(600, 1.15);
+        spawnFloating(lang === 'he' ? 'ציוד תוקן! +15% מהירות' : 'Fixed! +15% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -906,8 +914,8 @@ function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         playAd(() => {
-            game.triggerSpeedBoost(120, 1.0);
-            spawnFloating(lang === 'he' ? 'קבלן הגיע!' : 'Contractor arrived!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            game.triggerSpeedBoost(300, 1.5);
+            spawnFloating(lang === 'he' ? 'קבלן הגיע! +50% מהירות' : 'Contractor arrived! +50% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -958,7 +966,8 @@ function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         playAd(() => {
-            spawnFloating(lang === 'he' ? 'גנרטור ממומן! פעילות מלאה' : 'Generator funded! Full activity', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            game.triggerSpeedBoost(600, 1.25);
+            spawnFloating(lang === 'he' ? 'גנרטור ממומן! +25% מהירות' : 'Generator funded! +25% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1391,6 +1400,10 @@ function triggerRandomEvent() {
         handler(container, lang, tObj, eObj, eventModal);
     }
 
+    if (AdService.isInCooldown()) {
+        container.querySelectorAll('.ad-option').forEach(btn => btn.remove());
+    }
+
     eventModal.classList.add('active');
 }
 
@@ -1644,6 +1657,7 @@ function handleMissionRedirect(missionType, targetId) {
 }
 
 function showContextualAdBanner(type) {
+    if (AdService.isInCooldown()) return;
     if (game.state.boost2xTimeLeft > 0) return;
     if (document.querySelector('.modal-overlay.active')) return;
     if (contextualBannerShown) return;
@@ -1808,9 +1822,11 @@ function tick(timestamp) {
                     boostOfferEndTime = 0;
                     boostOfferNextTime = now + (900 + Math.random() * 900) * 1000;
                 } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
-                    // Start new offer window: 10-20 min duration
-                    boostOfferEndTime = now + (600 + Math.random() * 600) * 1000;
-                    boostOfferNextTime = 0;
+                    if (!AdService.isInCooldown()) {
+                        // Start new offer window: 10-20 min duration
+                        boostOfferEndTime = now + (600 + Math.random() * 600) * 1000;
+                        boostOfferNextTime = 0;
+                    }
                 }
             }
             window._boostOfferEndTime = boostOfferEndTime;
@@ -3135,16 +3151,56 @@ function initUIEvents() {
     // ==========================================
 
     var TUTORIAL_STEPS = [
-        { target: '#teller-collect-0', text: 'לחצי על כפתור "אסוף" בדלפק לאסוף את הכסף שנצבר שם' },
-        { target: '.vault-graphic', text: 'לחצי על כפתור "רוקן כספת" לאסוף את הכסף שנצבר בכספת' },
-        { target: '[data-tab="upgrades"]', text: 'כאן תוכלי לשדרג את הדלפקים ולהגדיל את ההכנסה' },
-        { target: '.guard-hire-btn, #upgrade-guard-0, [data-type="guard"]', text: 'הבלדרים מעבירים כסף מהדלפקים לכספת אוטומטית — שדרגי אותם!' },
-        { target: '[data-tab="departments"]', text: 'מחלקות מגדילות את ההכנסה בכפולות — פתחי אותן בהקדם' },
-        { target: '[data-tab="managers"]', text: 'מנהלים עובדים בשבילך גם כשאת לא כאן — שכרי מנהלים!' },
-        { target: '.prestige-btn, [data-tab="branches"]', text: 'כשתצברי מספיק כסף תוכלי לעשות Prestige ולקבל מניות זהב שמגדילות את כל ההכנסה לצמיתות' }
+        { target: '#teller-collect-0',                           textKey: 0 },
+        { target: '.vault-graphic',                              textKey: 1 },
+        { target: '[data-tab="upgrades"]',                       textKey: 2 },
+        { target: '.guard-hire-btn, #upgrade-guard-0, [data-type="guard"]', textKey: 3 },
+        { target: '[data-tab="departments"]',                    textKey: 4 },
+        { target: '[data-tab="managers"]',                       textKey: 5 },
+        { target: '.prestige-btn, [data-tab="branches"]',        textKey: 6 }
     ];
 
+    var TUTORIAL_TEXTS = {
+        he: [
+            'לחץ על כפתור "אסוף" בדלפק כדי לאסוף את הכסף שנצבר שם',
+            'לחץ על כפתור "רוקן כספת" כדי לאסוף את הכסף שנצבר בכספת',
+            'כאן תוכל לשדרג את הדלפקים ולהגדיל את ההכנסה',
+            'הבלדרים מעבירים כסף מהדלפקים לכספת אוטומטית — שדרג אותם!',
+            'מחלקות מגדילות את ההכנסה בכפולות — פתח אותן בהקדם',
+            'מנהלים עובדים בשבילך גם כשאתה לא כאן — שכור מנהלים!',
+            'כשתצבור מספיק כסף תוכל לעשות Prestige ולקבל מניות זהב שמגדילות את כל ההכנסה לצמיתות'
+        ],
+        en: [
+            'Tap "Collect" on a teller desk to collect the cash stored there',
+            'Tap "Empty Vault" to collect the cash stored in the vault',
+            'Here you can upgrade your tellers to increase income',
+            'Couriers automatically transfer cash from tellers to the vault — upgrade them!',
+            'Departments multiply your income — unlock them as soon as possible',
+            'Managers work for you even when you are away — hire them!',
+            'Once you earn enough, do a Prestige to get Gold Shares that permanently multiply all income'
+        ],
+        es: [
+            'Toca "Cobrar" en una caja para recolectar el dinero acumulado',
+            'Toca "Vaciar Bóveda" para recolectar el dinero de la bóveda',
+            'Aquí puedes mejorar tus cajas para aumentar los ingresos',
+            'Los mensajeros transfieren dinero automáticamente — ¡mejóralos!',
+            'Los departamentos multiplican tus ingresos — ¡desbloquéalos pronto!',
+            'Los gerentes trabajan aunque no estés — ¡contratalos!',
+            'Cuando acumules suficiente, haz Prestige para obtener Acciones de Oro que multiplican permanentemente los ingresos'
+        ],
+        ru: [
+            'Нажми «Собрать» у кассы, чтобы забрать накопленные деньги',
+            'Нажми «Опустошить хранилище», чтобы забрать деньги из хранилища',
+            'Здесь можно улучшать кассы для увеличения дохода',
+            'Курьеры автоматически переносят деньги из касс в хранилище — улучшай их!',
+            'Отделы умножают доход — открывай их как можно скорее',
+            'Менеджеры работают, даже когда тебя нет — нанимай их!',
+            'Набрав достаточно, сделай Prestige и получи Золотые Акции, которые навсегда увеличат весь доход'
+        ]
+    };
+
     var currentTutorialStep = 0;
+    var _tutorialResizeHandler = null;
 
     function _positionTutorialVisuals(targetEl) {
         var spotlight = document.getElementById('tutorial-spotlight');
@@ -3203,15 +3259,25 @@ function initUIEvents() {
         var textEl  = document.getElementById('tutorial-text');
         if (!overlay || !textEl) return;
 
+        var lang = (window.game.state && window.game.state.language) || 'he';
+        var texts = TUTORIAL_TEXTS[lang] || TUTORIAL_TEXTS.he;
         var step = TUTORIAL_STEPS[stepIndex];
-        textEl.textContent = step.text;
+        textEl.textContent = texts[step.textKey];
         overlay.style.display = 'flex';
+
+        if (_tutorialResizeHandler) {
+            window.removeEventListener('resize', _tutorialResizeHandler);
+            _tutorialResizeHandler = null;
+        }
 
         var target = document.querySelector(step.target);
         if (target) {
             try { target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e) {}
-            // Delay positioning slightly so scrollIntoView settles first
-            setTimeout(function() { _positionTutorialVisuals(target); }, 120);
+            setTimeout(function() {
+                _positionTutorialVisuals(target);
+                _tutorialResizeHandler = function() { _positionTutorialVisuals(target); };
+                window.addEventListener('resize', _tutorialResizeHandler, { passive: true });
+            }, 120);
         } else {
             _positionTutorialVisuals(null);
         }
@@ -3221,6 +3287,10 @@ function initUIEvents() {
         if (!window.game || !window.game.state) return;
         window.game.state.tutorialCompleted = true;
         window.game.state.tutorialStep = TUTORIAL_STEPS.length;
+        if (_tutorialResizeHandler) {
+            window.removeEventListener('resize', _tutorialResizeHandler);
+            _tutorialResizeHandler = null;
+        }
         var overlay = document.getElementById('tutorial-overlay');
         if (overlay) overlay.style.display = 'none';
         _positionTutorialVisuals(null);
