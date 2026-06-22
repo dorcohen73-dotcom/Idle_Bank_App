@@ -93,17 +93,21 @@ class EconomyManager {
     }
 
     getTellerCapacity(level) {
+        if (!this._cachedTellerCap) this._cachedTellerCap = new Map();
+        if (this._cachedTellerCap.has(level)) return this._cachedTellerCap.get(level);
+
         let cap = Math.round(GAME_CONFIG.TELLER_BASE_CAPACITY * Math.pow(GAME_CONFIG.TELLER_CAPACITY_GROWTH, level - 1));
-        
+
         if (this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service) {
             const svcLvl = this.game.state.managerUpgrades.service.level;
             cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.capacityBoost * svcLvl)); // +5% desk capacity per level
         }
-        
+
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.tellerCapacityBoost) {
             cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.tellerCapacityBoost)); // +10% per level
         }
-        
+
+        this._cachedTellerCap.set(level, cap);
         return cap;
     }
 

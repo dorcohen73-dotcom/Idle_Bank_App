@@ -647,8 +647,8 @@ class IdleBankGame {
         if (streak >= 7)  return { type: 'shares', value: 1 };
         if (streak >= 5)  return { type: 'boost', value: 1800 };
         if (streak >= 3)  return { type: 'gold', value: 1 };
-        if (streak >= 2)  return { type: 'cash', value: eps * 1800 };
-        return { type: 'cash', value: eps * 300 };
+        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
+        return { type: 'cash', value: Math.max(180, eps * 300) };
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -896,6 +896,8 @@ class IdleBankGame {
         const finalRewardForTick = baseRewardForTick * this.getTotalMultiplier();
 
         // Updating Teller processing timers
+        let _tickVipCount = 0;
+        let _tickHadNonVip = false;
         this.state.tellers.forEach(t => {
             if (t.unlocked && t.isProcessing) {
                 t.processingTimeLeft -= dt;
@@ -907,19 +909,11 @@ class IdleBankGame {
                         if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
                         this.state.stats.vipServed++;
                         this._contextualAdPending = 'vip';
+                        _tickVipCount++;
+                    } else {
+                        _tickHadNonVip = true;
                     }
                     this.missionsDirty = true;
-
-                    // vip_marathon tracking: count consecutive VIP/rich clients; reset on normal client
-                    this.state.missions.forEach(m => {
-                        if (m.type === 'vip_marathon' && !m.completed) {
-                            if (t.customerType === 'vip' || t.customerType === 'rich') {
-                                m.consecutiveVip = (m.consecutiveVip || 0) + 1;
-                            } else {
-                                m.consecutiveVip = 0; // streak broken
-                            }
-                        }
-                    });
 
                     // boost_run tracking: accumulate cash earned while boost is active
                     if (this.state.boost2xTimeLeft > 0) {
@@ -940,6 +934,20 @@ class IdleBankGame {
                 }
             }
         });
+
+        // vip_marathon: apply streak update once per tick based on all tellers that finished this tick.
+        // A non-VIP served by any teller breaks the streak, regardless of other tellers serving VIPs.
+        if (_tickVipCount > 0 || _tickHadNonVip) {
+            this.state.missions.forEach(m => {
+                if (m.type === 'vip_marathon' && !m.completed) {
+                    if (_tickHadNonVip) {
+                        m.consecutiveVip = 0;
+                    } else {
+                        m.consecutiveVip = (m.consecutiveVip || 0) + _tickVipCount;
+                    }
+                }
+            });
+        }
 
         // Update Guards state machine
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);

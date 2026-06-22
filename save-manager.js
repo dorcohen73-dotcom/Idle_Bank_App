@@ -320,6 +320,19 @@ class SaveManager {
         // C-14: backup save before any migration, to allow recovery if migration fails
         try { localStorage.setItem('idle_bank_save_backup', localStorage.getItem('idle_bank_save')); } catch(e) {}
 
+        // C-15: Deutsche Bank was inserted at index 2, shifting old branches 2→3 and 3→4.
+        // Detect old saves by checking if visitedBranches lacks the 'deutsche' sentinel.
+        if (!Array.isArray(state.visitedBranches) || !state.visitedBranches.includes('deutsche_migrated')) {
+            if (state.currentBranch >= 2) state.currentBranch++;
+            if (state.maxBranchUnlocked >= 2) state.maxBranchUnlocked++;
+            if (!Array.isArray(state.visitedBranches)) state.visitedBranches = [];
+            // Shift existing visited branch indices: 2→3, 3→4
+            state.visitedBranches = state.visitedBranches
+                .map(idx => (typeof idx === 'number' && idx >= 2) ? idx + 1 : idx)
+                .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
+            state.visitedBranches.push('deutsche_migrated'); // sentinel — never re-run
+        }
+
         // Backward compatibility migration from Rachel, Alan, Dan to 6 managers:
         if (state.managers && (state.managers.teller !== undefined || state.managers.guard !== undefined || state.managers.vault !== undefined)) {
             const oldT = state.managers.teller || false;
