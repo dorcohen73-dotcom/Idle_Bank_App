@@ -3274,7 +3274,19 @@ function initUIEvents() {
                     window.game.state.lifetimeCash <= 300 &&
                     !window.game.state.shares &&
                     !(window.game.state.missionsCompleted > 0);
-        if (isNew) setTimeout(function() { showDiscoveryTip('start'); }, 2500);
+        if (isNew) setTimeout(function() {
+            // Wait for language modal to be dismissed before showing first tip
+            var langModal = document.getElementById('lang-modal');
+            if (langModal && langModal.classList.contains('active')) {
+                var onLangClose = function() {
+                    langModal.removeEventListener('transitionend', onLangClose);
+                    setTimeout(function() { showDiscoveryTip('start'); }, 800);
+                };
+                langModal.addEventListener('transitionend', onLangClose);
+            } else {
+                showDiscoveryTip('start');
+            }
+        }, 2500);
     }
 
     function checkPrestigeTip() {
