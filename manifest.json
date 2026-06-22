@@ -1,12 +1,16 @@
 {
-  "name": "Bank Empire",
-  "short_name": "Bank Empire",
-  "description": "Premium Idle Bank Simulator Game",
-  "start_url": "index.html",
+  "name": "אימפריית הבנקים",
+  "short_name": "בנק Empire",
+  "description": "משחק Idle בנקאי פרימיום — בנה אימפריית בנקים עולמית",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#dfab29",
   "orientation": "portrait",
+  "lang": "he",
+  "dir": "rtl",
+  "categories": ["games", "entertainment"],
   "icons": [
     { "src": "תמונות/icon-192.png", "sizes": "192x192", "type": "image/png" },
     {
@@ -15,5 +19,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

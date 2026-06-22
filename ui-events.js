@@ -610,8 +610,6 @@ function handleSecurityEvent(container, lang, tObj, eObj, eventModal) {
             const msg = lang === 'he' ? `האבטחה הדפה את הפורצים! קיבלת מענק ביטוחי של ${formatMoney(payout)}.` : `Security held the line! You received an insurance payout of ${formatMoney(payout)}.`;
             if (typeof window.showToast === 'function') {
                 window.showToast(msg, 'success');
-            } else {
-                console.log(msg);
             }
             spawnFloating(`+$${formatMoney(payout)}`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
         }

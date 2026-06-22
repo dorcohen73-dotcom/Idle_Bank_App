@@ -44,11 +44,9 @@ class SaveManager {
         if (serverTime) {
             this.serverTimeOffset = serverTime - Date.now();
             this.isServerTimeVerified = true;
-            console.log(`Server time verified. Local clock offset: ${this.serverTimeOffset}ms`);
         } else {
             this.serverTimeOffset = 0;
             this.isServerTimeVerified = false;
-            console.log("Using unverified local clock for time calculations.");
         }
         
         // Execute offline calculations now that time verification status is settled

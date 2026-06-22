@@ -290,7 +290,6 @@
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
                 .then(reg => {
-                    console.log('Service Worker registered', reg);
                     reg.update();
                 })
                 .catch(err => console.error('Service Worker registration failed', err));
@@ -318,7 +317,6 @@
         if (activeGame) {
             try {
                 activeGame.saveGame(true); // Force immediate save on crash
-                console.log("State successfully saved during window.onerror crash recovery.");
             } catch (saveErr) {
                 console.error("Failed to save state during window.onerror crash recovery:", saveErr);
             }
@@ -332,7 +330,6 @@
         if (activeGame) {
             try {
                 activeGame.saveGame(true); // Force immediate save on crash
-                console.log("State successfully saved during unhandledrejection crash recovery.");
             } catch (saveErr) {
                 console.error("Failed to save state during unhandledrejection crash recovery:", saveErr);
             }
