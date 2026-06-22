@@ -147,9 +147,12 @@ class IdleBankGame {
             // Branch Welcome Bonus
             visitedBranches: [],
 
-            // Tutorial
+            // Tutorial (legacy — kept for save compatibility)
             tutorialStep: 0,
-            tutorialCompleted: false
+            tutorialCompleted: false,
+
+            // Discovery tips — tracks which contextual tips were already shown
+            discoveredTips: {}
         };
 
         this._contextualAdPending = null;

@@ -290,6 +290,8 @@ var AdService = {
                     clearInterval(interval);
                     AdService._isShowing = false;
                     AdService.lastWatchedAt = Date.now();
+                    boostOfferEndTime = 0;
+                    window._boostOfferEndTime = 0;
                     if (overlay.parentNode) {
                         document.body.removeChild(overlay);
                     }
@@ -351,6 +353,8 @@ function openPrestigeModal(target) {
         modal.setAttribute('data-target-branch', target);
         modal.classList.add('active');
     }
+    // Discovery tip: first time player opens prestige modal
+    if (typeof window.showDiscoveryTip === 'function') window.showDiscoveryTip('prestige');
 }
 
 function openBoostModal() {
@@ -2373,6 +2377,7 @@ function initUIEvents() {
                 beforeVal = game.state.guards[id].unlocked;
                 feedType = 'unlock-guard';
                 game.unlockGuard(id);
+                if (!beforeVal) showDiscoveryTip('guard');
             } else if (btn.id === 'upgrade-vault-btn') {
                 beforeVal = game.state.vault.level;
                 feedType = 'vault';
@@ -2515,6 +2520,9 @@ function initUIEvents() {
                 spawnVaultCoins(collected, rectBtn);
                 game.saveGame();
                 draw();
+                // Discovery tip: first time vault is collected (after start tip was already shown)
+                var tips = game.state.discoveredTips || {};
+                if (!tips.vault && tips.start) showDiscoveryTip('vault');
             }
         });
     }
@@ -2794,6 +2802,8 @@ function initUIEvents() {
                     game.state.lastSpinTime = Date.now();
                     game.saveGame();
                     draw();
+                    // Discovery tip: first fortune wheel spin
+                    showDiscoveryTip('fortune');
 
                     if (resultEl) {
                         const titleText = (tObj2.fortuneWheelPrizeTitle || 'זכית ב') + ':';
@@ -2876,7 +2886,7 @@ function initUIEvents() {
             </div>
             <div class="vip-banner-btns">
                 <button class="vip-serve-btn" id="vip-serve-cash">${serveText}</button>
-                <button class="vip-serve-btn vip-premium-btn" id="vip-serve-premium">${premiumText}</button>
+                ${!AdService.isInCooldown() ? `<button class="vip-serve-btn vip-premium-btn" id="vip-serve-premium">${premiumText}</button>` : ''}
             </div>
         `;
         document.body.appendChild(banner);
@@ -2902,10 +2912,13 @@ function initUIEvents() {
             initSound();
             serveVipVisitor(false);
         });
-        document.getElementById('vip-serve-premium').addEventListener('click', () => {
-            initSound();
-            serveVipVisitor(true);
-        });
+        const premiumBtn = document.getElementById('vip-serve-premium');
+        if (premiumBtn) {
+            premiumBtn.addEventListener('click', () => {
+                initSound();
+                serveVipVisitor(true);
+            });
+        }
     }
 
     function removeVipVisitBanner() {
@@ -3147,193 +3160,137 @@ function initUIEvents() {
     }
 
     // ==========================================
-    // TUTORIAL SYSTEM
+    // DISCOVERY TIPS SYSTEM
     // ==========================================
+    // Shows a contextual bottom panel the first time a player
+    // reaches something new. Tips are queued and shown one at a time.
 
-    var TUTORIAL_STEPS = [
-        { target: '#teller-collect-0',                           textKey: 0 },
-        { target: '.vault-graphic',                              textKey: 1 },
-        { target: '[data-tab="upgrades"]',                       textKey: 2 },
-        { target: '.guard-hire-btn, #upgrade-guard-0, [data-type="guard"]', textKey: 3 },
-        { target: '[data-tab="departments"]',                    textKey: 4 },
-        { target: '[data-tab="managers"]',                       textKey: 5 },
-        { target: '.prestige-btn, [data-tab="branches"]',        textKey: 6 }
-    ];
-
-    var TUTORIAL_TEXTS = {
-        he: [
-            'לחץ על כפתור "אסוף" בדלפק כדי לאסוף את הכסף שנצבר שם',
-            'לחץ על כפתור "רוקן כספת" כדי לאסוף את הכסף שנצבר בכספת',
-            'כאן תוכל לשדרג את הדלפקים ולהגדיל את ההכנסה',
-            'הבלדרים מעבירים כסף מהדלפקים לכספת אוטומטית — שדרג אותם!',
-            'מחלקות מגדילות את ההכנסה בכפולות — פתח אותן בהקדם',
-            'מנהלים עובדים בשבילך גם כשאתה לא כאן — שכור מנהלים!',
-            'כשתצבור מספיק כסף תוכל לעשות Prestige ולקבל מניות זהב שמגדילות את כל ההכנסה לצמיתות'
-        ],
-        en: [
-            'Tap "Collect" on a teller desk to collect the cash stored there',
-            'Tap "Empty Vault" to collect the cash stored in the vault',
-            'Here you can upgrade your tellers to increase income',
-            'Couriers automatically transfer cash from tellers to the vault — upgrade them!',
-            'Departments multiply your income — unlock them as soon as possible',
-            'Managers work for you even when you are away — hire them!',
-            'Once you earn enough, do a Prestige to get Gold Shares that permanently multiply all income'
-        ],
-        es: [
-            'Toca "Cobrar" en una caja para recolectar el dinero acumulado',
-            'Toca "Vaciar Bóveda" para recolectar el dinero de la bóveda',
-            'Aquí puedes mejorar tus cajas para aumentar los ingresos',
-            'Los mensajeros transfieren dinero automáticamente — ¡mejóralos!',
-            'Los departamentos multiplican tus ingresos — ¡desbloquéalos pronto!',
-            'Los gerentes trabajan aunque no estés — ¡contratalos!',
-            'Cuando acumules suficiente, haz Prestige para obtener Acciones de Oro que multiplican permanentemente los ingresos'
-        ],
-        ru: [
-            'Нажми «Собрать» у кассы, чтобы забрать накопленные деньги',
-            'Нажми «Опустошить хранилище», чтобы забрать деньги из хранилища',
-            'Здесь можно улучшать кассы для увеличения дохода',
-            'Курьеры автоматически переносят деньги из касс в хранилище — улучшай их!',
-            'Отделы умножают доход — открывай их как можно скорее',
-            'Менеджеры работают, даже когда тебя нет — нанимай их!',
-            'Набрав достаточно, сделай Prestige и получи Золотые Акции, которые навсегда увеличат весь доход'
-        ]
+    var DISCOVERY_TIPS = {
+        start: {
+            he: { icon: '🏦', title: 'ברוכים הבאים לבנק שלך!', body: 'לחץ "אסוף" על הדלפק כדי לאסוף כסף מלקוחות. לאחר מכן לחץ "רוקן כספת" להוסיף את הכסף ליתרה שלך.' },
+            en: { icon: '🏦', title: 'Welcome to your bank!', body: 'Tap "Collect" on a teller desk to gather cash from customers. Then tap "Empty Vault" to add it to your balance.' },
+            es: { icon: '🏦', title: '¡Bienvenido a tu banco!', body: 'Toca "Cobrar" en una caja para recolectar dinero. Luego toca "Vaciar Bóveda" para añadirlo a tu saldo.' },
+            ru: { icon: '🏦', title: 'Добро пожаловать в банк!', body: 'Нажми «Собрать» у кассы, чтобы собрать деньги. Потом нажми «Опустошить хранилище», чтобы добавить их на счёт.' }
+        },
+        vault: {
+            he: { icon: '🔐', title: 'הכספת מחכה לך!', body: 'הדלפקים שלחו כסף לכספת. לחץ "רוקן כספת" להוסיף אותו ליתרה. שדרג את הכספת כדי שתחזיק יותר כסף.' },
+            en: { icon: '🔐', title: 'The vault is waiting!', body: 'Tellers have sent cash to the vault. Tap "Empty Vault" to add it to your balance. Upgrade the vault to hold more.' },
+            es: { icon: '🔐', title: '¡La bóveda te espera!', body: 'Las cajas han enviado dinero a la bóveda. Toca "Vaciar Bóveda" para añadirlo a tu saldo. Mejora la bóveda para que guarde más.' },
+            ru: { icon: '🔐', title: 'Хранилище ждёт!', body: 'Кассы отправили деньги в хранилище. Нажми «Опустошить», чтобы добавить их на счёт. Улучши хранилище, чтобы оно вмещало больше.' }
+        },
+        guard: {
+            he: { icon: '🚐', title: 'גילית: בלדרים!', body: 'הבלדר מעביר כסף מהדלפקים לכספת אוטומטית — בלי שתצטרך ללחוץ. שדרג אותו כדי שיעביר מהר יותר ויכיל יותר.' },
+            en: { icon: '🚐', title: 'Discovered: Couriers!', body: 'The courier automatically transfers cash from tellers to the vault — no tapping needed. Upgrade it for faster and larger transfers.' },
+            es: { icon: '🚐', title: '¡Descubriste: Mensajeros!', body: 'El mensajero transfiere dinero de las cajas a la bóveda automáticamente. ¡Mejóralo para transferencias más rápidas y mayores!' },
+            ru: { icon: '🚐', title: 'Открытие: Курьеры!', body: 'Курьер автоматически переносит деньги из касс в хранилище — без нажатий. Улучши его для большей скорости и вместимости.' }
+        },
+        dept: {
+            he: { icon: '🏢', title: 'גילית: מחלקות!', body: 'כל מחלקה שפותחים מכפילה את ההכנסה הכוללת של הבנק. פתח כמה שיותר מחלקות כדי לגדול מהר יותר.' },
+            en: { icon: '🏢', title: 'Discovered: Departments!', body: 'Each department you unlock multiplies your total income. Open as many as possible to grow faster.' },
+            es: { icon: '🏢', title: '¡Descubriste: Departamentos!', body: 'Cada departamento que abres multiplica los ingresos totales. Abre tantos como puedas para crecer más rápido.' },
+            ru: { icon: '🏢', title: 'Открытие: Отделы!', body: 'Каждый открытый отдел умножает общий доход банка. Открывай как можно больше, чтобы расти быстрее.' }
+        },
+        manager: {
+            he: { icon: '👔', title: 'גילית: מנהלים!', body: 'המנהל ממשיך לעבוד גם כשסוגרים את המשחק! שכור מנהלים לדלפקים ולבלדרים כדי שהבנק ירוץ לגמרי אוטומטי.' },
+            en: { icon: '👔', title: 'Discovered: Managers!', body: 'The manager keeps working even when you close the game! Hire managers for tellers and couriers so the bank runs fully automatically.' },
+            es: { icon: '👔', title: '¡Descubriste: Gerentes!', body: '¡El gerente sigue trabajando aunque cierres el juego! Contrata gerentes para cajas y mensajeros para automatizar el banco.' },
+            ru: { icon: '👔', title: 'Открытие: Менеджеры!', body: 'Менеджер продолжает работать даже когда ты закрываешь игру! Нанимай менеджеров для касс и курьеров, чтобы банк работал автоматически.' }
+        },
+        prestige: {
+            he: { icon: '⭐', title: 'הגיע הזמן ל-Prestige!', body: 'הבנק צמח מספיק. לחץ על "סניפים" ובחר Prestige — הבנק יתאפס, אבל תקבל מניות זהב שמגדילות את כל ההכנסה לצמיתות!' },
+            en: { icon: '⭐', title: "Time to Prestige!", body: 'Your bank is big enough. Go to "Branches" and choose Prestige — the bank resets, but you earn Gold Shares that permanently multiply all income!' },
+            es: { icon: '⭐', title: '¡Hora del Prestige!', body: 'Tu banco ya es suficientemente grande. Ve a "Sucursales" y elige Prestige — el banco se reinicia, pero obtienes Acciones de Oro que multiplican permanentemente todos los ingresos.' },
+            ru: { icon: '⭐', title: 'Время для Prestige!', body: 'Банк достаточно вырос. Перейди в «Филиалы» и выбери Prestige — банк сбросится, но ты получишь Золотые Акции, которые навсегда умножат доход!' }
+        },
+        fortune: {
+            he: { icon: '🎡', title: 'גילית: גלגל המזל!', body: 'הגלגל מתאפס כל 24 שעות. חזור כל יום לסובב ולזכות בכסף, מניות, או בונוסים.' },
+            en: { icon: '🎡', title: 'Discovered: Fortune Wheel!', body: 'The wheel resets every 24 hours. Come back daily to spin and win cash, shares, or bonuses.' },
+            es: { icon: '🎡', title: '¡Descubriste: la Ruleta!', body: 'La ruleta se reinicia cada 24 horas. Vuelve cada día para girarla y ganar dinero, acciones o bonificaciones.' },
+            ru: { icon: '🎡', title: 'Открытие: Колесо Фортуны!', body: 'Колесо перезаряжается каждые 24 часа. Возвращайся каждый день, чтобы крутить и выигрывать деньги, акции или бонусы.' }
+        }
     };
 
-    var currentTutorialStep = 0;
-    var _tutorialResizeHandler = null;
+    var _discoveryQueue = [];
+    var _discoveryActive = false;
 
-    function _positionTutorialVisuals(targetEl) {
-        var spotlight = document.getElementById('tutorial-spotlight');
-        var arrow     = document.getElementById('tutorial-arrow');
-        var hand      = document.getElementById('tutorial-hand');
+    function showDiscoveryTip(key) {
+        if (!window.game || !window.game.state) return;
+        if (!DISCOVERY_TIPS[key]) return;
 
-        if (!targetEl) {
-            if (spotlight) spotlight.style.display = 'none';
-            if (arrow)     arrow.style.display     = 'none';
-            if (hand)      hand.style.display      = 'none';
-            return;
-        }
+        if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+        if (window.game.state.discoveredTips[key]) return;
 
-        var rect = targetEl.getBoundingClientRect();
-        var pad  = 8;
+        window.game.state.discoveredTips[key] = true;
+        window.game.saveGame();
 
-        if (spotlight) {
-            spotlight.style.left    = (rect.left   - pad) + 'px';
-            spotlight.style.top     = (rect.top    - pad) + 'px';
-            spotlight.style.width   = (rect.width  + pad * 2) + 'px';
-            spotlight.style.height  = (rect.height + pad * 2) + 'px';
-            spotlight.style.display = 'block';
-        }
-
-        if (arrow) {
-            var abovePx = rect.top - 50;
-            if (abovePx < 20) {
-                arrow.textContent   = '▲';
-                arrow.style.top     = (rect.bottom + 10) + 'px';
-            } else {
-                arrow.textContent   = '▼';
-                arrow.style.top     = abovePx + 'px';
-            }
-            arrow.style.left    = (rect.left + rect.width / 2 - 16) + 'px';
-            arrow.style.display = 'block';
-        }
-
-        if (hand) {
-            hand.style.left    = (rect.left + rect.width  / 2 - 16) + 'px';
-            hand.style.top     = (rect.top  + rect.height / 2 - 16) + 'px';
-            hand.style.display = 'block';
-        }
+        _discoveryQueue.push(key);
+        if (!_discoveryActive) _nextDiscoveryTip();
     }
 
-    function showTutorialStep(stepIndex) {
-        if (!window.game || !window.game.state) return;
-        if (window.game.state.tutorialCompleted) return;
-        if (stepIndex >= TUTORIAL_STEPS.length) {
-            completeTutorial();
-            return;
-        }
-        currentTutorialStep = stepIndex;
-        window.game.state.tutorialStep = stepIndex;
+    function _nextDiscoveryTip() {
+        if (_discoveryQueue.length === 0) { _discoveryActive = false; return; }
+        _discoveryActive = true;
+        var key = _discoveryQueue.shift();
+        var tipSet = DISCOVERY_TIPS[key];
+        if (!tipSet) { _nextDiscoveryTip(); return; }
 
-        var overlay = document.getElementById('tutorial-overlay');
-        var textEl  = document.getElementById('tutorial-text');
-        if (!overlay || !textEl) return;
+        var lang = (window.game && window.game.state && window.game.state.language) || 'he';
+        var tip = tipSet[lang] || tipSet.he;
 
-        var lang = (window.game.state && window.game.state.language) || 'he';
-        var texts = TUTORIAL_TEXTS[lang] || TUTORIAL_TEXTS.he;
-        var step = TUTORIAL_STEPS[stepIndex];
-        textEl.textContent = texts[step.textKey];
-        overlay.style.display = 'flex';
+        var panel   = document.getElementById('discovery-tip-panel');
+        var iconEl  = document.getElementById('discovery-tip-icon');
+        var titleEl = document.getElementById('discovery-tip-title');
+        var bodyEl  = document.getElementById('discovery-tip-body');
+        if (!panel || !iconEl || !titleEl || !bodyEl) { _discoveryActive = false; return; }
 
-        if (_tutorialResizeHandler) {
-            window.removeEventListener('resize', _tutorialResizeHandler);
-            _tutorialResizeHandler = null;
-        }
+        iconEl.textContent  = tip.icon;
+        titleEl.textContent = tip.title;
+        bodyEl.textContent  = tip.body;
 
-        var target = document.querySelector(step.target);
-        if (target) {
-            try { target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e) {}
-            setTimeout(function() {
-                _positionTutorialVisuals(target);
-                _tutorialResizeHandler = function() { _positionTutorialVisuals(target); };
-                window.addEventListener('resize', _tutorialResizeHandler, { passive: true });
-            }, 120);
-        } else {
-            _positionTutorialVisuals(null);
-        }
+        var btnLabels = { he: 'הבנתי!', en: 'Got it!', es: '¡Entendido!', ru: 'Понял!' };
+        var tipBtn = document.getElementById('discovery-tip-btn');
+        if (tipBtn) tipBtn.textContent = btnLabels[lang] || 'Got it!';
+
+        panel.classList.add('visible');
     }
 
-    function completeTutorial() {
-        if (!window.game || !window.game.state) return;
-        window.game.state.tutorialCompleted = true;
-        window.game.state.tutorialStep = TUTORIAL_STEPS.length;
-        if (_tutorialResizeHandler) {
-            window.removeEventListener('resize', _tutorialResizeHandler);
-            _tutorialResizeHandler = null;
-        }
-        var overlay = document.getElementById('tutorial-overlay');
-        if (overlay) overlay.style.display = 'none';
-        _positionTutorialVisuals(null);
-        if (window.game.saveGame) window.game.saveGame();
+    function _dismissDiscoveryTip() {
+        var panel = document.getElementById('discovery-tip-panel');
+        if (panel) panel.classList.remove('visible');
+        _discoveryActive = false;
+        if (_discoveryQueue.length > 0) setTimeout(_nextDiscoveryTip, 500);
     }
 
     function initTutorialEvents() {
-        var nextBtn = document.getElementById('tutorial-next');
-        var skipBtn = document.getElementById('tutorial-skip');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
-                initSound();
-                showTutorialStep(currentTutorialStep + 1);
-            });
-        }
-        if (skipBtn) {
-            skipBtn.addEventListener('click', function() {
-                initSound();
-                completeTutorial();
-            });
-        }
+        var btn = document.getElementById('discovery-tip-btn');
+        if (btn) btn.addEventListener('click', function() { initSound(); _dismissDiscoveryTip(); });
     }
 
     function maybeStartTutorial() {
         if (!window.game || !window.game.state) return;
-        if (window.game.state.tutorialCompleted) return;
-        // שחקן ותיק עם save קיים — דלג על tutorial
-        var isVeteran = (window.game.state.lifetimeCash > 5000 ||
-                         window.game.state.shares > 0 ||
-                         window.game.state.missionsCompleted > 0);
-        if (isVeteran) {
-            window.game.state.tutorialCompleted = true;
-            return;
-        }
-        // התחל מהשלב שנשמר, אם יש
-        var savedStep = window.game.state.tutorialStep || 0;
-        setTimeout(function() {
-            showTutorialStep(savedStep);
-        }, 2000);
+        if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+        var tips = window.game.state.discoveredTips;
+        var isNew = !tips.start &&
+                    window.game.state.lifetimeCash <= 300 &&
+                    !window.game.state.shares &&
+                    !(window.game.state.missionsCompleted > 0);
+        if (isNew) setTimeout(function() { showDiscoveryTip('start'); }, 2500);
     }
 
-    window.showTutorialStep = showTutorialStep;
-    window.completeTutorial = completeTutorial;
+    function checkPrestigeTip() {
+        if (!window.game || !window.game.state) return;
+        if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+        if (window.game.state.discoveredTips.prestige) return;
+        var branch = window.game.branches && window.game.branches[window.game.state.currentBranch];
+        if (branch && window.game.state.cash >= branch.minCashToPrestige) {
+            showDiscoveryTip('prestige');
+        }
+    }
+
+    window.showDiscoveryTip   = showDiscoveryTip;
+    window.checkPrestigeTip   = checkPrestigeTip;
+    window.showTutorialStep   = function() {};
+    window.completeTutorial   = function() {};
     window.maybeStartTutorial = maybeStartTutorial;
     window.spawnVaultCoins = spawnVaultCoins;
 

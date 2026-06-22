@@ -578,18 +578,16 @@
     </div>
 
     <script src="audio.js" defer></script>
-    <!-- Tutorial Overlay -->
-    <div id="tutorial-overlay" class="tutorial-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="מדריך למשחק">
-        <div id="tutorial-spotlight" class="tutorial-spotlight" style="display:none;"></div>
-        <div id="tutorial-arrow" class="tutorial-arrow" style="display:none;">▼</div>
-        <div id="tutorial-hand" class="tutorial-hand" style="display:none;">👆</div>
-        <div class="tutorial-tooltip">
-            <p id="tutorial-text"></p>
-            <div class="tutorial-buttons">
-                <button id="tutorial-next">הבנתי</button>
-                <button id="tutorial-skip">דלג על המדריך</button>
+    <!-- Discovery Tip Panel -->
+    <div id="discovery-tip-panel" class="discovery-tip-panel" role="status" aria-live="polite">
+        <div class="discovery-tip-inner">
+            <span class="discovery-tip-icon" id="discovery-tip-icon">💡</span>
+            <div class="discovery-tip-content">
+                <div class="discovery-tip-title" id="discovery-tip-title"></div>
+                <div class="discovery-tip-body" id="discovery-tip-body"></div>
             </div>
         </div>
+        <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
     </div>
 
     <script src="locales.js" defer></script>
