@@ -97,7 +97,7 @@
         splashSubtitle: null
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => { try {
         // Populate the cache once
         window.DOM_CACHE.cash = document.getElementById('cash-value');
         window.DOM_CACHE.eps = document.getElementById('eps-value');
@@ -180,7 +180,7 @@
         // Instantiate game logic and secure global IdleBankGame class
         if (typeof window.IdleBankGame !== 'function') {
             console.error('IdleBankGame class is not defined. game.js may have failed to load.');
-            return;
+            throw new Error('IdleBankGame not defined — caught by boot try/catch');
         }
         window.game = new window.IdleBankGame();
         delete window.IdleBankGame;
@@ -301,6 +301,11 @@
                 window.location.reload();
             });
         }
+    } catch(bootErr) {
+        console.error('[IDLE BANK BOOT ERROR]', bootErr);
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) { splashScreen.style.opacity = '0'; splashScreen.style.visibility = 'hidden'; setTimeout(() => splashScreen.remove(), 800); }
+    }
     });
 
     // Forced save on page close/reload

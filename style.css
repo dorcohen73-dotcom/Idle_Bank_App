@@ -551,22 +551,19 @@ header {
     min-height: 240px;
 }
 
-/* Up to 4 Tellers per row on desktop */
+/* Up to 4 Tellers per row on desktop — max 2 rows */
 @media (min-width: 769px) {
     .tellers-zone {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 0.75rem;
+        overflow: hidden;
     }
     .teller-counter {
         min-width: 0;
         flex: 1 1 calc(25% - 0.75rem);
         max-width: calc(25% - 0.75rem);
-    }
-    .teller-counter:nth-child(n+5) {
-        flex: 1 1 calc(33.333% - 0.75rem);
-        max-width: calc(33.333% - 0.75rem);
     }
 }
 

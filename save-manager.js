@@ -332,6 +332,10 @@ class SaveManager {
                 .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
             state.visitedBranches.push('deutsche_migrated'); // sentinel — never re-run
         }
+        // Cap branch indices to valid range after any migration
+        const _maxBranchIdx = GAME_CONFIG.BRANCHES.length - 1;
+        if (state.currentBranch > _maxBranchIdx) state.currentBranch = _maxBranchIdx;
+        if (state.maxBranchUnlocked > _maxBranchIdx) state.maxBranchUnlocked = _maxBranchIdx;
 
         // Backward compatibility migration from Rachel, Alan, Dan to 6 managers:
         if (state.managers && (state.managers.teller !== undefined || state.managers.guard !== undefined || state.managers.vault !== undefined)) {
