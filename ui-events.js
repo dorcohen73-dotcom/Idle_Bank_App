@@ -2083,6 +2083,28 @@ function initUIEvents() {
     if (uiEventsInitialized) return;
     uiEventsInitialized = true;
     initFocusTrapObserver();
+
+    // Escape key closes the topmost open modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const modals = [
+            { id: 'fortune-wheel-modal', closeId: 'fortune-close-btn' },
+            { id: 'prestige-modal',      closeId: 'prestige-cancel-btn' },
+            { id: 'lang-modal',          closeId: 'lang-modal-close' },
+            { id: 'login-reward-modal',  closeId: 'login-reward-collect-btn' },
+            { id: 'offline-modal',       closeId: 'offline-claim-btn' },
+            { id: 'weekly-modal',        closeId: 'weekly-close-btn' },
+            { id: 'analytics-modal',     closeId: 'analytics-close-btn' },
+        ];
+        for (const { id, closeId } of modals) {
+            const el = document.getElementById(id);
+            if (el && el.classList.contains('active')) {
+                const closeBtn = document.getElementById(closeId);
+                if (closeBtn) closeBtn.click();
+                break;
+            }
+        }
+    });
     if (DOM_CACHE.resetBtn) {
         const confirmCheck = document.getElementById('reset-confirm-checkbox');
         if (confirmCheck) {
@@ -2742,12 +2764,12 @@ function initUIEvents() {
                         prizeText = `${prizeLabel}: +${prize.value}h BOOST`;
                         spawnFloating(`⚡ +${prize.value}h`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
                     } else if (prize.type === 'gold') {
-                        game.state.shares = (game.state.shares || 0) + prize.value;
+                        game.state.shares = Math.min((game.state.shares || 0) + prize.value, 100000);
                         const goldLabel = tObj2.dailyRewardGold ? tObj2.dailyRewardGold(prize.value) : `+${prize.value}`;
                         prizeText = `${prizeLabel}: ${goldLabel}`;
                         spawnFloating(`🥇 ${goldLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
                     } else if (prize.type === 'shares') {
-                        game.state.shares = (game.state.shares || 0) + prize.value;
+                        game.state.shares = Math.min((game.state.shares || 0) + prize.value, 100000);
                         const sharesLabel = tObj2.dailyRewardShares ? tObj2.dailyRewardShares(prize.value) : `+${prize.value}`;
                         prizeText = `${prizeLabel}: ${sharesLabel}`;
                         spawnFloating(`📈 ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');

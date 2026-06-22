@@ -686,6 +686,8 @@ class IdleBankGame {
         const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
         const savedLoginDate = this.state.lastLoginDate || 0;
         const savedLoginStreak = this.state.loginStreak || 0;
+        const savedDailyChallenges = this.state.dailyChallenges;
+        const savedLastDailyReset = this.state.lastDailyReset;
 
         if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
         this.initDefaultState();
@@ -701,6 +703,8 @@ class IdleBankGame {
         this.state.lastSpinTime = savedLastSpinTime;
         this.state.lastLoginDate = savedLoginDate;
         this.state.loginStreak = savedLoginStreak;
+        this.state.dailyChallenges = savedDailyChallenges;
+        this.state.lastDailyReset = savedLastDailyReset;
 
         // Restore visitedBranches and add targetBranch if new
         if (!savedVisitedBranches.includes(targetBranchIndex)) {
