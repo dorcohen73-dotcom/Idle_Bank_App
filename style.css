@@ -6088,45 +6088,54 @@ header {
         border-radius: 16px !important;
     }
 
-    /* פורטרייט: cash שמאל (60%), secondary cards מוערמות ימין (40%) */
+    /* פורטרייט: שורה 1 cash רוחב מלא, שורה 2 secondary זה לצד זה */
     .luxury-dashboard {
-        grid-template-columns: 3fr 2fr !important;
-        grid-template-rows: 1fr !important;
-        gap: 0.5rem !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto !important;
+        gap: 0.45rem !important;
     }
 
     .secondary-cards-grid {
-        grid-template-columns: 1fr !important;
-        grid-template-rows: 1fr 1fr !important;
-        gap: 0.4rem !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 1fr !important;
+        gap: 0.45rem !important;
     }
 
     .cash-hero-card {
-        min-height: 80px !important;
-        padding: 0.65rem 0.85rem !important;
+        min-height: 76px !important;
+        padding: 0.7rem 1rem !important;
+    }
+
+    .cash-label {
+        font-size: 0.68rem !important;
+        opacity: 0.7;
     }
 
     .cash-amount {
-        font-size: 1.55rem !important;
+        font-size: 2.1rem !important;
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
     }
 
     .cash-eps {
-        font-size: 0.7rem !important;
+        font-size: 0.72rem !important;
+        margin-top: 0.1rem !important;
     }
 
     .secondary-card {
-        min-height: 0 !important;
-        padding: 0.45rem 0.65rem !important;
-        flex: 1 !important;
+        min-height: 68px !important;
+        padding: 0.55rem 0.7rem !important;
     }
 
     .secondary-value {
-        font-size: 1.05rem !important;
+        font-size: 1.35rem !important;
+        font-weight: 900 !important;
     }
 
     .multiplier-card .secondary-value,
     .multiplier-value-wrap {
-        font-size: 0.92rem !important;
+        font-size: 1.1rem !important;
+        font-weight: 800 !important;
     }
 
     .luxury-topbar {
