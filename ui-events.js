@@ -1531,7 +1531,7 @@ function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked, type,
     const y = (e && e.clientY) ? e.clientY : rect.top;
     
     // Trigger card gold flash animation
-    const card = btn.closest('.upgrade-card');
+    const card = btn.closest('.upgrade-card') || btn.closest('.upg-new-layout') || btn.closest('.mgr-new-layout');
     if (card) {
         card.classList.remove('sparkle-flash');
         void card.offsetWidth; // trigger reflow
@@ -1619,7 +1619,7 @@ function handleMissionRedirect(missionType, targetId) {
             tabName = 'departments';
             selector = '.dept-action-btn:not(.active)';
             break;
-        case 'vip_marathon':
+        case 'vip_collector':
         case 'serve_rich_vip':
             tabName = 'upgrades';
             selector = '.buy-btn[data-type="teller"][data-id="0"]';
@@ -1845,6 +1845,10 @@ function tick(timestamp) {
         tabRefreshTimer += cappedDt;
         if (tabRefreshTimer >= GAME_CONFIG.TAB_REFRESH_INTERVAL_SEC) {
             tabRefreshTimer = 0;
+            const _activeTabEl = document.querySelector('.tab-btn.active');
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'missions') {
+                game.checkMissions();
+            }
             updateButtonAffordability();
         }
 
@@ -1950,7 +1954,11 @@ function showLoginRewardModal() {
     const descEl = document.getElementById('login-reward-desc');
     const titleEl = document.getElementById('login-reward-title');
 
-    if (titleEl) titleEl.innerText = lang === 'he' ? 'בונוס כניסה יומי!' : 'Daily Login Bonus!';
+    const lm = (typeof translations !== 'undefined' && translations[lang] && translations[lang].loginModal)
+        ? translations[lang].loginModal
+        : translations.he.loginModal;
+
+    if (titleEl) titleEl.innerText = lm.title;
     if (streakEl) streakEl.innerText = streak;
 
     let displayText = '';
@@ -1958,17 +1966,14 @@ function showLoginRewardModal() {
 
     if (reward.type === 'cash') {
         displayText = '+$' + formatMoney(reward.value);
-        descText = lang === 'he' ? 'מזומן לחשבון' : 'Cash credited';
+        descText = lm.cashDesc;
     } else if (reward.type === 'boost') {
         const mins = Math.round(reward.value / 60);
-        displayText = '+' + mins + (lang === 'he' ? ' דקות בוסט x2' : ' min Boost x2');
-        descText = lang === 'he' ? 'בוסט הכנסות כפולות' : 'Double earnings boost';
-    } else if (reward.type === 'gold') {
+        displayText = typeof lm.boostLabel === 'function' ? lm.boostLabel(mins) : ('+' + mins + ' min Boost x2');
+        descText = lm.boostDesc;
+    } else if (reward.type === 'gold' || reward.type === 'shares') {
         displayText = '+' + reward.value + (lang === 'he' ? ' מניות זהב' : ' Gold Shares');
-        descText = lang === 'he' ? 'מניות זהב נוספו' : 'Gold shares added';
-    } else if (reward.type === 'shares') {
-        displayText = '+' + reward.value + (lang === 'he' ? ' מניות זהב' : ' Gold Shares');
-        descText = lang === 'he' ? 'מניות זהב נוספו' : 'Gold shares added';
+        descText = lm.sharesDesc;
     }
 
     if (amountEl) amountEl.innerText = displayText;
@@ -1976,7 +1981,7 @@ function showLoginRewardModal() {
 
     const collectBtn = document.getElementById('login-reward-collect-btn');
     if (collectBtn) {
-        collectBtn.innerText = lang === 'he' ? 'אסוף!' : 'Collect!';
+        collectBtn.innerText = lm.collectBtn;
         collectBtn.onclick = () => {
             initSound();
             modal.classList.remove('active');
@@ -2310,6 +2315,7 @@ function initUIEvents() {
     // Bottom Nav click handlers
     document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            try { navigator.vibrate && navigator.vibrate(5); } catch(e) {}
             const tab = btn.dataset.tab;
             // מפעיל את הלוגיקה הקיימת של הטאבים
             const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
@@ -2324,6 +2330,7 @@ function initUIEvents() {
     const vaultMiniBtn = document.getElementById('vault-mini-btn');
     if (vaultMiniBtn) {
         vaultMiniBtn.addEventListener('click', () => {
+            try { navigator.vibrate && navigator.vibrate([8, 30, 8]); } catch(e) {}
             const mainVaultBtn = document.getElementById('collect-vault-btn');
             if (mainVaultBtn) mainVaultBtn.click();
         });
@@ -2352,6 +2359,7 @@ function initUIEvents() {
             if (!btn || btn.classList.contains('disabled')) return;
 
             initSound();
+            try { navigator.vibrate && navigator.vibrate(12); } catch(e) {}
             const type = btn.getAttribute('data-type');
             const id = parseInt(btn.getAttribute('data-id'));
             if (isNaN(id) && (type === 'teller' || type === 'guard')) return;
@@ -2397,6 +2405,10 @@ function initUIEvents() {
             handlePurchaseFeedback(btn, e, beforeCash, beforeVal, feedType, id);
             if (feedType === 'unlock-teller' || feedType === 'unlock-guard') {
                 renderUpgradesTab();
+                if (feedType === 'unlock-teller' && typeof window.rebuildTellersDOM === 'function') {
+                    window.rebuildTellersDOM();
+                    if (typeof window.recalcGuardAnchors === 'function') window.recalcGuardAnchors();
+                }
             } else {
                 updateButtonAffordability();
             }
@@ -2674,9 +2686,12 @@ function initUIEvents() {
 
         const now = Date.now();
         const lastSpin = game.state.lastSpinTime || 0;
-        const cooldownMs = 86400000;
+        const cooldownMs = 28800000; // 8 hours
         const timeLeft = cooldownMs - (now - lastSpin);
         const canSpin = timeLeft <= 0;
+        const lastAdSpin = game.state.lastAdSpinTime || 0;
+        const canAdSpin = (cooldownMs - (now - lastAdSpin)) <= 0;
+        let adSpinGranted = false;
 
         const spinBtn = document.getElementById('fortune-spin-btn');
         const cooldownEl = document.getElementById('fortune-cooldown');
@@ -2799,7 +2814,13 @@ function initUIEvents() {
                         spawnFloating(`📈 ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
                     }
 
-                    game.state.lastSpinTime = Date.now();
+                    const wasAdSpin = adSpinGranted;
+                    if (wasAdSpin) {
+                        game.state.lastAdSpinTime = Date.now();
+                        adSpinGranted = false;
+                    } else {
+                        game.state.lastSpinTime = Date.now();
+                    }
                     game.saveGame();
                     draw();
                     // Discovery tip: first fortune wheel spin
@@ -2813,14 +2834,56 @@ function initUIEvents() {
 
                     const spinBtn2 = document.getElementById('fortune-spin-btn');
                     if (spinBtn2) {
-                        const newTimeLeft2 = 86400000;
+                        const newTimeLeft2 = 28800000;
                         const h2 = Math.floor(newTimeLeft2 / 3600000).toString().padStart(2, '0');
                         const m2 = '00';
                         const cd2 = tObj2.fortuneWheelCooldown ? tObj2.fortuneWheelCooldown(h2, m2) : `${h2}:${m2}`;
                         spinBtn2.textContent = cd2;
                         if (cooldownEl) { cooldownEl.textContent = cd2; cooldownEl.style.display = 'block'; }
                     }
+
+                    // Show ad-spin button only after a regular spin (not after an ad spin)
+                    const adSpinEl = document.getElementById('fortune-ad-spin-btn');
+                    if (adSpinEl && canAdSpin && !wasAdSpin) {
+                        adSpinEl.disabled = false;
+                        adSpinEl.style.display = 'block';
+                        adSpinEl.textContent = tObj2.fortuneWheelAdSpinBtn || '📺 סיבוב נוסף — צפה בפרסומת';
+                    } else if (adSpinEl) {
+                        adSpinEl.style.display = 'none';
+                    }
                 }, 3000);
+            };
+        }
+
+        // Ad spin button: visible on open if spin is on cooldown and ad spin available
+        const adSpinBtn = document.getElementById('fortune-ad-spin-btn');
+        if (adSpinBtn) {
+            adSpinBtn.disabled = false;
+            if (!canSpin && canAdSpin) {
+                adSpinBtn.style.display = 'block';
+                adSpinBtn.textContent = tObj.fortuneWheelAdSpinBtn || '📺 סיבוב נוסף — צפה בפרסומת';
+            } else {
+                adSpinBtn.style.display = 'none';
+            }
+
+            adSpinBtn.onclick = () => {
+                if (adSpinBtn.disabled) return;
+                adSpinBtn.disabled = true;
+                adSpinBtn.style.display = 'none';
+                playAd(() => {
+                    adSpinGranted = true;
+                    const sp = document.getElementById('fortune-spin-btn');
+                    if (sp) {
+                        sp.disabled = false;
+                        const lang3 = (game.state && game.state.language) || 'he';
+                        const t3 = translations[lang3] || translations.he;
+                        sp.textContent = t3.fortuneWheelSpinBtn || 'סובב!';
+                    }
+                    if (resultEl) resultEl.style.display = 'none';
+                    if (cooldownEl) cooldownEl.style.display = 'none';
+                    const hintEl2 = document.getElementById('fortune-spin-hint');
+                    if (hintEl2) hintEl2.style.display = 'block';
+                });
             };
         }
 

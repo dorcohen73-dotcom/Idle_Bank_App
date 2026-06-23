@@ -135,7 +135,9 @@ header {
     width: 1em;
     height: 1em;
     filter: drop-shadow(0 2px 8px var(--gold-glow));
-    animation: float 3s ease-in-out infinite;
+}
+@media (hover: hover) {
+  .brand-icon { animation: float 3s ease-in-out infinite; }
 }
 .brand-icon svg {
     width: 100%;
@@ -244,7 +246,9 @@ header {
     width: 1em;
     height: 1em;
     filter: drop-shadow(0 2px 8px var(--gold-glow));
-    animation: float 3s ease-in-out infinite;
+}
+@media (hover: hover) {
+  .brand-icon { animation: float 3s ease-in-out infinite; }
 }
 .brand-icon svg {
     width: 100%;
@@ -5040,6 +5044,25 @@ header, .control-panel, .bank-floor {
 
   .bottom-nav-btn.active {
     color: #dfab29;
+    background: rgba(223, 171, 41, 0.1);
+    border-radius: 10px;
+  }
+
+  .bottom-nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #dfab29;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(223, 171, 41, 0.7);
+  }
+
+  .bottom-nav-btn {
+    position: relative;
   }
 
   .bottom-nav-btn .nav-icon {
@@ -5047,9 +5070,9 @@ header, .control-panel, .bank-floor {
     line-height: 1;
   }
 
-  /* --- Body: מרווח תחתון לbottom nav --- */
+  /* --- Body: מרווח תחתון לbottom nav + buffer --- */
   body {
-    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
   }
 
   /* --- App Container --- */
@@ -5207,6 +5230,7 @@ header, .control-panel, .bank-floor {
     background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa) !important;
     border-radius: 4px !important;
     transition: width 0.5s ease, background 0.5s ease !important;
+    will-change: width;
   }
 
   /* שורה 3: סכומים */
@@ -5328,6 +5352,10 @@ header, .control-panel, .bank-floor {
   .tab-content {
     overflow-y: auto !important;
     max-height: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    overscroll-behavior-y: contain !important;
+    will-change: scroll-position;
   }
 
   /* --- Footer מוסתר --- */
@@ -5337,7 +5365,7 @@ header, .control-panel, .bank-floor {
 
   /* contextual banner מעל ה-bottom nav */
   #contextual-offer-banner {
-    bottom: calc(68px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(80px + env(safe-area-inset-bottom)) !important;
   }
 
   /* analytics שולחן-עבודה בלבד — מוסתר על מובייל */
@@ -5363,17 +5391,19 @@ header, .control-panel, .bank-floor {
   }
 
   .card-title {
-    font-size: 0.82rem !important;
-    font-weight: 700 !important;
+    font-size: 0.87rem !important;
+    font-weight: 800 !important;
   }
 
   .card-desc {
-    font-size: 0.78rem !important;
+    font-size: 0.74rem !important;
     line-height: 1.35 !important;
+    opacity: 0.82;
   }
 
   .card-stats {
-    font-size: 0.74rem !important;
+    font-size: 0.68rem !important;
+    opacity: 0.7;
   }
 
   /* כפתור Buy — גדול יותר, קריא */
@@ -5479,6 +5509,11 @@ header, .control-panel, .bank-floor {
     padding: 0.35rem 0.7rem !important;
     border-radius: 10px !important;
     font-weight: 700 !important;
+    transition: transform 80ms ease !important;
+  }
+
+  .vault-mini-collect:active {
+    transform: scale(0.92) !important;
   }
 
   /* --- Buy Buttons: גדולים וברורים --- */
@@ -5499,6 +5534,11 @@ header, .control-panel, .bank-floor {
     background: linear-gradient(160deg, #f3d052 0%, #dfab29 50%, #b8860b 100%) !important;
     border: 1.5px solid #ffe699 !important;
     color: #0c0e1d !important;
+    transition: transform 80ms ease, box-shadow 80ms ease !important;
+  }
+  .buy-btn:not(.disabled):active {
+    transform: scale(0.93) !important;
+    box-shadow: 0 2px 6px rgba(223, 171, 41, 0.3) !important;
   }
   .buy-btn.disabled, .buy-btn:disabled {
     box-shadow: none !important;
