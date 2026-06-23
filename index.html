@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
     
     <meta property="og:title" content="אימפריית הבנקים">
@@ -98,7 +98,7 @@
                     <div class="cash-card-content">
                         <div class="cash-card-top">
                             <span class="cash-label" id="label-cash">יתרת מזומנים</span>
-                            <span class="cash-live-badge">● LIVE</span>
+                            <span class="cash-live-badge" id="cash-live-badge">● LIVE</span>
                         </div>
                         <div class="cash-amount" id="cash-value">$0</div>
                         <div class="cash-eps" id="eps-value-container">
@@ -218,7 +218,7 @@
                     <div class="vault-zone">
                         <!-- Left: Vault Graphic -->
                         <div class="vault-graphic" id="vault-graphic" title="לחץ כדי לרוקן את הכספת">
-                            <div class="vault-graphic-label">BANK</div>
+                            <div class="vault-graphic-label" id="vault-graphic-label">BANK</div>
                         </div>
                         
                         <!-- Right: Vault Info -->
@@ -555,6 +555,7 @@
             <p class="fortune-spin-hint" id="fortune-spin-hint" style="font-size:0.8rem; color:#9ca3af; margin:0 0 0.5rem; text-align:center;">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>
 
             <div id="fortune-result" class="fortune-result" style="display:none;"></div>
+            <button id="fortune-ad-spin-btn" class="fortune-ad-spin-btn" style="display:none;">📺 סיבוב נוסף — צפה בפרסומת</button>
             <div id="fortune-prize-list" class="fortune-prize-list"></div>
             <div id="fortune-cooldown" class="fortune-cooldown" style="display:none;"></div>
 
