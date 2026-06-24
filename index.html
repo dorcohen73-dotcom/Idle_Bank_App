@@ -139,20 +139,26 @@
             <div class="top-overlay-ui">
             <!-- Portrait Vault Mini Bar -->
             <div class="vault-mini-bar" id="vault-mini-bar" style="display:none;">
+              <!-- שורה 1: אייקון + שם + סכום מאוחסן / קיבולת + כפתור -->
               <div class="vault-mini-top">
                 <span class="vault-mini-icon">🏦</span>
                 <span class="vault-mini-label">כספת</span>
                 <div class="vault-mini-spacer"></div>
-                <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
+                <div class="vault-mini-amounts">
+                  <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span><span class="vault-mini-slash"> / </span><span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
+                </div>
                 <button class="vault-mini-collect" id="vault-mini-btn">🚛 רוקן</button>
               </div>
-              <div class="vault-mini-track">
-                <div id="vault-mini-fill" class="vault-mini-fill"></div>
-              </div>
-              <div class="vault-mini-details">
-                <span id="vault-mini-stored">$0</span> / <span id="vault-mini-cap">$0</span>
-                <span class="vault-mini-sep">·</span>
-                <span id="vault-mini-yield">+$0/h</span>
+              <!-- שורה 2: פס מילוי + אחוז + תשואה -->
+              <div class="vault-mini-bottom">
+                <div class="vault-mini-track">
+                  <div id="vault-mini-fill" class="vault-mini-fill"></div>
+                </div>
+                <div class="vault-mini-details">
+                  <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
+                  <span class="vault-mini-sep">·</span>
+                  <span id="vault-mini-yield">+$0/h</span>
+                </div>
               </div>
             </div>
             </div>
