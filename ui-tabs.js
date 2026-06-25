@@ -909,26 +909,25 @@ function renderBranchesTab() {
         goldCardsHtml += `
             <div class="gold-upgrade-card">
                 ${isMax ? `<div class="gold-max-badge">MAX</div>` : ''}
-                <div class="gold-up-icon-box">
-                    <img class="gold-up-icon-img" src="${iconSrc}" alt="${upgradeData.title}">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="${iconSrc}" alt="${upgradeData.title}">
                 </div>
-                <div class="gold-upgrade-details">
+                <div class="gold-card-middle">
                     <div class="gold-upgrade-title">${upgradeData.title}</div>
                     <div class="gold-upgrade-desc">${desc}</div>
-                    <div class="gold-upgrade-level">
-                        ${translations[lang].levelLabel || 'רמה'}: 
-                        <span class="gold-level-val">${currentLvl}/${maxLvl}</span>
-                        ${isMax ? `<span class="gold-checkmark">✔</span>` : ''}
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill ${isMax ? 'max' : ''}">
+                            ${currentLvl}/${maxLvl}
+                            ${isMax ? `<span class="gold-checkmark">✔</span>` : ''}
+                        </span>
+                        ${isMax ? `
+                            <span style="background: rgba(223,171,41,0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
+                        ` : `
+                            <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>
+                                ${cost} 🪙
+                            </button>
+                        `}
                     </div>
-                </div>
-                <div class="gold-upgrade-action">
-                    ${isMax ? `
-                        <span class="manager-status hired" style="background: rgba(223, 171, 41, 0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
-                    ` : `
-                        <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>
-                            ${cost} 🪙
-                        </button>
-                    `}
                 </div>
             </div>
         `;
