@@ -1,4 +1,4 @@
-(function(window) {
+﻿(function(window) {
 // Visual Drawing & Formatting Module for Idle Bank Empire
 
 // LRU cache for SVG/HTML client portraits — Map preserves insertion order, giving O(1) lookup and eviction
@@ -144,7 +144,7 @@ function getClientSVG(type, seed) {
     }
     
     const resultHtml = `
-        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-sizing: border-box; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d; display: flex; align-items: center; justify-content: center;">
+        <div style="position: absolute; inset: 0; border-radius: 50%; overflow: hidden; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d;">
             <img src="תמונות/client-${imgNum}.png" alt="Client" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
         </div>
     `;
@@ -445,7 +445,8 @@ function rebuildTellersDOM() {
         
         if (t.unlocked) {
             div.innerHTML = `
-                <div class="glass-showcase" style="background-image: url('תמונות/teller-${(t.id % 7) + 1}.png');">
+                <div class="glass-showcase">
+                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 7) + 1}.png?v=20260625" alt="" />
                     <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
                 </div>
                 <div class="gold-plaque">
@@ -691,7 +692,17 @@ function draw() {
                     existingNode = document.createElement('div');
                     existingNode.className = `visual-client-icon`;
                     existingNode.setAttribute('data-id', clientId);
-                    existingNode.innerHTML = getClientSVG(client.type, client.seed);
+                    const _ct = client.type || 'normal';
+                    const _cs = (client.seed === undefined || client.seed === null || isNaN(client.seed)) ? 0 : client.seed;
+                    const _cn = (_ct === 'rich') ? 9 : (_ct === 'vip') ? 10 : ((_cs % 8) + 1);
+                    existingNode.style.backgroundImage = `url('תמונות/client-${_cn}.png')`;
+                    if (_ct === 'vip') {
+                        existingNode.style.borderColor = 'rgba(192,132,252,0.85)';
+                        existingNode.style.boxShadow = '0 0 8px rgba(192,132,252,0.4)';
+                    } else if (_ct === 'rich') {
+                        existingNode.style.borderColor = 'rgba(251,191,36,0.85)';
+                        existingNode.style.boxShadow = '0 0 8px rgba(251,191,36,0.4)';
+                    }
                 }
                 
                 if (DOM_CACHE.customerLine.children[idx] !== existingNode) {
@@ -764,7 +775,13 @@ function draw() {
                 if (prevTellerClientStates[tData.id] !== cacheKey) {
                     if (tData.isProcessing) {
                         clientSlot.classList.add('active');
-                        clientSlot.innerHTML = getClientSVG(tData.customerType, tData.customerSeed);
+                        const _t = tData.customerType || 'normal';
+                        const _s = (tData.customerSeed === undefined || tData.customerSeed === null || isNaN(tData.customerSeed)) ? 0 : tData.customerSeed;
+                        const _n = (_t === 'rich') ? 9 : (_t === 'vip') ? 10 : ((_s % 8) + 1);
+                        clientSlot.style.setProperty('background-image', `url('תמונות/client-${_n}.png')`, 'important');
+                        clientSlot.style.setProperty('background-size', 'cover', 'important');
+                        clientSlot.style.setProperty('background-position', 'center top', 'important');
+                        clientSlot.innerHTML = '';
 
                         // VIP & Rich serving glow effects — batch read then write
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
@@ -780,6 +797,7 @@ function draw() {
                     } else {
                         clientSlot.classList.remove('active');
                         clientSlot.innerHTML = '';
+                        clientSlot.style.removeProperty('background-image');
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                     }
                     prevTellerClientStates[tData.id] = cacheKey;

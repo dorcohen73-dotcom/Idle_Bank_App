@@ -1,4 +1,4 @@
-(function(window) {
+﻿(function(window) {
 // Tab Rendering & Updates Module for Idle Bank Empire
 
 var _buyBtnCache = null;
@@ -31,13 +31,17 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const nextLevel = entity.level + levelsToBuy;
         const cost = details.cost;
         
-        let capacity, speed, nextCapacity, nextSpeed, avatarStyle, title, desc, speedLabel, capLabel;
+        let capacity, speed, nextCapacity, nextSpeed, avatarImg, title, desc, speedLabel, capLabel;
+        let avatarBgUrl = '', avatarBgPos = 'center 20%', avatarBgSize = 'cover';
         if (type === 'teller') {
             capacity = game.getTellerCapacity(entity.level);
             speed = game.getTellerSpeed(entity.level).toFixed(1);
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
-            avatarStyle = `background-image: url('תמונות/teller-${(id % 7) + 1}.png');`;
+            avatarImg = '';
+            avatarBgUrl = `תמונות/manager-${(id % 6) + 1}.png`;
+            avatarBgPos = 'center 20%';
+            avatarBgSize = 'cover';
             title = tObj.tellerTitle(id + 1, entity.level);
             desc = tObj.tellerDesc;
             speedLabel = tObj.tellerSpeed;
@@ -47,7 +51,10 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             speed = game.getGuardSpeed(entity.level).toFixed(1);
             nextCapacity = game.getGuardCapacity(nextLevel);
             nextSpeed = game.getGuardSpeed(nextLevel).toFixed(1);
-            avatarStyle = `background-image: url('תמונות/guard.png'); background-size: 80%; background-repeat: no-repeat; background-position: center; background-color: rgba(255, 255, 255, 0.03);`;
+            avatarImg = '';
+            avatarBgUrl = 'תמונות/guard.png';
+            avatarBgPos = 'center 8%';
+            avatarBgSize = '220%';
             title = tObj.guardTitle(id + 1, entity.level);
             desc = tObj.guardDesc;
             speedLabel = tObj.guardSpeed;
@@ -55,10 +62,10 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         }
 
         const canBuy = details.canAfford;
-        
+
         card.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="${avatarStyle}"></div>
+                <div class="card-avatar"></div>
                 <div class="card-details">
                     <div class="card-title">${title}${levelsToBuy > 1 ? ` (+${levelsToBuy})` : ''}</div>
                     <div class="card-desc">${desc}</div>
@@ -73,29 +80,37 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 ${translations[lang].upgradeLabel}${levelsToBuy > 1 ? ' +' + levelsToBuy : ''}<br>${formatMoney(cost)}
             </button>
         `;
+        if (avatarBgUrl) {
+            const avEl = card.querySelector('.card-avatar');
+            if (avEl) { avEl.style.backgroundImage = `url('${avatarBgUrl}')`; avEl.style.backgroundPosition = avatarBgPos; avEl.style.backgroundSize = avatarBgSize; }
+        }
     } else {
-        let cost, avatarStyle, title, desc, unlockAction, unlockText;
+        let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 20%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
         if (type === 'teller') {
             cost = game.tellerUnlockCosts[id];
-            avatarStyle = `background-image: url('תמונות/teller-${(id % 7) + 1}.png');`;
+            avatarBgUrl2 = `תמונות/manager-${(id % 6) + 1}.png`;
+            avatarBgPos2 = 'center 20%';
+            avatarBgSize2 = 'cover';
             title = tObj.tellerLocked(id + 1);
             desc = tObj.tellerLockedDesc;
             unlockAction = 'unlock-teller';
             unlockText = translations[lang].unlockLabel;
         } else {
             cost = game.guardUnlockCosts[id];
-            avatarStyle = `background-image: url('תמונות/guard.png'); background-size: 80%; background-repeat: no-repeat; background-position: center; background-color: rgba(0,0,0,0.2);`;
+            avatarBgUrl2 = 'תמונות/guard.png';
+            avatarBgPos2 = 'center 8%';
+            avatarBgSize2 = '220%';
             title = tObj.guardLocked(id + 1);
             desc = tObj.guardLockedDesc;
             unlockAction = 'unlock-guard';
             unlockText = tObj.guardUnlockBtn;
         }
-        
+
         const canBuy = game.state.cash >= cost;
 
         card.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar locked" style="${avatarStyle}">
+                <div class="card-avatar locked">
                     <div class="lock-overlay">🔒</div>
                 </div>
                 <div class="card-details">
@@ -107,6 +122,10 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 ${unlockText}<br>${formatMoney(cost)}
             </button>
         `;
+        if (avatarBgUrl2) {
+            const avEl2 = card.querySelector('.card-avatar');
+            if (avEl2) { avEl2.style.backgroundImage = `url('${avatarBgUrl2}')`; avEl2.style.backgroundPosition = avatarBgPos2; avEl2.style.backgroundSize = avatarBgSize2; }
+        }
     }
     return card;
 }
@@ -152,7 +171,7 @@ function renderUpgradesTab() {
     vaultCard.className = 'upgrade-card';
     vaultCard.innerHTML = `
         <div class="card-left-section">
-            <div class="card-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
+            <div class="card-avatar"><img src="תמונות/vault-door.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
             <div class="card-details">
                 <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` (+${vLevelsToBuy})` : ''}</div>
                 <div class="card-desc">${tObj.vaultDesc}</div>
@@ -185,7 +204,7 @@ function renderUpgradesTab() {
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueMaxTitle}</div>
                     <div class="card-desc">${tObj.queueMaxDesc(qCap)}</div>
@@ -198,7 +217,7 @@ function renderUpgradesTab() {
     } else {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` (+${qLevelsToBuy})` : ''}</div>
                     <div class="card-desc">${tObj.queueDesc}</div>
