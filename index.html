@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
     
@@ -11,9 +11,20 @@
     <meta property="og:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
     <meta property="og:image" content="תמונות/icon.png">
     <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="אימפריית הבנקים">
+    <meta name="twitter:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
+    <meta name="twitter:image" content="תמונות/icon.png">
     
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preload critical assets -->
+    <link rel="preload" href="תמונות/icon.png" as="image">
+    <link rel="preload" href="תמונות/nav_bank.png" as="image">
+
     <!-- CSS Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=7">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -138,16 +149,21 @@
 
             <div class="top-overlay-ui">
             <!-- Portrait Vault Mini Bar -->
-            <div class="vault-mini-bar" id="vault-mini-bar" style="display:none;">
-              <!-- שורה 1: אייקון + שם + סכום מאוחסן / קיבולת + כפתור -->
+            <div class="vault-mini-bar" id="vault-mini-bar">
+              <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
               <div class="vault-mini-top">
-                <span class="vault-mini-icon">🏦</span>
-                <span class="vault-mini-label">כספת</span>
+                <img class="vault-mini-icon" src="תמונות/vault-door.png" alt="כספת">
+                <div class="vault-mini-name-col">
+                  <span class="vault-mini-label">כספת</span>
+                  <span class="vault-mini-level" id="vault-mini-level">Lv.1</span>
+                </div>
                 <div class="vault-mini-spacer"></div>
                 <div class="vault-mini-amounts">
-                  <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span><span class="vault-mini-slash"> / </span><span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
+                  <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span>
+                  <span class="vault-mini-slash"> / </span>
+                  <span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
                 </div>
-                <button class="vault-mini-collect" id="vault-mini-btn">🚛 רוקן</button>
+                <button class="vault-mini-collect" id="vault-mini-btn">💰 גבה</button>
               </div>
               <!-- שורה 2: פס מילוי + אחוז + תשואה -->
               <div class="vault-mini-bottom">
@@ -189,7 +205,7 @@
                         <span class="queue-label" id="queue-label">תור לקוחות (0/5):</span>
                         <div class="queue-zone">
                             <div class="waiting-sofa" aria-hidden="true">🛋️</div>
-                            <div class="entrance-door" style="font-size: 1.3rem; margin-left: 0.5rem;" aria-hidden="true">🚪</div>
+                            <div class="entrance-door" aria-hidden="true">🚪</div>
                             <div class="customer-line" id="customer-line"></div>
                         </div>
                     </div>
@@ -215,7 +231,7 @@
                     <!-- Security Guard Transit Path -->
                     <div class="security-path" id="security-path" title="לחץ כדי לשלוח את הבלדר ידנית">
                         <span class="guard-status-text" id="guard-status-text">מאבטח ממתין בכספת...</span>
-                        <span class="click-hint" id="label-guard-click-hint" style="font-size: 0.7rem; color: var(--text-muted); opacity: 0.7; margin-right: 0.25rem;">(שלח בלדר 👆)</span>
+                        <span class="click-hint" id="label-guard-click-hint">(שלח בלדר 👆)</span>
                         <div class="guard-avatar" id="guard-avatar"><span aria-hidden="true">👮</span></div>
                         <div class="guard-load" id="guard-load"></div>
                     </div>
@@ -293,12 +309,30 @@
                 <h2 class="sr-only">לוח בקרה</h2>
                 <!-- Navigation Tabs -->
                 <nav class="tabs-nav" aria-label="תפריט ניווט פנימי">
-                    <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades"><span class="tab-icon" aria-hidden="true">🏦</span> <span class="tab-label">עמדות</span></button>
-                    <button class="tab-btn" data-tab="managers" id="tab-btn-managers"><span class="tab-icon" aria-hidden="true">👔</span> <span class="tab-label">מנהלים</span></button>
-                    <button class="tab-btn" data-tab="departments" id="tab-btn-departments"><span class="tab-icon" aria-hidden="true">🏢</span> <span class="tab-label">מחלקות</span></button>
-                    <button class="tab-btn" data-tab="missions" id="tab-btn-missions"><span class="tab-icon" aria-hidden="true">🏆</span> <span class="tab-label">משימות</span></button>
-                    <button class="tab-btn" data-tab="daily" id="tab-btn-daily"><span class="tab-icon" aria-hidden="true">📅</span> <span class="tab-label">יומי</span></button>
-                    <button class="tab-btn" data-tab="branches" id="tab-btn-branches"><span class="tab-icon" aria-hidden="true">🌍</span> <span class="tab-label">סניפים</span></button>
+                    <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades">
+                        <img src="תמונות/nav_bank.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">עמדות</span>
+                    </button>
+                    <button class="tab-btn" data-tab="managers" id="tab-btn-managers">
+                        <img src="תמונות/nav_suit.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">מנהלים</span>
+                    </button>
+                    <button class="tab-btn" data-tab="departments" id="tab-btn-departments">
+                        <img src="תמונות/nav_building.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">מחלקות</span>
+                    </button>
+                    <button class="tab-btn" data-tab="missions" id="tab-btn-missions">
+                        <img src="תמונות/nav_trophy.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">משימות</span>
+                    </button>
+                    <button class="tab-btn" data-tab="daily" id="tab-btn-daily">
+                        <img src="תמונות/nav_calendar.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">יומי</span>
+                    </button>
+                    <button class="tab-btn" data-tab="branches" id="tab-btn-branches">
+                        <img src="תמונות/nav_globe.png" class="nav-3d-icon-small" alt="" />
+                        <span class="tab-label">סניפים</span>
+                    </button>
                 </nav>
 
                 <!-- Bulk Upgrade Selector -->
@@ -440,13 +474,14 @@
             
             <div class="settings-danger-section">
                 <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
-                <div class="reset-confirm-wrapper" style="margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <div class="reset-confirm-wrapper">
                     <input type="checkbox" id="reset-confirm-checkbox">
-                    <label for="reset-confirm-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer;">אני מאשר איפוס מלא / I confirm full reset</label>
+                    <label for="reset-confirm-checkbox">אני מאשר איפוס מלא / I confirm full reset</label>
                 </div>
                 <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
             </div>
             
+            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים מסכם</button>
             <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
         </div>
     </div>
@@ -518,28 +553,46 @@
     <!-- Portrait Bottom Navigation -->
     <nav class="bottom-nav" id="bottom-nav" aria-label="ניווט תחתון">
       <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades">
-        <span class="nav-icon" aria-hidden="true">🏦</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_bank.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_upgrades">עמדות</span>
+        <div class="active-star">✨</div>
       </button>
       <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers">
-        <span class="nav-icon" aria-hidden="true">👔</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_suit.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_managers">מנהלים</span>
+        <div class="active-star">✨</div>
       </button>
       <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments">
-        <span class="nav-icon" aria-hidden="true">🏢</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_building.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_departments">מחלקות</span>
+        <div class="active-star">✨</div>
       </button>
       <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions">
-        <span class="nav-icon" aria-hidden="true">🏆</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_trophy.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_missions">משימות</span>
+        <div class="active-star">✨</div>
       </button>
       <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily">
-        <span class="nav-icon" aria-hidden="true">📅</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_calendar.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_daily">יומי</span>
+        <div class="active-star">✨</div>
       </button>
       <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches">
-        <span class="nav-icon" aria-hidden="true">🌍</span>
+        <div class="nav-icon-wrapper">
+          <img src="תמונות/nav_globe.png" class="nav-3d-icon" alt="" />
+        </div>
         <span class="bnav-label" data-i18n="tab_branches">סניפים</span>
+        <div class="active-star">✨</div>
       </button>
     </nav>
 
@@ -558,15 +611,15 @@
                 <div class="wheel-pointer" aria-hidden="true">▼</div>
             </div>
 
-            <p class="fortune-spin-hint" id="fortune-spin-hint" style="font-size:0.8rem; color:#9ca3af; margin:0 0 0.5rem; text-align:center;">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>
+            <p class="fortune-spin-hint" id="fortune-spin-hint">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>
 
-            <div id="fortune-result" class="fortune-result" style="display:none;"></div>
-            <button id="fortune-ad-spin-btn" class="fortune-ad-spin-btn" style="display:none;">📺 סיבוב נוסף — צפה בפרסומת</button>
+            <div id="fortune-result" class="fortune-result"></div>
+            <button id="fortune-ad-spin-btn" class="fortune-ad-spin-btn">📺 סיבוב נוסף — צפה בפרסומת</button>
             <div id="fortune-prize-list" class="fortune-prize-list"></div>
-            <div id="fortune-cooldown" class="fortune-cooldown" style="display:none;"></div>
+            <div id="fortune-cooldown" class="fortune-cooldown"></div>
 
             <button class="modal-close-btn fortune-spin-btn" id="fortune-spin-btn">סובב!</button>
-            <button class="fortune-close-btn-styled" id="fortune-close-btn" style="margin-top:0.75rem; width:100%; padding:0.6rem; border-radius:10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#f87171; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;">✕ סגור וחזור למשחק</button>
+            <button class="fortune-close-btn-styled" id="fortune-close-btn">✕ סגור וחזור למשחק</button>
         </div>
     </div>
 
@@ -597,14 +650,14 @@
         <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
     </div>
 
-    <script src="locales.js" defer></script>
-    <script src="economy-manager.js" defer></script>
-    <script src="save-manager.js" defer></script>
-    <script src="mission-controller.js" defer></script>
-    <script src="game.js" defer></script>
-    <script src="ui-draw.js" defer></script>
-    <script src="ui-tabs.js" defer></script>
-    <script src="ui-events.js" defer></script>
-    <script src="app.js" defer></script>
+    <script src="locales.js?v=7" defer></script>
+    <script src="economy-manager.js?v=7" defer></script>
+    <script src="save-manager.js?v=7" defer></script>
+    <script src="mission-controller.js?v=7" defer></script>
+    <script src="game.js?v=7" defer></script>
+    <script src="ui-draw.js?v=7" defer></script>
+    <script src="ui-tabs.js?v=7" defer></script>
+    <script src="ui-events.js?v=7" defer></script>
+    <script src="app.js?v=7" defer></script>
 </body>
 </html>

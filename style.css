@@ -530,6 +530,7 @@ header {
     width: 44px;
     height: 44px;
     border-radius: 50%;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -538,7 +539,7 @@ header {
     flex-shrink: 0;
     border: 2px solid rgba(223, 171, 41, 0.4);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.3) center top / cover no-repeat;
     transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -610,15 +611,23 @@ header {
     width: 100%;
     height: 140px;
     position: relative;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     display: flex;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
     border-bottom: 1px solid rgba(223, 171, 41, 0.15);
     z-index: 1;
+}
+
+.teller-bg-img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
 }
 
 /* Glass Reflection */
@@ -668,12 +677,13 @@ header {
     width: 34px;
     height: 34px;
     border-radius: 50%;
+    overflow: hidden;
     background: linear-gradient(135deg, #dfab29 0%, #b8860b 100%);
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
     border: 1.5px solid #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), 0 0 8px rgba(223, 171, 41, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 1.15rem;
     z-index: 5;
     animation: client-float 1.2s ease-in-out infinite alternate;
@@ -1367,6 +1377,26 @@ header {
     border-color: rgba(59, 130, 246, 0.4);
 }
 
+.tab-btn .tab-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.nav-3d-icon-small {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6)) brightness(0.95);
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.tab-btn.active .nav-3d-icon-small {
+    transform: scale(1.15) translateY(-1px);
+    filter: drop-shadow(0 3px 7px rgba(0,0,0,0.9)) brightness(1.15);
+}
+
 .vault-stat-icon {
     font-size: 1.1rem;
     background: rgba(255, 255, 255, 0.03);
@@ -1627,6 +1657,7 @@ header {
     width: 72px;
     height: 72px;
     border-radius: 50%;
+    overflow: hidden;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -2428,6 +2459,11 @@ footer {
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
+.entrance-door {
+    font-size: 1.3rem;
+    margin-left: 0.5rem;
+}
+
 /* Missions Tab Styling matching mockup exactly */
 #tab-missions .missions-summary-header {
     background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%); /* Premium brushed silver metallic */
@@ -2849,6 +2885,9 @@ footer {
 }
 
 .upgrade-card.mission-highlight,
+.new-upg-wrapper.mission-highlight,
+.manager-card.mission-highlight,
+.department-card.mission-highlight,
 .prestige-panel.mission-highlight,
 .gold-upgrade-card.mission-highlight {
     animation: mission-pulse 0.6s infinite ease-in-out;
@@ -2878,10 +2917,17 @@ footer {
     }
 
     header {
+        position: sticky;
+        top: 0;
+        z-index: 300;
         flex-direction: column;
         align-items: stretch;
-        padding: 0.75rem;
-        gap: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        gap: 0.5rem;
+        background: rgba(10, 12, 20, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(223, 171, 41, 0.2);
     }
 
     .stats-bar {
@@ -2969,12 +3015,17 @@ footer {
         right: 2rem;
     }
 
-    /* Tellers Compact Grid */
+    /* Tellers Grid 2 Columns */
     .tellers-zone {
         display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 0.4rem !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem !important;
         width: 100%;
+        padding-bottom: 0.8rem !important;
+    }
+
+    .tellers-zone::-webkit-scrollbar {
+        display: none;
     }
 
     .teller-counter {
@@ -2982,8 +3033,9 @@ footer {
         max-width: none !important;
         padding: 0 !important;
         gap: 0 !important;
-        border-radius: 10px;
-        min-height: 175px;
+        border-radius: 12px;
+        min-height: 220px !important;
+        height: 220px !important;
     }
 
     .teller-counter.locked {
@@ -2992,15 +3044,15 @@ footer {
     }
 
     .glass-showcase {
-        height: 100px !important;
+        height: 150px !important;
     }
 
     .client-slot-3d {
-        width: 26px !important;
-        height: 26px !important;
+        width: 20px !important;
+        height: 20px !important;
         font-size: 0.9rem !important;
-        bottom: 6px !important;
-        right: 6px !important;
+        bottom: 5px !important;
+        right: 5px !important;
         border-width: 1px !important;
     }
 
@@ -3534,6 +3586,20 @@ html, body {
     font-size: 0.95rem;
     font-weight: 600;
     font-family: var(--font-heading);
+}
+
+.reset-confirm-wrapper {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.reset-confirm-wrapper label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
 }
 
 /* LTR layout fixes for visual stability */
@@ -4219,6 +4285,16 @@ header, .control-panel, .bank-floor {
 .analytics-modal-box, .event-modal-box, .language-modal-box {
     max-width: 500px;
 }
+.analytics-shortcut-btn {
+    background: rgba(35, 40, 60, 0.8) !important;
+    border: 1px solid rgba(223, 171, 41, 0.3) !important;
+    color: var(--primary-gold) !important;
+    margin-bottom: 0.5rem;
+}
+.analytics-shortcut-btn:hover {
+    border-color: var(--primary-gold) !important;
+    background: rgba(223, 171, 41, 0.1) !important;
+}
 .analytics-content, .event-options-list, .prestige-options {
     display: flex;
     flex-direction: column;
@@ -4263,8 +4339,10 @@ header, .control-panel, .bank-floor {
     margin-bottom: 1rem;
 }
 .click-hint {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
+    opacity: 0.7;
+    margin-right: 0.25rem;
     text-align: center;
     margin-top: 0.5rem;
 }
@@ -4762,120 +4840,159 @@ header, .control-panel, .bank-floor {
     box-sizing: border-box;
 }
 
-/* Individual gold upgrade card - full definition */
+/* Premium Gold Upgrade Cards matching image design */
 .gold-upgrade-card {
-    background: linear-gradient(135deg, rgba(20, 24, 36, 0.95) 0%, rgba(12, 15, 24, 0.98) 100%) !important;
-    border: 1px solid rgba(223, 171, 41, 0.18) !important;
-    border-radius: 14px;
-    padding: 0.85rem 0.95rem;
+    background: #0b0f19 !important; /* Deep dark background */
+    border: 1px solid rgba(223, 171, 41, 0.4) !important;
+    border-radius: 16px;
+    padding: 1.2rem;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.85rem;
+    justify-content: space-between;
+    gap: 1.5rem;
     position: relative;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+    direction: rtl;
+    width: 100%;
     box-sizing: border-box;
+    margin-bottom: 1.2rem;
 }
 
 .gold-upgrade-card:hover {
     border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 14px rgba(223, 171, 41, 0.18) !important;
-    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(223, 171, 41, 0.25);
+    transform: translateY(-2px);
 }
 
-/* MAX badge pinned to top-left */
-.gold-max-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: linear-gradient(135deg, #f5d06d 0%, #dfab29 100%);
-    color: #111827;
-    font-size: 0.6rem;
-    font-weight: 900;
-    padding: 0.15rem 0.45rem;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-    z-index: 1;
-}
-
-/* Icon box */
-.gold-up-icon-box {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    background: rgba(223, 171, 41, 0.08);
-    border: 1px solid rgba(223, 171, 41, 0.2);
+/* Right Side: Large 3D Illustration */
+.gold-card-right {
+    flex-shrink: 0;
+    width: 90px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
-
-.gold-up-icon-img {
-    width: 34px;
-    height: 34px;
+.gold-card-right::before {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.2) 0%, rgba(0,0,0,0) 70%);
+    z-index: 0;
+}
+.gold-big-illustration {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    image-rendering: auto;
+    z-index: 1;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
 }
 
-/* Details section */
-.gold-upgrade-details {
+/* Middle: Text and Action */
+.gold-card-middle {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    flex: 1;
-    min-width: 0;
+    justify-content: center;
+    gap: 0.4rem;
 }
 
 .gold-upgrade-title {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--gold-light, #f5d06d) !important;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gold-title-icon {
+    font-size: 1.1rem;
 }
 
 .gold-upgrade-desc {
-    font-size: 0.73rem;
-    color: var(--text-muted, #9ca3af);
-    line-height: 1.3;
+    font-size: 0.85rem;
+    color: #a3aab5;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
 }
 
-.gold-upgrade-level {
-    font-size: 0.73rem;
-    color: var(--text-secondary, #a3aab5);
-    font-weight: 500;
+.gold-upgrade-action-row {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    margin-top: 0.1rem;
+    gap: 1rem;
 }
 
-.gold-level-val {
-    font-weight: 800;
-    color: var(--primary-gold, #dfab29);
-    font-family: 'Outfit', sans-serif;
+.gold-level-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(20, 24, 36, 0.8);
+    border: 1px solid rgba(223, 171, 41, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #ffffff;
+}
+
+.gold-level-pill.max {
+    border-color: #34d399;
 }
 
 .gold-checkmark {
     color: #34d399;
-    font-size: 0.8rem;
     font-weight: 900;
 }
 
-/* Action area (buy button or MAX label) */
-.gold-upgrade-action {
+.buy-gold-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid var(--primary-gold);
+    color: var(--primary-gold);
+}
+.buy-gold-btn:not(.disabled):hover {
+    background: rgba(223, 171, 41, 0.1);
+}
+
+/* Left Side: Icon and MAX */
+.gold-card-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.gold-category-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(223, 171, 41, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    font-size: 1.4rem;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.15) 0%, rgba(20, 24, 36, 0.8) 100%);
+    box-shadow: inset 0 0 10px rgba(223, 171, 41, 0.2);
+}
+
+.gold-max-text {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--primary-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(223, 171, 41, 0.4);
 }
 
 /* Gold buy button */
@@ -4996,24 +5113,21 @@ header, .control-panel, .bank-floor {
   .bottom-nav {
     display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(60px + env(safe-area-inset-bottom));
-    background: rgba(10, 12, 20, 0.97);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    z-index: 200;
-    padding-bottom: env(safe-area-inset-bottom);
-    justify-content: flex-start;
+    bottom: calc(15px + env(safe-area-inset-bottom));
+    left: 15px;
+    right: 15px;
+    height: 70px;
+    background: rgba(15, 18, 28, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 35px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    justify-content: space-around;
     align-items: center;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 4px;
+    overflow: visible;
+    gap: 0;
   }
 
   .bottom-nav::-webkit-scrollbar {
@@ -5025,49 +5139,94 @@ header, .control-panel, .bank-floor {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    flex: 0 0 auto;
-    min-width: 60px;
-    height: 60px;
-    background: none;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    background: transparent;
     border: none;
-    color: rgba(160, 160, 180, 0.7);
-    font-size: 0.7rem;
-    font-family: inherit;
+    color: rgba(160, 160, 180, 0.6);
+    font-size: 0.65rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: color 0.2s ease;
-    touch-action: manipulation;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     -webkit-tap-highlight-color: transparent;
-    padding: 0 4px;
-    scroll-snap-align: start;
+  }
+
+  .bottom-nav-btn:active {
+    transform: scale(0.95);
   }
 
   .bottom-nav-btn.active {
-    color: #dfab29;
-    background: rgba(223, 171, 41, 0.1);
-    border-radius: 10px;
+    color: var(--primary-gold);
+    /* Remove old background gradient */
+    background: transparent;
   }
 
-  .bottom-nav-btn.active::after {
+  /* 3D Icon styling */
+  .nav-icon-wrapper {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+
+  .nav-3d-icon {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.65)) brightness(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+  }
+
+  /* Active Tab Enhancements */
+  .bottom-nav-btn.active .nav-3d-icon {
+    transform: scale(1.15) translateY(-2px);
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.9)) brightness(1.2);
+  }
+
+  .bottom-nav-btn.active .nav-icon-wrapper::before {
     content: '';
     position: absolute;
-    bottom: 6px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background: #dfab29;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.35) 0%, rgba(223, 171, 41, 0) 65%);
+    z-index: 1;
     border-radius: 50%;
-    box-shadow: 0 0 6px rgba(223, 171, 41, 0.7);
+    pointer-events: none;
   }
 
-  .bottom-nav-btn {
-    position: relative;
+  .bnav-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    z-index: 2;
+    letter-spacing: 0.3px;
+    transition: color 0.3s ease;
+  }
+  
+  .bottom-nav-btn.active .bnav-label {
+    text-shadow: 0 0 8px rgba(223, 171, 41, 0.5);
   }
 
-  .bottom-nav-btn .nav-icon {
-    font-size: 1.3rem;
-    line-height: 1;
+  .active-star {
+    font-size: 0.55rem;
+    color: var(--primary-gold);
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.3s ease;
+    margin-top: -2px;
+    text-shadow: 0 0 6px rgba(223, 171, 41, 0.9);
+  }
+
+  .bottom-nav-btn.active .active-star {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   /* --- Body: מרווח תחתון לbottom nav + buffer --- */
@@ -5086,6 +5245,8 @@ header, .control-panel, .bank-floor {
     padding: 0.4rem 0.6rem !important;
     gap: 0.35rem !important;
     flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
     align-items: stretch !important;
   }
 
@@ -5154,38 +5315,99 @@ header, .control-panel, .bank-floor {
     display: none !important;
   }
 
-  /* --- Vault Mini Bar: פאנל כספת — 2 שורות --- */
+  /* --- Vault Mini Bar: פאנל כספת מרשים --- */
+  @keyframes vault-bar-ready-pulse {
+    0%, 100% { box-shadow: 0 0 22px rgba(223,171,41,0.18), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06); border-color: rgba(223,171,41,0.65); }
+    50%       { box-shadow: 0 0 38px rgba(223,171,41,0.55), 0 4px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08); border-color: rgba(243,208,82,0.95); }
+  }
+  @keyframes vault-bar-full-pulse {
+    0%, 100% { box-shadow: 0 0 24px rgba(239,68,68,0.25), 0 4px 16px rgba(0,0,0,0.5); border-color: rgba(239,68,68,0.7); }
+    50%       { box-shadow: 0 0 42px rgba(239,68,68,0.6),  0 4px 20px rgba(0,0,0,0.6); border-color: rgba(239,68,68,1.0); }
+  }
+  @keyframes vault-btn-ready-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(223,171,41,0.0); }
+    50%       { box-shadow: 0 0 14px 4px rgba(223,171,41,0.55); }
+  }
+  @keyframes vault-fill-shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+
   .vault-mini-bar {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.38rem !important;
-    background: linear-gradient(135deg, rgba(18,24,42,0.98) 0%, rgba(12,18,32,0.99) 100%) !important;
+    gap: 0.42rem !important;
+    background: linear-gradient(135deg, rgba(14,20,38,0.99) 0%, rgba(8,13,26,1.0) 100%) !important;
     border: 2px solid rgba(223, 171, 41, 0.65) !important;
-    border-radius: 14px !important;
-    padding: 0.55rem 0.75rem !important;
+    border-radius: 16px !important;
+    padding: 0.6rem 0.8rem !important;
     margin-top: 0.2rem !important;
-    box-shadow: 0 0 20px rgba(223,171,41,0.12), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    box-shadow: 0 0 22px rgba(223,171,41,0.18), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .vault-mini-bar::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(223,171,41,0.07) 0%, transparent 70%) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+  .vault-mini-bar.is-ready {
+    animation: vault-bar-ready-pulse 1.8s ease-in-out infinite !important;
+  }
+  .vault-mini-bar.is-full {
+    animation: vault-bar-full-pulse 1.4s ease-in-out infinite !important;
   }
 
-  /* שורה 1: אייקון + שם + סכום מאוחסן / קיבולת + כפתור */
+  /* שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור */
   .vault-mini-top {
     display: flex !important;
     align-items: center !important;
-    gap: 0.4rem !important;
+    gap: 0.5rem !important;
+    position: relative !important;
+    z-index: 1 !important;
   }
 
   .vault-mini-icon {
-    font-size: 1.3rem !important;
-    line-height: 1 !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2px solid rgba(223,171,41,0.6) !important;
+    box-shadow: 0 0 10px rgba(223,171,41,0.25) !important;
+    flex-shrink: 0 !important;
+    background: #0a0f1e !important;
+    transition: box-shadow 0.3s ease !important;
+  }
+  .vault-mini-bar.is-ready .vault-mini-icon {
+    box-shadow: 0 0 18px rgba(243,208,82,0.55) !important;
+    border-color: rgba(243,208,82,0.9) !important;
+  }
+
+  .vault-mini-name-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1px !important;
     flex-shrink: 0 !important;
   }
 
   .vault-mini-label {
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
     font-weight: 800 !important;
     color: #dfab29 !important;
     letter-spacing: 0.5px !important;
-    flex-shrink: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .vault-mini-level {
+    font-size: 0.62rem !important;
+    font-weight: 700 !important;
+    color: rgba(255,255,255,0.45) !important;
+    letter-spacing: 0.3px !important;
+    line-height: 1 !important;
   }
 
   .vault-mini-spacer {
@@ -5197,65 +5419,122 @@ header, .control-panel, .bank-floor {
     display: flex !important;
     align-items: baseline !important;
     flex-shrink: 0 !important;
+    gap: 1px !important;
   }
 
   .vault-mini-stored-val {
-    font-size: 1.5rem !important;
+    font-size: 1.55rem !important;
     font-weight: 900 !important;
     color: #f3d052 !important;
     line-height: 1 !important;
-    text-shadow: 0 0 8px rgba(243,208,82,0.4) !important;
+    text-shadow: 0 0 12px rgba(243,208,82,0.55) !important;
+    transition: text-shadow 0.3s ease !important;
+  }
+  .vault-mini-bar.is-full .vault-mini-stored-val {
+    color: #fca5a5 !important;
+    text-shadow: 0 0 12px rgba(239,68,68,0.55) !important;
   }
 
   .vault-mini-slash {
-    font-size: 0.68rem !important;
-    color: rgba(255,255,255,0.3) !important;
+    font-size: 0.66rem !important;
+    color: rgba(255,255,255,0.28) !important;
     margin: 0 2px !important;
   }
 
   .vault-mini-cap-val {
-    font-size: 0.78rem !important;
+    font-size: 0.76rem !important;
     font-weight: 600 !important;
-    color: rgba(255,255,255,0.5) !important;
+    color: rgba(255,255,255,0.45) !important;
   }
 
   .vault-mini-collect {
-    background: linear-gradient(135deg, #1e3a5f, #1e4976) !important;
-    border: 1.5px solid rgba(96,165,250,0.5) !important;
-    color: #93c5fd !important;
-    border-radius: 9px !important;
-    padding: 0.3rem 0.55rem !important;
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
+    background: linear-gradient(135deg, #1a3352, #1a4268) !important;
+    border: 1.5px solid rgba(96,165,250,0.45) !important;
+    color: #7eb8f5 !important;
+    border-radius: 10px !important;
+    padding: 0.32rem 0.6rem !important;
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
     cursor: pointer !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
     touch-action: manipulation !important;
-    min-height: 36px !important;
+    min-height: 38px !important;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 80ms ease !important;
+    letter-spacing: 0.3px !important;
+  }
+  .vault-mini-collect:not(:disabled) {
+    background: linear-gradient(135deg, #92530a, #b8720d, #dfab29) !important;
+    border-color: rgba(243,208,82,0.8) !important;
+    color: #fff8e0 !important;
+    animation: vault-btn-ready-pulse 1.8s ease-in-out infinite !important;
+  }
+  .vault-mini-bar.is-full .vault-mini-collect:not(:disabled) {
+    background: linear-gradient(135deg, #7f1d1d, #b91c1c, #ef4444) !important;
+    border-color: rgba(239,68,68,0.9) !important;
+    color: #fff !important;
+    animation: vault-btn-ready-pulse 1.2s ease-in-out infinite !important;
+  }
+  .vault-mini-collect:active {
+    transform: scale(0.92) !important;
+    animation: none !important;
+  }
+  .vault-mini-collect:disabled {
+    opacity: 0.35 !important;
+    animation: none !important;
   }
 
-  /* שורה 2: עמודה — פס מילוי + meta */
+  /* שורה 2: פס מילוי + meta */
   .vault-mini-bottom {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.22rem !important;
+    gap: 0.25rem !important;
+    position: relative !important;
+    z-index: 1 !important;
   }
 
   .vault-mini-track {
     width: 100% !important;
-    height: 7px !important;
-    background: rgba(255,255,255,0.07) !important;
-    border-radius: 4px !important;
+    height: 12px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border-radius: 6px !important;
     overflow: hidden !important;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5) !important;
   }
 
   .vault-mini-fill {
     height: 100% !important;
-    width: 0% !important;
-    background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa) !important;
-    border-radius: 4px !important;
-    transition: width 0.5s ease, background 0.5s ease !important;
+    width: 0%;
+    background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 40%, #93c5fd 60%, #3b82f6 100%) !important;
+    background-size: 200% 100% !important;
+    border-radius: 6px !important;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
     will-change: width;
+    animation: vault-fill-shimmer 2.5s linear infinite !important;
+    box-shadow: 0 0 8px rgba(59,130,246,0.5) !important;
+    position: relative !important;
+  }
+  .vault-mini-fill::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    left: 6% !important;
+    right: 6% !important;
+    height: 3px !important;
+    background: rgba(255,255,255,0.25) !important;
+    border-radius: 2px !important;
+  }
+  .vault-mini-fill.is-warm {
+    background: linear-gradient(90deg, #92400e 0%, #d97706 40%, #fbbf24 60%, #d97706 100%) !important;
+    background-size: 200% 100% !important;
+    box-shadow: 0 0 10px rgba(217,119,6,0.6) !important;
+    animation: vault-fill-shimmer 2s linear infinite !important;
+  }
+  .vault-mini-fill.is-full {
+    background: linear-gradient(90deg, #7f1d1d 0%, #dc2626 40%, #f87171 60%, #dc2626 100%) !important;
+    background-size: 200% 100% !important;
+    box-shadow: 0 0 12px rgba(239,68,68,0.7) !important;
+    animation: vault-fill-shimmer 1.5s linear infinite !important;
   }
 
   /* meta: אחוז + תשואה */
@@ -5264,24 +5543,24 @@ header, .control-panel, .bank-floor {
     align-items: center !important;
     gap: 0.3rem !important;
     font-size: 0.68rem !important;
-    color: rgba(255,255,255,0.55) !important;
+    color: rgba(255,255,255,0.5) !important;
     line-height: 1 !important;
   }
 
   .vault-mini-pct-wrap {
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
     font-weight: 700 !important;
     color: #f3d052 !important;
     line-height: 1 !important;
   }
 
   .vault-mini-sep {
-    color: rgba(255,255,255,0.25) !important;
+    color: rgba(255,255,255,0.22) !important;
   }
 
   #vault-mini-yield {
     color: #34d399 !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
   }
 
   /* --- קופות בפורטרייט: נראות טובה יותר --- */
@@ -5309,29 +5588,58 @@ header, .control-panel, .bank-floor {
 
   .floor-map {
     min-height: 0 !important;
-    height: 130px !important;
-    max-height: 130px !important;
+    height: auto !important;
+    max-height: none !important;
     padding: 0.4rem 0.5rem !important;
-    gap: 0.3rem !important;
-    overflow: hidden !important;
+    gap: 0.5rem !important;
+    overflow: visible !important;
   }
 
-  /* queue-wrapper מוסתר בפורטרייט — אין מקום ב-110px */
+  /* queue-wrapper — גרסה קומפקטית לפורטרייט */
   .queue-wrapper {
-    display: none !important;
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  /* Tellers: גלילה אופקית */
-  .tellers-zone {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+  .queue-zone {
+    height: 48px !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 10px !important;
     gap: 0.4rem !important;
+  }
+
+  .queue-label {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .customer-line {
+    min-width: 110px !important;
+    width: 110px !important;
+    max-width: 110px !important;
+    gap: 0.25rem !important;
+  }
+
+  .customer-avatar, .visual-client-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.78rem !important;
+    border-width: 1.5px !important;
+  }
+
+  .waiting-sofa, .entrance-door {
+    font-size: 0.9rem !important;
+  }
+
+  /* Tellers: Grid 2 Columns (Portrait Override) */
+  .tellers-zone {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
     width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
   }
 
   .tellers-zone::-webkit-scrollbar {
@@ -5339,12 +5647,21 @@ header, .control-panel, .bank-floor {
   }
 
   .teller-counter {
-    flex: 0 0 110px !important;
-    min-width: 110px !important;
-    max-width: 110px !important;
-    min-height: 0 !important;
-    height: 94px !important;
-    border-radius: 10px !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 145px !important;
+    height: 145px !important;
+    border-radius: 12px !important;
+    padding: 0 !important;
+  }
+
+  .teller-counter .glass-showcase {
+    height: 90px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .teller-counter .teller-bg-img {
+    object-position: center 15% !important;
   }
 
   /* --- כספת: מוסתרת בפורטרייט — vault-mini-bar ב-header מחליפה אותה --- */
@@ -5356,8 +5673,29 @@ header, .control-panel, .bank-floor {
     display: none !important;
   }
 
+  /* advertising-control — גרסה קומפקטית לפורטרייט */
   .advertising-control {
-    display: none !important;
+    display: flex !important;
+    padding: 0.3rem 0.6rem !important;
+    gap: 0.15rem !important;
+    border-radius: 8px !important;
+  }
+
+  .adv-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    font-size: 0.7rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .adv-slider-wrapper {
+    gap: 0.35rem !important;
+  }
+
+  .adv-slider::-webkit-slider-thumb {
+    height: 22px !important;
+    width: 22px !important;
   }
 
   /* אלמנטים דקורטיביים */
@@ -5381,12 +5719,10 @@ header, .control-panel, .bank-floor {
   }
 
   .tab-content {
-    overflow-y: auto !important;
+    overflow-y: visible !important;
     max-height: none !important;
-    -webkit-overflow-scrolling: touch !important;
-    scroll-behavior: smooth !important;
-    overscroll-behavior-y: contain !important;
-    will-change: scroll-position;
+    overscroll-behavior-y: auto !important;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
   }
 
   /* --- Footer מוסתר --- */
@@ -5514,24 +5850,24 @@ header, .control-panel, .bank-floor {
 
   /* --- Vault Mini Bar: small phone refinements --- */
   .vault-mini-bar {
-    border: 1.5px solid rgba(223, 171, 41, 0.65) !important;
-    background: rgba(18, 24, 40, 0.97) !important;
-    box-shadow: 0 0 14px rgba(223, 171, 41, 0.18), inset 0 1px 0 rgba(255,255,255,0.05) !important;
-    padding: 0.5rem 0.7rem !important;
+    padding: 0.5rem 0.65rem !important;
+    border-radius: 14px !important;
+  }
+  .vault-mini-icon {
+    width: 34px !important;
+    height: 34px !important;
   }
   .vault-mini-stored-val {
     font-size: 1.35rem !important;
   }
   .vault-mini-collect {
-    min-height: 40px !important;
+    min-height: 38px !important;
     font-size: 0.7rem !important;
-    padding: 0.3rem 0.5rem !important;
+    padding: 0.28rem 0.48rem !important;
     border-radius: 10px !important;
-    font-weight: 700 !important;
-    transition: transform 80ms ease !important;
   }
-  .vault-mini-collect:active {
-    transform: scale(0.92) !important;
+  .vault-mini-track {
+    height: 10px !important;
   }
 
   /* --- Buy Buttons: גדולים וברורים --- */
@@ -5578,12 +5914,16 @@ header, .control-panel, .bank-floor {
     align-self: flex-end !important;
     flex-shrink: 0 !important;
   }
+  /* Force Gold Upgrades to 1 column in portrait so they aren't squished */
+  .gold-upgrades-grid {
+      grid-template-columns: 1fr !important;
+  }
 }
 
 /* Responsive adjustments for gold shop and small mobile */
 @media (max-width: 480px) {
     .gold-upgrades-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
     }
     .gold-summary-grid {
         flex-direction: column;
@@ -5656,6 +5996,73 @@ header, .control-panel, .bank-floor {
     min-height: 0 !important;
     height: 130px !important;
     max-height: 130px !important;
+  }
+
+  /* Gold shop — redesigned 2-column layout for portrait mobile */
+  .gold-upgrade-card {
+    gap: 0.75rem !important;
+    padding: 0.85rem !important;
+    align-items: center !important;
+  }
+
+  /* Hide emoji icon column — image already carries the visual identity */
+  .gold-card-left {
+    display: none !important;
+  }
+
+  /* Larger, cleaner illustration */
+  .gold-card-right {
+    width: 76px !important;
+    height: 76px !important;
+    flex-shrink: 0 !important;
+  }
+  .gold-card-right::before {
+    width: 76px !important;
+    height: 76px !important;
+  }
+  /* Remove drop-shadow — it bleeds outside card bounds on mobile */
+  .gold-big-illustration {
+    filter: none !important;
+  }
+
+  /* Full-width text area, prevents overflow */
+  .gold-card-middle {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .gold-upgrade-title {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+  }
+  .gold-upgrade-desc {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.35rem !important;
+  }
+  .gold-upgrade-action-row {
+    flex-wrap: wrap !important;
+    gap: 0.45rem !important;
+    align-items: center !important;
+  }
+  .buy-gold-btn {
+    font-size: 0.83rem !important;
+    padding: 0.38rem 0.8rem !important;
+  }
+  .gold-level-pill {
+    font-size: 0.76rem !important;
+    padding: 0.25rem 0.6rem !important;
+  }
+
+  /* Summary panel */
+  .gold-summary-box {
+    padding: 0.8rem !important;
+  }
+  .gold-stat-val {
+    font-size: 0.92rem !important;
+  }
+  .gold-stat-desc {
+    font-size: 0.63rem !important;
   }
 }
 
@@ -6104,10 +6511,15 @@ header {
         padding: 0.55rem 0.7rem !important;
         gap: 0.55rem !important;
         border-radius: 16px !important;
+        flex-wrap: nowrap !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
     }
 
     /* פורטרייט: שורה 1 cash רוחב מלא, שורה 2 secondary זה לצד זה */
     .luxury-dashboard {
+        display: grid !important;
         grid-template-columns: 1fr !important;
         grid-template-rows: auto auto !important;
         gap: 0.45rem !important;
@@ -6120,8 +6532,9 @@ header {
     }
 
     .cash-hero-card {
-        min-height: 76px !important;
-        padding: 0.7rem 1rem !important;
+        min-height: 88px !important;
+        padding: 0.75rem 1rem 0.6rem !important;
+        justify-content: flex-start !important;
     }
 
     .cash-label {
@@ -6132,7 +6545,7 @@ header {
     .cash-amount {
         font-size: 2.1rem !important;
         font-weight: 900 !important;
-        line-height: 1.1 !important;
+        line-height: 1.15 !important;
     }
 
     .cash-eps {
@@ -6141,8 +6554,9 @@ header {
     }
 
     .secondary-card {
-        min-height: 68px !important;
-        padding: 0.55rem 0.7rem !important;
+        min-height: 72px !important;
+        padding: 0.6rem 0.7rem !important;
+        justify-content: flex-start !important;
     }
 
     .secondary-value {
@@ -6168,12 +6582,23 @@ header {
         font-size: 1.3rem !important;
     }
 
-    .brand-title h1 {
-        font-size: 0.9rem !important;
-    }
-
     .header-buttons-row {
         gap: 0.3rem !important;
+        width: auto !important;
+        align-self: center !important;
+        flex-shrink: 0 !important;
+    }
+
+    .brand-section {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    .brand-title h1 {
+        font-size: 0.9rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
 
     #prestige-preview-label {
@@ -6431,6 +6856,7 @@ header {
 }
 
 .fortune-result {
+    display: none;
     background: linear-gradient(135deg, rgba(223, 171, 41, 0.15) 0%, rgba(223, 171, 41, 0.05) 100%);
     border: 1px solid rgba(223, 171, 41, 0.5);
     border-radius: 12px;
@@ -6522,6 +6948,7 @@ header {
 
 
 .fortune-cooldown {
+    display: none;
     font-size: 0.9rem;
     color: var(--text-muted);
     text-align: center;
@@ -6562,6 +6989,7 @@ header {
 }
 
 .fortune-ad-spin-btn {
+    display: none;
     margin-top: 0.6rem;
     width: 100%;
     padding: 0.7rem;
@@ -6586,6 +7014,27 @@ header {
     color: #9ca3af;
     box-shadow: none;
     cursor: not-allowed;
+}
+
+.fortune-spin-hint {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0 0 0.5rem;
+    text-align: center;
+}
+
+.fortune-close-btn-styled {
+    margin-top: 0.75rem;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #f87171;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 /* ==========================================
@@ -7867,8 +8316,19 @@ header {
 }
 
 .upg-title-levels {
-    color: #a3ffb1;
+    color: #059669; /* Darker, richer green that blends better with the game */
+    font-weight: 900;
     font-size: 1.2rem;
+}
+
+.upg-plus-hl {
+    color: #059669; /* Darker, richer green */
+    font-weight: 900;
+}
+
+.buy-btn .upg-plus-hl {
+    color: #065f46; /* Deep forest green for better contrast on gold buttons */
+    text-shadow: 0 1px 1px rgba(255,255,255,0.2);
 }
 
 .upg-new-desc {

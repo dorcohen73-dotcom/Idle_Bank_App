@@ -341,9 +341,9 @@ function openPrestigeModal(target) {
     const elRewardLabel = document.getElementById('prestige-reward-label');
     
     if (elTitle) elTitle.innerText = tObj.branches.names[target];
-    if (elGained) elGained.innerText = `+${sharesGained}`;
-    if (elDoubled) elDoubled.innerText = `${sharesGained * 3}`;
-    if (elAdBtn) elAdBtn.innerText = tObj.prestigeAdBtn(sharesGained * 3);
+    if (elGained) elGained.innerText = `+${sharesGained.toLocaleString('en-US')}`;
+    if (elDoubled) elDoubled.innerText = `${(sharesGained * 3).toLocaleString('en-US')}`;
+    if (elAdBtn) elAdBtn.innerText = tObj.prestigeAdBtn((sharesGained * 3).toLocaleString('en-US'));
     if (elRegularBtn) elRegularBtn.innerText = tObj.prestigeRegularBtn;
     if (elCancelBtn) elCancelBtn.innerText = tObj.prestigeCancelBtn;
     if (elRewardLabel) elRewardLabel.innerText = tObj.prestigeRewardLabel;
@@ -1603,7 +1603,9 @@ function handleMissionRedirect(missionType, targetId) {
         case 'earn_cash':
         case 'earn_eps':
         case 'serve_rich_vip':
+        case 'vip_collector':
         case 'spend_cash':
+        case 'break_the_wall':
             tabName = 'upgrades';
             selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
             break;
@@ -1612,17 +1614,12 @@ function handleMissionRedirect(missionType, targetId) {
         case 'manager_hire':
         case 'all_managers':
             tabName = 'managers';
-            selector = '.mgr-buy-btn';
+            selector = '.buy-mgr-btn, .upgrade-mgr-btn';
             break;
         case 'unlock_departments':
         case 'department_unlock':
             tabName = 'departments';
             selector = '.dept-action-btn:not(.active)';
-            break;
-        case 'vip_collector':
-        case 'serve_rich_vip':
-            tabName = 'upgrades';
-            selector = '.buy-btn[data-type="teller"][data-id="0"]';
             break;
         case 'teller_max':
             tabName = 'upgrades';
@@ -1648,7 +1645,7 @@ function handleMissionRedirect(missionType, targetId) {
 
         const targetBtn = document.querySelector(selector);
         if (targetBtn) {
-            const card = targetBtn.closest('.upgrade-card, .prestige-panel, .gold-upgrade-card');
+            const card = targetBtn.closest('.new-upg-wrapper, .upgrade-card, .manager-card, .department-card, .prestige-panel, .gold-upgrade-card');
             if (card) {
                 card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 card.classList.add('mission-highlight');
@@ -1657,7 +1654,7 @@ function handleMissionRedirect(missionType, targetId) {
                 }, 2500);
             }
         }
-    }, 150);
+    }, 300);
 }
 
 function showContextualAdBanner(type) {
@@ -1909,34 +1906,36 @@ function syncBottomNav(activeTab) {
 }
 
 // עדכון vault mini bar ב-portrait
-function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour) {
+function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour, vaultLevel) {
     const miniPct = document.getElementById('vault-mini-pct');
     const miniFill = document.getElementById('vault-mini-fill');
     const miniBtn = document.getElementById('vault-mini-btn');
+    const miniBar = document.getElementById('vault-mini-bar');
     if (!miniPct) return;
     miniPct.textContent = Math.round(pct) + '%';
     if (miniFill) miniFill.style.width = pct + '%';
     if (miniBtn) {
         miniBtn.disabled = !isReady;
-        miniBtn.style.opacity = isReady ? '1' : '0.4';
     }
-    // פרטים נוספים: stored / capacity + yield/hour
+    const fmt = (typeof window.formatMoney === 'function') ? window.formatMoney : (v => '$' + Math.round(v));
     const miniStored = document.getElementById('vault-mini-stored');
     const miniCap = document.getElementById('vault-mini-cap');
     const miniYield = document.getElementById('vault-mini-yield');
-    const fmt = (typeof window.formatMoney === 'function') ? window.formatMoney : (v => '$' + Math.round(v));
+    const miniLevel = document.getElementById('vault-mini-level');
     if (miniStored && cashStored !== undefined) miniStored.textContent = fmt(cashStored);
     if (miniCap && capacity !== undefined) miniCap.textContent = fmt(capacity);
     if (miniYield && yieldPerHour !== undefined) miniYield.textContent = '+' + fmt(yieldPerHour) + '/h';
-    // צבע fill לפי מצב
+    if (miniLevel && vaultLevel !== undefined) miniLevel.textContent = 'Lv.' + vaultLevel;
+    // CSS classes לפס מילוי (ללא inline style — ה-CSS מטפל בצבע)
     if (miniFill) {
-        if (pct >= 95) {
-            miniFill.style.background = '#ef4444';
-        } else if (pct >= 60) {
-            miniFill.style.background = '#dfab29';
-        } else {
-            miniFill.style.background = '#3b82f6';
-        }
+        miniFill.style.background = '';
+        miniFill.classList.toggle('is-full', pct >= 95);
+        miniFill.classList.toggle('is-warm', pct >= 60 && pct < 95);
+    }
+    // classes על הבר לאנימציות גלו
+    if (miniBar) {
+        miniBar.classList.toggle('is-full', pct >= 95);
+        miniBar.classList.toggle('is-ready', isReady && pct < 95);
     }
 }
 
@@ -2186,6 +2185,14 @@ function initUIEvents() {
     if (DOM_CACHE.analyticsBtn) {
         DOM_CACHE.analyticsBtn.addEventListener('click', () => {
             initSound();
+            openAnalyticsModal();
+        });
+    }
+
+    const analyticsFromSettingsBtn = document.getElementById('analytics-from-settings-btn');
+    if (analyticsFromSettingsBtn) {
+        analyticsFromSettingsBtn.addEventListener('click', () => {
+            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.remove('active');
             openAnalyticsModal();
         });
     }
