@@ -2,7 +2,7 @@ class EconomyManager {
     constructor(game) {
         this.game = game;
         this.cachedTotalMult = null;
-        this._cachedVaultCap = null;
+        this._cachedVaultCap = new Map();
         this._cachedTellerCap = null;
     }
 
@@ -22,7 +22,7 @@ class EconomyManager {
 
     getMaxTellers() {
         const branchIndex = this.game.state.currentBranch || 0;
-        return 4 + branchIndex;
+        return Math.min(this.game.tellerUnlockCosts.length, 4 + branchIndex);
     }
 
     getTotalMultiplier() {
@@ -150,15 +150,15 @@ class EconomyManager {
 
     // Vault Formulas
     getVaultCapacity(level) {
-        // H-05: cache vault capacity — invalidated in recalculateEps() and after upgrades
-        if (this._cachedVaultCap !== null) return this._cachedVaultCap;
+        // H-05: cache vault capacity per level — invalidated in recalculateEps() and after upgrades
+        if (this._cachedVaultCap.has(level)) return this._cachedVaultCap.get(level);
         let cap = Math.round(GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1));
 
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.vaultCapacityBoost) {
             cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost)); // +10% per level
         }
 
-        this._cachedVaultCap = cap;
+        this._cachedVaultCap.set(level, cap);
         return cap;
     }
 
@@ -289,7 +289,7 @@ class EconomyManager {
     recalculateEps() {
         let totalVal = 0;
         this.cachedTotalMult = null;
-        this._cachedVaultCap = null;
+        this._cachedVaultCap = new Map();
         this._cachedTellerCap = null;
         const freshMult = this.getTotalMultiplier();
         const baseRewardWithMultiplier = this.getCurrentBaseReward() * freshMult;

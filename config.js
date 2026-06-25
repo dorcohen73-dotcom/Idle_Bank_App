@@ -12,7 +12,7 @@ const GAME_CONFIG = {
     TELLER_CAPACITY_GROWTH: 1.35,
 
     TELLER_BASE_UPGRADE_COST: 80,
-    TELLER_UPGRADE_COST_GROWTH: 1.32,
+    TELLER_UPGRADE_COST_GROWTH: 1.20,
 
     // Guards Formulas
     GUARD_BASE_SPEED: 8.0,
@@ -28,21 +28,21 @@ const GAME_CONFIG = {
     GUARD_AUTO_CAPACITY_FACTOR: 1.5, // Alon manager auto capacity multiplier (+50%)
 
     GUARD_BASE_UPGRADE_COST: 180,
-    GUARD_UPGRADE_COST_GROWTH: 1.30,
+    GUARD_UPGRADE_COST_GROWTH: 1.25,
 
     // Vault Formulas
     VAULT_BASE_CAPACITY: 1500,
     VAULT_CAPACITY_GROWTH: 1.45,
 
     VAULT_BASE_UPGRADE_COST: 350,
-    VAULT_UPGRADE_COST_GROWTH: 1.34,
+    VAULT_UPGRADE_COST_GROWTH: 1.30,
 
     // Queue Lobby Formulas
     QUEUE_BASE_CAPACITY: 5,
     QUEUE_CAPACITY_STEP: 5,
     QUEUE_BRANCH_BONUS_FACTOR: 5,
     QUEUE_BASE_UPGRADE_COST: 100,
-    QUEUE_UPGRADE_COST_GROWTH: 2.0,
+    QUEUE_UPGRADE_COST_GROWTH: 1.8,
     QUEUE_MAX_LEVEL: 6,
 
     // Timers & Intervals
@@ -66,7 +66,7 @@ const GAME_CONFIG = {
     GUARD_UNLOCK_COSTS: [0, 4000, 120000],
     
     MANAGER_COSTS: {
-        customer: 800,
+        customer: 50,
         operations: 5000,
         finance: 100000,
         service: 1500000,
@@ -75,7 +75,7 @@ const GAME_CONFIG = {
     },
 
     MANAGER_UPGRADE_COSTS: {
-        customer: [0, 3000, 10000, 35000, 120000],
+        customer: [0, 300, 1000, 5000, 25000],
         operations: [0, 15000, 50000, 180000, 600000],
         finance: [0, 300000, 1000000, 3200000, 10000000],
         service: [0, 4500000, 15000000, 50000000, 150000000],
@@ -125,7 +125,13 @@ const GAME_CONFIG = {
     ADMOB_CONFIG: {
         APP_ID: "ca-app-pub-1189054329275307~5576716143",
         REWARDED_AD_UNIT_ID: "ca-app-pub-1189054329275307/1609550976"
-    }
+    },
+
+    // Multi-stop guard route anchors — fractional position (0.0–1.0) along #security-path
+    // Centers for a 4-column equal-grid (1fr each): (i + 0.5) / 4 in RTL visual order.
+    // DOM-computed values override these at runtime via _recalcGuardAnchors().
+    GUARD_TELLER_ANCHORS: [0.125, 0.375, 0.625, 0.875],
+    GUARD_VAULT_ANCHOR: 0.05
 };
 
 Object.freeze(GAME_CONFIG.BRANCHES);
@@ -140,4 +146,5 @@ Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS);
 Object.keys(GAME_CONFIG.MANAGER_COEFFICIENTS).forEach(k => Object.freeze(GAME_CONFIG.MANAGER_COEFFICIENTS[k]));
 GAME_CONFIG.WHEEL_PRIZES.forEach(p => Object.freeze(p));
 Object.freeze(GAME_CONFIG.WHEEL_PRIZES);
+Object.freeze(GAME_CONFIG.GUARD_TELLER_ANCHORS);
 Object.freeze(GAME_CONFIG);

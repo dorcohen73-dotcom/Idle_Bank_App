@@ -127,12 +127,18 @@ class MissionController {
 
         // === NEW MISSION TYPES ===
 
-        // 1. vip_marathon — only if VIP dept (index 2) is unlocked
+
+
+        // 1. vip_collector — only if VIP dept (index 2) is unlocked
         const vipDeptUnlocked = this.game.state.departments && this.game.state.departments[2] && this.game.state.departments[2].unlocked;
         if (vipDeptUnlocked) {
             pool.push({
-                type: 'vip_marathon',
-                target: () => 20,
+                type: 'vip_collector',
+                target: () => {
+                    const branchMult = Math.pow(1.5, branchIndex);
+                    const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
+                    return Math.round(20 * branchMult * (1 + 0.2 * epsFactor));
+                },
                 reward: () => ({ type: 'shares', amount: 2 })
             });
         }
@@ -204,6 +210,16 @@ class MissionController {
             });
         }
 
+        // 8. break_the_wall — Mid-game cash burst to help afford the 4th/5th teller
+        const unlockedTellersCount = (this.game.state.tellers || []).filter(t => t && t.unlocked).length;
+        if (unlockedTellersCount >= 3 && unlockedTellersCount < 5) {
+            pool.push({
+                type: 'break_the_wall',
+                target: () => 150 + Math.floor(Math.random() * 50),
+                reward: () => Math.round(this.game.getEarningsPerSecond() * 1800 + 8000 * scale) // 30 mins worth of cash + base
+            });
+        }
+
         // Pick random mission template ensuring no duplicate active types
         const activeTypes = (this.game.state.missions || []).map(m => m.type);
         let availablePool = pool.filter(t => !activeTypes.includes(t.type));
@@ -246,12 +262,20 @@ class MissionController {
             this.game.state.missions.push(this.generateMission());
         }
 
+        let anyNewlyCompleted = false;
+
         this.game.state.missions.forEach(m => {
             if (m.completed) return;
 
             // Healing check to prevent freezes or NaN loops
             if (isNaN(m.target) || !isFinite(m.target) || m.target <= 0) {
                 m.target = 1; 
+            }
+
+            // Migrate legacy vip_marathon to vip_collector
+            if (m.type === 'vip_marathon') {
+                m.type = 'vip_collector';
+                m.startProgress = this.game.state.stats.vipServed || 0;
             }
 
             let currentProgress = 0;
@@ -320,10 +344,13 @@ class MissionController {
 
                 // === NEW MISSION TRACKING ===
 
-                case 'vip_marathon':
-                    // Counts consecutive VIP clients served; resets if a non-VIP is served between them.
-                    // Relies on game loop calling m.consecutiveVip counter updates externally.
-                    currentProgress = m.consecutiveVip || 0;
+
+
+                case 'vip_collector':
+                    if (m.startProgress === undefined) {
+                        m.startProgress = this.game.state.stats.vipServed || 0;
+                    }
+                    currentProgress = (this.game.state.stats.vipServed || 0) - m.startProgress;
                     break;
 
                 case 'department_unlock': {
@@ -378,6 +405,14 @@ class MissionController {
                     currentProgress = totalHired;
                     break;
                 }
+
+                case 'break_the_wall': {
+                    if (m.startProgress === undefined) {
+                        m.startProgress = this.game.state.stats.clientsServed || 0;
+                    }
+                    currentProgress = (this.game.state.stats.clientsServed || 0) - m.startProgress;
+                    break;
+                }
             }
 
             m.progress = Math.min(m.target, currentProgress);
@@ -389,8 +424,24 @@ class MissionController {
             if (m.progress >= m.target) {
                 m.progress = m.target;
                 m.completed = true;
+                anyNewlyCompleted = true;
+                if (typeof window.showToast === 'function') {
+                    const lang = this.game.state.language || 'he';
+                    const msg = lang === 'he' ? '🏆 משימה הושלמה! לחץ אסוף פרס' :
+                               (lang === 'ru' ? '🏆 Миссия завершена!' :
+                               (lang === 'es' ? '🏆 ¡Misión completada!' : '🏆 Mission Completed!'));
+                    window.showToast(msg, 'success');
+                }
             }
         });
+
+        if (anyNewlyCompleted) {
+            const activeTabEl = document.querySelector && document.querySelector('.tab-btn.active');
+            const activeTab = activeTabEl ? activeTabEl.getAttribute('data-tab') : '';
+            if (activeTab === 'missions' && typeof window.renderMissionsTab === 'function') {
+                window.renderMissionsTab();
+            }
+        }
     }
 
     claimMissionReward(id) {

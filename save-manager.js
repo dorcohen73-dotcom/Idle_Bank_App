@@ -247,6 +247,7 @@ class SaveManager {
 
         // Fortune Wheel
         if (!isNum(state.lastSpinTime) || state.lastSpinTime < 0) state.lastSpinTime = 0;
+        if (!isNum(state.lastAdSpinTime) || state.lastAdSpinTime < 0) state.lastAdSpinTime = 0;
 
         // VIP Visitor
         if (!isNum(state.nextVipVisit) || state.nextVipVisit < 0) state.nextVipVisit = 0;
@@ -321,8 +322,14 @@ class SaveManager {
         try { localStorage.setItem('idle_bank_save_backup', localStorage.getItem('idle_bank_save')); } catch(e) {}
 
         // C-15: Deutsche Bank was inserted at index 2, shifting old branches 2→3 and 3→4.
-        // Detect old saves by checking if visitedBranches lacks the 'deutsche' sentinel.
-        if (!Array.isArray(state.visitedBranches) || !state.visitedBranches.includes('deutsche_migrated')) {
+        // Detect old saves by checking the migrations.deutsche flag (previously stored as a string sentinel inside visitedBranches).
+        if (!state.migrations) state.migrations = {};
+        // Backward compat: if the old sentinel string was already pushed into visitedBranches, promote it to migrations flag and clean the array
+        if (Array.isArray(state.visitedBranches) && state.visitedBranches.includes('deutsche_migrated')) {
+            state.migrations.deutsche = true;
+            state.visitedBranches = state.visitedBranches.filter(v => v !== 'deutsche_migrated');
+        }
+        if (!state.migrations.deutsche) {
             if (state.currentBranch >= 2) state.currentBranch++;
             if (state.maxBranchUnlocked >= 2) state.maxBranchUnlocked++;
             if (!Array.isArray(state.visitedBranches)) state.visitedBranches = [];
@@ -330,7 +337,7 @@ class SaveManager {
             state.visitedBranches = state.visitedBranches
                 .map(idx => (typeof idx === 'number' && idx >= 2) ? idx + 1 : idx)
                 .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
-            state.visitedBranches.push('deutsche_migrated'); // sentinel — never re-run
+            state.migrations.deutsche = true; // flag — never re-run
         }
         // Cap branch indices to valid range after any migration
         const _maxBranchIdx = GAME_CONFIG.BRANCHES.length - 1;
@@ -472,16 +479,16 @@ class SaveManager {
         }
 
         // guards
+        const _defaultGuard = (i) => ({
+            id: i, unlocked: (i === 0), level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0,
+            targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0
+        });
         if (!Array.isArray(state.guards)) {
-            state.guards = [
-                { id: 0, unlocked: true, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 1, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 2, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 }
-            ];
+            state.guards = [_defaultGuard(0), _defaultGuard(1), _defaultGuard(2)];
         } else {
             state.guards.forEach((g, i) => {
                 if (!g || typeof g !== 'object') {
-                    state.guards[i] = { id: i, unlocked: (i === 0), level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 };
+                    state.guards[i] = _defaultGuard(i);
                 } else {
                     if (!isNum(g.id)) g.id = i;
                     if (!isBool(g.unlocked)) g.unlocked = (i === 0);
@@ -491,6 +498,22 @@ class SaveManager {
                     if (!isNum(g.position) || g.position < 0) g.position = 0;
                     if (!isString(g.state)) g.state = 'idle';
                     if (!isNum(g.timer) || g.timer < 0) g.timer = 0;
+                    // Multi-stop fields — migrate old saves that lack them
+                    if (!isNum(g.targetTellerIndex) || g.targetTellerIndex < 0) g.targetTellerIndex = 0;
+                    if (!Array.isArray(g.tellerVisitQueue)) g.tellerVisitQueue = [];
+                    if (!isNum(g.segmentPosition) || g.segmentPosition < 0) g.segmentPosition = g.position;
+                    if (!isNum(g.carriedAmount) || g.carriedAmount < 0) g.carriedAmount = g.loadedCash;
+                    else g.carriedAmount = roundCents(g.carriedAmount);
+                    // Normalise states that no longer exist in new machine → idle so game.js rebuilds them
+                    const validStates = ['idle', 'moving_to_vault', 'depositing'];
+                    const isMultiStop = g.state.startsWith('moving_to_teller_') || g.state.startsWith('collecting_from_teller_');
+                    if (!validStates.includes(g.state) && !isMultiStop) {
+                        g.state = 'idle';
+                        g.carriedAmount = 0;
+                        g.loadedCash = 0;
+                        g.segmentPosition = 0;
+                        g.tellerVisitQueue = [];
+                    }
                 }
             });
         }
@@ -562,6 +585,12 @@ class SaveManager {
                     if (!isBool(m.claimed)) m.claimed = false;
                     if (m.type === 'clients' && (m.startProgress !== undefined && (!isNum(m.startProgress) || m.startProgress < 0 || m.startProgress > state.stats.clientsServed))) {
                         m.startProgress = undefined;
+                    }
+                    // B-3: department_unlock missions saved before startProgress was introduced
+                    // would never complete because startProgress defaults to current dept count on first
+                    // checkMissions() run, making the delta always 0. Reset to 0 so any future unlock counts.
+                    if (m.type === 'department_unlock' && m.startProgress === undefined) {
+                        m.startProgress = 0;
                     }
                 }
             });
