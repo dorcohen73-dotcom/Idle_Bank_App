@@ -710,11 +710,14 @@ function renderDepartmentsTab() {
             `;
         } else {
             actionBtnHtml = `
-                <button class="dept-action-btn active disabled" disabled>
-                    <span class="btn-arrow">✓</span>
-                    <span class="btn-lbl">${translations[lang].activeLabel || 'Active'}</span>
-                    <span class="btn-cost">MAX</span>
-                </button>
+                <div class="max-jewel-container">
+                    <div class="max-jewel">
+                        <div class="jewel-content">
+                            <div class="jewel-check">✓</div>
+                            <div class="jewel-text">MAX</div>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
