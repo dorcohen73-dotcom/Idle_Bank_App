@@ -772,6 +772,8 @@ function draw() {
                         clientSlot.classList.remove('active');
                         clientSlot.innerHTML = '';
                         clientSlot.style.removeProperty('background-image');
+                        clientSlot.style.removeProperty('background-size');
+                        clientSlot.style.removeProperty('background-position');
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                     }
                     prevTellerClientStates[tData.id] = cacheKey;

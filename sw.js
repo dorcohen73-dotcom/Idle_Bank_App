@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bank-empire-v1.2.1';
+const CACHE_NAME = 'bank-empire-v1.2.5';
 const ASSETS = [
   './',
   './index.html',
@@ -40,6 +40,7 @@ const ASSETS = [
   './תמונות/teller-5.png',
   './תמונות/teller-6.png',
   './תמונות/teller-7.png',
+  './תמונות/teller-8.png',
   './תמונות/manager-1.png',
   './תמונות/manager-2.png',
   './תמונות/manager-3.png',

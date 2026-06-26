@@ -1148,7 +1148,7 @@ header {
     cursor: pointer;
     position: relative;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
     z-index: 2;
     flex-shrink: 0;
 }
@@ -1160,7 +1160,12 @@ header {
     object-fit: cover;
     display: block;
     border-radius: 50%;
-    z-index: 0;
+    z-index: 1;
+}
+
+.vault-graphic-label {
+    position: relative;
+    z-index: 4;
 }
 
 .vault-graphic::before {
@@ -1169,7 +1174,7 @@ header {
 
 .vault-graphic:hover {
     transform: translateY(-4px) scale(1.03);
-    filter: drop-shadow(0 15px 35px rgba(223, 171, 41, 0.45));
+    box-shadow: 0 15px 35px rgba(223, 171, 41, 0.45);
 }
 
 .vault-graphic:active {
@@ -1206,7 +1211,7 @@ header {
 
 .vault-graphic.full {
     animation: shake 0.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.75));
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.75);
 }
 
 .vault-graphic.vault-full {
@@ -5733,7 +5738,14 @@ header, .control-panel, .bank-floor {
   }
 
   .security-path {
-    display: none !important;
+    display: flex !important;
+    padding: 0.3rem 0.6rem !important;
+    min-height: 36px !important;
+    overflow: visible !important;
+  }
+
+  .guard-status-text {
+    font-size: 0.72rem !important;
   }
 
   /* advertising-control — גרסה קומפקטית לפורטרייט */
@@ -7866,14 +7878,14 @@ header {
 
 /* 3. Vault Animation (Pulse & Open glow) */
 .vault-graphic {
-    transition: transform 0.2s ease, filter 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 .vault-graphic.vault-full {
     animation: vaultPulse 1.5s infinite alternate;
 }
 @keyframes vaultPulse {
-    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.3)); }
-    100% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.8)); }
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(223, 171, 41, 0.3); }
+    100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(223, 171, 41, 0.8); }
 }
 .vault-graphic:active {
     transform: scale(0.9);

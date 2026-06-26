@@ -970,15 +970,6 @@ class IdleBankGame {
         // Route: idle → moving_to_teller_N → collecting_from_teller_N (repeat per teller) → moving_to_vault → depositing → idle
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
 
-        // Collect teller indices currently targeted by other guards
-        const _claimedTellers = [];
-        this.state.guards.forEach(cg => {
-            if (!cg.unlocked) return;
-            if (cg.state.startsWith('moving_to_teller_') || cg.state.startsWith('collecting_from_teller_')) {
-                _claimedTellers.push(cg.targetTellerIndex);
-            }
-        });
-
         const _getTellerAnchor = (ti) =>
             GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] !== undefined ? GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] : 0.5;
         const VAULT_ANCHOR = GAME_CONFIG.GUARD_VAULT_ANCHOR;
@@ -1012,7 +1003,7 @@ class IdleBankGame {
                     let nextTi = -1;
                     for (let i = 0; i < this.state.tellers.length; i++) {
                         const t = this.state.tellers[i];
-                        if (t && t.unlocked && t.cashStored > 0 && !_claimedTellers.includes(i)) {
+                        if (t && t.unlocked && t.cashStored > 0) {
                             nextTi = i;
                             break;
                         }
@@ -1021,7 +1012,6 @@ class IdleBankGame {
                         g.targetTellerIndex = nextTi;
                         g.carriedAmount = 0;
                         g.state = 'moving_to_teller_' + nextTi;
-                        _claimedTellers.push(nextTi);
                     }
                 }
 
@@ -1073,7 +1063,7 @@ class IdleBankGame {
                     if (!isFull) {
                         for (let i = ti + 1; i < this.state.tellers.length; i++) {
                             const t = this.state.tellers[i];
-                            if (t && t.unlocked && t.cashStored > 0 && !_claimedTellers.includes(i)) {
+                            if (t && t.unlocked && t.cashStored > 0) {
                                 nextTi = i;
                                 break;
                             }
@@ -1083,7 +1073,6 @@ class IdleBankGame {
                     if (nextTi >= 0) {
                         g.targetTellerIndex = nextTi;
                         g.state = 'moving_to_teller_' + nextTi;
-                        _claimedTellers.push(nextTi);
                     } else {
                         // Done collecting — head to vault
                         g.tellerVisitQueue = [];
