@@ -67,7 +67,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             <div class="card-left-section">
                 <div class="card-avatar"></div>
                 <div class="card-details">
-                    <div class="card-title">${title}${levelsToBuy > 1 ? ` (+${levelsToBuy})` : ''}</div>
+                    <div class="card-title">${title}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${levelsToBuy})</span>` : ''}</div>
                     <div class="card-desc">${desc}</div>
                     <div class="card-stats">
                         <div class="stat-line">${speedLabel}: <span>${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}</span></div>
@@ -77,7 +77,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 </div>
             </div>
             <button class="buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
-                ${translations[lang].upgradeLabel}${levelsToBuy > 1 ? ' +' + levelsToBuy : ''}<br>${formatMoney(cost)}
+                ${translations[lang].upgradeLabel}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ''}<br>${formatMoney(cost)}
             </button>
         `;
         if (avatarBgUrl) {
@@ -171,9 +171,9 @@ function renderUpgradesTab() {
     vaultCard.className = 'upgrade-card';
     vaultCard.innerHTML = `
         <div class="card-left-section">
-            <div class="card-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
+            <div class="card-avatar"></div>
             <div class="card-details">
-                <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` (+${vLevelsToBuy})` : ''}</div>
+                <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${vLevelsToBuy})</span>` : ''}</div>
                 <div class="card-desc">${tObj.vaultDesc}</div>
                 <div class="card-stats">
                     ${tObj.vaultCap}: <span>${formatMoney(vCap)} ➔ ${formatMoney(nextVCap)}</span>
@@ -181,9 +181,11 @@ function renderUpgradesTab() {
             </div>
         </div>
         <button class="buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'}>
-            ${translations[lang].upgradeLabel}${vLevelsToBuy > 1 ? ' +' + vLevelsToBuy : ''}<br>${formatMoney(vCost)}
+            ${translations[lang].upgradeLabel}${vLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${vLevelsToBuy}</span>` : ''}<br>${formatMoney(vCost)}
         </button>
     `;
+    const vaultAv = vaultCard.querySelector('.card-avatar');
+    if (vaultAv) vaultAv.style.backgroundImage = "url('תמונות/vault-door.png')";
     container.appendChild(vaultCard);
 
     // Separator line
@@ -204,7 +206,7 @@ function renderUpgradesTab() {
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueMaxTitle}</div>
                     <div class="card-desc">${tObj.queueMaxDesc(qCap)}</div>
@@ -217,9 +219,9 @@ function renderUpgradesTab() {
     } else {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"></div>
                 <div class="card-details">
-                    <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` (+${qLevelsToBuy})` : ''}</div>
+                    <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${qLevelsToBuy})</span>` : ''}</div>
                     <div class="card-desc">${tObj.queueDesc}</div>
                     <div class="card-stats">
                         ${tObj.queueCap}: <span>${qCap} ${tObj.clientsShort} ➔ ${nextQCap} ${tObj.clientsShort}</span>
@@ -227,10 +229,12 @@ function renderUpgradesTab() {
                 </div>
             </div>
             <button class="buy-btn ${qCanBuy ? '' : 'disabled'}" id="upgrade-queue-btn" ${qCanBuy ? '' : 'disabled'}>
-                ${tObj.queueUpgradeBtn}${qLevelsToBuy > 1 ? ' +' + qLevelsToBuy : ''}<br>${formatMoney(qCost)}
+                ${tObj.queueUpgradeBtn}${qLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${qLevelsToBuy}</span>` : ''}<br>${formatMoney(qCost)}
             </button>
         `;
     }
+    const queueAv = queueCard.querySelector('.card-avatar');
+    if (queueAv) queueAv.style.backgroundImage = "url('תמונות/client-1.png')";
     container.appendChild(queueCard);
 }
 
@@ -478,7 +482,7 @@ function renderManagersTab() {
                 
                 actionBtnHtml = `
                     <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? '' : 'disabled'}" data-mgr-type="${type}" ${canUpgrade ? '' : 'disabled'}>
-                        ${statLabels[lang].upgradeBtn}${levelsToBuy > 1 ? ' +' + levelsToBuy : ''}<br>${formatMoney(costToUpgrade)}
+                        ${statLabels[lang].upgradeBtn}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ''}<br>${formatMoney(costToUpgrade)}
                     </button>
                 `;
             } else {
@@ -1220,14 +1224,14 @@ function updateButtonAffordability() {
                     const details = game.getBulkUpgradeDetails('teller', id, currentUpgradeMode, t.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
-                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ' +' + details.levels : ''}<br>${formatMoney(details.cost)}`;
+                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
                     if (btn.innerHTML !== newText) {
                         btn.innerHTML = newText;
                         const card = btn.closest('.upgrade-card');
                         if (card) {
                             const titleEl = card.querySelector('.card-title');
                             if (titleEl) {
-                                titleEl.innerText = `${translations[game.state.language || 'he'].upgrades.tellerTitle(id + 1, t.level)}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
+                                titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.tellerTitle(id + 1, t.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
                             }
                             const statsSpans = card.querySelectorAll('.card-stats span');
                             if (statsSpans.length >= 2) {
@@ -1253,14 +1257,14 @@ function updateButtonAffordability() {
                     const details = game.getBulkUpgradeDetails('guard', id, currentUpgradeMode, g.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
-                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ' +' + details.levels : ''}<br>${formatMoney(details.cost)}`;
+                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
                     if (btn.innerHTML !== newText) {
                         btn.innerHTML = newText;
                         const card = btn.closest('.upgrade-card');
                         if (card) {
                             const titleEl = card.querySelector('.card-title');
                             if (titleEl) {
-                                titleEl.innerText = `${translations[game.state.language || 'he'].upgrades.guardTitle(id + 1, g.level)}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
+                                titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.guardTitle(id + 1, g.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
                             }
                             const statsSpans = card.querySelectorAll('.card-stats span');
                             if (statsSpans.length >= 2) {
@@ -1284,14 +1288,14 @@ function updateButtonAffordability() {
                 const details = game.getBulkUpgradeDetails('vault', null, currentUpgradeMode, game.state.vault.level, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
-                const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ' +' + details.levels : ''}<br>${formatMoney(details.cost)}`;
+                const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
                 if (btn.innerHTML !== newText) {
                     btn.innerHTML = newText;
                     const card = btn.closest('.upgrade-card');
                     if (card) {
                         const titleEl = card.querySelector('.card-title');
                         if (titleEl) {
-                            titleEl.innerText = `${translations[game.state.language || 'he'].upgrades.vaultTitle(game.state.vault.level)}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
+                            titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.vaultTitle(game.state.vault.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
                         }
                         const statsSpan = card.querySelector('.card-stats span');
                         if (statsSpan) {
@@ -1305,14 +1309,14 @@ function updateButtonAffordability() {
                 const details = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
-                const newText = `${translations[game.state.language || 'he'].upgrades.queueUpgradeBtn}${details.levels > 1 ? ' +' + details.levels : ''}<br>${formatMoney(details.cost)}`;
+                const newText = `${translations[game.state.language || 'he'].upgrades.queueUpgradeBtn}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
                 if (btn.innerHTML !== newText) {
                     btn.innerHTML = newText;
                     const card = btn.closest('.upgrade-card');
                     if (card) {
                         const titleEl = card.querySelector('.card-title');
                         if (titleEl) {
-                            titleEl.innerText = `${translations[game.state.language || 'he'].upgrades.queueTitle(game.state.queueUpgradeLevel || 1)}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
+                            titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.queueTitle(game.state.queueUpgradeLevel || 1)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
                         }
                         const statsSpan = card.querySelector('.card-stats span');
                         if (statsSpan) {
@@ -1343,7 +1347,7 @@ function updateButtonAffordability() {
                     const details = game.getBulkUpgradeDetails('manager', type, currentUpgradeMode, mgr.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
-                    const newText = `${translations[lang].upgradeLabel}${details.levels > 1 ? ' +' + details.levels : ''}<br>${formatMoney(details.cost)}`;
+                    const newText = `${translations[lang].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
                     if (btn.innerHTML !== newText) {
                         btn.innerHTML = newText;
                     }

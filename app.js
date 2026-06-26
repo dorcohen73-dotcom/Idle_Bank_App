@@ -248,6 +248,18 @@
             if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
         }
 
+        // Ensure vault-door image is present in vault-graphic (JS fallback)
+        const vaultGraphicEl = document.getElementById('vault-graphic');
+        if (vaultGraphicEl) {
+            if (!vaultGraphicEl.querySelector('.vault-door-img')) {
+                const vaultImg = document.createElement('img');
+                vaultImg.className = 'vault-door-img';
+                vaultImg.src = 'תמונות/vault-door.png';
+                vaultImg.alt = '';
+                vaultGraphicEl.insertBefore(vaultImg, vaultGraphicEl.firstChild);
+            }
+        }
+
         // Initial Layout Rendering with defensive guards
         if (typeof window.rebuildTellersDOM === 'function') {
             window.rebuildTellersDOM();

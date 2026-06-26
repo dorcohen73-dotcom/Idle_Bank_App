@@ -1760,14 +1760,32 @@ header {
 }
 
 .card-title {
-    font-size: 0.95rem;
-    font-weight: 800;
+    font-size: 1.3rem !important;
+    font-weight: 900;
     color: var(--text-main);
     font-family: var(--font-heading);
     background: linear-gradient(90deg, #fff, #f3e5ab);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.card-title .upgrade-amount-text {
+    -webkit-text-fill-color: #16a34a !important;
+    color: #16a34a !important;
+}
+
+.upgrade-amount-text {
+    color: #16a34a !important;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(22, 163, 74, 0.4);
+    font-size: 1.2em;
+}
+
+.buy-btn .upgrade-amount-text {
+    direction: ltr;
+    unicode-bidi: embed;
+    margin-right: 4px;
 }
 
 .card-desc {
@@ -1796,7 +1814,7 @@ header {
     padding: 0.6rem 1.2rem;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 1.1rem !important;
     font-family: 'Outfit', sans-serif;
     min-width: 120px;
     text-align: center;
@@ -1805,6 +1823,17 @@ header {
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.buy-btn br {
+    display: none;
 }
 
 .buy-btn:not(.disabled)::after {
@@ -8694,5 +8723,19 @@ header {
     }
     .upg-btn-glow {
         display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .buy-btn {
+        font-size: 1.3rem !important;
+        padding: 0.8rem 1.2rem !important;
+        line-height: 1.4 !important;
+    }
+    .card-title {
+        font-size: 1.35rem !important;
+    }
+    .upgrade-amount-text {
+        font-size: 1.2em !important;
     }
 }
