@@ -92,8 +92,8 @@ class MissionController {
             reward: (t) => Math.round(referenceCash * 0.30 + t * 0.15)
         });
 
-        // Serve VIP / Rich clients — suppressed once VIP dept (index 2) is unlocked; vip_collector takes over
-        const vipDeptAlreadyUnlocked = this.game.state.departments && this.game.state.departments[2] && this.game.state.departments[2].unlocked;
+        // Serve VIP / Rich clients — suppressed once VIP dept (index 3) is unlocked; vip_collector takes over
+        const vipDeptAlreadyUnlocked = this.game.state.departments && this.game.state.departments[3] && this.game.state.departments[3].unlocked;
         if (!vipDeptAlreadyUnlocked) {
             pool.push({
                 type: 'serve_rich_vip',
@@ -132,8 +132,8 @@ class MissionController {
 
 
 
-        // 1. vip_collector — only if VIP dept (index 2) is unlocked
-        const vipDeptUnlocked = this.game.state.departments && this.game.state.departments[2] && this.game.state.departments[2].unlocked;
+        // 1. vip_collector — only if VIP dept (index 3) is unlocked
+        const vipDeptUnlocked = this.game.state.departments && this.game.state.departments[3] && this.game.state.departments[3].unlocked;
         if (vipDeptUnlocked) {
             pool.push({
                 type: 'vip_collector',
@@ -223,7 +223,7 @@ class MissionController {
             });
         }
 
-        // 10. missions_veteran — complete X missions in total (meta-progression milestone)
+        // 9. missions_veteran — complete X missions in total (meta-progression milestone)
         const completedSoFar = this.game.state.missionsCompleted || 0;
         if (completedSoFar >= 5) {
             pool.push({
@@ -233,7 +233,7 @@ class MissionController {
             });
         }
 
-        // 9. department_grind — upgrade a specific unlocked department's manager N times
+        // 10. department_grind — upgrade a specific unlocked department's manager N times
         const deptMgrMap = [
             { mgrType: 'finance',   deptIdx: 1 },
             { mgrType: 'service',   deptIdx: 2 },
@@ -243,7 +243,7 @@ class MissionController {
         const availableDeptMgrs = deptMgrMap.filter(({ mgrType, deptIdx }) => {
             const deptUnlocked = this.game.state.departments[deptIdx] && this.game.state.departments[deptIdx].unlocked;
             const mgr = this.game.state.managerUpgrades && this.game.state.managerUpgrades[mgrType];
-            return deptUnlocked && mgr && mgr.level < 5;
+            return deptUnlocked && mgr && mgr.level < 4; // max level is 5, target can be up to +2
         });
         if (availableDeptMgrs.length > 0) {
             const chosen = availableDeptMgrs[Math.floor(Math.random() * availableDeptMgrs.length)];
@@ -255,9 +255,20 @@ class MissionController {
             });
         }
 
-        // Pick random mission template ensuring no duplicate active types
+        // Pick random mission template ensuring no duplicate active types.
+        // Conflict groups prevent semantically-equivalent types from co-existing.
+        const conflictGroups = [
+            ['hire_managers', 'manager_hire'],
+            ['unlock_departments', 'department_unlock'],
+        ];
         const activeTypes = (this.game.state.missions || []).map(m => m.type);
-        let availablePool = pool.filter(t => !activeTypes.includes(t.type));
+        const blockedTypes = new Set(activeTypes);
+        conflictGroups.forEach(group => {
+            if (group.some(t => activeTypes.includes(t))) {
+                group.forEach(t => blockedTypes.add(t));
+            }
+        });
+        let availablePool = pool.filter(t => !blockedTypes.has(t.type));
         if (availablePool.length === 0) {
             availablePool = pool;
         }
@@ -371,7 +382,7 @@ class MissionController {
                     break;
                 }
                 case 'upgrade_managers': {
-                    const currentLevels = Object.values(this.game.state.managerUpgrades).reduce((sum, m) => sum + (m.level || 1), 0);
+                    const currentLevels = Object.values(this.game.state.managerUpgrades).reduce((sum, upg) => sum + (upg.level || 1), 0);
                     if (m.startProgress === undefined) {
                         m.startProgress = currentLevels;
                     }

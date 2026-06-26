@@ -39,8 +39,8 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
             avatarImg = '';
-            avatarBgUrl = `תמונות/manager-${(id % 8) + 1}.png`;
-            avatarBgPos = 'center 25%';
+            avatarBgUrl = `תמונות/teller-${(id % 8) + 1}.png`;
+            avatarBgPos = 'center';
             avatarBgSize = 'cover';
             title = tObj.tellerTitle(id + 1, entity.level);
             desc = tObj.tellerDesc;
@@ -88,8 +88,8 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 25%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
         if (type === 'teller') {
             cost = game.tellerUnlockCosts[id];
-            avatarBgUrl2 = `תמונות/manager-${(id % 8) + 1}.png`;
-            avatarBgPos2 = 'center 25%';
+            avatarBgUrl2 = `תמונות/teller-${(id % 8) + 1}.png`;
+            avatarBgPos2 = 'center';
             avatarBgSize2 = 'cover';
             title = tObj.tellerLocked(id + 1);
             desc = tObj.tellerLockedDesc;
@@ -1077,6 +1077,7 @@ function renderMissionsTab() {
             'earn_cash': './תמונות/gold-bars.png',
             'serve_rich_vip': './תמונות/client-6.png',
             'vip_marathon': './תמונות/gold-vip.png',
+            'vip_collector': './תמונות/gold-vip.png',
             'department_unlock': './תמונות/gold-truck.png',
             'manager_hire': './תמונות/manager-1.png',
             'teller_max': './תמונות/teller-7.png',
