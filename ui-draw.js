@@ -1,4 +1,4 @@
-﻿(function(window) {
+(function(window) {
 // Visual Drawing & Formatting Module for Idle Bank Empire
 
 // LRU cache for SVG/HTML client portraits — Map preserves insertion order, giving O(1) lookup and eviction
@@ -446,7 +446,7 @@ function rebuildTellersDOM() {
         if (t.unlocked) {
             div.innerHTML = `
                 <div class="glass-showcase">
-                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 7) + 1}.png?v=20260625" alt="" />
+                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 8) + 1}.png?v=20260625" alt="" />
                     <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
                 </div>
                 <div class="gold-plaque">
@@ -606,9 +606,11 @@ function draw() {
     if (DOM_CACHE.boostBtn) {
         if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
             DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
+            DOM_CACHE.boostBtn.setAttribute('data-time', formatTime(game.state.boost2xTimeLeft));
             DOM_CACHE.boostBtn.classList.add('active');
             DOM_CACHE.boostBtn.classList.remove('offer');
         } else {
+            DOM_CACHE.boostBtn.removeAttribute('data-time');
             const nowMs = Date.now();
             const offerEnd = window._boostOfferEndTime || 0;
             if (offerEnd > nowMs) {
@@ -626,91 +628,63 @@ function draw() {
         }
     }
 
-    // Update customer queue count display and visual status indicators (OK vs Warning)
-    const elQueueLabel = DOM_CACHE.queueLabel;
+    // Update customer queue count display and visual status indicators (Premium Redesign)
+    const capLabel = document.getElementById('queue-capacity-label');
+    const fillBar = document.getElementById('queue-progress-fill');
+    const statText = document.getElementById('queue-status-text');
+    const statIcon = document.getElementById('queue-status-icon');
     const elQueueZone = DOM_CACHE.queueZone;
-    if (elQueueLabel) {
+    
+    if (capLabel) {
         const queueData = game.getQueueRenderData();
         const maxCap = queueData.capacity;
         const currentLen = queueData.currentLen;
         
+        capLabel.textContent = `${currentLen}/${maxCap}`;
+        
+        if (fillBar) {
+            const pct = Math.min(100, Math.max(0, (currentLen / maxCap) * 100));
+            fillBar.style.width = `${pct}%`;
+        }
+        
         const isTooLow = currentLen <= 1;
         const isTooHigh = currentLen >= maxCap - 1 || currentLen / maxCap >= 0.8;
         
-        let newQueueLabelHtml = '';
         if (isTooLow) {
             if (elQueueZone) {
                 elQueueZone.classList.remove('status-ok');
                 elQueueZone.classList.add('status-alert');
             }
-            newQueueLabelHtml = `${tObj.alertQueueLabel} (${currentLen}/${maxCap}) <span class="queue-status-badge" style="color:var(--danger-red); font-size:0.75rem; margin-right:0.25rem;">⚠️ <span class="queue-status-text">(${tObj.alertQueueEmpty})</span></span>:`;
+            if (statText) statText.textContent = tObj.alertQueueEmpty;
+            if (statIcon) {
+                statIcon.textContent = '❕';
+                statIcon.style.color = 'var(--danger-red)';
+            }
         } else if (isTooHigh) {
             if (elQueueZone) {
                 elQueueZone.classList.remove('status-ok');
                 elQueueZone.classList.add('status-alert');
             }
-            newQueueLabelHtml = `${tObj.alertQueueLabel} (${currentLen}/${maxCap}) <span class="queue-status-badge" style="color:var(--danger-red); font-size:0.75rem; margin-right:0.25rem;">⚠️ <span class="queue-status-text">(${tObj.alertQueueFull})</span></span>:`;
+            const spotsLeft = maxCap - currentLen;
+            if (statText) statText.textContent = `נותרו ${spotsLeft} מקומות בלבד`;
+            if (statIcon) {
+                statIcon.textContent = '❕';
+                statIcon.style.color = 'var(--danger-red)';
+            }
         } else {
             if (elQueueZone) {
                 elQueueZone.classList.remove('status-alert');
                 elQueueZone.classList.add('status-ok');
             }
-            newQueueLabelHtml = `${tObj.alertQueueLabel} (${currentLen}/${maxCap}) <span class="queue-status-badge" style="color:var(--money-green); font-size:0.75rem; margin-right:0.25rem;">✔ <span class="queue-status-text">(${tObj.alertQueueOk})</span></span>:`;
-        }
-
-        if (prevQueueLabelHtml !== newQueueLabelHtml) {
-            elQueueLabel.innerHTML = newQueueLabelHtml;
-            prevQueueLabelHtml = newQueueLabelHtml;
-        }
-    }
-
-    // Customer queue rendering using premium vector SVGs and advanced DOM reconciliation
-    if (DOM_CACHE.customerLine) {
-        const currentQueue = game.customerQueue || [];
-        const lastCustomer = currentQueue[currentQueue.length - 1];
-        const lastId = lastCustomer ? lastCustomer.id : null;
-
-        if (currentQueue.length !== prevQueueLength || lastId !== prevLastCustomerId) {
-            prevQueueLength = currentQueue.length;
-            prevLastCustomerId = lastId;
-
-            const currentIds = currentQueue.map(c => c.id || `${c.type}-${c.seed}`);
-            
-            const existingNodes = Array.from(DOM_CACHE.customerLine.children);
-            existingNodes.forEach(node => {
-                const nodeId = node.getAttribute('data-id');
-                if (!currentIds.includes(nodeId)) {
-                    DOM_CACHE.customerLine.removeChild(node);
-                }
-            });
-            
-            currentQueue.forEach((client, idx) => {
-                const clientId = client.id || `${client.type}-${client.seed}`;
-                let existingNode = DOM_CACHE.customerLine.querySelector(`[data-id="${clientId}"]`);
-                
-                if (!existingNode) {
-                    existingNode = document.createElement('div');
-                    existingNode.className = `visual-client-icon`;
-                    existingNode.setAttribute('data-id', clientId);
-                    const _ct = client.type || 'normal';
-                    const _cs = (client.seed === undefined || client.seed === null || isNaN(client.seed)) ? 0 : client.seed;
-                    const _cn = (_ct === 'rich') ? 9 : (_ct === 'vip') ? 10 : ((_cs % 8) + 1);
-                    existingNode.style.backgroundImage = `url('תמונות/client-${_cn}.png')`;
-                    if (_ct === 'vip') {
-                        existingNode.style.borderColor = 'rgba(192,132,252,0.85)';
-                        existingNode.style.boxShadow = '0 0 8px rgba(192,132,252,0.4)';
-                    } else if (_ct === 'rich') {
-                        existingNode.style.borderColor = 'rgba(251,191,36,0.85)';
-                        existingNode.style.boxShadow = '0 0 8px rgba(251,191,36,0.4)';
-                    }
-                }
-                
-                if (DOM_CACHE.customerLine.children[idx] !== existingNode) {
-                    DOM_CACHE.customerLine.insertBefore(existingNode, DOM_CACHE.customerLine.children[idx] || null);
-                }
-            });
+            if (statText) statText.textContent = tObj.alertQueueOk;
+            if (statIcon) {
+                statIcon.textContent = '✔';
+                statIcon.style.color = 'var(--money-green)';
+            }
         }
     }
+
+    // Removed customer line rendering logic per user request
 
     // Tellers loading bars & values
     game.state.tellers.forEach(t => {
