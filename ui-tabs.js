@@ -383,7 +383,10 @@ function renderManagersTab() {
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-info-box">
-                        <div class="mgr-title">${tObj.names[type]}</div>
+                        <div class="mgr-title-box">
+                            <div class="mgr-title">${tObj.names[type]}</div>
+                            <div class="mgr-title-divider"></div>
+                        </div>
                         <div class="mgr-stars-box">
                             <span class="star gray-star">★</span>
                             <span class="star gray-star">★</span>
@@ -393,9 +396,11 @@ function renderManagersTab() {
                         </div>
                         <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
                         <div class="mgr-stats-list">
-                            <div class="mgr-stat-item" style="color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">
-                                🔒 ${translations[lang].requiresUnlocking || 'Requires unlocking:'} <br>
-                                <span style="color: var(--primary-gold);">${deptName}</span>
+                            <div class="mgr-stat-item" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    🔒 ${translations[lang].requiresUnlocking || 'Requires unlocking:'} <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">${deptName}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -406,7 +411,9 @@ function renderManagersTab() {
                 <div class="mgr-footer-row">
                     <div class="mgr-footer-info">
                         <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
-                        <div class="mgr-footer-val" style="color: var(--text-muted); font-family: inherit;">-</div>
+                        <div class="mgr-footer-val-box">
+                            <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                        </div>
                     </div>
                     <button class="buy-btn mgr-buy-btn disabled" disabled>
                         ${statLabels[lang].lockedLabel} 🔒
@@ -422,24 +429,37 @@ function renderManagersTab() {
 
             // Determine custom statistics descriptions
             let stat1Lbl = '', stat2Lbl = '';
+            let icon1 = '', icon2 = '';
             if (type === 'customer') {
                 stat1Lbl = statLabels[lang].client_speed;
                 stat2Lbl = statLabels[lang].satisfaction;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
             } else if (type === 'finance') {
                 stat1Lbl = statLabels[lang].auto_vault;
                 stat2Lbl = statLabels[lang].bank_yield;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>';
             } else if (type === 'operations') {
                 stat1Lbl = statLabels[lang].courier_speed;
                 stat2Lbl = statLabels[lang].counter_cap;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
             } else if (type === 'service') {
                 stat1Lbl = statLabels[lang].counter_cap;
                 stat2Lbl = statLabels[lang].base_income;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
             } else if (type === 'vip') {
                 stat1Lbl = statLabels[lang].dept_yields;
                 stat2Lbl = statLabels[lang].gold_shares;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>';
             } else if (type === 'marketing') {
                 stat1Lbl = statLabels[lang].ad_bonus;
                 stat2Lbl = statLabels[lang].offline_time;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 11 2v20a10 10 0 0 0 11-10z"></path></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
             }
 
             bodyHtml = `
@@ -449,17 +469,34 @@ function renderManagersTab() {
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-info-box">
-                        <div class="mgr-title">${tObj.names[type]}</div>
+                        <div class="mgr-title-box">
+                            <div class="mgr-title">${tObj.names[type]}</div>
+                            <div class="mgr-title-divider"></div>
+                        </div>
                         <div class="mgr-stars-box">
                             ${starsHtml}
                         </div>
                         <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item">
-                                <span class="mgr-stat-val">${mData.stat1Val}</span> ${stat1Lbl}
+                                <div class="mgr-stat-left">
+                                    <span class="mgr-stat-val">${mData.stat1Val}</span>
+                                    <span class="mgr-stat-sep">|</span>
+                                </div>
+                                <div class="mgr-stat-right">
+                                    <span class="mgr-stat-label">${stat1Lbl}</span>
+                                    <div class="mgr-stat-icon-circle">${icon1}</div>
+                                </div>
                             </div>
                             <div class="mgr-stat-item">
-                                <span class="mgr-stat-val">${mData.stat2Val}</span> ${stat2Lbl}
+                                <div class="mgr-stat-left">
+                                    <span class="mgr-stat-val">${mData.stat2Val}</span>
+                                    <span class="mgr-stat-sep">|</span>
+                                </div>
+                                <div class="mgr-stat-right">
+                                    <span class="mgr-stat-label">${stat2Lbl}</span>
+                                    <div class="mgr-stat-icon-circle">${icon2}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -488,7 +525,7 @@ function renderManagersTab() {
             } else {
                 actionBtnHtml = `
                     <div class="mgr-active-badge">
-                        ${statLabels[lang].activeLabel} ✓
+                        ${statLabels[lang].activeLabel} <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     </div>
                 `;
             }
@@ -497,7 +534,10 @@ function renderManagersTab() {
                 <div class="mgr-footer-row">
                     <div class="mgr-footer-info">
                         <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
-                        <div class="mgr-footer-val">${isHired ? formatMoney(mData.extraHourly) : formatMoney(0)} ${statLabels[lang].perHour}</div>
+                        <div class="mgr-footer-val-box">
+                            <span class="mgr-footer-val">${isHired ? formatMoney(mData.extraHourly) : formatMoney(0)}</span>
+                            <span class="per-hour-lbl">${statLabels[lang].perHour}</span>
+                        </div>
                     </div>
                     ${actionBtnHtml}
                 </div>

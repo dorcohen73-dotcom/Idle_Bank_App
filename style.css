@@ -4129,31 +4129,49 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
     flex-direction: column;
     flex-grow: 1;
     margin-right: 0.9rem; /* RTL margin right */
-    text-align: right;
+    align-items: center;
+    text-align: center;
 }
 
 html[dir="ltr"] .mgr-info-box {
     margin-right: 0;
     margin-left: 0.9rem;
-    text-align: left;
+}
+
+.mgr-title-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .mgr-title {
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 1.45rem;
+    font-weight: 800;
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    margin-bottom: 0.2rem;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mgr-title-divider {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(223, 171, 41, 0.5), transparent);
+    margin: 0 auto 0.4rem auto;
 }
 
 /* Stars Rating */
 .mgr-stars-box {
     display: flex;
-    gap: 3px;
-    margin-top: 0.2rem;
+    gap: 4px;
+    margin-bottom: 0.4rem;
 }
 
 .mgr-stars-box .star {
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     line-height: 1;
 }
 
@@ -4162,48 +4180,96 @@ html[dir="ltr"] .mgr-info-box {
 
 /* Level Badge */
 .mgr-lvl-badge {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #ffffff;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 0.15rem 0.5rem;
-    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #dfab29;
+    background: transparent;
+    border: 1.5px solid #dfab29;
+    padding: 0.15rem 1rem;
+    border-radius: 6px;
     width: fit-content;
-    margin-top: 0.45rem;
+    margin-bottom: 0.8rem;
 }
 
-.theme-gold .mgr-lvl-badge { color: #f5cf6d; border-color: rgba(223, 171, 41, 0.2); background: rgba(223, 171, 41, 0.05); }
-.theme-blue .mgr-lvl-badge { color: #93c5fd; border-color: rgba(59, 130, 246, 0.2); background: rgba(59, 130, 246, 0.05); }
-.theme-purple .mgr-lvl-badge { color: #d8b4fe; border-color: rgba(168, 85, 247, 0.2); background: rgba(168, 85, 247, 0.05); }
-.theme-amber .mgr-lvl-badge { color: #fcd34d; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05); }
-.theme-red .mgr-lvl-badge { color: #fca5a5; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
-.theme-green .mgr-lvl-badge { color: #86efac; border-color: rgba(34, 197, 94, 0.2); background: rgba(34, 197, 94, 0.05); }
+.theme-gold .mgr-lvl-badge { color: #dfab29; border-color: #dfab29; background: transparent; }
+.theme-blue .mgr-lvl-badge { color: #60a5fa; border-color: #60a5fa; background: transparent; }
+.theme-purple .mgr-lvl-badge { color: #c084fc; border-color: #c084fc; background: transparent; }
+.theme-amber .mgr-lvl-badge { color: #fbbf24; border-color: #fbbf24; background: transparent; }
+.theme-red .mgr-lvl-badge { color: #f87171; border-color: #f87171; background: transparent; }
+.theme-green .mgr-lvl-badge { color: #4ade80; border-color: #4ade80; background: transparent; }
 
 /* Stats details */
 .mgr-stats-list {
-    margin-top: 0.5rem;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
 }
 
 .mgr-stat-item {
-    font-size: 0.92rem;
-    color: rgba(248, 250, 252, 0.55);
-    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: #181d2c;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+html[dir="rtl"] .mgr-stat-item {
+    flex-direction: row-reverse;
+}
+
+.mgr-stat-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .mgr-stat-val {
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.mgr-stat-sep {
+    color: rgba(255,255,255,0.15);
+    font-weight: 300;
+    margin: 0 4px;
+}
+
+.mgr-stat-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mgr-stat-label {
+    color: #e2e8f0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.mgr-stat-icon-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(223, 171, 41, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #dfab29;
 }
 
 .theme-gold .mgr-stat-val { color: #f5cf6d; }
-.theme-blue .mgr-stat-val { color: #60a5fa; }
-.theme-purple .mgr-stat-val { color: #c084fc; }
-.theme-amber .mgr-stat-val { color: #fbbf24; }
-.theme-red .mgr-stat-val { color: #f87171; }
-.theme-green .mgr-stat-val { color: #4ade80; }
+.theme-blue .mgr-stat-val { color: #93c5fd; }
+.theme-purple .mgr-stat-val { color: #d8b4fe; }
+.theme-amber .mgr-stat-val { color: #fcd34d; }
+.theme-red .mgr-stat-val { color: #fca5a5; }
+.theme-green .mgr-stat-val { color: #86efac; }
 
 /* Footer row */
 .mgr-footer-row {
@@ -4228,16 +4294,28 @@ html[dir="ltr"] .mgr-footer-info {
 
 .mgr-footer-lbl {
     font-size: 0.88rem;
-    color: rgba(248, 250, 252, 0.4);
+    color: rgba(248, 250, 252, 0.5);
     font-weight: 500;
 }
 
-.mgr-footer-val {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #dfab29;
+.mgr-footer-val-box {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
     margin-top: 0.15rem;
+}
+
+.mgr-footer-val {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #f5cf6d;
     font-family: 'Outfit', sans-serif;
+}
+
+.per-hour-lbl {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 500;
 }
 
 .mgr-buy-btn {
@@ -4251,16 +4329,17 @@ html[dir="ltr"] .mgr-footer-info {
 
 /* Active status indicator */
 .mgr-active-badge {
-    background: rgba(16, 185, 129, 0.12) !important;
-    border: 1px solid rgba(16, 185, 129, 0.3) !important;
-    color: #10b981 !important;
-    font-size: 0.78rem !important;
+    background: rgba(16, 185, 129, 0.08) !important;
+    border: 1.5px solid #16a34a !important;
+    color: #16a34a !important;
+    font-size: 1.05rem !important;
     font-weight: 800 !important;
-    padding: 0.45rem 1.1rem !important;
-    border-radius: 6px !important;
+    padding: 0.45rem 1.2rem !important;
+    border-radius: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 8px;
     min-width: 120px !important;
 }
 
