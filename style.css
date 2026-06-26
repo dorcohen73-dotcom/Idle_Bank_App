@@ -808,7 +808,7 @@ header {
     color: #000 !important;
     border: none;
     border-radius: 5px;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 800;
     padding: 0.25rem 0.5rem;
     cursor: pointer;
@@ -874,7 +874,7 @@ header {
     margin-bottom: 0.25rem;
 }
 .lock-cost {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     color: var(--primary-gold);
     font-weight: 600;
     font-family: 'Outfit', sans-serif;
@@ -883,7 +883,7 @@ header {
 .teller-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     font-weight: 500;
 }
 
@@ -928,7 +928,7 @@ header {
 }
 
 .cash-pile-label {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 
@@ -1843,7 +1843,7 @@ header {
 
 /* Managers Specific Layout */
 .manager-status {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     font-weight: 600;
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
@@ -2113,7 +2113,7 @@ header {
 }
 
 .branch-card-right .branch-desc {
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     color: #b3bac5;
     line-height: 1.35;
     margin-bottom: 0.5rem;
@@ -2121,7 +2121,7 @@ header {
 }
 
 .branch-card-right .branch-req {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     color: #9ca3af;
     font-weight: 500;
 }
@@ -2132,7 +2132,7 @@ header {
     color: #34d399;
     padding: 0.25rem 0.65rem;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
@@ -2195,7 +2195,7 @@ header {
     border-radius: 8px;
     padding: 0.45rem 0.5rem;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255,255,255,0.3);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
     white-space: nowrap;
@@ -2222,7 +2222,7 @@ header {
 }
 
 .branch-status-label {
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-muted);
     background: rgba(255,255,255,0.03);
@@ -2776,7 +2776,7 @@ footer {
 }
 
 #tab-missions .box-progress-fraction {
-    font-size: 0.70rem; /* Scaled down slightly to prevent overflow */
+    font-size: 0.80rem;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.9);
     font-family: 'Outfit', sans-serif;
@@ -2788,7 +2788,7 @@ footer {
 }
 
 #tab-missions .box-progress-percent {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 800;
     color: #ffd54f; /* Gold text for percent inside box */
     text-shadow: 0 0 4px rgba(255, 213, 79, 0.3);
@@ -2844,7 +2844,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     font-weight: 600;
 }
 
@@ -3111,11 +3111,11 @@ footer {
     }
 
     .plaque-title {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
     }
 
     .plaque-level {
-        font-size: 0.6rem !important;
+        font-size: 0.72rem !important;
         padding: 0px 3px !important;
     }
 
@@ -3124,7 +3124,7 @@ footer {
     }
 
     .plaque-collect-btn {
-        font-size: 0.6rem !important;
+        font-size: 0.72rem !important;
         padding: 0.2rem 0.4rem !important;
     }
 
@@ -3133,13 +3133,13 @@ footer {
     }
 
     .stat-label {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
     }
     .stat-value {
         font-size: 1.05rem !important;
     }
     .stat-sub {
-        font-size: 0.65rem !important;
+        font-size: 0.75rem !important;
     }
 
     .collect-btn {
@@ -3258,7 +3258,7 @@ footer {
     }
 
     .vault-subtitle {
-        font-size: 0.65rem !important;
+        font-size: 0.75rem !important;
         margin-top: 0 !important;
     }
 
@@ -3268,7 +3268,7 @@ footer {
     }
 
     .vault-progress-label {
-        font-size: 0.62rem !important;
+        font-size: 0.74rem !important;
     }
 
     .vault-stats-grid {
@@ -3297,7 +3297,7 @@ footer {
     }
 
     .vault-stat-label {
-        font-size: 0.55rem !important;
+        font-size: 0.7rem !important;
         margin-bottom: 0 !important;
         white-space: nowrap !important;
     }
@@ -3336,11 +3336,11 @@ footer {
         gap: 0.15rem !important;
         width: 100% !important;
         margin-bottom: 0.2rem !important;
-        font-size: 0.72rem !important;
+        font-size: 0.82rem !important;
     }
 
     .adv-title {
-        font-size: 0.72rem !important;
+        font-size: 0.82rem !important;
     }
 
     .adv-value {
@@ -3353,7 +3353,7 @@ footer {
     }
 
     .adv-limit {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
         min-width: 24px !important;
     }
 
@@ -3457,7 +3457,7 @@ footer {
 
     .bulk-btn-option {
         padding: 0.25rem 0.6rem !important;
-        font-size: 0.72rem !important;
+        font-size: 0.82rem !important;
     }
 
     /* Managers grid single column on mobile */
@@ -3485,7 +3485,7 @@ footer {
         font-size: 1.2rem !important;
     }
     .brand-title p {
-        font-size: 0.72rem !important;
+        font-size: 0.82rem !important;
     }
 
     /* Make all interactive items full-width on mobile for easier tapping */
@@ -3522,7 +3522,7 @@ footer {
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         max-width: 45% !important;
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
         padding: 0.1rem 0.45rem !important;
     }
 
@@ -3736,10 +3736,10 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
         font-size: 0.95rem !important;
     }
     .stat-label {
-        font-size: 0.62rem !important;
+        font-size: 0.74rem !important;
     }
     .stat-sub {
-        font-size: 0.6rem !important;
+        font-size: 0.7rem !important;
     }
     
     /* Minimize margins & headers padding */
@@ -3759,7 +3759,7 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
         font-size: 0.95rem !important;
     }
     .boost-toggle-btn {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
         padding: 0.35rem 0.65rem !important;
     }
     
@@ -3772,10 +3772,10 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
         font-size: 0.8rem !important;
     }
     .card-desc {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
     }
     .card-stats {
-        font-size: 0.65rem !important;
+        font-size: 0.75rem !important;
     }
     .buy-btn {
         min-width: 90px !important;
@@ -4125,7 +4125,7 @@ html[dir="ltr"] .mgr-info-box {
 
 /* Level Badge */
 .mgr-lvl-badge {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #ffffff;
     background: rgba(255,255,255,0.06);
@@ -4152,7 +4152,7 @@ html[dir="ltr"] .mgr-info-box {
 }
 
 .mgr-stat-item {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     color: rgba(248, 250, 252, 0.55);
     font-weight: 500;
 }
@@ -4190,7 +4190,7 @@ html[dir="ltr"] .mgr-footer-info {
 }
 
 .mgr-footer-lbl {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     color: rgba(248, 250, 252, 0.4);
     font-weight: 500;
 }
@@ -4679,7 +4679,7 @@ header, .control-panel, .bank-floor {
     color: #34d399 !important;
     padding: 0.15rem 0.5rem !important;
     border-radius: 20px !important;
-    font-size: 0.68rem !important;
+    font-size: 0.78rem !important;
     font-weight: 800 !important;
     display: flex !important;
     align-items: center !important;
@@ -4719,7 +4719,7 @@ header, .control-panel, .bank-floor {
 }
 
 .dept-stat-label {
-    font-size: 0.65rem !important;
+    font-size: 0.88rem !important;
     color: #94a3b8 !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -4880,7 +4880,7 @@ header, .control-panel, .bank-floor {
 }
 
 .dept-action-btn .btn-lbl {
-    font-size: 0.75rem !important;
+    font-size: 0.88rem !important;
     font-weight: 800 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.3px !important;
@@ -4888,7 +4888,7 @@ header, .control-panel, .bank-floor {
 }
 
 .dept-action-btn .btn-cost {
-    font-size: 0.8rem !important;
+    font-size: 0.92rem !important;
     font-weight: 900 !important;
     font-family: 'Outfit', sans-serif !important;
     margin-top: 0.1rem !important;
@@ -5067,7 +5067,7 @@ header, .control-panel, .bank-floor {
     border-radius: 8px;
     padding: 0.4rem 0.65rem;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     white-space: nowrap;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255,255,255,0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
@@ -5138,14 +5138,14 @@ header, .control-panel, .bank-floor {
 }
 
 .gold-stat-desc {
-    font-size: 0.68rem;
+    font-size: 0.88rem;
     color: var(--text-muted, #9ca3af);
     text-align: center;
     line-height: 1.2;
 }
 
 .gold-grand-bonus-row {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--text-secondary, #a3aab5);
     border-top: 1px solid rgba(223, 171, 41, 0.12);
     padding-top: 0.65rem;
@@ -5208,7 +5208,7 @@ header, .control-panel, .bank-floor {
     background: transparent;
     border: none;
     color: rgba(160, 160, 180, 0.6);
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -5278,7 +5278,7 @@ header, .control-panel, .bank-floor {
   }
 
   .active-star {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: var(--primary-gold);
     opacity: 0;
     transform: translateY(5px);
@@ -5366,11 +5366,11 @@ header, .control-panel, .bank-floor {
   }
 
   .stat-label {
-    font-size: 0.72rem !important;
+    font-size: 0.8rem !important;
   }
 
   .stat-sub {
-    font-size: 0.7rem !important;
+    font-size: 0.78rem !important;
   }
 
   /* מסתיר שורת Prestige preview — חוסך גובה */
@@ -5466,7 +5466,7 @@ header, .control-panel, .bank-floor {
   }
 
   .vault-mini-level {
-    font-size: 0.62rem !important;
+    font-size: 0.72rem !important;
     font-weight: 700 !important;
     color: rgba(255,255,255,0.45) !important;
     letter-spacing: 0.3px !important;
@@ -5499,13 +5499,13 @@ header, .control-panel, .bank-floor {
   }
 
   .vault-mini-slash {
-    font-size: 0.66rem !important;
+    font-size: 0.76rem !important;
     color: rgba(255,255,255,0.28) !important;
     margin: 0 2px !important;
   }
 
   .vault-mini-cap-val {
-    font-size: 0.76rem !important;
+    font-size: 0.82rem !important;
     font-weight: 600 !important;
     color: rgba(255,255,255,0.45) !important;
   }
@@ -5516,7 +5516,7 @@ header, .control-panel, .bank-floor {
     color: #7eb8f5 !important;
     border-radius: 10px !important;
     padding: 0.32rem 0.6rem !important;
-    font-size: 0.74rem !important;
+    font-size: 0.82rem !important;
     font-weight: 800 !important;
     cursor: pointer !important;
     white-space: nowrap !important;
@@ -5605,7 +5605,7 @@ header, .control-panel, .bank-floor {
     display: flex !important;
     align-items: center !important;
     gap: 0.3rem !important;
-    font-size: 0.68rem !important;
+    font-size: 0.78rem !important;
     color: rgba(255,255,255,0.5) !important;
     line-height: 1 !important;
   }
@@ -5673,7 +5673,7 @@ header, .control-panel, .bank-floor {
   }
 
   .queue-label {
-    font-size: 0.68rem !important;
+    font-size: 0.78rem !important;
     margin-bottom: 0.15rem !important;
   }
 
@@ -5748,7 +5748,7 @@ header, .control-panel, .bank-floor {
     flex-direction: row !important;
     align-items: center !important;
     gap: 0.4rem !important;
-    font-size: 0.7rem !important;
+    font-size: 0.85rem !important;
     margin-bottom: 0 !important;
   }
 
@@ -5828,13 +5828,13 @@ header, .control-panel, .bank-floor {
   }
 
   .card-desc {
-    font-size: 0.74rem !important;
+    font-size: 0.82rem !important;
     line-height: 1.35 !important;
     opacity: 0.82;
   }
 
   .card-stats {
-    font-size: 0.68rem !important;
+    font-size: 0.78rem !important;
     opacity: 0.7;
   }
 
@@ -6106,7 +6106,7 @@ header, .control-panel, .bank-floor {
     white-space: normal !important;
   }
   .gold-upgrade-desc {
-    font-size: 0.8rem !important;
+    font-size: 0.9rem !important;
     line-height: 1.4 !important;
     margin-bottom: 0.35rem !important;
   }
@@ -6116,11 +6116,11 @@ header, .control-panel, .bank-floor {
     align-items: center !important;
   }
   .buy-gold-btn {
-    font-size: 0.83rem !important;
+    font-size: 0.92rem !important;
     padding: 0.38rem 0.8rem !important;
   }
   .gold-level-pill {
-    font-size: 0.76rem !important;
+    font-size: 0.82rem !important;
     padding: 0.25rem 0.6rem !important;
   }
 
@@ -6132,7 +6132,7 @@ header, .control-panel, .bank-floor {
     font-size: 0.92rem !important;
   }
   .gold-stat-desc {
-    font-size: 0.63rem !important;
+    font-size: 0.88rem !important;
   }
 }
 
@@ -6395,7 +6395,7 @@ header {
 }
 
 .cash-live-badge {
-    font-size: 0.52rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: rgba(52, 211, 153, 0.85);
@@ -6436,7 +6436,7 @@ header {
 }
 
 .eps-arrow {
-    font-size: 0.62rem;
+    font-size: 0.72rem;
     display: inline-block;
     animation: eps-float 1.8s ease-in-out infinite;
     color: var(--green-light);
@@ -6521,7 +6521,7 @@ header {
 }
 
 .secondary-label {
-    font-size: 0.68rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.38);
     text-transform: uppercase;
@@ -6565,7 +6565,7 @@ header {
 
 /* Prestige hint under shares value */
 .prestige-hint-text {
-    font-size: 0.58rem;
+    font-size: 0.72rem;
     color: rgba(148, 163, 184, 0.65);
     line-height: 1.35;
     margin-top: 0.1rem;
@@ -6608,7 +6608,7 @@ header {
     }
 
     .cash-label {
-        font-size: 0.68rem !important;
+        font-size: 0.78rem !important;
         opacity: 0.7;
     }
 
@@ -6619,7 +6619,7 @@ header {
     }
 
     .cash-eps {
-        font-size: 0.72rem !important;
+        font-size: 0.82rem !important;
         margin-top: 0.1rem !important;
     }
 
@@ -6723,7 +6723,7 @@ header {
     transform: translateX(-50%);
     background: #fff;
     color: #1f2937;
-    font-size: 0.55rem;
+    font-size: 0.7rem;
     font-weight: 800;
     font-family: 'Outfit', sans-serif;
     padding: 1px 4px;
@@ -8045,7 +8045,7 @@ header {
 .mgr-new-stat-label {
     flex-grow: 1;
     color: #cbd5e1;
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     font-weight: 500;
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding-left: 0.3rem;
@@ -8192,7 +8192,7 @@ header {
 }
 
 .mgr-new-profit-lbl {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     color: #94a3b8;
     margin-bottom: 0.1rem;
 }
@@ -8214,7 +8214,7 @@ header {
 }
 
 .profit-val-suffix {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     color: #94a3b8;
     font-family: var(--font-main);
 }
@@ -8566,12 +8566,12 @@ header {
     }
     .upg-title-level {
         color: #d4a93a;
-        font-size: 0.78rem;
+        font-size: 0.85rem;
         font-weight: 600;
     }
     .upg-title-levels {
         display: inline-block;
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         font-weight: 800;
         color: #0f121a;
         background: #7deba0;
@@ -8628,7 +8628,7 @@ header {
         display: none;
     }
     .upg-stat-val {
-        font-size: 0.67rem;
+        font-size: 0.77rem;
         white-space: nowrap;
         font-family: 'Outfit', sans-serif;
     }
