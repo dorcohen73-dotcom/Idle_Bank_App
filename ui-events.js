@@ -376,8 +376,8 @@ function openBoostModal() {
     const btnAd = document.createElement('button');
     btnAd.className = 'event-option-btn ad-option';
     btnAd.innerHTML = `
-        <div class="event-option-title">${lang === 'he' ? '🎬 צפה בפרסומת והפעל בוסט' : '🎬 Watch Ad & Activate'}</div>
-        <div class="event-option-desc">${lang === 'he' ? 'מוסיף 4 שעות של רווח כפול (עד 8 שעות)' : 'Adds 4 hours of double earnings (up to 8h)'}</div>
+        <div class="event-option-title">${tObj.boostEventAdTitle || '🎬 Watch Ad & Activate'}</div>
+        <div class="event-option-desc">${tObj.boostEventAdDesc || 'Adds 4 hours of double earnings (up to 8h)'}</div>
     `;
     btnAd.addEventListener('click', () => {
         initSound();
@@ -391,8 +391,8 @@ function openBoostModal() {
     const btnCancel = document.createElement('button');
     btnCancel.className = 'event-option-btn';
     btnCancel.innerHTML = `
-        <div class="event-option-title">${lang === 'he' ? 'ביטול' : 'Cancel'}</div>
-        <div class="event-option-desc">${lang === 'he' ? 'חזור למשחק' : 'Back to game'}</div>
+        <div class="event-option-title">${tObj.cancelLabel || 'Cancel'}</div>
+        <div class="event-option-desc">${tObj.backToGameLabel || 'Back to game'}</div>
     `;
     btnCancel.addEventListener('click', () => {
         initSound();
@@ -413,7 +413,7 @@ function openAnalyticsModal() {
     const tObj = translations[lang];
     
     document.getElementById('analytics-modal-title').innerText = tObj.analyticsTitle;
-    document.getElementById('analytics-title-general').innerText = lang === 'he' ? 'נתונים כלליים' : 'General Stats';
+    document.getElementById('analytics-title-general').innerText = tObj.analyticsGeneralStats || 'General Stats';
     document.getElementById('analytics-label-eps').innerText = tObj.analyticsTotalEps;
     document.getElementById('analytics-label-vault').innerText = tObj.analyticsVaultUtil;
     document.getElementById('analytics-title-tellers').innerText = tObj.analyticsTellersTitle;
@@ -443,7 +443,7 @@ function openAnalyticsModal() {
             
             row.innerHTML = `
                 <span>${tObj.tellerLabel} ${t.id + 1} (${tObj.levelLabel} ${t.level}):</span>
-                <strong>${formatMoney(tellerEps)}/${lang === 'he' ? 'שנייה' : 'sec'}</strong>
+                <strong>${formatMoney(tellerEps)}/${tObj.secLabel || 'sec'}</strong>
             `;
             tellersFragment.appendChild(row);
         }
@@ -610,7 +610,7 @@ function handleSecurityEvent(container, lang, tObj, eObj, eventModal) {
         if (Math.random() < 0.5) {
             const lost = Math.round(game.state.vault.cashStored * 0.10);
             game.deductVaultCash(lost);
-            const msg = lang === 'he' ? `התרחשה פריצה! איבדת ${formatMoney(lost)} מהכספת.` : `Break-in occurred! You lost ${formatMoney(lost)} from the vault.`;
+            const msg = typeof tObj.securityBreachMsg === 'function' ? tObj.securityBreachMsg(formatMoney(lost)) : `Break-in occurred! You lost ${formatMoney(lost)} from the vault.`;
             if (typeof window.showToast === 'function') {
                 window.showToast(msg, 'warning');
             } else {
@@ -619,7 +619,7 @@ function handleSecurityEvent(container, lang, tObj, eObj, eventModal) {
         } else {
             const payout = Math.round(game.state.cash * 0.05 * game.getEventBonusMultiplier());
             game.addCash(payout);
-            const msg = lang === 'he' ? `האבטחה הדפה את הפורצים! קיבלת מענק ביטוחי של ${formatMoney(payout)}.` : `Security held the line! You received an insurance payout of ${formatMoney(payout)}.`;
+            const msg = typeof tObj.securityDefenseMsg === 'function' ? tObj.securityDefenseMsg(formatMoney(payout)) : `Security held the line! You received an insurance payout of ${formatMoney(payout)}.`;
             if (typeof window.showToast === 'function') {
                 window.showToast(msg, 'success');
             }
@@ -831,7 +831,7 @@ function handleAuditEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         game.spendCash(cost);
         eventModal.classList.remove('active');
-        spawnFloating(lang === 'he' ? 'ביקורת הסתיימה נקי!' : 'Audit closed clean!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.auditCleanMsg || 'Audit closed clean!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -846,7 +846,7 @@ function handleAuditEvent(container, lang, tObj, eObj, eventModal) {
         const penalty = Math.round(game.state.cash * 0.08);
         game.spendCash(penalty);
         game.addShares(3);
-        spawnFloating(lang === 'he' ? `-${formatMoney(penalty)} | +3 מניות זהב` : `-${formatMoney(penalty)} | +3 Gold Shares`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(typeof tObj.auditPenaltyMsg === 'function' ? tObj.auditPenaltyMsg(formatMoney(penalty)) : `-${formatMoney(penalty)} | +3 Gold Shares`, window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnC = document.createElement('button');
@@ -893,7 +893,7 @@ function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
         game.spendCash(cost);
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(600, 1.15);
-        spawnFloating(lang === 'he' ? 'ציוד תוקן! +15% מהירות' : 'Fixed! +15% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.equipmentFixedMsg || 'Fixed! +15% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -906,7 +906,7 @@ function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(300, 0.7);
-        spawnFloating(lang === 'he' ? '-30% מהירות לכ-5 דקות' : '-30% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+        spawnFloating(tObj.equipmentWaitMsg || '-30% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
     });
 
     const btnC = document.createElement('button');
@@ -920,7 +920,7 @@ function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
         eventModal.classList.remove('active');
         playAd(() => {
             game.triggerSpeedBoost(300, 1.5);
-            spawnFloating(lang === 'he' ? 'קבלן הגיע! +50% מהירות' : 'Contractor arrived! +50% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.contractorMsg || 'Contractor arrived! +50% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -945,7 +945,7 @@ function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         game.spendCash(cost);
         eventModal.classList.remove('active');
-        spawnFloating(lang === 'he' ? 'גנרטור פעיל!' : 'Generator running!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.generatorActiveMsg || 'Generator running!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -958,7 +958,7 @@ function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(300, 0.5);
-        spawnFloating(lang === 'he' ? '50% תפוקה לכ-5 דקות' : '50% output for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+        spawnFloating(tObj.powerHalfMsg || '50% output for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
     });
 
     const btnC = document.createElement('button');
@@ -972,7 +972,7 @@ function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
         eventModal.classList.remove('active');
         playAd(() => {
             game.triggerSpeedBoost(600, 1.25);
-            spawnFloating(lang === 'he' ? 'גנרטור ממומן! +25% מהירות' : 'Generator funded! +25% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.generatorFundedMsg || 'Generator funded! +25% speed', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1011,7 +1011,7 @@ function handleRobberyAttemptEvent(container, lang, tObj, eObj, eventModal) {
     btnB.addEventListener('click', () => {
         initSound();
         eventModal.classList.remove('active');
-        spawnFloating(lang === 'he' ? 'משטרה בדרך!' : 'Police en route!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.policeOnWayMsg || 'Police en route!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnC = document.createElement('button');
@@ -1053,7 +1053,7 @@ function handleCelebrityVisitEvent(container, lang, tObj, eObj, eventModal) {
         eventModal.classList.remove('active');
         // VIP visit: give a speed boost (faster tellers = more clients served effectively)
         game.triggerSpeedBoost(3600, 1.15);
-        spawnFloating(lang === 'he' ? 'VIP +15% מהירות לשעה!' : 'VIP +15% speed for 1 hour!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.vipSpeedMsg || 'VIP +15% speed for 1 hour!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -1171,7 +1171,7 @@ function handleCompetitorNewsEvent(container, lang, tObj, eObj, eventModal) {
         // More clients = faster processing speed + queue bonus
         game.triggerSpeedBoost(3600, 1.5);
         game.triggerTempQueueBonus(10, 3600000);
-        spawnFloating(lang === 'he' ? 'לקוחות גל! x1.5 לשעה' : 'Client wave! x1.5 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.clientWave15Msg || 'Client wave! x1.5 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -1184,7 +1184,7 @@ function handleCompetitorNewsEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(1800, 1.05);
-        spawnFloating(lang === 'he' ? '+5% לקוחות לחצי שעה' : '+5% clients for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.clientBoost5Msg || '+5% clients for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnC = document.createElement('button');
@@ -1199,7 +1199,7 @@ function handleCompetitorNewsEvent(container, lang, tObj, eObj, eventModal) {
         playAd(() => {
             game.triggerSpeedBoost(3600, 2.0);
             game.triggerTempQueueBonus(15, 3600000);
-            spawnFloating(lang === 'he' ? 'לקוחות גל! x2 לשעה' : 'Client wave! x2 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.clientWave2Msg || 'Client wave! x2 for 1h', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1225,7 +1225,7 @@ function handleEconomicBoomEvent(container, lang, tObj, eObj, eventModal) {
         game.spendCash(cost);
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(3600, 1.2);
-        spawnFloating(lang === 'he' ? 'EPS +20% לשעה!' : 'EPS +20% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.eps20Msg || 'EPS +20% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -1238,7 +1238,7 @@ function handleEconomicBoomEvent(container, lang, tObj, eObj, eventModal) {
         initSound();
         eventModal.classList.remove('active');
         game.triggerSpeedBoost(1800, 1.1);
-        spawnFloating(lang === 'he' ? 'EPS +10% לחצי שעה' : 'EPS +10% for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.eps10Msg || 'EPS +10% for 30 min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnC = document.createElement('button');
@@ -1252,7 +1252,7 @@ function handleEconomicBoomEvent(container, lang, tObj, eObj, eventModal) {
         eventModal.classList.remove('active');
         playAd(() => {
             game.triggerSpeedBoost(3600, 1.3);
-            spawnFloating(lang === 'he' ? 'EPS +30% לשעה!' : 'EPS +30% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.eps30Msg || 'EPS +30% for 1h!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1280,7 +1280,7 @@ function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
         // ATMs fixed: bonus customers arrive (speed boost + queue expansion)
         game.triggerSpeedBoost(600, 1.3);
         game.triggerTempQueueBonus(8, 600000);
-        spawnFloating(lang === 'he' ? 'ATM חזרו לפעולה!' : 'ATMs back online!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+        spawnFloating(tObj.atmBackMsg || 'ATMs back online!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
     });
 
     const btnB = document.createElement('button');
@@ -1294,7 +1294,7 @@ function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
         eventModal.classList.remove('active');
         // Temporary slowdown while ATMs are offline
         game.triggerSpeedBoost(300, 0.8);
-        spawnFloating(lang === 'he' ? '-20% מהירות לכ-5 דקות' : '-20% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
+        spawnFloating(tObj.speed20MinusMsg || '-20% speed for 5 min', window.innerWidth / 2, window.innerHeight / 2, 'red');
     });
 
     const btnC = document.createElement('button');
@@ -1309,7 +1309,7 @@ function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
         playAd(() => {
             game.triggerSpeedBoost(600, 1.25);
             game.triggerTempQueueBonus(8, 600000);
-            spawnFloating(lang === 'he' ? 'ATM מתוקנים — גל לקוחות!' : 'ATMs fixed — client wave!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.atmFixedWaveMsg || 'ATMs fixed — client wave!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1675,9 +1675,10 @@ function showContextualAdBanner(type) {
     const existing = document.getElementById('contextual-offer-banner');
     if (existing) existing.remove();
 
+    const tObj = translations[lang] || translations.he;
     const msgs = {
-        vip: lang === 'he' ? '💎 לקוח VIP שורת! הכפל רווח עם פרסומת?' : '💎 VIP served! Double your reward?',
-        milestone: lang === 'he' ? '🎉 יעד כסף הושג! הפעל בוסט x2?' : '🎉 Cash milestone! Activate x2 boost?'
+        vip: tObj.boostVIPMsg || '💎 VIP served! Double your reward?',
+        milestone: tObj.boostMilestoneMsg || '🎉 Cash milestone! Activate x2 boost?'
     };
     const msg = msgs[type] || msgs.vip;
 
@@ -1685,7 +1686,7 @@ function showContextualAdBanner(type) {
     banner.id = 'contextual-offer-banner';
     banner.innerHTML = `
         <span style="font-size:0.82rem; color:var(--text-main); flex:1;">${msg}</span>
-        <button id="ctx-offer-yes" style="background:var(--primary-gold,#dfab29); color:#000; border:none; padding:0.28rem 0.7rem; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:700; white-space:nowrap;">🎬 צפה</button>
+        <button id="ctx-offer-yes" style="background:var(--primary-gold,#dfab29); color:#000; border:none; padding:0.28rem 0.7rem; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:700; white-space:nowrap;">${tObj.ctxWatchBtn || '🎬 Watch'}</button>
         <button id="ctx-offer-no" style="background:transparent; border:1px solid var(--border-color,rgba(255,255,255,0.1)); color:var(--text-muted,#9ca3af); padding:0.28rem 0.5rem; border-radius:8px; font-size:0.78rem; cursor:pointer;">✕</button>
     `;
     Object.assign(banner.style, {
@@ -1713,7 +1714,7 @@ function showContextualAdBanner(type) {
         playAd(() => {
             game.addBoost2x(2);
             draw();
-            spawnFloating(lang === 'he' ? '⚡ בוסט x2 הופעל!' : '⚡ Boost x2 activated!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+            spawnFloating(tObj.boostActivatedMsg || '⚡ Boost x2 activated!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
         });
     });
 
@@ -1727,6 +1728,7 @@ function showContextualAdBanner(type) {
 
 function openWeeklyRewardModal() {
     const lang = (game.state && game.state.language) || 'he';
+    const tObj = translations[lang] || translations.he;
     const modal = document.getElementById('weekly-modal');
     if (!modal) return;
 
@@ -1734,17 +1736,15 @@ function openWeeklyRewardModal() {
     const textEl = document.getElementById('weekly-modal-text');
     const statsBox = document.getElementById('weekly-stats-box');
 
-    if (titleEl) titleEl.innerText = lang === 'he' ? '🏆 שבוע מצוין!' : '🏆 Great Week!';
-    if (textEl) textEl.innerText = lang === 'he'
-        ? 'עברת שבוע מלא של ניהול אימפריה. הצוות שלך ממתין לדרבן!'
-        : 'A full week of running your empire! Your team is ready for a boost!';
+    if (titleEl) titleEl.innerText = tObj.weeklyTitle || '🏆 Great Week!';
+    if (textEl) textEl.innerText = tObj.weeklyText || 'A full week of running your empire! Your team is ready for a boost!';
 
     if (statsBox) {
         const eps = game.getEarningsPerSecond ? game.getEarningsPerSecond() : 0;
         const served = (game.state.stats && game.state.stats.clientsServed) || 0;
         const shares = game.state.shares || 0;
-        statsBox.innerHTML = lang === 'he'
-            ? `💰 רווח לשנייה: <strong>${formatMoney(eps)}</strong><br>👥 לקוחות שטופלו: <strong>${served.toLocaleString()}</strong><br>⭐ מניות זהב: <strong>${shares}</strong>`
+        statsBox.innerHTML = typeof tObj.weeklyStats === 'function'
+            ? tObj.weeklyStats(formatMoney(eps), served.toLocaleString(), shares)
             : `💰 EPS: <strong>${formatMoney(eps)}</strong><br>👥 Clients served: <strong>${served.toLocaleString()}</strong><br>⭐ Gold shares: <strong>${shares}</strong>`;
     }
 
@@ -1759,7 +1759,7 @@ function openWeeklyRewardModal() {
                 game.addBoost2x(8);
                 game.state.lastWeeklyReward = Date.now();
                 draw();
-                spawnFloating(lang === 'he' ? '⚡ בוסט 8 שעות!' : '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+                spawnFloating(tObj.boost8hMsg || '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
             });
         };
     }
@@ -1882,9 +1882,9 @@ function tick(timestamp) {
         }
         
         if (typeof window.showToast === 'function') {
-            const crashMsg = (game.state && game.state.language === 'en') ? 
-                'A critical error occurred! Game progress was saved.' : 
-                'שגיאה קריטית התרחשה! המשחק נשמר.';
+            const _toastLang = (game.state && game.state.language) || 'en';
+            const _toastT = (typeof translations !== 'undefined' && translations[_toastLang]) ? translations[_toastLang] : translations.en;
+            const crashMsg = _toastT.errorDesc || 'A critical error occurred! Game progress was saved.';
             window.showToast(crashMsg, 'danger');
         }
         
@@ -1893,16 +1893,16 @@ function tick(timestamp) {
             overlay = document.createElement('div');
             overlay.id = 'crash-overlay';
             
+            const _crashLang = window.gameLanguage || 'en';
+            const _crashT = (typeof translations !== 'undefined' && translations[_crashLang]) ? translations[_crashLang] : translations.en;
             const title = document.createElement('h1');
-            title.innerText = window.gameLanguage === 'he' ? 'אופס! משהו השתבש' : 'Oops! Something went wrong';
-            
+            title.innerText = _crashT.errorTitle || 'Oops! Something went wrong';
+
             const desc = document.createElement('p');
-            desc.innerText = window.gameLanguage === 'he' ? 
-                'התרחשה שגיאה בלתי צפויה בלולאת המשחק. ההתקדמות שלך נשמרה בבטחה.' : 
-                'An unexpected error occurred in the game loop. Your progress has been saved.';
-            
+            desc.innerText = _crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.';
+
             const reloadBtn = document.createElement('button');
-            reloadBtn.innerText = window.gameLanguage === 'he' ? 'טען מחדש 🔄' : 'Reload Game 🔄';
+            reloadBtn.innerText = _crashT.reloadBtn || 'Reload Game 🔄';
             reloadBtn.addEventListener('click', () => window.location.reload());
             
             overlay.appendChild(title);
@@ -1962,6 +1962,7 @@ function showLoginRewardModal() {
     const reward = window.game.state.pendingLoginReward;
     const streak = window.game.state.loginStreak || 1;
     const lang = (window.game.state.language) || 'he';
+    const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : translations.he;
 
     const streakEl = document.getElementById('login-streak-count');
     const amountEl = document.getElementById('login-reward-amount');
@@ -1986,7 +1987,7 @@ function showLoginRewardModal() {
         displayText = typeof lm.boostLabel === 'function' ? lm.boostLabel(mins) : ('+' + mins + ' min Boost x2');
         descText = lm.boostDesc;
     } else if (reward.type === 'gold' || reward.type === 'shares') {
-        displayText = '+' + reward.value + (lang === 'he' ? ' מניות זהב' : ' Gold Shares');
+        displayText = '+' + reward.value + (tObj.goldSharesUnit || ' Gold Shares');
         descText = lm.sharesDesc;
     }
 
@@ -2036,6 +2037,8 @@ function _applyLoginReward(reward) {
 // ==========================================
 
 function triggerPrestigeCeremony(sharesGained, branchName, callback) {
+    const _pLang = (game.state && game.state.language) || 'he';
+    const _pT = translations[_pLang] || translations.he;
     const overlay = document.createElement('div');
     overlay.className = 'prestige-ceremony-overlay';
     overlay.setAttribute('aria-live', 'polite');
@@ -2044,7 +2047,7 @@ function triggerPrestigeCeremony(sharesGained, branchName, callback) {
     const line1 = document.createElement('div');
     line1.className = 'ceremony-line1';
     line1.style.cssText = 'font-size:1.5rem; margin-bottom:0.5rem; opacity:0; transition:opacity 0.4s ease;';
-    line1.innerText = branchName + ' מתאפס...';
+    line1.innerText = branchName + ' ' + (_pT.prestigeResetLabel || 'resetting...');
 
     const line2 = document.createElement('div');
     line2.className = 'ceremony-line2';
@@ -2054,7 +2057,7 @@ function triggerPrestigeCeremony(sharesGained, branchName, callback) {
     const line3 = document.createElement('div');
     line3.className = 'ceremony-line3';
     line3.style.cssText = 'font-size:1rem; color:#dfab29; opacity:0; transition:opacity 0.4s ease;';
-    line3.innerText = 'מניות זהב';
+    line3.innerText = _pT.goldSharesLabel || 'Gold Shares';
 
     overlay.appendChild(line1);
     overlay.appendChild(line2);
@@ -2469,7 +2472,8 @@ function initUIEvents() {
                 game.saveGame();
                 draw();
                 if (typeof window.showToast === 'function') {
-                    window.showToast('בוסט הופעל! רווחי הבנק הוכפלו ל-4 שעות.', 'success');
+                    const _bT = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                    window.showToast(_bT.boostActivated4h || 'Boost activated! Bank profits doubled for 4 hours.', 'success');
                 }
             });
         });
@@ -2496,7 +2500,8 @@ function initUIEvents() {
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
                 const sharesPreview = game.calculatePrestigeShares() * 3;
-                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ('סניף ' + target);
+                const _prT = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT.branchLabel || 'Branch') + ' ' + target);
                 prestigeModal.classList.remove('active');
                 playAd(() => {
                     triggerPrestigeCeremony(Math.min(1000, sharesPreview), branchName, () => {
@@ -2518,7 +2523,8 @@ function initUIEvents() {
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
                 const sharesPreview = game.calculatePrestigeShares();
-                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ('סניף ' + target);
+                const _prT2 = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT2.branchLabel || 'Branch') + ' ' + target);
                 prestigeModal.classList.remove('active');
                 triggerPrestigeCeremony(sharesPreview, branchName, () => {
                     game.prestige(target, false);
@@ -3100,7 +3106,7 @@ function initUIEvents() {
             emptyEl.style.color = 'var(--text-muted)';
             emptyEl.style.textAlign = 'center';
             emptyEl.style.padding = '1rem';
-            emptyEl.textContent = lang === 'he' ? 'טוען אתגרים...' : 'Loading...';
+            emptyEl.textContent = tObj.loadingChallengesMsg || 'Loading...';
             container.appendChild(emptyEl);
             return;
         }

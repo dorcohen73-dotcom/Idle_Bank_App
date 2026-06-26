@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
     
@@ -23,8 +23,8 @@
     <link rel="preload" href="תמונות/icon.png" as="image">
     <link rel="preload" href="תמונות/nav_bank.png" as="image">
 
-    <!-- CSS Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=20240625_1">
+    <!-- Application Styles -->
+    <link rel="stylesheet" href="style.css?v=20260626_4">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -647,14 +647,15 @@
         <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
     </div>
 
-    <script src="locales.js?v=20240625_1" defer></script>
-    <script src="economy-manager.js?v=20240625_1" defer></script>
-    <script src="save-manager.js?v=20240625_1" defer></script>
-    <script src="mission-controller.js?v=20240625_1" defer></script>
-    <script src="game.js?v=20240625_1" defer></script>
-    <script src="ui-draw.js?v=20240625_1" defer></script>
-    <script src="ui-tabs.js?v=20240625_1" defer></script>
-    <script src="ui-events.js?v=20240625_1" defer></script>
-    <script src="app.js?v=20240625_1" defer></script>
+    <script src="config.js?v=20260626_5" defer></script>
+    <script src="locales.js?v=20260626_2" defer></script>
+    <script src="economy-manager.js?v=20260626_2" defer></script>
+    <script src="save-manager.js?v=20260626_2" defer></script>
+    <script src="mission-controller.js?v=20260626_2" defer></script>
+    <script src="game.js?v=20260626_5" defer></script>
+    <script src="ui-draw.js?v=20260626_3" defer></script>
+    <script src="ui-tabs.js?v=20260626_2" defer></script>
+    <script src="ui-events.js?v=20260626_2" defer></script>
+    <script src="app.js?v=20260626_2" defer></script>
 </body>
 </html>

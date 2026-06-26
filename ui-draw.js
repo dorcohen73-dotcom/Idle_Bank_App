@@ -571,7 +571,7 @@ function draw() {
             const mStr = minutes < 10 ? '0' + minutes : minutes;
             const sStr = seconds < 10 ? '0' + seconds : seconds;
             
-            DOM_CACHE.adBoostTimer.innerText = `${tObj.timeLeftLabel || 'נותרו'}: ${hStr}:${mStr}:${sStr}`;
+            DOM_CACHE.adBoostTimer.innerText = `${tObj.timeLeftLabel || 'Remaining'}: ${hStr}:${mStr}:${sStr}`;
         } else {
             DOM_CACHE.btnWatchAd.classList.remove('hidden');
             DOM_CACHE.adBoostTimer.classList.add('hidden');
@@ -666,7 +666,7 @@ function draw() {
                 elQueueZone.classList.add('status-alert');
             }
             const spotsLeft = maxCap - currentLen;
-            if (statText) statText.textContent = `נותרו ${spotsLeft} מקומות בלבד`;
+            if (statText) statText.textContent = tObj.alertQueueAlmostFull ? tObj.alertQueueAlmostFull(spotsLeft) : spotsLeft + ' left';
             if (statIcon) {
                 statIcon.textContent = '❕';
                 statIcon.style.color = 'var(--danger-red)';
@@ -838,6 +838,12 @@ function draw() {
 
                 const avatarEl = document.createElement('div');
                 avatarEl.className = 'guard-runner-avatar';
+                avatarEl.innerHTML = '👮';
+                avatarEl.style.fontSize = '32px';
+                avatarEl.style.display = 'flex';
+                avatarEl.style.alignItems = 'center';
+                avatarEl.style.justifyContent = 'center';
+                
                 runner.appendChild(avatarEl);
 
                 const loadEl = document.createElement('div');
@@ -849,13 +855,16 @@ function draw() {
 
             // Stagger position and height to create a convoy/row effect so guards don't overlap
             let visualPosition = gData.position;
-            if (gData.state === 'moving_to_tellers') {
+            const isMovingToTeller = gData.state.startsWith('moving_to_teller_');
+            const isCollecting = gData.state.startsWith('collecting_from_teller_');
+
+            if (isMovingToTeller) {
                 visualPosition = Math.max(0, gData.position - (gData.id * 0.07));
             } else if (gData.state === 'moving_to_vault') {
                 visualPosition = Math.min(1.0, gData.position + (gData.id * 0.07));
             } else if (gData.state === 'idle' || gData.state === 'depositing') {
                 visualPosition = gData.position + (gData.id * 0.04);
-            } else if (gData.state === 'collecting') {
+            } else if (isCollecting) {
                 visualPosition = gData.position - (gData.id * 0.04);
             }
 
@@ -874,7 +883,10 @@ function draw() {
             // Clean previous state and direction classes
             runner.className = 'guard-runner';
             runner.classList.add(`state-${gData.state}`);
-            if (gData.state === 'moving_to_tellers') {
+            if (isMovingToTeller) runner.classList.add('state-moving_to_tellers');
+            if (isCollecting) runner.classList.add('state-collecting');
+
+            if (isMovingToTeller) {
                 runner.classList.add('moving-left');
             } else if (gData.state === 'moving_to_vault') {
                 runner.classList.add('moving-right');
@@ -882,9 +894,7 @@ function draw() {
 
             // Update avatar text (empty since we use background image)
             const avatarEl = runner.querySelector('.guard-runner-avatar');
-            if (avatarEl && avatarEl.innerText !== '') {
-                avatarEl.innerText = '';
-            }
+            // Removed innerText clearing to preserve emoji fallback
 
             // Update load label bubble above
             const loadEl = runner.querySelector('.guard-runner-load');
@@ -965,7 +975,10 @@ function draw() {
         const reads = [];
         guardAnimationsToTrigger.forEach(item => {
             const { g, gData, prevState } = item;
-            if (prevState === 'moving_to_tellers' && gData.state === 'collecting') {
+            const prevIsMoving = prevState && prevState.startsWith('moving_to_teller_');
+            const currIsCollecting = gData.state.startsWith('collecting_from_teller_');
+
+            if (prevIsMoving && currIsCollecting) {
                 const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
                 const rectGuard = runner ? runner.getBoundingClientRect() : (DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null);
                 

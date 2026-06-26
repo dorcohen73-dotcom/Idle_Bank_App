@@ -70,7 +70,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                     <div class="card-title">${title}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${levelsToBuy})</span>` : ''}</div>
                     <div class="card-desc">${desc}</div>
                     <div class="card-stats">
-                        <div class="stat-line">${speedLabel}: <span>${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}</span></div>
+                        <div class="stat-line">${speedLabel}: <span>${speed}${translations[lang].secAbbr || 's'} ➔ ${nextSpeed}${translations[lang].secAbbr || 's'}</span></div>
                         <div class="stat-sep"> | </div>
                         <div class="stat-line">${capLabel}: <span>${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}</span></div>
                     </div>
@@ -394,7 +394,7 @@ function renderManagersTab() {
                         <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item" style="color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">
-                                🔒 ${lang === 'he' ? 'דורש פתיחת מחלקת:' : 'Requires unlocking:'} <br>
+                                🔒 ${translations[lang].requiresUnlocking || 'Requires unlocking:'} <br>
                                 <span style="color: var(--primary-gold);">${deptName}</span>
                             </div>
                         </div>
@@ -638,7 +638,7 @@ function renderDepartmentsTab() {
         const activeBadgeHtml = isUnlocked ? `
             <span class="dept-active-badge">
                 <span class="badge-dot"></span>
-                <span>${lang === 'he' ? 'פעיל' : 'Active'}</span>
+                <span>${translations[lang].activeLabel || 'Active'}</span>
             </span>
         ` : '';
 
@@ -664,7 +664,7 @@ function renderDepartmentsTab() {
             actionBtnHtml = `
                 <button class="dept-action-btn buy-btn ${canBuy ? '' : 'disabled'}" data-dept-idx="${d.id}" ${canBuy ? '' : 'disabled'}>
                     <span class="btn-arrow">▲</span>
-                    <span class="btn-lbl">${lang === 'he' ? 'שדרג' : tObj.unlock}</span>
+                    <span class="btn-lbl">${tObj.unlock}</span>
                     <span class="btn-cost">${formatMoney(d.cost)}</span>
                 </button>
             `;
@@ -672,7 +672,7 @@ function renderDepartmentsTab() {
             actionBtnHtml = `
                 <button class="dept-action-btn active disabled" disabled>
                     <span class="btn-arrow">✓</span>
-                    <span class="btn-lbl">${lang === 'he' ? 'פעיל' : 'Active'}</span>
+                    <span class="btn-lbl">${translations[lang].activeLabel || 'Active'}</span>
                     <span class="btn-cost">MAX</span>
                 </button>
             `;
@@ -773,7 +773,7 @@ function renderBranchesTab() {
             ${tObj.sellAndBuild}
         </button>
         <div class="prestige-btn-subtext">
-            ${lang === 'he' ? `מינימום כסף: ${formatMoney(currentReq)}` : tObj.prestigeMinLabel(formatMoney(currentReq))}
+            ${typeof tObj.prestigeMinLabel === 'function' ? tObj.prestigeMinLabel(formatMoney(currentReq)) : formatMoney(currentReq)}
         </div>
     `;
     container.appendChild(prestigeCard);
@@ -799,7 +799,7 @@ function renderBranchesTab() {
         } else if (isNext) {
             actionBtnHtml = `
                 <button class="branch-action-btn ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled'}>
-                    ${lang === 'he' ? 'מכור' : translations[lang].branches.sellAndBuild.replace('!', '')}
+                    ${translations[lang].branches.sellAndBuild.replace('!', '')}
                 </button>
             `;
         } else {
@@ -949,10 +949,10 @@ function renderBranchesTab() {
     
     const prestigeBonusPct = Math.round((game.getPrestigeMultiplier() - 1) * 100);
 
-    const tTotalEffect = translations[lang].goldTotalEffect || 'האפקט הכולל שלך';
-    const tBranchProfits = translations[lang].goldBranchProfits || 'רווחים בסניפים';
-    const tCourierSpeed = translations[lang].goldCourierSpeed || 'מהירות שליחים';
-    const tStartingCapital = translations[lang].goldStartingCapital || 'הון התחלתי';
+    const tTotalEffect = translations[lang].goldTotalEffect || translations.en.goldTotalEffect;
+    const tBranchProfits = translations[lang].goldBranchProfits || translations.en.goldBranchProfits;
+    const tCourierSpeed = translations[lang].goldCourierSpeed || translations.en.goldCourierSpeed;
+    const tStartingCapital = translations[lang].goldStartingCapital || translations.en.goldStartingCapital;
     
     let grandBonusHtml = '';
     if (typeof translations[lang].goldGrandBonus === 'function') {
@@ -1014,6 +1014,7 @@ function renderMissionsTab() {
 
     const lang = game.state.language || 'he';
     const tObj = translations[lang].missions;
+    const rootT = translations[lang];
     const completedCount = game.state.missionsCompleted || 0;
     
     // Top Board Pannel (Brushed Silver with Gold Border)
@@ -1097,7 +1098,7 @@ function renderMissionsTab() {
         if (m.completed && !m.claimed) {
             btnHtml = `
                 <button class="claim-reward-btn" data-mission-id="${m.id}">
-                    ${lang === 'he' ? 'אסוף פרס!' : 'Claim!'}
+                    ${rootT.claimReward || 'Claim!'}
                 </button>
             `;
         } else {
@@ -1116,10 +1117,10 @@ function renderMissionsTab() {
         // Resolve reward display (may be cash number or {type,amount} object)
         let rewardBadgeHtml = '';
         if (m.reward && typeof m.reward === 'object' && m.reward.type) {
-            const shareLbl = lang === 'he' ? 'מניות זהב' : 'Gold Shares';
-            rewardBadgeHtml = `<span>${lang === 'he' ? 'פרס:' : 'Reward:'} +${m.reward.amount} ${shareLbl} 🪙</span>`;
+            const shareLbl = rootT.sharesLabel || 'Gold Shares';
+            rewardBadgeHtml = `<span>${rootT.rewardLabel || 'Reward:'} +${m.reward.amount} ${shareLbl} 🪙</span>`;
         } else {
-            rewardBadgeHtml = `<span>${lang === 'he' ? 'רווח:' : 'Reward:'} +${formatMoney(m.reward)} 💰</span>`;
+            rewardBadgeHtml = `<span>${rootT.profitLabel || 'Profit:'} +${formatMoney(m.reward)} 💰</span>`;
         }
 
         card.innerHTML = `
@@ -1181,7 +1182,7 @@ function renderMissionsTab() {
                         animateCoins(rectBtn, rectShares, collected.amount, 'gold');
                     }
                     const lang = (game.state && game.state.language) || 'he';
-                    const shareLbl = lang === 'he' ? 'מניות זהב' : 'Gold Shares';
+                    const shareLbl = (translations[lang] || translations.he).sharesLabel || 'Gold Shares';
                     spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold');
                 }
 
@@ -1240,7 +1241,7 @@ function updateButtonAffordability() {
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                                 const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
                                 const lang = game.state.language || 'he';
-                                statsSpans[0].innerText = `${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}`;
+                                statsSpans[0].innerText = `${speed}${(translations[lang] || translations.he).secAbbr || 's'} ➔ ${nextSpeed}${(translations[lang] || translations.he).secAbbr || 's'}`;
                                 statsSpans[1].innerText = `${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}`;
                             }
                         }
@@ -1273,7 +1274,7 @@ function updateButtonAffordability() {
                                 const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
                                 const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                                 const lang = game.state.language || 'he';
-                                statsSpans[0].innerText = `${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}`;
+                                statsSpans[0].innerText = `${speed}${(translations[lang] || translations.he).secAbbr || 's'} ➔ ${nextSpeed}${(translations[lang] || translations.he).secAbbr || 's'}`;
                                 statsSpans[1].innerText = `${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}`;
                             }
                         }

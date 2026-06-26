@@ -757,11 +757,11 @@ class IdleBankGame {
             if (typeof window.showToast === 'function') {
                 const lang = this.state.language || 'he';
                 const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
-                const branchName = (this.branches && this.branches[targetBranchIndex]) ? this.branches[targetBranchIndex].name : ('סניף ' + targetBranchIndex);
+                const branchName = (this.branches && this.branches[targetBranchIndex]) ? this.branches[targetBranchIndex].name : ('Branch ' + targetBranchIndex);
                 const amt = Math.round(welcomeBonusCash).toLocaleString();
                 const msg = (tObj && typeof tObj.welcomeBonusMsg === 'function')
                     ? tObj.welcomeBonusMsg(branchName, amt)
-                    : ('ברוכים הבאים ל' + branchName + '! קיבלת $' + amt + ' כמתנת פתיחה');
+                    : ('Welcome to ' + branchName + '! You received $' + amt + ' as an opening gift.');
                 window.showToast(msg, 'success');
             }
         }
@@ -784,10 +784,10 @@ class IdleBankGame {
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
         const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
 
-        // Build ordered queue of tellers with cash
+        // Build ordered queue of ALL unlocked tellers for visual patrol
         const queue = [];
         this.state.tellers.forEach((t, idx) => {
-            if (t.unlocked && t.cashStored > 0) queue.push(idx);
+            if (t.unlocked) queue.push(idx);
         });
 
         if (queue.length > 0 && vaultSpaceLeft > 0) {
@@ -970,8 +970,13 @@ class IdleBankGame {
         // Route: idle → moving_to_teller_N → collecting_from_teller_N (repeat per teller) → moving_to_vault → depositing → idle
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
 
-        const _getTellerAnchor = (ti) =>
-            GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] !== undefined ? GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] : 0.5;
+        const _getTellerAnchor = (ti) => {
+            const anchors = GAME_CONFIG.GUARD_TELLER_ANCHORS;
+            if (anchors && anchors[ti] !== undefined) return anchors[ti];
+            // Fallback for 8 tellers
+            const fallback = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+            return fallback[ti] !== undefined ? fallback[ti] : 0.5;
+        };
         const VAULT_ANCHOR = GAME_CONFIG.GUARD_VAULT_ANCHOR;
 
         this.state.guards.forEach(g => {
@@ -983,9 +988,16 @@ class IdleBankGame {
 
             // Ensure new fields exist (migration safety)
             if (!Array.isArray(g.tellerVisitQueue)) g.tellerVisitQueue = [];
-            if (typeof g.segmentPosition !== 'number') g.segmentPosition = g.position || 0;
-            if (typeof g.carriedAmount !== 'number')   g.carriedAmount = g.loadedCash || 0;
-            if (typeof g.targetTellerIndex !== 'number') g.targetTellerIndex = 0;
+            if (typeof g.level !== 'number' || isNaN(g.level)) g.level = 1;
+            if (g.segmentPosition === undefined || isNaN(g.segmentPosition)) {
+                g.segmentPosition = g.position || GAME_CONFIG.GUARD_VAULT_ANCHOR;
+            }
+            if (g.position === undefined || isNaN(g.position)) {
+                g.position = g.segmentPosition;
+            }
+            if (typeof g.segmentPosition !== 'number' || isNaN(g.segmentPosition)) g.segmentPosition = g.position || 0;
+            if (typeof g.carriedAmount !== 'number' || isNaN(g.carriedAmount))   g.carriedAmount = g.loadedCash || 0;
+            if (typeof g.targetTellerIndex !== 'number' || isNaN(g.targetTellerIndex)) g.targetTellerIndex = 0;
 
             // Normalise legacy states that no longer exist
             if (g.state === 'moving_to_tellers' || g.state === 'collecting') {
@@ -1000,18 +1012,22 @@ class IdleBankGame {
                         g.state = 'moving_to_vault';
                     }
                 } else if (this.state.managers.operations && vaultSpaceLeft > 0) {
-                    let nextTi = -1;
+                    let hasCash = false;
                     for (let i = 0; i < this.state.tellers.length; i++) {
-                        const t = this.state.tellers[i];
-                        if (t && t.unlocked && t.cashStored > 0) {
-                            nextTi = i;
+                        if (this.state.tellers[i] && this.state.tellers[i].unlocked && this.state.tellers[i].cashStored > 0) {
+                            hasCash = true;
                             break;
                         }
                     }
-                    if (nextTi >= 0) {
-                        g.targetTellerIndex = nextTi;
+                    if (hasCash) {
+                        const queue = [];
+                        this.state.tellers.forEach((t, idx) => {
+                            if (t.unlocked) queue.push(idx);
+                        });
+                        g.tellerVisitQueue = queue;
+                        g.targetTellerIndex = queue[0];
                         g.carriedAmount = 0;
-                        g.state = 'moving_to_teller_' + nextTi;
+                        g.state = 'moving_to_teller_' + queue[0];
                     }
                 }
 
@@ -1057,16 +1073,13 @@ class IdleBankGame {
                     // Remove this teller from the visit queue
                     g.tellerVisitQueue = g.tellerVisitQueue.filter(idx => idx !== ti);
 
-                    // Find next teller in order (1, 2, 3...) that has cash
+                    // Find next teller in order (1, 2, 3...)
                     let nextTi = -1;
-                    const isFull = g.carriedAmount >= capacity;
-                    if (!isFull) {
-                        for (let i = ti + 1; i < this.state.tellers.length; i++) {
-                            const t = this.state.tellers[i];
-                            if (t && t.unlocked && t.cashStored > 0) {
-                                nextTi = i;
-                                break;
-                            }
+                    for (let i = ti + 1; i < this.state.tellers.length; i++) {
+                        const t = this.state.tellers[i];
+                        if (t && t.unlocked) {
+                            nextTi = i;
+                            break;
                         }
                     }
 

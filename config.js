@@ -130,7 +130,7 @@ const GAME_CONFIG = {
     // Multi-stop guard route anchors — fractional position (0.0–1.0) along #security-path
     // Centers for a 4-column equal-grid (1fr each): (i + 0.5) / 4 in RTL visual order.
     // DOM-computed values override these at runtime via _recalcGuardAnchors().
-    GUARD_TELLER_ANCHORS: [0.125, 0.375, 0.625, 0.875],
+    GUARD_TELLER_ANCHORS: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
     GUARD_VAULT_ANCHOR: 0.05
 };
 
