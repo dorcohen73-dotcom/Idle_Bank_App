@@ -1055,6 +1055,8 @@ function renderMissionsTab() {
                 progressDesc = descFn(formatMoney(m.target));
             } else if (m.type === 'upgrade_teller' || m.type === 'upgrade_guard') {
                 progressDesc = descFn(m.target, (m.targetId !== undefined ? m.targetId + 1 : 1));
+            } else if (m.type === 'department_grind') {
+                progressDesc = descFn(m.target, m.targetId);
             } else {
                 progressDesc = descFn(m.target);
             }
@@ -1080,7 +1082,9 @@ function renderMissionsTab() {
             'teller_max': './תמונות/teller-7.png',
             'boost_run': './תמונות/gold-bars.png',
             'guard_trips': './תמונות/guard.png',
-            'all_managers': './תמונות/manager-1.png'
+            'all_managers': './תמונות/manager-1.png',
+            'department_grind': './תמונות/manager-1.png',
+            'missions_veteran': './תמונות/gold-chest.png'
         };
         const imgSrc = imgMap[m.type] || './תמונות/icon.png';
 

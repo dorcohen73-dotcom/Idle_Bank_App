@@ -92,17 +92,20 @@ class MissionController {
             reward: (t) => Math.round(referenceCash * 0.30 + t * 0.15)
         });
 
-        // Serve VIP / Rich clients
-        pool.push({
-            type: 'serve_rich_vip',
-            target: () => {
-                const base = 5 + Math.floor(Math.random() * 6);
-                const branchMult = Math.pow(2.0, branchIndex);
-                const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
-                return Math.round(base * branchMult * (1 + 0.4 * epsFactor));
-            },
-            reward: (t) => Math.round(t * 80 * scale + referenceCash * 0.25)
-        });
+        // Serve VIP / Rich clients — suppressed once VIP dept (index 2) is unlocked; vip_collector takes over
+        const vipDeptAlreadyUnlocked = this.game.state.departments && this.game.state.departments[2] && this.game.state.departments[2].unlocked;
+        if (!vipDeptAlreadyUnlocked) {
+            pool.push({
+                type: 'serve_rich_vip',
+                target: () => {
+                    const base = 5 + Math.floor(Math.random() * 6);
+                    const branchMult = Math.pow(2.0, branchIndex);
+                    const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
+                    return Math.round(base * branchMult * (1 + 0.4 * epsFactor));
+                },
+                reward: (t) => Math.round(t * 80 * scale + referenceCash * 0.25)
+            });
+        }
 
         // Spend Cash on upgrades
         pool.push({
@@ -168,13 +171,13 @@ class MissionController {
             });
         }
 
-        // 4. teller_max — only if highest teller level >= 5
+        // 4. teller_max — only if highest teller level >= 5; target always 5 levels ahead to prevent instant completion
         const unlockedTellerLevels = (this.game.state.tellers || []).filter(t => t && t.unlocked).map(t => t.level);
         const highestTellerLevel = unlockedTellerLevels.length > 0 ? Math.max(...unlockedTellerLevels) : 0;
         if (highestTellerLevel >= 5) {
             pool.push({
                 type: 'teller_max',
-                target: () => 10,
+                target: () => highestTellerLevel + 5,
                 reward: () => ({ type: 'gold', amount: 1 })
             });
         }
@@ -196,7 +199,7 @@ class MissionController {
         if (unlockedGuardsCount >= 1) {
             pool.push({
                 type: 'guard_trips',
-                target: () => 50,
+                target: () => Math.round(50 * Math.pow(1.5, branchIndex)),
                 reward: () => ({ type: 'gold', amount: 1 })
             });
         }
@@ -220,6 +223,38 @@ class MissionController {
             });
         }
 
+        // 10. missions_veteran — complete X missions in total (meta-progression milestone)
+        const completedSoFar = this.game.state.missionsCompleted || 0;
+        if (completedSoFar >= 5) {
+            pool.push({
+                type: 'missions_veteran',
+                target: () => completedSoFar + 5 + Math.floor(Math.random() * 6),
+                reward: () => ({ type: 'shares', amount: 2 })
+            });
+        }
+
+        // 9. department_grind — upgrade a specific unlocked department's manager N times
+        const deptMgrMap = [
+            { mgrType: 'finance',   deptIdx: 1 },
+            { mgrType: 'service',   deptIdx: 2 },
+            { mgrType: 'vip',       deptIdx: 3 },
+            { mgrType: 'marketing', deptIdx: 4 }
+        ];
+        const availableDeptMgrs = deptMgrMap.filter(({ mgrType, deptIdx }) => {
+            const deptUnlocked = this.game.state.departments[deptIdx] && this.game.state.departments[deptIdx].unlocked;
+            const mgr = this.game.state.managerUpgrades && this.game.state.managerUpgrades[mgrType];
+            return deptUnlocked && mgr && mgr.level < 5;
+        });
+        if (availableDeptMgrs.length > 0) {
+            const chosen = availableDeptMgrs[Math.floor(Math.random() * availableDeptMgrs.length)];
+            pool.push({
+                type: 'department_grind',
+                _deptMgrType: chosen.mgrType,
+                target: () => 1 + Math.floor(Math.random() * 2),
+                reward: (t) => Math.round(t * 80000 * scale + referenceCash * 0.35)
+            });
+        }
+
         // Pick random mission template ensuring no duplicate active types
         const activeTypes = (this.game.state.missions || []).map(m => m.type);
         let availablePool = pool.filter(t => !activeTypes.includes(t.type));
@@ -237,6 +272,8 @@ class MissionController {
             const unlockedGuards = (this.game.state.guards || []).filter(g => g && g.unlocked);
             const lowestGuard = unlockedGuards.reduce((min, g) => g.level < min.level ? g : min, unlockedGuards[0] || { id: 0 });
             targetId = lowestGuard.id;
+        } else if (template.type === 'department_grind') {
+            targetId = template._deptMgrType;
         }
 
         const targetVal = template.target(targetId);
@@ -413,6 +450,21 @@ class MissionController {
                     currentProgress = (this.game.state.stats.clientsServed || 0) - m.startProgress;
                     break;
                 }
+
+                case 'department_grind': {
+                    const mgrType = m.targetId;
+                    const mgr = this.game.state.managerUpgrades && this.game.state.managerUpgrades[mgrType];
+                    const currentLevel = mgr ? mgr.level : 1;
+                    if (m.startProgress === undefined) {
+                        m.startProgress = currentLevel;
+                    }
+                    currentProgress = currentLevel - m.startProgress;
+                    break;
+                }
+
+                case 'missions_veteran':
+                    currentProgress = this.game.state.missionsCompleted || 0;
+                    break;
             }
 
             m.progress = Math.min(m.target, currentProgress);
@@ -540,7 +592,7 @@ class DailyChallengeController {
             case 'daily_earn_cash': return s.lifetimeCash || 0;
             case 'daily_clients':   return (s.stats && s.stats.clientsServed) || 0;
             case 'daily_spend':     return (s.stats && s.stats.cashSpent) || 0;
-            case 'daily_vip':       return s.vipServedTotal || (s.stats && s.stats.vipServed) || 0;
+            case 'daily_vip':       return (s.stats && s.stats.vipServed) || 0;
             case 'daily_eps':       return 0; // EPS נוכחי, לא delta
             default: return 0;
         }
@@ -574,7 +626,7 @@ class DailyChallengeController {
                     currentProgress = ((s.stats && s.stats.cashSpent) || 0) - (c.startProgress || 0);
                     break;
                 case 'daily_vip':
-                    currentProgress = (s.vipServedTotal || (s.stats && s.stats.vipServed) || 0) - (c.startProgress || 0);
+                    currentProgress = ((s.stats && s.stats.vipServed) || 0) - (c.startProgress || 0);
                     break;
                 case 'daily_eps':
                     currentProgress = this.game.getEarningsPerSecond();

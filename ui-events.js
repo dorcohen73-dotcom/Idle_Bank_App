@@ -1634,6 +1634,13 @@ function handleMissionRedirect(missionType, targetId) {
             tabName = 'upgrades';
             selector = '.buy-btn[data-type="teller"][data-id="0"]';
             break;
+        case 'department_grind':
+            tabName = 'managers';
+            selector = `.upgrade-mgr-btn[data-type="${targetId}"], .buy-mgr-btn[data-type="${targetId}"]`;
+            break;
+        case 'missions_veteran':
+            tabName = 'missions';
+            break;
     }
 
     const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);

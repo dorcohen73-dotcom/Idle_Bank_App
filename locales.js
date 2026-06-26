@@ -209,7 +209,14 @@ const translations = {
             vip_marathonTitle: "מרתון VIP",
             vip_marathonDesc: (t) => `שרת ${t} לקוחות VIP ברצף`,
             break_the_wallTitle: "פריצת מחסום ההתרחבות",
-            break_the_wallDesc: (t) => `טפל ב-${t} לקוחות כדי לקבל מענק התרחבות שמן`
+            break_the_wallDesc: (t) => `טפל ב-${t} לקוחות כדי לקבל מענק התרחבות שמן`,
+            missions_veteranTitle: "ותיק המשימות",
+            missions_veteranDesc: (t) => `השלם ${t} משימות בסך הכל`,
+            department_grindTitle: "שדרוג מנהל מחלקה",
+            department_grindDesc: (t, mgrType) => {
+                const names = { finance: 'כספים', service: 'שירות', vip: 'VIP', marketing: 'שיווק' };
+                return `שדרג את מנהל ${names[mgrType] || 'המחלקה'} ${t} פעם${t !== 1 ? 'ים' : ''}`;
+            }
         },
         vaultFullMsg: "הכספת מלאה — רוקן אותה",
         welcomeBonusMsg: (branch, amt) => `ברוכים הבאים ל${branch}! קיבלת $${amt} כמתנת פתיחה`,
@@ -434,7 +441,14 @@ const translations = {
             vip_marathonTitle: "VIP Marathon",
             vip_marathonDesc: (t) => `Serve ${t} VIP clients in a row`,
             break_the_wallTitle: "Breaking the Expansion Wall",
-            break_the_wallDesc: (t) => `Serve ${t} clients to receive a massive expansion grant`
+            break_the_wallDesc: (t) => `Serve ${t} clients to receive a massive expansion grant`,
+            missions_veteranTitle: "Mission Veteran",
+            missions_veteranDesc: (t) => `Complete ${t} missions in total`,
+            department_grindTitle: "Department Manager Grind",
+            department_grindDesc: (t, mgrType) => {
+                const names = { finance: 'Finance', service: 'Service', vip: 'VIP', marketing: 'Marketing' };
+                return `Upgrade the ${names[mgrType] || 'department'} manager ${t} time${t !== 1 ? 's' : ''}`;
+            }
         },
         vaultFullMsg: "Vault is full — empty it",
         welcomeBonusMsg: (branch, amt) => `Welcome to ${branch}! You received $${amt} as an opening gift`,
@@ -659,7 +673,14 @@ const translations = {
             vip_marathonTitle: "Maratón VIP",
             vip_marathonDesc: (t) => `Atiende a ${t} clientes VIP seguidos`,
             break_the_wallTitle: "Rompiendo el Muro",
-            break_the_wallDesc: (t) => `Atiende a ${t} clientes para recibir una gran subvención de expansión`
+            break_the_wallDesc: (t) => `Atiende a ${t} clientes para recibir una gran subvención de expansión`,
+            missions_veteranTitle: "Veterano de Misiones",
+            missions_veteranDesc: (t) => `Completa ${t} misiones en total`,
+            department_grindTitle: "Mejora de Gerente",
+            department_grindDesc: (t, mgrType) => {
+                const names = { finance: 'Finanzas', service: 'Servicio', vip: 'VIP', marketing: 'Marketing' };
+                return `Mejora al gerente de ${names[mgrType] || 'departamento'} ${t} vez${t !== 1 ? 'es' : ''}`;
+            }
         },
         vaultFullMsg: "Bóveda llena — vacíala",
         welcomeBonusMsg: (branch, amt) => `¡Bienvenido a ${branch}! Recibiste $${amt} como regalo de apertura`,
@@ -884,7 +905,14 @@ const translations = {
             vip_marathonTitle: "VIP Марафон",
             vip_marathonDesc: (t) => `Обслужите ${t} VIP-клиентов подряд`,
             break_the_wallTitle: "Сломать Стену Расширения",
-            break_the_wallDesc: (t) => `Обслужите ${t} клиентов, чтобы получить крупный грант на расширение`
+            break_the_wallDesc: (t) => `Обслужите ${t} клиентов, чтобы получить крупный грант на расширение`,
+            missions_veteranTitle: "Ветеран миссий",
+            missions_veteranDesc: (t) => `Выполни ${t} миссий всего`,
+            department_grindTitle: "Прокачка менеджера отдела",
+            department_grindDesc: (t, mgrType) => {
+                const names = { finance: 'Финансов', service: 'Сервиса', vip: 'VIP', marketing: 'Маркетинга' };
+                return `Улучши менеджера ${names[mgrType] || 'отдела'} ${t} раз`;
+            }
         },
         vaultFullMsg: "Сейф переполнен — очистите его",
         welcomeBonusMsg: (branch, amt) => `Добро пожаловать в ${branch}! Вы получили $${amt} в подарок`,
