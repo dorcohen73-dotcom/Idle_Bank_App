@@ -1,4 +1,4 @@
-﻿(function(window) {
+(function(window) {
 // Tab Rendering & Updates Module for Idle Bank Empire
 
 var _buyBtnCache = null;
@@ -32,15 +32,15 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const cost = details.cost;
         
         let capacity, speed, nextCapacity, nextSpeed, avatarImg, title, desc, speedLabel, capLabel;
-        let avatarBgUrl = '', avatarBgPos = 'center 20%', avatarBgSize = 'cover';
+        let avatarBgUrl = '', avatarBgPos = 'center 25%', avatarBgSize = 'cover';
         if (type === 'teller') {
             capacity = game.getTellerCapacity(entity.level);
             speed = game.getTellerSpeed(entity.level).toFixed(1);
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
             avatarImg = '';
-            avatarBgUrl = `תמונות/manager-${(id % 6) + 1}.png`;
-            avatarBgPos = 'center 20%';
+            avatarBgUrl = `תמונות/manager-${(id % 8) + 1}.png`;
+            avatarBgPos = 'center 25%';
             avatarBgSize = 'cover';
             title = tObj.tellerTitle(id + 1, entity.level);
             desc = tObj.tellerDesc;
@@ -85,11 +85,11 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             if (avEl) { avEl.style.backgroundImage = `url('${avatarBgUrl}')`; avEl.style.backgroundPosition = avatarBgPos; avEl.style.backgroundSize = avatarBgSize; }
         }
     } else {
-        let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 20%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
+        let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 25%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
         if (type === 'teller') {
             cost = game.tellerUnlockCosts[id];
-            avatarBgUrl2 = `תמונות/manager-${(id % 6) + 1}.png`;
-            avatarBgPos2 = 'center 20%';
+            avatarBgUrl2 = `תמונות/manager-${(id % 8) + 1}.png`;
+            avatarBgPos2 = 'center 25%';
             avatarBgSize2 = 'cover';
             title = tObj.tellerLocked(id + 1);
             desc = tObj.tellerLockedDesc;
@@ -171,7 +171,7 @@ function renderUpgradesTab() {
     vaultCard.className = 'upgrade-card';
     vaultCard.innerHTML = `
         <div class="card-left-section">
-            <div class="card-avatar"><img src="תמונות/vault-door.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+            <div class="card-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
             <div class="card-details">
                 <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` (+${vLevelsToBuy})` : ''}</div>
                 <div class="card-desc">${tObj.vaultDesc}</div>
@@ -204,7 +204,7 @@ function renderUpgradesTab() {
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueMaxTitle}</div>
                     <div class="card-desc">${tObj.queueMaxDesc(qCap)}</div>
@@ -217,7 +217,7 @@ function renderUpgradesTab() {
     } else {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` (+${qLevelsToBuy})` : ''}</div>
                     <div class="card-desc">${tObj.queueDesc}</div>

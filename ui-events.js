@@ -5,6 +5,7 @@ var soundInitialized = false;
 var autoSaveTimer = 0;
 var eventTimer = 0;
 var tabRefreshTimer = 0;
+var fortuneWheelBtnTimer = 0;
 var contextualOfferTimeout = null;
 var contextualBannerShown = false;
 var boostOfferEndTime = 0;
@@ -1845,8 +1846,15 @@ function tick(timestamp) {
             const _activeTabEl = document.querySelector('.tab-btn.active');
             if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'missions') {
                 game.checkMissions();
+                if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
             }
             updateButtonAffordability();
+        }
+
+        fortuneWheelBtnTimer += cappedDt;
+        if (fortuneWheelBtnTimer >= 30) {
+            fortuneWheelBtnTimer = 0;
+            updateFortuneWheelBtnState();
         }
 
         draw();
@@ -2204,6 +2212,7 @@ function initUIEvents() {
             openFortuneWheel();
         });
     }
+    updateFortuneWheelBtnState();
 
     if (DOM_CACHE.muteBtn) {
         DOM_CACHE.muteBtn.addEventListener('click', () => {
@@ -2683,6 +2692,14 @@ function initUIEvents() {
         return prizes[prizes.length - 1];
     }
 
+    function updateFortuneWheelBtnState() {
+        const btn = document.getElementById('fortune-wheel-btn');
+        if (!btn) return;
+        const lastSpin = (game.state && game.state.lastSpinTime) || 0;
+        const canSpin = (Date.now() - lastSpin) >= 86400000;
+        btn.classList.toggle('fortune-wheel-ready', canSpin);
+    }
+
     function openFortuneWheel() {
         initSound();
         const lang = (game.state && game.state.language) || 'he';
@@ -2693,7 +2710,7 @@ function initUIEvents() {
 
         const now = Date.now();
         const lastSpin = game.state.lastSpinTime || 0;
-        const cooldownMs = 28800000; // 8 hours
+        const cooldownMs = 86400000; // 24 hours
         const timeLeft = cooldownMs - (now - lastSpin);
         const canSpin = timeLeft <= 0;
         const lastAdSpin = game.state.lastAdSpinTime || 0;
@@ -2829,6 +2846,7 @@ function initUIEvents() {
                         game.state.lastSpinTime = Date.now();
                     }
                     game.saveGame();
+                    updateFortuneWheelBtnState();
                     draw();
                     // Discovery tip: first fortune wheel spin
                     showDiscoveryTip('fortune');
@@ -2841,7 +2859,7 @@ function initUIEvents() {
 
                     const spinBtn2 = document.getElementById('fortune-spin-btn');
                     if (spinBtn2) {
-                        const newTimeLeft2 = 28800000;
+                        const newTimeLeft2 = 86400000;
                         const h2 = Math.floor(newTimeLeft2 / 3600000).toString().padStart(2, '0');
                         const m2 = '00';
                         const cd2 = tObj2.fortuneWheelCooldown ? tObj2.fortuneWheelCooldown(h2, m2) : `${h2}:${m2}`;

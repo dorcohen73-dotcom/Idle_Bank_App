@@ -24,7 +24,7 @@
     <link rel="preload" href="תמונות/nav_bank.png" as="image">
 
     <!-- CSS Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=20240625_1">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -200,13 +200,20 @@
                     <div class="bank-decor potted-plant plant-l" aria-hidden="true">🌿</div>
                     <div class="bank-decor potted-plant plant-r" aria-hidden="true">🌿</div>
                     
-                    <!-- Customer Queue Group -->
-                    <div class="queue-wrapper">
-                        <span class="queue-label" id="queue-label">תור לקוחות (0/5):</span>
-                        <div class="queue-zone">
-                            <div class="waiting-sofa" aria-hidden="true">🛋️</div>
-                            <div class="entrance-door" aria-hidden="true">🚪</div>
-                            <div class="customer-line" id="customer-line"></div>
+                    <!-- Customer Queue Group (Premium Redesign) -->
+                    <div class="queue-wrapper queue-premium-design">
+                        <!-- Top Progress Section -->
+                        <div class="queue-top-section">
+                            <div class="queue-capacity-label" id="queue-capacity-label">0/5</div>
+                            <div class="queue-progress-bar">
+                                <div class="queue-progress-fill" id="queue-progress-fill"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Subtitle Status Section -->
+                        <div class="queue-status-section">
+                            <span class="queue-status-text" id="queue-status-text">התור פנוי</span>
+                            <span class="queue-status-icon" id="queue-status-icon"></span>
                         </div>
                     </div>
 
@@ -650,14 +657,14 @@
         <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
     </div>
 
-    <script src="locales.js?v=7" defer></script>
-    <script src="economy-manager.js?v=7" defer></script>
-    <script src="save-manager.js?v=7" defer></script>
-    <script src="mission-controller.js?v=7" defer></script>
-    <script src="game.js?v=7" defer></script>
-    <script src="ui-draw.js?v=7" defer></script>
-    <script src="ui-tabs.js?v=7" defer></script>
-    <script src="ui-events.js?v=7" defer></script>
-    <script src="app.js?v=7" defer></script>
+    <script src="locales.js?v=20240625_1" defer></script>
+    <script src="economy-manager.js?v=20240625_1" defer></script>
+    <script src="save-manager.js?v=20240625_1" defer></script>
+    <script src="mission-controller.js?v=20240625_1" defer></script>
+    <script src="game.js?v=20240625_1" defer></script>
+    <script src="ui-draw.js?v=20240625_1" defer></script>
+    <script src="ui-tabs.js?v=20240625_1" defer></script>
+    <script src="ui-events.js?v=20240625_1" defer></script>
+    <script src="app.js?v=20240625_1" defer></script>
 </body>
 </html>
