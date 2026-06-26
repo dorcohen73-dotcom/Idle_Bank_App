@@ -446,7 +446,7 @@ function rebuildTellersDOM() {
         if (t.unlocked) {
             div.innerHTML = `
                 <div class="glass-showcase">
-                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 8) + 1}.png?v=20260625" alt="" />
+                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 8) + 1}.png?v=20260626" alt="" />
                     <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
                 </div>
                 <div class="gold-plaque">
@@ -554,7 +554,7 @@ function draw() {
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
         lastMultiplier = mult;
-        DOM_CACHE.multiplier.innerText = mult.toFixed(1) + 'x';
+        DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + 'x';
     }
 
     // Ad Boost UI logic
