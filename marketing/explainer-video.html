@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Idle Bank Empire — Explainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --gold:#f0c040;--gold-l:#ffe48a;--gold-d:#b8860b;
+  --navy:#070c20;--white:#f8f9ff;--muted:#8899bb;
+  --dur:0.7s;
+}
+
+body{
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;font-family:'Inter',sans-serif;
+}
+
+/* ── 16:9 stage ── */
+#stage{
+  position:relative;
+  width:1280px;height:720px;
+  background:var(--navy);
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+/* ── slides ── */
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--dur) ease;
+}
+.slide.active{opacity:1;pointer-events:auto;}
+
+/* backgrounds */
+.slide-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  filter:brightness(.35) saturate(1.2);
+  transform:scale(1.06);
+  transition:transform 8s linear;
+}
+.slide.active .slide-bg{transform:scale(1);}
+.slide-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,transparent 30%,rgba(7,12,32,.85) 100%);
+}
+.slide-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(7,12,32,.1) 0%,rgba(7,12,32,.7) 70%,rgba(7,12,32,1) 100%);
+}
+
+/* ── text animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.anim{opacity:0;}
+.slide.active .anim{animation:fadeUp .7s ease forwards;}
+.slide.active .anim-scale{animation:scaleIn .8s ease forwards;}
+.slide.active .anim-fade{animation:fadeIn .8s ease forwards;}
+.slide.active .anim-right{animation:slideRight .6s ease forwards;}
+
+/* ── progress bar ── */
+#progress-wrap{
+  width:1280px;height:5px;background:rgba(255,255,255,.1);flex-shrink:0;
+}
+#progress-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--gold-d),var(--gold),var(--gold-l));
+  transition:width linear;
+}
+
+/* ── controls ── */
+#controls{
+  display:flex;gap:12px;margin-top:10px;
+  font-size:13px;color:rgba(255,255,255,.5);
+  font-family:'Inter',sans-serif;
+}
+#controls button{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.7);padding:6px 18px;border-radius:20px;cursor:pointer;
+  font-size:13px;transition:background .2s;
+}
+#controls button:hover{background:rgba(255,255,255,.15);}
+#slide-counter{display:flex;align-items:center;}
+
+/* ── typography helpers ── */
+.eyebrow{
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:4px;
+  color:var(--gold);text-transform:uppercase;margin-bottom:14px;
+}
+.big-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(36px,5.5vw,72px);font-weight:900;line-height:1.05;
+  background:linear-gradient(135deg,#fff 0%,var(--gold-l) 50%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.subtitle{
+  font-family:'Cinzel',serif;font-size:20px;color:var(--gold-l);
+  letter-spacing:2px;margin-top:8px;opacity:.85;
+}
+.body-text{
+  font-size:20px;line-height:1.7;color:rgba(255,255,255,.82);
+  max-width:680px;text-align:center;
+}
+.body-text em{font-style:normal;color:var(--gold-l);font-weight:700;}
+.gold-line{
+  width:60px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:18px auto;
+}
+
+/* ════════════════════════════════
+   SLIDE-SPECIFIC STYLES
+═══════════════════════════════════ */
+
+/* ── S1: Hero ── */
+.hero-icon{
+  width:110px;height:110px;border-radius:24px;
+  box-shadow:0 0 48px rgba(240,192,64,.55),0 8px 32px rgba(0,0,0,.7);
+  border:3px solid rgba(240,192,64,.4);
+  margin-bottom:24px;
+}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px;}
+.badge{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  border-radius:20px;padding:5px 14px;font-size:13px;color:var(--muted);
+}
+
+/* ── S2: Core Loop ── */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;justify-content:center;}
+.flow-step{
+  display:flex;flex-direction:column;align-items:center;
+  width:130px;padding:18px 10px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(240,192,64,.2);border-radius:16px;text-align:center;
+}
+.flow-icon{font-size:30px;margin-bottom:8px;}
+.flow-label{font-size:12px;font-weight:600;color:var(--gold-l);line-height:1.3;}
+.flow-arrow{font-size:24px;color:var(--gold-d);margin:0 8px;flex-shrink:0;}
+.feature-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  margin-top:32px;width:100%;max-width:860px;
+}
+.feat{
+  background:rgba(255,255,255,.04);border:1px solid rgba(240,192,64,.15);
+  border-radius:14px;padding:16px 14px;
+}
+.feat-icon{font-size:22px;margin-bottom:6px;}
+.feat-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* ── S3: Branches ── */
+.branches-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  width:100%;max-width:1080px;
+}
+.branch-card{
+  position:relative;border-radius:16px;overflow:hidden;height:330px;
+}
+.branch-card img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.5) saturate(1.1);
+}
+.branch-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 60%);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:16px;
+}
+.b-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold-l);margin-bottom:4px;}
+.b-mult{font-size:12px;color:rgba(255,255,255,.6);}
+.b-num{
+  position:absolute;top:12px;left:12px;
+  font-family:'Cinzel',serif;font-size:11px;color:var(--gold);
+  background:rgba(0,0,0,.55);padding:3px 8px;border-radius:10px;letter-spacing:2px;
+}
+
+/* ── S4: Departments ── */
+.dept-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:680px;}
+.dept-row{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:14px 18px;
+}
+.dept-icon{font-size:22px;flex-shrink:0;}
+.dept-name{font-size:15px;font-weight:600;flex:1;}
+.dept-income{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap;}
+
+/* ── S5: Managers ── */
+.mgr-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:12px;
+  width:100%;max-width:1040px;
+}
+.mgr-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;overflow:hidden;text-align:center;
+}
+.mgr-card img{width:100%;height:120px;object-fit:cover;object-position:top;}
+.mgr-info{padding:10px 8px;}
+.mgr-name{font-size:12px;font-weight:700;color:var(--gold-l);}
+.mgr-role{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3;}
+
+/* ── S6: Gold & Offline ── */
+.cards-2{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  width:100%;max-width:800px;margin-top:28px;
+}
+.info-card{
+  background:linear-gradient(135deg,rgba(13,26,74,.8),rgba(7,12,32,.9));
+  border:1px solid rgba(240,192,64,.25);border-radius:20px;
+  padding:30px 26px;
+}
+.ic-emoji{font-size:36px;margin-bottom:12px;display:block;}
+.ic-title{font-size:19px;font-weight:700;margin-bottom:8px;color:var(--white);}
+.ic-desc{font-size:14px;line-height:1.65;color:var(--muted);}
+
+/* ── S7: CTA ── */
+.cta-btn{
+  display:inline-block;margin-top:28px;
+  background:linear-gradient(135deg,var(--gold-d),var(--gold),#ffe88a);
+  color:#1a0f00;font-weight:700;font-size:20px;
+  padding:18px 56px;border-radius:50px;text-decoration:none;
+  box-shadow:0 4px 36px rgba(240,192,64,.45);
+  animation:pulse 2s ease infinite;
+}
+.platforms{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.ptag{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:7px 16px;font-size:13px;color:var(--muted);
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 1   ║  HERO
+       ╚══════════════╝ -->
+  <div class="slide" id="s1">
+    <div class="slide-bg" style="background-image:url('תמונות/branch-bg-3.png')"></div>
+    <div class="slide-vignette"></div>
+    <div class="slide-gradient"></div>
+    <div style="position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;">
+      <img src="תמונות/icon.png" class="hero-icon anim anim-scale" style="animation-delay:.1s" alt="icon"/>
+      <p class="eyebrow anim" style="animation-delay:.4s">Browser Game · Free · PWA</p>
+      <h1 class="big-title anim" style="animation-delay:.7s;font-size:72px">Idle Bank Empire</h1>
+      <p class="subtitle anim" style="animation-delay:1s">From Teller Window to Goldman Sachs</p>
+      <div class="gold-line anim" style="animation-delay:1.2s"></div>
+      <p class="body-text anim" style="animation-delay:1.5s">
+        Build your financial dynasty from a <em>single branch</em><br>
+        to a <em>global banking empire</em>.
+      </p>
+      <div class="hero-badges anim" style="animation-delay:2s">
+        <span class="badge">🌐 No Download</span>
+        <span class="badge">📱 Mobile Friendly</span>
+        <span class="badge">😴 Offline Earnings</span>
+        <span class="badge">🌍 4 Languages</span>
+        <span class="badge">🔒 No Pay-to-Win</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 2   ║  CORE LOOP
+       ╚══════════════╝ -->
+  <div class="slide" id="s2">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(26,58,140,.35),transparent 70%),var(--navy);"></div>
+    <div style="position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;">
+      <p class="eyebrow anim" style="animation-delay:.1s">How It Works</p>
+      <h2 class="big-title anim" style="animation-delay:.3s;font-size:44px">The Core Loop</h2>
+      <div class="gold-line anim" style="animation-delay:.5s"></div>
+
+      <div class="flow anim" style="animation-delay:.8s;margin-top:10px;">
+        <div class="flow-step"><div class="flow-icon">🧑‍💼</div><div class="flow-label">Customers<br>Arrive</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-icon">🏧</div><div class="flow-label">Tellers<br>Process</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-icon">💼</div><div class="flow-label">Guards<br>Collect</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-icon">🏦</div><div class="flow-label">Vault<br>Fills Up</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-icon">💰</div><div class="flow-label">Profit</div></div>
+      </div>
+
+      <div class="feature-row anim" style="animation-delay:1.3s">
+        <div class="feat"><div class="feat-icon">🏧</div><div class="feat-title">Hire & Upgrade Tellers</div><div class="feat-desc">Up to 4 per branch. Each one a dedicated revenue engine.</div></div>
+        <div class="feat"><div class="feat-icon">💂</div><div class="feat-title">Deploy Smart Guards</div><div class="feat-desc">Full patrol AI: collect → vault → repeat. Automate your cash flow.</div></div>
+        <div class="feat"><div class="feat-icon">💎</div><div class="feat-title">Attract VIP Clients</div><div class="feat-desc">Normal, Rich, and VIP customers. VIPs tip big and boost shares.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 3   ║  BRANCHES
+       ╚══════════════╝ -->
+  <div class="slide" id="s3">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#050a1a,#0a1535);"></div>
+    <div style="position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;">
+      <p class="eyebrow anim" style="animation-delay:.1s">Prestige System</p>
+      <h2 class="big-title anim" style="animation-delay:.3s;font-size:44px">Four Iconic Branches</h2>
+      <div class="gold-line anim" style="animation-delay:.5s"></div>
+      <div class="branches-grid anim" style="animation-delay:.9s">
+        <div class="branch-card">
+          <img src="תמונות/branch-bg-1.png" alt="Citibank"/>
+          <div class="branch-overlay">
+            <div class="b-name">Citibank</div>
+            <div class="b-mult">×1 — Your First Branch</div>
+          </div>
+          <div class="b-num">01</div>
+        </div>
+        <div class="branch-card">
+          <img src="תמונות/branch-bg-2.png" alt="HSBC"/>
+          <div class="branch-overlay">
+            <div class="b-name">HSBC</div>
+            <div class="b-mult">×5 — International Finance</div>
+          </div>
+          <div class="b-num">02</div>
+        </div>
+        <div class="branch-card">
+          <img src="תמונות/branch-bg-3.png" alt="JP Morgan"/>
+          <div class="branch-overlay">
+            <div class="b-name">JP Morgan</div>
+            <div class="b-mult">×30 — Wall Street</div>
+          </div>
+          <div class="b-num">03</div>
+        </div>
+        <div class="branch-card">
+          <img src="תמונות/branch-bg-4.png" alt="Goldman Sachs"/>
+          <div class="branch-overlay">
+            <div class="b-name">Goldman Sachs</div>
+            <div class="b-mult">×200 — The Pinnacle</div>
+          </div>
+          <div class="b-num">04</div>
+        </div>
+      </div>
+      <p class="body-text anim" style="animation-delay:1.4s;font-size:16px;margin-top:18px;">
+        Each prestige <em>resets</em> your branch with a massive multiplier — making you <em>exponentially more powerful</em>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 4   ║  DEPARTMENTS
+       ╚══════════════╝ -->
+  <div class="slide" id="s4">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(184,134,11,.1),transparent 60%),var(--navy);"></div>
+    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
+      <p class="eyebrow anim" style="animation-delay:.1s">Unlock & Expand</p>
+      <h2 class="big-title anim" style="animation-delay:.3s;font-size:44px">5 Departments</h2>
+      <p class="body-text anim" style="animation-delay:.5s;font-size:15px;margin-bottom:20px;">Wildly different income tiers — unlock them all.</p>
+      <div class="dept-list">
+        <div class="dept-row anim" style="animation-delay:.7s"><div class="dept-icon">🪙</div><div class="dept-name">Teller Services</div><div class="dept-income">Base Income</div></div>
+        <div class="dept-row anim" style="animation-delay:.95s"><div class="dept-icon">🏠</div><div class="dept-name">Loans & Mortgages</div><div class="dept-income">×6 Multiplier</div></div>
+        <div class="dept-row anim" style="animation-delay:1.2s"><div class="dept-icon">💎</div><div class="dept-name">VIP Private Banking</div><div class="dept-income">×45 Multiplier</div></div>
+        <div class="dept-row anim" style="animation-delay:1.45s"><div class="dept-icon">📊</div><div class="dept-name">Stocks & Crypto Trading</div><div class="dept-income">×350 Multiplier</div></div>
+        <div class="dept-row anim" style="animation-delay:1.7s;border-color:rgba(240,192,64,.35)"><div class="dept-icon">🤫</div><div class="dept-name">"Legal" Money Laundering</div><div class="dept-income" style="color:#ff9f1c;">×3,000 Multiplier</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 5   ║  MANAGERS
+       ╚══════════════╝ -->
+  <div class="slide" id="s5">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#060b20,#0c1840);"></div>
+    <div style="position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;">
+      <p class="eyebrow anim" style="animation-delay:.1s">Automation</p>
+      <h2 class="big-title anim" style="animation-delay:.3s;font-size:44px">6 Specialist Managers</h2>
+      <div class="gold-line anim" style="animation-delay:.5s"></div>
+      <div class="mgr-grid anim" style="animation-delay:.8s">
+        <div class="mgr-card"><img src="תמונות/manager-1.png" alt=""/><div class="mgr-info"><div class="mgr-name">Customer Relations</div><div class="mgr-role">Boosts customer spawn & income</div></div></div>
+        <div class="mgr-card"><img src="תמונות/manager-2.png" alt=""/><div class="mgr-info"><div class="mgr-name">Finance</div><div class="mgr-role">Auto-empties vault + income</div></div></div>
+        <div class="mgr-card"><img src="תמונות/manager-3.png" alt=""/><div class="mgr-info"><div class="mgr-name">Operations</div><div class="mgr-role">Speeds up guards & tellers</div></div></div>
+        <div class="mgr-card"><img src="תמונות/manager-4.png" alt=""/><div class="mgr-info"><div class="mgr-name">Service</div><div class="mgr-role">Expands queue capacity</div></div></div>
+        <div class="mgr-card"><img src="תמונות/manager-5.png" alt=""/><div class="mgr-info"><div class="mgr-name">VIP Services</div><div class="mgr-role">Income + prestige share bonus</div></div></div>
+        <div class="mgr-card"><img src="תמונות/manager-6.png" alt=""/><div class="mgr-info"><div class="mgr-name">Marketing</div><div class="mgr-role">Ad boost + offline hours</div></div></div>
+      </div>
+      <p class="body-text anim" style="animation-delay:1.3s;font-size:15px;margin-top:18px;">
+        Each manager <em>automates</em> a different part of your bank — hire them all, sit back, and <em>watch the money flow</em>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 6   ║  GOLD + OFFLINE
+       ╚══════════════╝ -->
+  <div class="slide" id="s6">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(13,26,74,.6),var(--navy));"></div>
+    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;">
+      <p class="eyebrow anim" style="animation-delay:.1s">The Meta Game</p>
+      <h2 class="big-title anim" style="animation-delay:.3s;font-size:44px">Always Working. Always Growing.</h2>
+      <div class="gold-line anim" style="animation-delay:.5s"></div>
+      <div class="cards-2 anim" style="animation-delay:.8s">
+        <div class="info-card">
+          <span class="ic-emoji">🪙</span>
+          <div class="ic-title">Gold Shares</div>
+          <div class="ic-desc">A meta-currency earned through VIP clients and prestige. Spend it on <strong style="color:var(--gold-l)">permanent upgrades</strong> — faster guards, bigger vaults, offline multipliers — that carry through every reset.</div>
+        </div>
+        <div class="info-card">
+          <span class="ic-emoji">😴</span>
+          <div class="ic-title">Offline Earnings</div>
+          <div class="ic-desc">Your bank <strong style="color:var(--gold-l)">never sleeps</strong>. Earnings are calculated using server-verified time — fully protected against clock manipulation. Come back hours later and collect exactly what you earned.</div>
+        </div>
+      </div>
+      <p class="body-text anim" style="animation-delay:1.3s;font-size:15px;margin-top:22px;">
+        No pay-to-win. No energy bars. No ads you can't skip. <em>Just pure idle banking strategy.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- ╔══════════════╗
+       ║   SLIDE 7   ║  CTA
+       ╚══════════════╝ -->
+  <div class="slide" id="s7">
+    <div class="slide-bg" style="background-image:url('תמונות/branch-bg-2.png')"></div>
+    <div class="slide-vignette"></div>
+    <div class="slide-gradient"></div>
+    <div style="position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;">
+      <img src="תמונות/icon.png" class="hero-icon anim anim-scale" style="animation-delay:.2s;width:90px;height:90px;" alt="icon"/>
+      <p class="eyebrow anim" style="animation-delay:.5s">Ready to Start?</p>
+      <h2 class="big-title anim" style="animation-delay:.7s;font-size:58px">Build Your Empire.</h2>
+      <p class="subtitle anim" style="animation-delay:1s">Free. In your browser. Right now.</p>
+      <div class="gold-line anim" style="animation-delay:1.2s"></div>
+      <a href="#" class="cta-btn anim" style="animation-delay:1.5s">Play Idle Bank Empire →</a>
+      <div class="platforms anim" style="animation-delay:2s">
+        <span class="ptag">🌐 Chrome / Firefox / Safari</span>
+        <span class="ptag">📱 iOS & Android (PWA)</span>
+        <span class="ptag">🇮🇱 🇺🇸 🇪🇸 🇷🇺 4 Languages</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- slide number overlay -->
+  <div id="slide-label" style="position:absolute;top:16px;right:20px;z-index:99;font-family:'Cinzel',serif;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:2px;"></div>
+
+</div><!-- /stage -->
+
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<div id="controls">
+  <button onclick="prevSlide()">← Prev</button>
+  <span id="slide-counter">1 / 7</span>
+  <button onclick="nextSlide()">Next →</button>
+  <button onclick="togglePause()" id="pause-btn">⏸ Pause</button>
+  <button onclick="restart()">↺ Restart</button>
+</div>
+
+<script>
+const SLIDES = ['s1','s2','s3','s4','s5','s6','s7'];
+const DURATIONS = [7000, 9000, 9000, 9000, 9000, 9000, 8000]; // ms per slide
+const TOTAL = DURATIONS.reduce((a,b)=>a+b,0);
+
+let current = 0;
+let paused = false;
+let elapsed = 0;       // ms elapsed in current slide
+let lastTick = null;
+let rafId = null;
+
+function showSlide(i){
+  SLIDES.forEach((id,idx)=>{
+    const el = document.getElementById(id);
+    el.classList.toggle('active', idx === i);
+    // reset animations by re-adding class
+    if(idx === i){
+      const anims = el.querySelectorAll('.anim,.anim-scale,.anim-fade,.anim-right');
+      anims.forEach(a=>{a.style.animation='none';void a.offsetWidth;a.style.animation='';});
+    }
+  });
+  document.getElementById('slide-counter').textContent = `${i+1} / ${SLIDES.length}`;
+  document.getElementById('slide-label').textContent = `${String(i+1).padStart(2,'0')} / 07`;
+}
+
+function updateProgress(){
+  // compute total elapsed
+  let totalElapsed = DURATIONS.slice(0,current).reduce((a,b)=>a+b,0) + elapsed;
+  const pct = Math.min(100, (totalElapsed / TOTAL) * 100);
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = pct + '%';
+  bar.style.transition = paused ? 'none' : 'width 0.1s linear';
+}
+
+function tick(ts){
+  if(!lastTick) lastTick = ts;
+  const dt = ts - lastTick;
+  lastTick = ts;
+
+  if(!paused){
+    elapsed += dt;
+    if(elapsed >= DURATIONS[current]){
+      elapsed = 0;
+      if(current < SLIDES.length - 1){
+        current++;
+        showSlide(current);
+      } else {
+        // stay on last slide
+        elapsed = DURATIONS[current];
+      }
+    }
+    updateProgress();
+  }
+  rafId = requestAnimationFrame(tick);
+}
+
+function prevSlide(){
+  current = Math.max(0, current - 1);
+  elapsed = 0;
+  lastTick = null;
+  showSlide(current);
+  updateProgress();
+}
+function nextSlide(){
+  current = Math.min(SLIDES.length - 1, current + 1);
+  elapsed = 0;
+  lastTick = null;
+  showSlide(current);
+  updateProgress();
+}
+function togglePause(){
+  paused = !paused;
+  lastTick = null;
+  document.getElementById('pause-btn').textContent = paused ? '▶ Resume' : '⏸ Pause';
+}
+function restart(){
+  current = 0; elapsed = 0; lastTick = null; paused = false;
+  document.getElementById('pause-btn').textContent = '⏸ Pause';
+  showSlide(0);
+  updateProgress();
+}
+
+// init
+showSlide(0);
+rafId = requestAnimationFrame(tick);
+
+// keyboard nav
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') nextSlide();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prevSlide();
+  if(e.key===' '){e.preventDefault();togglePause();}
+  if(e.key==='r'||e.key==='R') restart();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מקליט פרומו אוטומטי</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #2c3e50; margin: 0; color: white; text-align: center; }
+        .container { background: #34495e; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { margin-top: 0; }
+        button { background: #e74c3c; color: white; border: none; padding: 20px 40px; font-size: 24px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        button:hover { background: #c0392b; transform: scale(1.05); }
+        button:disabled { background: #7f8c8d; cursor: not-allowed; transform: none; }
+        #status { margin-top: 20px; font-size: 18px; color: #2ecc71; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 כלי הקלטת סרטוני פרומו</h1>
+        <p>לחץ על הכפתור, בחר בלשונית של המשחק, וההקלטה (באיכות שיא 60FPS) תתחיל מיד.</p>
+        <button id="recordBtn">🔴 התחל הקלטה עכשיו (15 שניות)</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('recordBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('recordBtn');
+            const status = document.getElementById('status');
+            
+            try {
+                // 1. Get screen stream from user
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { frameRate: { ideal: 60 } },
+                    audio: false
+                });
+
+                // 2. Prepare recorder
+                let mediaRecorder;
+                try {
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 8000000 });
+                } catch(e) {
+                    mediaRecorder = new MediaRecorder(stream); // Fallback
+                }
+
+                const chunks = [];
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Direct download
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'idle_bank_promo_en.webm';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = '✅ ההורדה הושלמה! הקלט שוב?';
+                    status.innerHTML = 'הסרטון נשמר בתיקיית ההורדות שלך בהצלחה!';
+                };
+
+                // 3. Start recording
+                mediaRecorder.start();
+                btn.disabled = true;
+                
+                let secondsLeft = 15;
+                btn.innerHTML = `הקלטה פעילה... עוצר בעוד ${secondsLeft} שניות`;
+                status.innerHTML = 'חזור לכרטיסייה של המשחק ושחק!';
+                
+                const timer = setInterval(() => {
+                    secondsLeft--;
+                    if (secondsLeft > 0) {
+                        btn.innerHTML = `הקלטה פעילה... עוצר בעוד ${secondsLeft} שניות`;
+                    } else {
+                        clearInterval(timer);
+                    }
+                }, 1000);
+
+                // Stop after 15 seconds
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 15000);
+
+            } catch(err) {
+                console.error(err);
+                status.innerHTML = 'ההקלטה בוטלה או נכשלה.';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

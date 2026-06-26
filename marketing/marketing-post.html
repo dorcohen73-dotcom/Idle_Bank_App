@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Idle Bank Empire — Marketing Post</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #f0c040;
+      --gold-light: #ffe48a;
+      --gold-dark: #b8860b;
+      --navy: #0a0f2c;
+      --blue-mid: #0d1a4a;
+      --blue-glow: #1a3a8c;
+      --white: #f8f8f8;
+      --text-muted: #a0aabf;
+    }
+
+    body {
+      background: var(--navy);
+      font-family: 'Inter', sans-serif;
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 60px 24px 80px;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('תמונות/branch-bg-3.png');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35) saturate(1.2);
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(10,15,44,0.2) 0%,
+        rgba(10,15,44,0.55) 60%,
+        rgba(10,15,44,1) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 760px; }
+
+    .hero-icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      box-shadow: 0 0 40px rgba(240,192,64,0.5), 0 8px 32px rgba(0,0,0,0.6);
+      margin-bottom: 28px;
+      border: 3px solid rgba(240,192,64,0.4);
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(40px, 7vw, 76px);
+      font-weight: 900;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #fff 0%, var(--gold-light) 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      text-shadow: none;
+    }
+
+    .hero-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: var(--gold-light);
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      opacity: 0.85;
+    }
+
+    .hero-tagline {
+      font-size: 18px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.85);
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-tagline em {
+      font-style: normal;
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), #ffe88a);
+      color: #1a0f00;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 16px 48px;
+      border-radius: 50px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 30px rgba(240,192,64,0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(240,192,64,0.6); }
+
+    .hero-badges {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ─── LOOP SECTION ──────────────────────────────── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      background: linear-gradient(135deg, #fff, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── FLOW DIAGRAM ──────────────────────────────── */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 130px;
+      padding: 20px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(240,192,64,0.2);
+      border-radius: 16px;
+    }
+    .flow-icon { font-size: 32px; margin-bottom: 8px; }
+    .flow-label { font-size: 12px; font-weight: 600; color: var(--gold-light); line-height: 1.3; }
+
+    .flow-arrow {
+      font-size: 22px;
+      color: var(--gold-dark);
+      margin: 0 6px;
+      flex-shrink: 0;
+    }
+
+    /* ─── FEATURES GRID ─────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, rgba(13,26,74,0.8), rgba(10,15,44,0.9));
+      border: 1px solid rgba(240,192,64,0.2);
+      border-radius: 20px;
+      padding: 28px 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(240,192,64,0.5); transform: translateY(-3px); }
+
+    .feature-emoji { font-size: 28px; margin-bottom: 12px; display: block; }
+    .feature-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; color: var(--white); }
+    .feature-desc { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+
+    /* ─── BRANCHES ──────────────────────────────────── */
+    .branches-section {
+      background: linear-gradient(180deg, var(--navy), #060a1c);
+      padding: 0 0 80px;
+    }
+
+    .branches-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    @media (max-width: 700px) {
+      .branches-grid { grid-template-columns: repeat(2, 1fr); }
+      .flow { gap: 6px; }
+      .flow-arrow { display: none; }
+    }
+
+    .branch-card {
+      position: relative;
+      height: 240px;
+      overflow: hidden;
+      cursor: default;
+    }
+    .branch-card:first-child { border-radius: 20px 0 0 20px; }
+    .branch-card:last-child  { border-radius: 0 20px 20px 0; }
+
+    .branch-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) saturate(1.1);
+      transition: filter 0.4s, transform 0.4s;
+    }
+    .branch-card:hover img { filter: brightness(0.7) saturate(1.3); transform: scale(1.05); }
+
+    .branch-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 14px;
+    }
+    .branch-name {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 3px;
+    }
+    .branch-mult {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .branch-num {
+      position: absolute;
+      top: 12px; left: 14px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      background: rgba(0,0,0,0.5);
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    /* ─── DEPARTMENTS ───────────────────────────────── */
+    .dept-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .dept-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 20px;
+    }
+    .dept-icon { font-size: 22px; flex-shrink: 0; }
+    .dept-name { font-size: 15px; font-weight: 600; flex: 1; }
+    .dept-income {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    /* ─── MANAGERS ──────────────────────────────────── */
+    .managers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .managers-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .manager-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .manager-card:hover { border-color: rgba(240,192,64,0.4); }
+
+    .manager-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      object-position: top;
+    }
+    .manager-info { padding: 12px; }
+    .manager-name { font-size: 13px; font-weight: 700; color: var(--gold-light); }
+    .manager-role { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+    /* ─── DIVIDER ───────────────────────────────────── */
+    .gold-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 20px;
+    }
+
+    /* ─── BOTTOM CTA ────────────────────────────────── */
+    .bottom-cta {
+      text-align: center;
+      padding: 80px 24px;
+      background: linear-gradient(180deg, #060a1c 0%, var(--navy) 100%);
+    }
+    .bottom-cta h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .bottom-cta p {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+
+    .platforms {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .platform-tag {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ─── FOOTER ────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ░░ HERO ░░ -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <img src="תמונות/icon.png" alt="Idle Bank Empire" class="hero-icon" />
+      <p class="hero-eyebrow">Browser Game · Free to Play · PWA</p>
+      <h1 class="hero-title">Idle Bank<br>Empire</h1>
+      <p class="hero-subtitle">From Teller Window to Goldman Sachs</p>
+      <p class="hero-tagline">
+        Build your financial dynasty from a <em>single branch</em> to a
+        <em>global banking empire</em>. Hire staff, secure your vault,
+        unlock VIP clients — and earn even while you sleep.
+      </p>
+      <a href="#" class="hero-cta">Play Free Now</a>
+      <div class="hero-badges">
+        <span class="badge">🌐 No Download</span>
+        <span class="badge">📱 Mobile Friendly</span>
+        <span class="badge">😴 Offline Earnings</span>
+        <span class="badge">🌍 4 Languages</span>
+        <span class="badge">🔒 No Pay-to-Win</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ CORE LOOP ░░ -->
+  <section class="section">
+    <p class="section-label">How It Works</p>
+    <h2 class="section-title">The Core Loop</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-icon">🧑‍💼</div>
+        <div class="flow-label">Customers Arrive</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🏧</div>
+        <div class="flow-label">Tellers Process</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">💼</div>
+        <div class="flow-label">Guards Collect</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🏦</div>
+        <div class="flow-label">Vault Fills Up</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">💰</div>
+        <div class="flow-label">Profit</div>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-emoji">🏧</span>
+        <div class="feature-title">Hire & Upgrade Tellers</div>
+        <div class="feature-desc">Up to 4 tellers per branch, each one a revenue engine. Upgrade speed, capacity, and earnings per transaction.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-emoji">💂</span>
+        <div class="feature-title">Deploy Smart Guards</div>
+        <div class="feature-desc">Guards patrol with full AI: idle → collect cash from tellers → escort to vault → repeat. Automate your cash flow.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-emoji">💎</span>
+        <div class="feature-title">Attract VIP Clients</div>
+        <div class="feature-desc">Normal, rich, and VIP customers arrive in your queue. VIPs tip big and boost your Prestige Share earnings.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-emoji">😴</span>
+        <div class="feature-title">Earn While Offline</div>
+        <div class="feature-desc">Your bank never closes. Earnings are server-verified so you always get exactly what you earned — even hours later.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-emoji">🪙</span>
+        <div class="feature-title">Gold Shares Meta</div>
+        <div class="feature-desc">Spend Gold Shares on permanent upgrades — faster guards, vault boosts, offline multipliers — that carry across every prestige.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-emoji">📈</span>
+        <div class="feature-title">Prestige & Scale</div>
+        <div class="feature-desc">Reset with massive multipliers and unlock the next bank branch. Each prestige makes you exponentially more powerful.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ BRANCHES ░░ -->
+  <section class="branches-section">
+    <div class="section" style="padding-bottom: 32px;">
+      <p class="section-label">Prestige System</p>
+      <h2 class="section-title">Four Iconic Branches to Conquer</h2>
+    </div>
+    <div class="branches-grid">
+      <div class="branch-card">
+        <img src="תמונות/branch-bg-1.png" alt="Citibank" />
+        <div class="branch-overlay">
+          <div class="branch-name">Citibank</div>
+          <div class="branch-mult">×1 — Your First Branch</div>
+        </div>
+        <div class="branch-num">BRANCH 01</div>
+      </div>
+      <div class="branch-card">
+        <img src="תמונות/branch-bg-2.png" alt="HSBC" />
+        <div class="branch-overlay">
+          <div class="branch-name">HSBC</div>
+          <div class="branch-mult">×5 — International Finance</div>
+        </div>
+        <div class="branch-num">BRANCH 02</div>
+      </div>
+      <div class="branch-card">
+        <img src="תמונות/branch-bg-3.png" alt="JP Morgan" />
+        <div class="branch-overlay">
+          <div class="branch-name">JP Morgan</div>
+          <div class="branch-mult">×30 — Wall Street</div>
+        </div>
+        <div class="branch-num">BRANCH 03</div>
+      </div>
+      <div class="branch-card">
+        <img src="תמונות/branch-bg-4.png" alt="Goldman Sachs" />
+        <div class="branch-overlay">
+          <div class="branch-name">Goldman Sachs</div>
+          <div class="branch-mult">×200 — The Pinnacle</div>
+        </div>
+        <div class="branch-num">BRANCH 04</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ DEPARTMENTS ░░ -->
+  <section class="section">
+    <p class="section-label">Unlock & Expand</p>
+    <h2 class="section-title">5 Departments. Wildly Different Income.</h2>
+    <div class="dept-list">
+      <div class="dept-row">
+        <div class="dept-icon">🪙</div>
+        <div class="dept-name">Teller Services</div>
+        <div class="dept-income">Base Income</div>
+      </div>
+      <div class="dept-row">
+        <div class="dept-icon">🏠</div>
+        <div class="dept-name">Loans & Mortgages</div>
+        <div class="dept-income">×6 Multiplier</div>
+      </div>
+      <div class="dept-row">
+        <div class="dept-icon">💎</div>
+        <div class="dept-name">VIP Private Banking</div>
+        <div class="dept-income">×45 Multiplier</div>
+      </div>
+      <div class="dept-row">
+        <div class="dept-icon">📊</div>
+        <div class="dept-name">Stocks & Crypto Trading</div>
+        <div class="dept-income">×350 Multiplier</div>
+      </div>
+      <div class="dept-row" style="border-color: rgba(240,192,64,0.35);">
+        <div class="dept-icon">🤫</div>
+        <div class="dept-name">"Legal" Money Laundering</div>
+        <div class="dept-income" style="color: #ff9f1c;">×3,000 Multiplier</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ MANAGERS ░░ -->
+  <section class="section" style="padding-top: 0;">
+    <p class="section-label">Automation</p>
+    <h2 class="section-title">6 Managers. One Empire.</h2>
+    <div class="managers-grid">
+      <div class="manager-card">
+        <img src="תמונות/manager-1.png" alt="Customer Manager" />
+        <div class="manager-info">
+          <div class="manager-name">Customer Relations</div>
+          <div class="manager-role">Boosts customer spawn & income</div>
+        </div>
+      </div>
+      <div class="manager-card">
+        <img src="תמונות/manager-2.png" alt="Finance Manager" />
+        <div class="manager-info">
+          <div class="manager-name">Finance</div>
+          <div class="manager-role">Auto-empties vault + income</div>
+        </div>
+      </div>
+      <div class="manager-card">
+        <img src="תמונות/manager-3.png" alt="Operations Manager" />
+        <div class="manager-info">
+          <div class="manager-name">Operations</div>
+          <div class="manager-role">Speeds up guards & tellers</div>
+        </div>
+      </div>
+      <div class="manager-card">
+        <img src="תמונות/manager-4.png" alt="Service Manager" />
+        <div class="manager-info">
+          <div class="manager-name">Service</div>
+          <div class="manager-role">Expands queue capacity</div>
+        </div>
+      </div>
+      <div class="manager-card">
+        <img src="תמונות/manager-5.png" alt="VIP Manager" />
+        <div class="manager-info">
+          <div class="manager-name">VIP Services</div>
+          <div class="manager-role">Income + prestige share bonus</div>
+        </div>
+      </div>
+      <div class="manager-card">
+        <img src="תמונות/manager-6.png" alt="Marketing Manager" />
+        <div class="manager-info">
+          <div class="manager-name">Marketing</div>
+          <div class="manager-role">Ad boost + offline hours</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ BOTTOM CTA ░░ -->
+  <section class="bottom-cta">
+    <div class="gold-divider"></div>
+    <h2>Ready to Build Your Empire?</h2>
+    <p>No download. No login. No energy bars.<br>Just pure idle banking strategy — free in your browser.</p>
+    <a href="#" class="hero-cta">Play Idle Bank Empire</a>
+    <div class="platforms">
+      <span class="platform-tag">🌐 Chrome / Firefox / Safari</span>
+      <span class="platform-tag">📱 iOS & Android (PWA)</span>
+      <span class="platform-tag">🇮🇱 Hebrew · 🇺🇸 English · 🇪🇸 Spanish · 🇷🇺 Russian</span>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Idle Bank Empire · Built with pure JavaScript · No frameworks, no bloat.
+    #idlegame #incrementalgame #browserGame #PWA #indiegame
+  </footer>
+
+</body>
+</html>

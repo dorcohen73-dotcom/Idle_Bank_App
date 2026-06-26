@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Idle Bank Empire — Video Producer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#060a18;font-family:'Inter',sans-serif;color:#f0f0f0;
+  display:flex;flex-direction:column;align-items:center;padding:24px;min-height:100vh;}
+
+h1{font-family:'Cinzel',serif;font-size:22px;color:#f0c040;margin-bottom:6px;letter-spacing:2px;}
+.sub-head{font-size:13px;color:#6a7a99;margin-bottom:20px;}
+
+/* Stage */
+#stage-wrap{position:relative;width:1280px;max-width:100%;}
+#cnv{display:block;width:100%;border-radius:12px;
+  box-shadow:0 0 60px rgba(240,192,64,.18),0 8px 40px rgba(0,0,0,.7);
+  border:1px solid rgba(240,192,64,.15);}
+
+/* Hidden video */
+#vid{display:none;}
+
+/* Progress */
+#prog-wrap{width:1280px;max-width:100%;height:4px;background:rgba(255,255,255,.08);
+  border-radius:2px;margin-top:8px;}
+#prog-bar{height:100%;width:0%;background:linear-gradient(90deg,#b8860b,#f0c040,#ffe48a);
+  border-radius:2px;transition:width .1s linear;}
+
+/* Controls */
+#ctrl{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap;justify-content:center;}
+.btn{padding:12px 30px;border:none;border-radius:30px;font-size:15px;font-weight:700;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:.5px;}
+.btn-gold{background:linear-gradient(135deg,#b8860b,#f0c040,#ffe48a);color:#1a0f00;}
+.btn-dark{background:rgba(255,255,255,.07);color:#d0d8f0;border:1px solid rgba(255,255,255,.15);}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 24px rgba(240,192,64,.35);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+#log{font-size:13px;color:#6a9f6a;min-width:260px;text-align:center;}
+
+/* Script preview */
+#script-box{margin-top:24px;width:1280px;max-width:100%;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:16px 20px;}
+#script-box h3{font-size:12px;letter-spacing:3px;color:#f0c040;text-transform:uppercase;margin-bottom:12px;}
+.cue-row{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:13px;line-height:1.5;}
+.cue-row:last-child{border-bottom:none;}
+.cue-time{color:#f0c040;font-weight:700;min-width:40px;font-variant-numeric:tabular-nums;}
+.cue-text{color:#b0bdd8;}
+</style>
+</head>
+<body>
+
+<h1>🎬 Idle Bank Empire — Video Producer</h1>
+<p class="sub-head">Music + Narration subtitles burned into video · Download ready .webm</p>
+
+<div id="stage-wrap">
+  <canvas id="cnv" width="1280" height="720"></canvas>
+  <video id="vid" src="idle_bank_promo_en.webm" preload="auto" crossorigin="anonymous"></video>
+</div>
+
+<div id="prog-wrap"><div id="prog-bar"></div></div>
+
+<div id="ctrl">
+  <button class="btn btn-dark" id="btn-preview">▶ Preview</button>
+  <button class="btn btn-gold" id="btn-record">⏺ Record &amp; Download</button>
+  <div id="log">Load the page and click Preview to test.</div>
+</div>
+
+<div id="script-box">
+  <h3>Narration Script (shown as subtitles)</h3>
+  <div id="script-list"></div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   NARRATION SCRIPT
+   (times in seconds — auto-scales to video length)
+════════════════════════════════════════════ */
+const SCRIPT = [
+  { t: 0,    text: "Welcome to Idle Bank Empire." },
+  { t: 3.5,  text: "Build your financial dynasty — from a single teller window to a global banking empire." },
+  { t: 9,    text: "The loop is simple: customers arrive, tellers process them, guards collect the cash, and your vault fills up." },
+  { t: 17,   text: "Prestige through four iconic banks — Citibank, HSBC, JP Morgan, and Goldman Sachs — each with massive income multipliers." },
+  { t: 26,   text: "Unlock five departments. From basic teller services all the way to... legally questionable money management." },
+  { t: 34,   text: "Three thousand times your base income. No questions asked." },
+  { t: 38,   text: "Recruit six specialist managers to automate every corner of your empire." },
+  { t: 44.5, text: "Sit back. Watch the money flow." },
+  { t: 47,   text: "Earn Gold Shares through VIP clients. Spend them on permanent upgrades that carry through every prestige." },
+  { t: 54,   text: "And yes — your bank earns even while you sleep, with server-verified offline earnings." },
+  { t: 60,   text: "Free. In your browser. No download. No pay-to-win." },
+  { t: 65,   text: "Play Idle Bank Empire — and start building your empire today." },
+];
+
+/* ════════════════════════════════════════════
+   SUBTITLE RENDERER (on canvas)
+════════════════════════════════════════════ */
+const CANVAS_W = 1280, CANVAS_H = 720;
+const SUB_Y    = 638; // top of subtitle band
+const SUB_H    = 74;
+let   subText  = '';
+let   subAlpha = 0;
+let   subTarget= 0;
+
+function setSubtitle(text) {
+  if (text === subText) return;
+  subText   = text;
+  subTarget = text ? 1 : 0;
+}
+
+function drawSubtitle(ctx) {
+  if (!subText && subAlpha < 0.01) return;
+  // Smooth alpha
+  subAlpha += (subTarget - subAlpha) * 0.12;
+
+  ctx.save();
+  ctx.globalAlpha = subAlpha;
+
+  // Background bar
+  ctx.fillStyle = 'rgba(0,0,0,0.82)';
+  ctx.fillRect(0, SUB_Y, CANVAS_W, SUB_H);
+
+  // Gold accent line
+  const grad = ctx.createLinearGradient(0, SUB_Y, CANVAS_W, SUB_Y);
+  grad.addColorStop(0,   'rgba(240,192,64,0)');
+  grad.addColorStop(0.2, 'rgba(240,192,64,0.9)');
+  grad.addColorStop(0.8, 'rgba(240,192,64,0.9)');
+  grad.addColorStop(1,   'rgba(240,192,64,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, SUB_Y, CANVAS_W, 2);
+
+  // Text (word-wrap at ~72 chars)
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const lines = wrapText(subText, 72);
+  const lineH = 30;
+  const startY = SUB_Y + SUB_H / 2 - ((lines.length - 1) * lineH) / 2;
+
+  lines.forEach((line, i) => {
+    ctx.font = `700 ${lines.length > 1 ? 22 : 25}px Inter, sans-serif`;
+    // Shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+    ctx.shadowBlur  = 8;
+    ctx.fillText(line, CANVAS_W / 2, startY + i * lineH);
+    ctx.shadowBlur  = 0;
+  });
+
+  ctx.restore();
+}
+
+function wrapText(text, maxLen) {
+  if (text.length <= maxLen) return [text];
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  words.forEach(w => {
+    if ((cur + ' ' + w).trim().length <= maxLen) {
+      cur = (cur + ' ' + w).trim();
+    } else {
+      if (cur) lines.push(cur);
+      cur = w;
+    }
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+/* ════════════════════════════════════════════
+   REC INDICATOR
+════════════════════════════════════════════ */
+let recVisible = false;
+let recBlink   = false;
+
+function drawRec(ctx, time) {
+  if (!recVisible) return;
+  recBlink = Math.floor(time * 2) % 2 === 0;
+  ctx.save();
+  ctx.globalAlpha = recBlink ? 1 : 0.4;
+  ctx.fillStyle   = '#ff3333';
+  ctx.beginPath();
+  ctx.arc(36, 36, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = recBlink ? 1 : 0.5;
+  ctx.fillStyle   = '#ffffff';
+  ctx.font        = 'bold 15px Inter, sans-serif';
+  ctx.textAlign   = 'left';
+  ctx.textBaseline= 'middle';
+  ctx.fillText('REC', 52, 36);
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════════
+   MUSIC ENGINE (Web Audio API)
+   Key: A minor  |  Tempo: ~72 BPM
+════════════════════════════════════════════ */
+function buildImpulse(ctx, dur, decay) {
+  const rate = ctx.sampleRate;
+  const len  = Math.floor(rate * dur);
+  const buf  = ctx.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++)
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay * 4);
+  }
+  return buf;
+}
+
+function startMusic(ctx, destNode, fadeInDur = 2) {
+  const now = ctx.currentTime;
+
+  // ── Master chain ──
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0, now);
+  master.gain.linearRampToValueAtTime(0.55, now + fadeInDur);
+  master.connect(destNode);
+
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -20;
+  comp.knee.value      = 20;
+  comp.ratio.value     = 5;
+  comp.attack.value    = 0.004;
+  comp.release.value   = 0.18;
+  comp.connect(master);
+
+  // ── Reverb ──
+  const reverb = ctx.createConvolver();
+  reverb.buffer = buildImpulse(ctx, 3, 0.6);
+  const revGain = ctx.createGain();
+  revGain.gain.value = 0.38;
+  reverb.connect(revGain);
+  revGain.connect(comp);
+
+  // Dry bus
+  const dry = ctx.createGain();
+  dry.gain.value = 0.65;
+  dry.connect(comp);
+
+  // ── Bass drone: A2 (110 Hz) ──
+  const bassOsc = ctx.createOscillator();
+  bassOsc.type           = 'sine';
+  bassOsc.frequency.value= 110;
+  const bassEnv = ctx.createGain();
+  bassEnv.gain.setValueAtTime(0, now);
+  bassEnv.gain.linearRampToValueAtTime(0.38, now + 3);
+  bassOsc.connect(bassEnv);
+  bassEnv.connect(dry);
+  bassEnv.connect(reverb);
+  bassOsc.start(now);
+
+  // Slow LFO on bass freq (1/6 Hz → vibrato)
+  const lfo = ctx.createOscillator();
+  lfo.frequency.value = 0.16;
+  const lfoG = ctx.createGain();
+  lfoG.gain.value = 4;
+  lfo.connect(lfoG);
+  lfoG.connect(bassOsc.frequency);
+  lfo.start(now);
+
+  // ── Pad: A minor chord (A-C-E, multiple octaves) ──
+  [[220,'sawtooth'],[261.63,'triangle'],[329.63,'sawtooth'],
+   [440,'triangle'],[523.25,'sine']].forEach(([f, type], i) => {
+    const osc  = ctx.createOscillator();
+    osc.type   = type;
+    osc.frequency.value = f + i * 0.7; // micro-detune
+
+    const filt = ctx.createBiquadFilter();
+    filt.type  = 'lowpass';
+    filt.frequency.setValueAtTime(300 + i * 80, now);
+    filt.frequency.linearRampToValueAtTime(900 + i * 100, now + 5);
+    filt.Q.value = 1.8;
+
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.042 - i * 0.004, now + 2.5 + i * 0.4);
+
+    osc.connect(filt);
+    filt.connect(env);
+    env.connect(dry);
+    env.connect(reverb);
+    osc.start(now);
+  });
+
+  // ── Arpeggios: A minor pentatonic ──
+  // A4 C5 E5 A5 E5 C5
+  const arpNotes = [440, 523.25, 659.25, 880, 659.25, 523.25, 392, 440];
+  let   arpIdx   = 0;
+  const arpSep   = 0.27; // seconds
+
+  const arpTimer = setInterval(() => {
+    const t    = ctx.currentTime;
+    const freq = arpNotes[arpIdx++ % arpNotes.length];
+
+    const osc = ctx.createOscillator();
+    osc.type           = 'triangle';
+    osc.frequency.value= freq;
+
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.048, t + 0.018);
+    env.gain.exponentialRampToValueAtTime(0.001, t + arpSep * 0.92);
+
+    osc.connect(env);
+    env.connect(reverb);
+    osc.start(t);
+    osc.stop(t + arpSep);
+  }, arpSep * 1000);
+
+  // ── Subtle kick every beat (750 ms) ──
+  let kickCount = 0;
+  const kickTimer = setInterval(() => {
+    if (++kickCount < 5) return; // wait before first kick
+    const t = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(190, t);
+    osc.frequency.exponentialRampToValueAtTime(42, t + 0.16);
+
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0.28, t);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+
+    osc.connect(env);
+    env.connect(dry);
+    osc.start(t);
+    osc.stop(t + 0.25);
+  }, 750);
+
+  function fadeOut(dur = 2) {
+    const t = ctx.currentTime;
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(0, t + dur);
+    setTimeout(() => {
+      clearInterval(arpTimer);
+      clearInterval(kickTimer);
+      try { bassOsc.stop(); lfo.stop(); } catch(e){}
+    }, (dur + 0.1) * 1000);
+  }
+
+  return { fadeOut, masterGain: master };
+}
+
+/* ════════════════════════════════════════════
+   MAIN RUN FUNCTION
+════════════════════════════════════════════ */
+const vid     = document.getElementById('vid');
+const canvas  = document.getElementById('cnv');
+const ctx2d   = canvas.getContext('2d');
+const progBar = document.getElementById('prog-bar');
+const logEl   = document.getElementById('log');
+
+function log(msg, color = '#6a9f6a') {
+  logEl.style.color = color;
+  logEl.textContent = msg;
+}
+
+let running = false;
+let audioCtx = null;
+
+async function run(isRecording) {
+  if (running) return;
+  running = true;
+
+  // ── Disable buttons ──
+  document.getElementById('btn-preview').disabled = true;
+  document.getElementById('btn-record').disabled  = true;
+
+  // ── Reset video to start ──
+  vid.pause();
+  vid.currentTime = 0;
+  await new Promise(r => setTimeout(r, 200));
+
+  // ── Audio context ──
+  if (audioCtx) { try { audioCtx.close(); } catch(e){} }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  let recDest = null;
+  let recorder = null;
+  let chunks   = [];
+
+  if (isRecording) {
+    recDest = audioCtx.createMediaStreamDestination();
+  }
+
+  // Music goes to: speakers always + recDest if recording
+  const musicDest = recDest || audioCtx.destination;
+  // Also connect to speakers when recording
+  const music = startMusic(audioCtx, musicDest);
+  if (isRecording) {
+    // Monitor music through speakers while recording
+    const monitor = audioCtx.createGain();
+    monitor.gain.value = 0.4;
+    music.masterGain.connect(monitor);
+    monitor.connect(audioCtx.destination);
+  }
+
+  // ── Setup MediaRecorder if recording ──
+  if (isRecording) {
+    const videoStream = canvas.captureStream(60);
+    const combined    = new MediaStream([
+      ...videoStream.getVideoTracks(),
+      ...recDest.stream.getAudioTracks(),
+    ]);
+    recorder = new MediaRecorder(combined, {
+      mimeType: 'video/webm; codecs=vp9,opus',
+      videoBitsPerSecond: 8_000_000,
+      audioBitsPerSecond: 192_000,
+    });
+    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recorder.start(100);
+    recVisible = true;
+    log('● Recording…', '#ff6060');
+  } else {
+    log('▶ Preview playing…', '#6a9f6a');
+  }
+
+  // ── Play video ──
+  await vid.play();
+
+  // ── TTS narration (through speakers, synced) ──
+  const synth = window.speechSynthesis;
+  synth.cancel();
+
+  const vidDur = isFinite(vid.duration) ? vid.duration : 75;
+  let lastCueIdx = -1;
+
+  // Pre-schedule TTS based on video time
+  function checkCues(currentTime) {
+    for (let i = 0; i < SCRIPT.length; i++) {
+      const cue = SCRIPT[i];
+      const scaled = cue.t; // use raw seconds
+      if (scaled <= currentTime && i > lastCueIdx) {
+        lastCueIdx = i;
+        setSubtitle(cue.text);
+        // TTS
+        const utt = new SpeechSynthesisUtterance(cue.text);
+        utt.rate   = 0.92;
+        utt.pitch  = 1.0;
+        utt.volume = 1.0;
+        // Pick best English voice
+        const voices = synth.getVoices();
+        const eng = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'))
+                 || voices.find(v => v.lang === 'en-US')
+                 || voices.find(v => v.lang.startsWith('en'));
+        if (eng) utt.voice = eng;
+        synth.speak(utt);
+        break;
+      }
+    }
+  }
+
+  // ── Canvas render loop ──
+  let rafId;
+  function renderFrame() {
+    if (!vid.ended && !vid.paused) {
+      ctx2d.drawImage(vid, 0, 0, CANVAS_W, CANVAS_H);
+    }
+    drawSubtitle(ctx2d);
+    drawRec(ctx2d, vid.currentTime);
+    checkCues(vid.currentTime);
+
+    // Progress bar
+    const pct = vidDur > 0 ? (vid.currentTime / vidDur) * 100 : 0;
+    progBar.style.width = pct + '%';
+
+    rafId = requestAnimationFrame(renderFrame);
+  }
+  rafId = requestAnimationFrame(renderFrame);
+
+  // ── Wait for video to end ──
+  await new Promise(resolve => {
+    vid.addEventListener('ended', resolve, { once: true });
+  });
+
+  // Fade out last subtitle
+  subTarget = 0;
+  await new Promise(r => setTimeout(r, 800));
+
+  // Fade out music
+  music.fadeOut(2.5);
+  synth.cancel();
+
+  await new Promise(r => setTimeout(r, 2600));
+
+  // ── Stop ──
+  cancelAnimationFrame(rafId);
+  recVisible = false;
+
+  if (isRecording && recorder && recorder.state !== 'inactive') {
+    recorder.stop();
+    await new Promise(r => { recorder.onstop = r; });
+
+    // Download
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'idle_bank_promo_FINAL.webm';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    log('✅ Downloaded: idle_bank_promo_FINAL.webm', '#6af0a0');
+  } else {
+    log('Preview complete. Click Record to export.', '#6a9f6a');
+  }
+
+  running = false;
+  document.getElementById('btn-preview').disabled = false;
+  document.getElementById('btn-record').disabled  = false;
+}
+
+/* ════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════ */
+document.getElementById('btn-preview').addEventListener('click', () => run(false));
+document.getElementById('btn-record').addEventListener('click',  () => run(true));
+
+/* ════════════════════════════════════════════
+   SCRIPT TABLE
+════════════════════════════════════════════ */
+const list = document.getElementById('script-list');
+SCRIPT.forEach(({ t, text }) => {
+  const row  = document.createElement('div');
+  row.className = 'cue-row';
+  const mm  = String(Math.floor(t / 60)).padStart(2,'0');
+  const ss  = String(Math.floor(t % 60)).padStart(2,'0');
+  row.innerHTML = `<span class="cue-time">${mm}:${ss}</span><span class="cue-text">${text}</span>`;
+  list.appendChild(row);
+});
+
+/* ════════════════════════════════════════════
+   IDLE CANVAS (show first frame while waiting)
+════════════════════════════════════════════ */
+vid.addEventListener('loadeddata', () => {
+  vid.currentTime = 0.1;
+  setTimeout(() => {
+    ctx2d.drawImage(vid, 0, 0, CANVAS_W, CANVAS_H);
+    // Overlay title
+    ctx2d.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx2d.fillRect(0, CANVAS_H/2 - 60, CANVAS_W, 120);
+    ctx2d.fillStyle = '#f0c040';
+    ctx2d.font      = 'bold 36px Cinzel, serif';
+    ctx2d.textAlign = 'center';
+    ctx2d.textBaseline = 'middle';
+    ctx2d.fillText('Click ▶ Preview or ⏺ Record to begin', CANVAS_W/2, CANVAS_H/2);
+  }, 200);
+});
+</script>
+</body>
+</html>
