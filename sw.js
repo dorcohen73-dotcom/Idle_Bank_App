@@ -52,6 +52,7 @@ const ASSETS = [
   './תמונות/branch-bg-2.png',
   './תמונות/branch-bg-3.png',
   './תמונות/branch-bg-4.png',
+  './תמונות/branch-bg-5.png',
   './manifest.json'
 ];
 

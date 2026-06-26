@@ -2122,9 +2122,12 @@ header {
 .branch-card.bg-branch-3::before {
     background-image: url('תמונות/branch-bg-4.png');
 }
+.branch-card.bg-branch-4::before {
+    background-image: url('תמונות/branch-bg-5.png');
+}
 
 /* Goldman Sachs custom golden overlay */
-.branch-card.bg-branch-3::after {
+.branch-card.bg-branch-4::after {
     background: linear-gradient(270deg, rgba(20, 16, 8, 0.98) 0%, rgba(20, 16, 8, 0.9) 45%, rgba(20, 16, 8, 0.35) 75%, rgba(20, 16, 8, 0) 100%);
 }
 
