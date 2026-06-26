@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bank-empire-3d5e969b20';
+const CACHE_NAME = 'bank-empire-v1.2.0';
 const ASSETS = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
   './ui-tabs.js',
   './ui-events.js',
   './app.js',
+  './privacy.html',
   './תמונות/icon.png',
   './תמונות/icon-192.png',
   './תמונות/gold-chest.png',

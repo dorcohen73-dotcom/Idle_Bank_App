@@ -7,6 +7,9 @@ const translations = {
         mute: "השתק",
         unmute: "בטל השתקה",
         vaultVolume: "נפח",
+        vaultBankLabel: "בנק",
+        cashLiveBadge: "● פעיל",
+        splashSubtitle: "טוען את חווית ה-VIP...",
         tooltips: {
             adv: "קמפיין שיווק ממומן להבאת לקוחות",
             guard: "לחץ כדי לשלוח את הבלדר ידנית",
@@ -53,7 +56,7 @@ const translations = {
         hiredLabel: "מגויס ✔",
         claimReward: "קבל",
         missionCompletedTitle: "🏆 משימות שהושלמו",
-        missionCompletedDesc: "בצע משימות רשמיות מטעם מועצת המנהלים של הבנק וקבל מענקים במזומן באופן מיידי!",
+        missionCompletedDesc: "בצע משימות מקצועיות בשם הנהלת הבנק וקבל מענקים במזומן באופן מיידי!",
         alertQueueEmpty: "תור ריק",
         alertQueueFull: "תור עמוס",
         alertQueueOk: "תור תקין",
@@ -62,6 +65,10 @@ const translations = {
         advSuspended: " (הושעה - חוסר מזומן)",
         tellerLabel: "כספר",
         levelLabel: "רמה",
+        levelAbbr: "רמה",
+        guardLabel: "בלדר",
+        guardsLabel: "בלדרים",
+        boostOfferText: (time) => `⚡ הצעה! ${time}`,
         servingClientLabel: "לקוח בטיפול",
         collectShortLabel: "איסוף",
         guardStates: {
@@ -73,11 +80,11 @@ const translations = {
         },
         upgrades: {
             tellerTitle: (id, lvl) => `כספר ${id} - רמה ${lvl}`,
-            tellerDesc: "מטפל בלקוחות ומייצר ערימות מזומנים.",
+            tellerDesc: "מטפל בלקוחות ומייצר ערימת מזומנים.",
             tellerSpeed: "מהירות",
             tellerCap: "נפח דלפק",
             tellerLocked: (id) => `כספר ${id} - [נעול]`,
-            tellerLockedDesc: "פתח דלפק שירות נוסף להגברת תזרים הלקוחות.",
+            tellerLockedDesc: "פתח דלפק שירות נוסף להגברת תזרים הלקוחות שלך.",
             guardTitle: (id, lvl) => `בלדר ${id} - רמה ${lvl}`,
             guardDesc: "אוסף כסף מהדלפקים ומעביר לכספת הראשית.",
             guardSpeed: "זמן סבב",
@@ -128,20 +135,22 @@ const translations = {
         },
         branches: {
             prestigeTitle: "מנגנון ה-Prestige (מניות זהב)",
-            prestigeDesc: "מכור את הבנק הנוכחי שלך והקם סניף חדש. בתמורה תקבל **מניות זהב** המעניקות בונוס קבוע לרווחים.",
-            prestigeBoost: "כל מניית זהב מעניקה +5% רווח קבוע בכל הסניפים!",
+            prestigeDesc: "מכור את הבנק הנוכחי שלך והקם סניף חדש. בתמורה תקבל (מניות זהב) המעניקות בונוס קבוע לרווחים.",
+            prestigeBoost: "כל מניית זהב מעניקה 5% רווח קבוע בכל הסניפים!",
             prestigeRewardLabel: "מניות זהב שתקבל במעבר:",
             prestigeRewardValue: (val) => `+ ${val} מניות זהב`,
             prestigeMinLabel: (val) => `מינימום כסף נדרש למעבר בסניף זה: ${val}`,
             names: [
                 "סיטיבנק (סניף מקומי)",
                 "אייץ'-אס-בי-סי (סניף פיננסי)",
+                "דויטשה בנק (פרנקפורט)",
                 "ג'יי פי מורגן (וול סטריט)",
                 "גולדמן זקס (אימפריית השקעות)"
             ],
             descs: [
                 "הבנק המקומי הראשון שלך. כאן הכל מתחיל.",
                 "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה.",
+                "לב הפיננסים האירופאי. עסקות נדל\"ן ו-corporate banking בינלאומי.",
                 "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים.",
                 "האימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות."
             ],
@@ -182,9 +191,36 @@ const translations = {
             upgrade_managersTitle: "שדרוג מנהלים",
             upgrade_managersDesc: (t) => `שדרג רמות מנהלים ${t} פעמים (מצטבר)`,
             defaultTitle: "משימה מיוחדת",
-            defaultDesc: "השלם את יעדי המשימה"
+            defaultDesc: "השלם את יעדי המשימה",
+            vip_collectorTitle: "אספן ה-VIP",
+            vip_collectorDesc: (t) => `שרת ${t} לקוחות VIP בסך הכל`,
+            department_unlockTitle: "פתיחת מחלקה חדשה",
+            department_unlockDesc: () => `פתח מחלקה חדשה בבנק`,
+            manager_hireTitle: "גיוס מנהלים",
+            manager_hireDesc: (t) => `גייס ${t} מנהלים חדשים`,
+            teller_maxTitle: "כספר אלוף",
+            teller_maxDesc: (t) => `שדרג דלפק כספר לרמה ${t}`,
+            boost_runTitle: "ריצת מאיץ",
+            boost_runDesc: (t) => `הרווח ${t} בזמן שמאיץ x2 פעיל`,
+            guard_tripsTitle: "בלדר ותיק",
+            guard_tripsDesc: (t) => `הבלדר יבצע ${t} נסיעות הפקדה`,
+            all_managersTitle: "צוות הנהלה מלא",
+            all_managersDesc: (t) => `גייס את כל ${t} המנהלים`,
+            vip_marathonTitle: "מרתון VIP",
+            vip_marathonDesc: (t) => `שרת ${t} לקוחות VIP ברצף`,
+            break_the_wallTitle: "פריצת מחסום ההתרחבות",
+            break_the_wallDesc: (t) => `טפל ב-${t} לקוחות כדי לקבל מענק התרחבות שמן`
         },
         vaultFullMsg: "הכספת מלאה — רוקן אותה",
+        welcomeBonusMsg: (branch, amt) => `ברוכים הבאים ל${branch}! קיבלת $${amt} כמתנת פתיחה`,
+        loginModal: {
+            title: 'בונוס כניסה יומי!',
+            collectBtn: 'אסוף!',
+            cashDesc: 'מזומן לחשבון',
+            boostLabel: (mins) => `+${mins} דקות בוסט x2`,
+            boostDesc: 'בוסט הכנסות כפולות',
+            sharesDesc: 'מניות זהב נוספו'
+        },
         cheatDetectedMsg: "⚠️ זוהתה עריכת שמירה! היתרה אופסה ל-150$ ומניות הזהב ל-0 כעונש.",
         adTitle: "צופה בחסות ממומנת...",
         adSubtitle: "הפרס יינתן בעוד:",
@@ -196,6 +232,9 @@ const translations = {
         mute: "Mute",
         unmute: "Unmute",
         vaultVolume: "Volume",
+        vaultBankLabel: "BANK",
+        cashLiveBadge: "● LIVE",
+        splashSubtitle: "Loading VIP experience...",
         tooltips: {
             adv: "Sponsored marketing campaign to attract clients",
             guard: "Click to send the courier manually",
@@ -251,6 +290,10 @@ const translations = {
         advSuspended: " (Suspended - No cash)",
         tellerLabel: "Teller",
         levelLabel: "Lvl",
+        levelAbbr: "Lv",
+        guardLabel: "Courier",
+        guardsLabel: "Couriers",
+        boostOfferText: (time) => `⚡ OFFER! ${time}`,
         servingClientLabel: "Serving Client",
         collectShortLabel: "Collect",
         guardStates: {
@@ -317,20 +360,22 @@ const translations = {
         },
         branches: {
             prestigeTitle: "Prestige Mechanics (Golden Shares)",
-            prestigeDesc: "Sell your current branch and establish a new one. In return, you receive **Golden Shares** which grant a permanent boost to all future earnings.",
-            prestigeBoost: "Each Golden Share grants a permanent +5% boost to earnings in all branches!",
+            prestigeDesc: "Sell your current branch and establish a new one. In return, you receive (Golden Shares) which grant a permanent boost to all future earnings.",
+            prestigeBoost: "Each Golden Share grants a permanent 5% boost to earnings in all branches!",
             prestigeRewardLabel: "Golden Shares received on transfer:",
             prestigeRewardValue: (val) => `+ ${val} Shares`,
             prestigeMinLabel: (val) => `Minimum cash required for prestige in this branch: ${val}`,
             names: [
                 "Citibank (Local Branch)",
                 "HSBC (Financial Branch)",
+                "Deutsche Bank (Frankfurt)",
                 "JPMorgan Chase (Wall Street)",
                 "Goldman Sachs (Investment Empire)"
             ],
             descs: [
                 "Your first local bank branch. This is where it all begins.",
                 "A global financial giant. Wealthier clients and rapid cash flow.",
+                "Heart of European finance. Real estate deals and international corporate banking.",
                 "The heart of Wall Street business. Massive deals, huge loans, and giant profits.",
                 "The ultimate investment empire. Legendary earnings filling golden vaults in seconds."
             ],
@@ -371,9 +416,36 @@ const translations = {
             upgrade_managersTitle: "Upgrade Managers",
             upgrade_managersDesc: (t) => `Upgrade manager levels ${t} times (total)`,
             defaultTitle: "Special Mission",
-            defaultDesc: "Complete the mission objectives"
+            defaultDesc: "Complete the mission objectives",
+            vip_collectorTitle: "VIP Collector",
+            vip_collectorDesc: (t) => `Serve a total of ${t} VIP clients`,
+            department_unlockTitle: "Unlock New Department",
+            department_unlockDesc: () => `Unlock a new department in the bank`,
+            manager_hireTitle: "Hire Managers",
+            manager_hireDesc: (t) => `Hire ${t} new managers`,
+            teller_maxTitle: "Champion Teller",
+            teller_maxDesc: (t) => `Upgrade a teller desk to level ${t}`,
+            boost_runTitle: "Boost Sprint",
+            boost_runDesc: (t) => `Earn ${t} while the x2 boost is active`,
+            guard_tripsTitle: "Veteran Courier",
+            guard_tripsDesc: (t) => `The courier completes ${t} deposit trips`,
+            all_managersTitle: "Full Management Team",
+            all_managersDesc: (t) => `Hire all ${t} managers`,
+            vip_marathonTitle: "VIP Marathon",
+            vip_marathonDesc: (t) => `Serve ${t} VIP clients in a row`,
+            break_the_wallTitle: "Breaking the Expansion Wall",
+            break_the_wallDesc: (t) => `Serve ${t} clients to receive a massive expansion grant`
         },
         vaultFullMsg: "Vault is full — empty it",
+        welcomeBonusMsg: (branch, amt) => `Welcome to ${branch}! You received $${amt} as an opening gift`,
+        loginModal: {
+            title: 'Daily Login Bonus!',
+            collectBtn: 'Collect!',
+            cashDesc: 'Cash credited',
+            boostLabel: (mins) => `+${mins} min Boost x2`,
+            boostDesc: 'Double earnings boost',
+            sharesDesc: 'Gold shares added'
+        },
         cheatDetectedMsg: "⚠️ Save editing detected! Balance reset to $150 and golden shares to 0 as penalty.",
         adTitle: "Watching Sponsored Ad...",
         adSubtitle: "Reward unlocks in:",
@@ -385,6 +457,9 @@ const translations = {
         mute: "Silenciar",
         unmute: "Desactivar silencio",
         vaultVolume: "Volumen",
+        vaultBankLabel: "BANCO",
+        cashLiveBadge: "● VIVO",
+        splashSubtitle: "Cargando experiencia VIP...",
         tooltips: {
             adv: "Campaña de marketing patrocinada para atraer clientes",
             guard: "Haz clic para enviar al guardia manualmente",
@@ -440,6 +515,10 @@ const translations = {
         advSuspended: " (Suspendido - Sin efectivo)",
         tellerLabel: "Cajero",
         levelLabel: "Nivel",
+        levelAbbr: "Nv",
+        guardLabel: "Mensajero",
+        guardsLabel: "Mensajeros",
+        boostOfferText: (time) => `⚡ ¡Oferta! ${time}`,
         servingClientLabel: "Atendiendo Cliente",
         collectShortLabel: "Cobrar",
         guardStates: {
@@ -479,8 +558,8 @@ const translations = {
                 customer: "Gerente de Clientes",
                 finance: "Gerente de Finanzas",
                 operations: "Gerente de Operaciones",
-                service: "Gerente de Servicio",
-                vip: "Gerente VIP",
+                service: "Directora de Servicio al Cliente",
+                vip: "Directora VIP",
                 marketing: "Gerente de Marketing"
             },
             descs: {
@@ -506,20 +585,22 @@ const translations = {
         },
         branches: {
             prestigeTitle: "Mecánica de Prestigio (Acciones de Oro)",
-            prestigeDesc: "Vende tu sucursal actual y establece una nueva. A cambio, recibes **Acciones de Oro** que otorgan un impulso permanente a todas las ganancias futuras.",
-            prestigeBoost: "¡Cada Acción de Oro otorga un impulso permanente de +5% a las ganancias en todas las sucursales!",
+            prestigeDesc: "Vende tu sucursal actual y establece una nueva. A cambio, recibes (Acciones de Oro) que otorgan un impulso permanente a todas las ganancias futuras.",
+            prestigeBoost: "¡Cada Acción de Oro otorga un impulso permanente de 5% a las ganancias en todas las sucursales!",
             prestigeRewardLabel: "Acciones de Oro obtenidas en el traslado:",
             prestigeRewardValue: (val) => `+ ${val} Acciones`,
             prestigeMinLabel: (val) => `Mínimo de efectivo requerido para el prestigio en esta sucursal: ${val}`,
             names: [
                 "Citibank (Sucursal Local)",
                 "HSBC (Sucursal Financiera)",
+                "Deutsche Bank (Fráncfort)",
                 "JPMorgan Chase (Wall Street)",
                 "Goldman Sachs (Imperio de Inversión)"
             ],
             descs: [
                 "Tu primera sucursal bancaria local. Aquí es donde comienza todo.",
                 "Un gigante financiero global. Clientes más ricos y un flujo de caja rápido.",
+                "El corazón de las finanzas europeas. Operaciones inmobiliarias y banca corporativa internacional.",
                 "El corazón de los negocios de Wall Street. Acuerdos masivos, préstamos enormes y ganancias gigantes.",
                 "El imperio definitivo de la inversión. Ganancias legendarias que llenan las bóvedas de oro en segundos."
             ],
@@ -560,9 +641,36 @@ const translations = {
             upgrade_managersTitle: "Mejorar Gerentes",
             upgrade_managersDesc: (t) => `Mejora los niveles de gerentes ${t} veces (total)`,
             defaultTitle: "Misión Especial",
-            defaultDesc: "Completa los objetivos de la misión"
+            defaultDesc: "Completa los objetivos de la misión",
+            vip_collectorTitle: "Coleccionista VIP",
+            vip_collectorDesc: (t) => `Atiende a un total de ${t} clientes VIP`,
+            department_unlockTitle: "Abrir Nuevo Departamento",
+            department_unlockDesc: () => `Desbloquea un nuevo departamento en el banco`,
+            manager_hireTitle: "Contratar Gerentes",
+            manager_hireDesc: (t) => `Contrata ${t} nuevos gerentes`,
+            teller_maxTitle: "Cajero Campeón",
+            teller_maxDesc: (t) => `Mejora un cajero al nivel ${t}`,
+            boost_runTitle: "Sprint de Boost",
+            boost_runDesc: (t) => `Gana ${t} mientras el boost x2 está activo`,
+            guard_tripsTitle: "Mensajero Veterano",
+            guard_tripsDesc: (t) => `El mensajero completa ${t} viajes de depósito`,
+            all_managersTitle: "Equipo Directivo Completo",
+            all_managersDesc: (t) => `Contrata a los ${t} gerentes`,
+            vip_marathonTitle: "Maratón VIP",
+            vip_marathonDesc: (t) => `Atiende a ${t} clientes VIP seguidos`,
+            break_the_wallTitle: "Rompiendo el Muro",
+            break_the_wallDesc: (t) => `Atiende a ${t} clientes para recibir una gran subvención de expansión`
         },
         vaultFullMsg: "Bóveda llena — vacíala",
+        welcomeBonusMsg: (branch, amt) => `¡Bienvenido a ${branch}! Recibiste $${amt} como regalo de apertura`,
+        loginModal: {
+            title: '¡Bono de Acceso Diario!',
+            collectBtn: '¡Cobrar!',
+            cashDesc: 'Efectivo acreditado',
+            boostLabel: (mins) => `+${mins} min Boost x2`,
+            boostDesc: 'Impulso de ganancias dobles',
+            sharesDesc: 'Acciones de oro añadidas'
+        },
         cheatDetectedMsg: "⚠️ ¡Edición de guardado detectada! El saldo se restableció a $150 y las acciones de oro a 0 como penalización.",
         adTitle: "Viendo anuncio patrocinado...",
         adSubtitle: "La recompensa se desbloquea en:",
@@ -574,6 +682,9 @@ const translations = {
         mute: "Выключить звук",
         unmute: "Включить звук",
         vaultVolume: "Объем",
+        vaultBankLabel: "БАНК",
+        cashLiveBadge: "● ОНЛАЙН",
+        splashSubtitle: "Загрузка VIP-опыта...",
         tooltips: {
             adv: "Рекламная кампания для привлечения клиентов",
             guard: "Нажмите, чтобы отправить инкассатора вручную",
@@ -588,7 +699,7 @@ const translations = {
         advTitle: "📢 Рекламная кампания",
         advValueOff: "Выкл",
         advValueOn: "Реклама активна",
-        guardClickHint: "(Отправить копа 👆)",
+        guardClickHint: "(Отправить инкассатора 👆)",
         vaultTitle: "Главный Сейф",
         vaultLoading: "Загрузка данных...",
         collectVault: "Очистить сейф",
@@ -629,6 +740,10 @@ const translations = {
         advSuspended: " (Приостановлено - Нет денег)",
         tellerLabel: "Кассир",
         levelLabel: "Ур",
+        levelAbbr: "Ур",
+        guardLabel: "инкассатор",
+        guardsLabel: "инкассаторы",
+        boostOfferText: (time) => `⚡ Предложение! ${time}`,
         servingClientLabel: "Обслуживание",
         collectShortLabel: "Сбор",
         guardStates: {
@@ -651,7 +766,7 @@ const translations = {
             guardCap: "Вместимость",
             guardLocked: (id) => `Инкассатор ${id} - [Закрыто]`,
             guardLockedDesc: "Наймите дополнительного инкассатора для быстрого сбора средств.",
-            guardUnlockBtn: "Нанять копа",
+            guardUnlockBtn: "Нанять инкассатора",
             vaultTitle: (lvl) => `Главный Сейф - Ур. ${lvl}`,
             vaultDesc: "Хранит все собранные наличные средства банка.",
             vaultCap: "Объем хранилища",
@@ -695,20 +810,22 @@ const translations = {
         },
         branches: {
             prestigeTitle: "Механика Престижа (Золотые акции)",
-            prestigeDesc: "Продайте текущий филиал и откройте новый. Взамен вы получите **Золотые акции**, которые дают постоянный буст ко всем будущим доходам.",
-            prestigeBoost: "Каждая Золотая акция дает постоянный буст +5% к доходу во всех филиалах!",
+            prestigeDesc: "Продайте текущий филиал и откройте новый. Взамен вы получите (Золотые акции), которые дают постоянный буст ко всем будущим доходам.",
+            prestigeBoost: "Каждая Золотая акция дает постоянный буст 5% к доходу во всех филиалах!",
             prestigeRewardLabel: "Золотые акции к получению при переезде:",
             prestigeRewardValue: (val) => `+ ${val} шт.`,
             prestigeMinLabel: (val) => `Минимум наличных для престижа в этом филиале: ${val}`,
             names: [
                 "Ситибанк (Местный филиал)",
                 "HSBC (Финансовый филиал)",
+                "Дойче Банк (Франкфурт)",
                 "JPMorgan Chase (Уолл-стрит)",
                 "Goldman Sachs (Инвестиционная империя)"
             ],
             descs: [
                 "Ваш первый местный филиал Ситибанка. Здесь всё начинается.",
                 "Глобальный финансовый гигант HSBC. Клиенты здесь богаче и транзакции проходят быстрее.",
+                "Сердце европейских финансов. Сделки с недвижимостью и международный корпоративный банкинг.",
                 "Сердце бизнеса Уолл-стрит от JPMorgan Chase. Огромные кредиты и многомиллионные сделки.",
                 "Легендарная инвестиционная империя Goldman Sachs. Колоссальная прибыль, заполняющая золотые сейфы."
             ],
@@ -749,9 +866,36 @@ const translations = {
             upgrade_managersTitle: "Улучшение менеджеров",
             upgrade_managersDesc: (t) => `Повысьте уровни менеджеров ${t} раз (всего)`,
             defaultTitle: "Специальная миссия",
-            defaultDesc: "Выполните задачи миссии"
+            defaultDesc: "Выполните задачи миссии",
+            vip_collectorTitle: "VIP Коллекционер",
+            vip_collectorDesc: (t) => `Обслужите в общей сложности ${t} VIP-клиентов`,
+            department_unlockTitle: "Открыть Новый Отдел",
+            department_unlockDesc: () => `Откройте новый отдел в банке`,
+            manager_hireTitle: "Нанять Менеджеров",
+            manager_hireDesc: (t) => `Наймите ${t} новых менеджеров`,
+            teller_maxTitle: "Кассир-Чемпион",
+            teller_maxDesc: (t) => `Улучшите кассу до уровня ${t}`,
+            boost_runTitle: "Ускоренный Спринт",
+            boost_runDesc: (t) => `Заработайте ${t} пока активен буст x2`,
+            guard_tripsTitle: "Ветеран Инкассации",
+            guard_tripsDesc: (t) => `Инкассатор совершит ${t} поездок`,
+            all_managersTitle: "Полная Команда Менеджеров",
+            all_managersDesc: (t) => `Наймите всех ${t} менеджеров`,
+            vip_marathonTitle: "VIP Марафон",
+            vip_marathonDesc: (t) => `Обслужите ${t} VIP-клиентов подряд`,
+            break_the_wallTitle: "Сломать Стену Расширения",
+            break_the_wallDesc: (t) => `Обслужите ${t} клиентов, чтобы получить крупный грант на расширение`
         },
         vaultFullMsg: "Сейф переполнен — очистите его",
+        welcomeBonusMsg: (branch, amt) => `Добро пожаловать в ${branch}! Вы получили $${amt} в подарок`,
+        loginModal: {
+            title: 'Ежедневный бонус входа!',
+            collectBtn: 'Забрать!',
+            cashDesc: 'Наличные зачислены',
+            boostLabel: (mins) => `+${mins} мин Буст x2`,
+            boostDesc: 'Двойной доход',
+            sharesDesc: 'Золотые акции добавлены'
+        },
         cheatDetectedMsg: "⚠️ Обнаружено изменение сохранений! Баланс сброшен до $150 и золотые акции до 0 в качестве наказания.",
         adTitle: "Просмотр спонсорской рекламы...",
         adSubtitle: "Награда разблокируется через:",
@@ -919,7 +1063,7 @@ Object.assign(translations.he, {
         },
         rescue: {
             title: "מענק סיוע ממשלתי!",
-            desc: "הבנק שלך נקלע לקשיים כספיים קיצוניים ותקוע ללא תזרים. הממשלה מציעה סיוע.",
+            desc: "אתה בקשיים כספיים קיצוניים — אין לך תזרים מזומנים! הממשלה מציעה לך סיוע מיידי.",
             optA: (amt) => `🎬 קבל מענק חירום (${amt}) (פרסומת)`,
             optADesc: (amt) => `קבל ${amt} במזומן באופן מיידי כדי להמשיך לתפקד`,
             optB: "סרב לסיוע (חינם)",
@@ -1388,6 +1532,7 @@ Object.assign(translations.he, {
     fortuneWheelSpinning: "מסתובב...",
     fortuneWheelCooldown: (h, m) => `חוזר בעוד ${h}:${m}`,
     fortuneWheelPrizeTitle: "זכית ב",
+    fortuneWheelAdSpinBtn: "📺 סיבוב נוסף — צפה בפרסומת",
     fortuneWheelClose: "סגור",
     wheelPrizes: {
         cash_small: "כסף",
@@ -1395,8 +1540,8 @@ Object.assign(translations.he, {
         boost_2x: "בוסט x2",
         gold_1: "זהב x1",
         gold_2: "זהב x2",
-        shares_1: "שיתוף x1",
-        shares_3: "שיתופים x3"
+        shares_1: "מניה x1",
+        shares_3: "מניות x3"
     },
     // VIP Visitor
     vipBannerTitle: "לקוח VIP פנימה!",
@@ -1431,6 +1576,7 @@ Object.assign(translations.en, {
     fortuneWheelSpinning: "Spinning...",
     fortuneWheelCooldown: (h, m) => `Returns in ${h}:${m}`,
     fortuneWheelPrizeTitle: "You won",
+    fortuneWheelAdSpinBtn: "📺 Extra Spin — Watch an Ad",
     fortuneWheelClose: "Close",
     wheelPrizes: {
         cash_small: "Cash",
@@ -1467,11 +1613,12 @@ Object.assign(translations.en, {
 Object.assign(translations.es, {
     fortuneWheelBtn: "Ruleta de Fortuna",
     fortuneWheelTitle: "Ruleta de la Fortuna Diaria",
-    fortuneWheelSubtitle: "Gira una vez al dia para ganar un premio!",
+    fortuneWheelSubtitle: "¡Gira una vez al día para ganar un premio!",
     fortuneWheelSpinBtn: "Girar!",
     fortuneWheelSpinning: "Girando...",
     fortuneWheelCooldown: (h, m) => `Vuelve en ${h}:${m}`,
     fortuneWheelPrizeTitle: "Ganaste",
+    fortuneWheelAdSpinBtn: "📺 Giro Extra — Ver Anuncio",
     fortuneWheelClose: "Cerrar",
     wheelPrizes: {
         cash_small: "Efectivo",
@@ -1479,18 +1626,18 @@ Object.assign(translations.es, {
         boost_2x: "Boost x2",
         gold_1: "Oro x1",
         gold_2: "Oro x2",
-        shares_1: "Accion x1",
+        shares_1: "Acción x1",
         shares_3: "Acciones x3"
     },
-    vipBannerTitle: "Cliente VIP adentro!",
+    vipBannerTitle: "¡Cliente VIP adentro!",
     vipBannerTimer: (s) => `${s} segundos`,
     vipServeBtn: "Atender (Premio en Efectivo)",
     vipPremiumBtn: "VIP Premium (Anuncio + Oro)",
     vipRewardCash: (amt) => `Recibiste +${amt} efectivo`,
-    vipRewardGold: "Recibiste una Accion de Oro!",
+    vipRewardGold: "¡Recibiste una Acción de Oro!",
     dailyTabBtn: "Diario",
-    dailyChallengesTitle: "Desafios Diarios",
-    dailyChallengesSubtitle: "3 desafios que se reinician a medianoche",
+    dailyChallengesTitle: "Desafíos Diarios",
+    dailyChallengesSubtitle: "3 desafíos que se reinician a medianoche",
     dailyClaimBtn: "Reclamar Premio",
     dailyClaimedLabel: "Reclamado",
     dailyResetLabel: (h, m) => `Se reinicia en ${h}:${m}`,
@@ -1513,6 +1660,7 @@ Object.assign(translations.ru, {
     fortuneWheelSpinning: "Вращается...",
     fortuneWheelCooldown: (h, m) => `Вернется через ${h}:${m}`,
     fortuneWheelPrizeTitle: "Вы выиграли",
+    fortuneWheelAdSpinBtn: "📺 Доп. кручение — Смотреть рекламу",
     fortuneWheelClose: "Закрыть",
     wheelPrizes: {
         cash_small: "Наличные",
@@ -1544,6 +1692,387 @@ Object.assign(translations.ru, {
     },
     dailyRewardGold: (n) => `+${n} Золото`,
     dailyRewardShares: (n) => `+${n} Акции`
+});
+
+// New events — 9 additional event types (he/en/es/ru)
+Object.assign(translations.he, {
+    events_extended: {
+        audit: {
+            title: "ביקורת פנימית: רו\"ח בסניף",
+            desc: "רואה החשבון הפנימי הגיע עם תיק עור ופנים של מי שיש לו שאלות. המחלקה מחכה להנחיה.",
+            optA: (cost) => `שחד חוקי — ייעוץ חיצוני (${cost})`,
+            optADesc: "מסיים את הביקורת ללא הערות. מוניטין הסניף יוצא נקי.",
+            optB: "שיתוף פעולה מלא (חינם)",
+            optBDesc: "הביקורת מסתיימת תקינה. -8% ממזומנים כעמלת ציות, אבל מקבלים 3 מניות זהב.",
+            optC: "🎬 ערר משפטי (פרסומת)",
+            optCDesc: "50% לסיים ללא עלות עם בונוס, 50% לקנס כפול. הגישה האמיצה."
+        },
+        maintenance: {
+            title: "תקלת ציוד קריטית",
+            desc: "מדפסת הניירות, שרת הנתונים ומכונת הקפה קרסו בו-זמנית. עמי מבין שזה הרגע.",
+            optA: (cost) => `תיקון חירום מהיר (${cost})`,
+            optADesc: "הטכנאי מגיע תוך דקות. הפעילות חוזרת לנורמה מיידית.",
+            optB: "המתן לצוות הפנימי (חינם)",
+            optBDesc: "תפוקת הכספרים יורדת ב-30% לחמש דקות עד לתיקון.",
+            optC: "🎬 קבלן חיצוני (פרסומת)",
+            optCDesc: "תיקון מהיר יותר מהאפשרות הרגילה — ובלי לשלם."
+        },
+        power_outage: {
+            title: "הפסקת חשמל בסניף",
+            desc: "האורות כבו. הלקוחות מסתכלים סביב. הבלדר עדיין רץ — מרגל מוותיק.",
+            optA: (cost) => `הפעל גנרטור חירום (${cost})`,
+            optADesc: "הסניף ממשיך לפעול בקיבולת מלאה ללא הפרעה.",
+            optB: "פרוטוקול חירום ידני (חינם)",
+            optBDesc: "הסניף פועל ב-50% תפוקה עד חזרת החשמל.",
+            optC: "🎬 מימון גנרטור (פרסומת)",
+            optCDesc: "גנרטור חדש ממומן במלואו. הפעילות מתחדשת מיד ללא עלות."
+        },
+        robbery_attempt: {
+            title: "ניסיון שוד — אזעקה פעילה",
+            desc: "מצלמות האבטחה זיהו פעילות חשודה בכניסה. אלון כבר בדרך. המצב מבוקר — בשלב זה.",
+            optA: (cost) => `כוננות אבטחה מוגברת (${cost})`,
+            optADesc: "האיום מנוטרל. הסניף מקבל מענק מוניטין ובונוס ביטחוני.",
+            optB: "קרא למשטרה (חינם)",
+            optBDesc: "האיום מנוטרל ללא אובדן. הלקוחות מרגישים בטוחים.",
+            optC: "🎬 שדרוג מערך אבטחה (פרסומת)",
+            optCDesc: "האיום מנוטרל ומקבלים בונוס כספי מהביטוח."
+        },
+        celebrity_visit: {
+            title: "סלבריטי רוצה לפתוח חשבון",
+            desc: "דמות מוכרת מהטלוויזיה נכנסה עם שני שומרי גוף ודרישה לשירות דיסקרטי. הצוות מסתכל עלייך.",
+            optA: (cost) => `טיפול VIP מלא (${cost})`,
+            optADesc: "הסלבריטי מרוצה. לקוחות VIP מגיעים ב-+15% לשעה.",
+            optB: "שירות רגיל, יחס אדיב (חינם)",
+            optBDesc: "הסלבריטי מרוצה בינוני. מקבלים תשלום חד-פעמי נאה.",
+            optC: "🎬 חבילת בכורה (פרסומת)",
+            optCDesc: "הסלבריטי מספר לעוקבים שלו. VIP +15% לשעה ובונוס מזומן."
+        },
+        lottery_winner: {
+            title: "זוכה הגרלה הפקיד מיליונים",
+            desc: "לקוח שרגיל להפקיד 500 שקל הגיע עם שקית ובה 4 מיליון. הכספר שלך לא הגיב על הפנים. מקצוען.",
+            optA: (cost) => `הצע חבילת השקעות (${cost})`,
+            optADesc: "הלקוח מושקע בבנק. כל 10 דקות מקבלים תשואה כפי 30 EPS לשעה.",
+            optB: "טיפול סטנדרטי (חינם)",
+            optBDesc: "הפקדה רגילה. מקבלים תשלום חד-פעמי שווה ל-60 פעמי EPS.",
+            optC: "🎬 טיפול VIP מהיר (פרסומת)",
+            optCDesc: "גם תשואה שוטפת וגם תשלום חד-פעמי. הכי טוב מכל העולמות."
+        },
+        competitor_news: {
+            title: "בנק המתחרה קרס",
+            desc: "השם לא ייאמר, אבל הסניף שמולנו סגר הבוקר. לקוחות מבולבלים עומדים ברחוב. ההזדמנות ברורה.",
+            optA: (cost) => `קמפיין שיווקי אגרסיבי (${cost})`,
+            optADesc: "ספאון לקוחות עולה פי 1.5 לשעה. כל הרחוב שלנו.",
+            optB: "קבלה שקטה ומקצועית (חינם)",
+            optBDesc: "ספאון עולה ב-+5%. דיסקרטי, אבל עובד.",
+            optC: "🎬 מודעת גיוס לקוחות (פרסומת)",
+            optCDesc: "ספאון לקוחות עולה פי 2 לשעה. המתחרה היה יכול ללמוד."
+        },
+        economic_boom: {
+            title: "תנופה כלכלית בשוק",
+            desc: "המדדים עולים, הסנטימנט חיובי, ולקוחות מגיעים עם כסף ויצר השקעה. המנכ\"ל — זה אתה — חייב לנצל.",
+            optA: (cost) => `השקע עכשיו, תגדל מהר (${cost})`,
+            optADesc: "EPS עולה ב-+20% לשעה תמימה. זמן הזהב.",
+            optB: "גידול זהיר (חינם)",
+            optBDesc: "EPS עולה ב-+10%. בטוח, יציב, ומשעמם בדיוק כמו שצריך.",
+            optC: "🎬 גיוס הון מהיר (פרסומת)",
+            optCDesc: "EPS עולה ב-+30% לשעה. הבנק צומח. הכלכלה בוכה משמחה."
+        },
+        atm_malfunction: {
+            title: "תקלת ATM בכל הרשת",
+            desc: "200 כספומטים הציגו את אותה שגיאה באותו רגע. מנהל הטכנולוגיה אומר 'ידוע לנו'. זה לא מרגיע.",
+            optA: (cost) => `תיקון חירום מרכזי (${cost})`,
+            optADesc: "הרשת חוזרת לפעולה. לקוחות מרוצים ומגיעים בגל.",
+            optB: "השבתה זמנית מבוקרת (חינם)",
+            optBDesc: "ספאון לקוחות יורד ב-20% לחמש דקות עד לפתרון.",
+            optC: "🎬 עדכון תוכנה ממומן (פרסומת)",
+            optCDesc: "הכספומטים חוזרים לפעולה מיד, ללא עלות, עם גל לקוחות מכיר תודה."
+        }
+    }
+});
+
+Object.assign(translations.en, {
+    events_extended: {
+        audit: {
+            title: "Internal Audit: CPA Visit",
+            desc: "The internal auditor arrived with a leather briefcase and the face of someone with questions. The department awaits.",
+            optA: (cost) => `Legal consultation fee (${cost})`,
+            optADesc: "Audit closes with no findings. Branch reputation remains spotless.",
+            optB: "Full cooperation (Free)",
+            optBDesc: "Audit ends cleanly. -8% cash as compliance fee, but you receive 3 Golden Shares.",
+            optC: "🎬 File an appeal (Ad)",
+            optCDesc: "50% chance to close with a bonus, 50% risk of a double penalty. Bold move."
+        },
+        maintenance: {
+            title: "Critical Equipment Failure",
+            desc: "The printer, data server, and coffee machine all failed simultaneously. Ami knew this moment would come.",
+            optA: (cost) => `Emergency repair service (${cost})`,
+            optADesc: "Technician arrives within minutes. Operations return to normal immediately.",
+            optB: "Wait for in-house team (Free)",
+            optBDesc: "Teller output drops 30% for five minutes until fixed.",
+            optC: "🎬 External contractor (Ad)",
+            optCDesc: "Faster repair than the basic option — and at zero cost."
+        },
+        power_outage: {
+            title: "Branch Power Outage",
+            desc: "Lights out. Clients look around. The courier is still running — veteran instincts.",
+            optA: (cost) => `Activate emergency generator (${cost})`,
+            optADesc: "Branch continues at full capacity without interruption.",
+            optB: "Manual emergency protocol (Free)",
+            optBDesc: "Branch runs at 50% output until power returns.",
+            optC: "🎬 Funded generator (Ad)",
+            optCDesc: "Brand-new generator fully financed. Operations resume instantly at no cost."
+        },
+        robbery_attempt: {
+            title: "Robbery Attempt — Alarm Active",
+            desc: "Security cameras detected suspicious activity at the entrance. Alan is already on his way. Situation is under control — for now.",
+            optA: (cost) => `Enhanced security standby (${cost})`,
+            optADesc: "Threat neutralized. Branch earns a reputation grant and a security bonus.",
+            optB: "Call the police (Free)",
+            optBDesc: "Threat neutralized with no loss. Clients feel safe.",
+            optC: "🎬 Security system upgrade (Ad)",
+            optCDesc: "Threat neutralized plus an insurance cash bonus."
+        },
+        celebrity_visit: {
+            title: "Celebrity Wants an Account",
+            desc: "A recognizable TV personality walked in with two bodyguards and a demand for discreet service. Staff looks to you.",
+            optA: (cost) => `Full VIP treatment (${cost})`,
+            optADesc: "Celebrity is impressed. VIP client spawn rate +15% for one hour.",
+            optB: "Standard service, warm attitude (Free)",
+            optBDesc: "Celebrity is moderately pleased. Receive a solid one-time cash payment.",
+            optC: "🎬 Premier package (Ad)",
+            optCDesc: "Celebrity mentions us to followers. VIP +15% for an hour plus a cash bonus."
+        },
+        lottery_winner: {
+            title: "Lottery Winner Deposits Millions",
+            desc: "A client who usually deposits 500 shekel walked in with a bag containing 4 million. Your teller held a straight face. Professional.",
+            optA: (cost) => `Offer an investment package (${cost})`,
+            optADesc: "Client stays invested in the bank. Every 10 minutes earns 30x EPS for one hour.",
+            optB: "Standard processing (Free)",
+            optBDesc: "Regular deposit. Receive a one-time payout equal to 60x EPS.",
+            optC: "🎬 Fast VIP treatment (Ad)",
+            optCDesc: "Both recurring yield and one-time payout. Best of both worlds."
+        },
+        competitor_news: {
+            title: "Rival Bank Has Collapsed",
+            desc: "The name will not be mentioned, but the branch across the street closed this morning. Confused clients stand outside. The opportunity is clear.",
+            optA: (cost) => `Aggressive marketing campaign (${cost})`,
+            optADesc: "Client spawn rate multiplied by 1.5 for one hour. The whole street is ours.",
+            optB: "Quiet professional reception (Free)",
+            optBDesc: "Spawn rate increases by +5%. Discreet, but effective.",
+            optC: "🎬 Customer recruitment ad (Ad)",
+            optCDesc: "Client spawn rate multiplied by 2 for one hour. The competitor should have taken notes."
+        },
+        economic_boom: {
+            title: "Economic Boom in the Market",
+            desc: "Indexes are up, sentiment is positive, clients are arriving with cash and ambition. The CEO — that is you — must capitalize.",
+            optA: (cost) => `Invest now, grow fast (${cost})`,
+            optADesc: "EPS rises +20% for a full hour. This is the golden window.",
+            optB: "Cautious growth (Free)",
+            optBDesc: "EPS rises +10%. Safe, stable, and precisely as boring as it should be.",
+            optC: "🎬 Fast capital raise (Ad)",
+            optCDesc: "EPS rises +30% for one hour. The bank grows. The economy weeps with joy."
+        },
+        atm_malfunction: {
+            title: "ATM Network-Wide Failure",
+            desc: "200 ATMs displayed the same error at the same moment. The tech manager says 'we know.' That is not reassuring.",
+            optA: (cost) => `Central emergency repair (${cost})`,
+            optADesc: "Network restored. Satisfied clients arrive in a wave.",
+            optB: "Controlled temporary shutdown (Free)",
+            optBDesc: "Client spawn drops 20% for five minutes until resolved.",
+            optC: "🎬 Sponsored software update (Ad)",
+            optCDesc: "ATMs back online immediately, at no cost, with a grateful wave of returning clients."
+        }
+    }
+});
+
+Object.assign(translations.es, {
+    events_extended: {
+        audit: {
+            title: "Auditoría Interna: Visita del Contador",
+            desc: "El auditor interno llegó con un maletín de cuero y cara de quien tiene preguntas. El departamento espera instrucciones.",
+            optA: (cost) => `Honorarios de consulta legal (${cost})`,
+            optADesc: "La auditoría cierra sin hallazgos. La reputación de la sucursal queda impecable.",
+            optB: "Cooperación plena (Gratis)",
+            optBDesc: "Auditoría concluida sin problemas. -8% de efectivo como tasa de cumplimiento, pero se reciben 3 Acciones de Oro.",
+            optC: "🎬 Presentar apelación (Anuncio)",
+            optCDesc: "50% de posibilidades de cerrar con bono, 50% de riesgo de multa doble. Decisión audaz."
+        },
+        maintenance: {
+            title: "Falla Crítica de Equipos",
+            desc: "La impresora, el servidor de datos y la cafetera fallaron al mismo tiempo. Ami sabía que este momento llegaría.",
+            optA: (cost) => `Servicio de reparación de emergencia (${cost})`,
+            optADesc: "El técnico llega en minutos. Las operaciones vuelven a la normalidad de inmediato.",
+            optB: "Esperar al equipo interno (Gratis)",
+            optBDesc: "El rendimiento de cajeros cae un 30% durante cinco minutos.",
+            optC: "🎬 Contratista externo (Anuncio)",
+            optCDesc: "Reparación más rápida que la opción básica, sin ningún costo."
+        },
+        power_outage: {
+            title: "Corte de Energía en Sucursal",
+            desc: "Las luces se apagaron. Los clientes miran alrededor. El mensajero sigue corriendo — instintos veteranos.",
+            optA: (cost) => `Activar generador de emergencia (${cost})`,
+            optADesc: "La sucursal continúa a plena capacidad sin interrupción.",
+            optB: "Protocolo manual de emergencia (Gratis)",
+            optBDesc: "La sucursal opera al 50% hasta que regrese la energía.",
+            optC: "🎬 Generador financiado (Anuncio)",
+            optCDesc: "Generador nuevo completamente financiado. Las operaciones se reanudan de inmediato sin costo."
+        },
+        robbery_attempt: {
+            title: "Intento de Robo — Alarma Activa",
+            desc: "Las cámaras detectaron actividad sospechosa en la entrada. Alan ya va en camino. La situación está controlada, por ahora.",
+            optA: (cost) => `Refuerzo de seguridad (${cost})`,
+            optADesc: "Amenaza neutralizada. La sucursal recibe una subvención de reputación y un bono de seguridad.",
+            optB: "Llamar a la policía (Gratis)",
+            optBDesc: "Amenaza neutralizada sin pérdidas. Los clientes se sienten seguros.",
+            optC: "🎬 Actualización del sistema de seguridad (Anuncio)",
+            optCDesc: "Amenaza neutralizada más un bono de efectivo del seguro."
+        },
+        celebrity_visit: {
+            title: "Un Famoso Quiere Abrir una Cuenta",
+            desc: "Una figura conocida de la televisión entró con dos guardaespaldas y la exigencia de un servicio discreto. El equipo te mira.",
+            optA: (cost) => `Tratamiento VIP completo (${cost})`,
+            optADesc: "El famoso queda impresionado. Tasa de aparición de VIPs +15% por una hora.",
+            optB: "Servicio estándar, trato amable (Gratis)",
+            optBDesc: "El famoso queda moderadamente satisfecho. Se recibe un buen pago único en efectivo.",
+            optC: "🎬 Paquete premier (Anuncio)",
+            optCDesc: "El famoso nos menciona a sus seguidores. VIP +15% por una hora y bono en efectivo."
+        },
+        lottery_winner: {
+            title: "Ganador de Lotería Deposita Millones",
+            desc: "Un cliente que solía depositar 500 shekels llegó con una bolsa que contenía 4 millones. Tu cajero mantuvo la compostura. Profesional.",
+            optA: (cost) => `Ofrecer paquete de inversión (${cost})`,
+            optADesc: "El cliente permanece invertido en el banco. Cada 10 minutos se reciben 30x EPS durante una hora.",
+            optB: "Procesamiento estándar (Gratis)",
+            optBDesc: "Depósito regular. Se recibe un pago único equivalente a 60x EPS.",
+            optC: "🎬 Tratamiento VIP rápido (Anuncio)",
+            optCDesc: "Rendimiento recurrente y pago único. Lo mejor de ambos mundos."
+        },
+        competitor_news: {
+            title: "El Banco Rival Ha Quebrado",
+            desc: "El nombre no será mencionado, pero la sucursal de enfrente cerró esta mañana. Clientes confundidos esperan en la calle. La oportunidad es clara.",
+            optA: (cost) => `Campaña de marketing agresiva (${cost})`,
+            optADesc: "Tasa de aparición de clientes multiplicada por 1.5 durante una hora. Toda la calle es nuestra.",
+            optB: "Recepción profesional discreta (Gratis)",
+            optBDesc: "La tasa de aparición aumenta un +5%. Discreto pero efectivo.",
+            optC: "🎬 Anuncio de captación de clientes (Anuncio)",
+            optCDesc: "Tasa de aparición de clientes multiplicada por 2 durante una hora. La competencia debería haber tomado nota."
+        },
+        economic_boom: {
+            title: "Auge Económico en el Mercado",
+            desc: "Los índices suben, el sentimiento es positivo, los clientes llegan con dinero y ambición. El CEO, es decir tú, debe capitalizar.",
+            optA: (cost) => `Invertir ahora, crecer rápido (${cost})`,
+            optADesc: "EPS sube +20% durante una hora completa. Esta es la ventana dorada.",
+            optB: "Crecimiento cauteloso (Gratis)",
+            optBDesc: "EPS sube +10%. Seguro, estable, y exactamente tan aburrido como debe ser.",
+            optC: "🎬 Captación rápida de capital (Anuncio)",
+            optCDesc: "EPS sube +30% durante una hora. El banco crece. La economía llora de alegría."
+        },
+        atm_malfunction: {
+            title: "Falla Masiva en la Red de ATMs",
+            desc: "200 cajeros automáticos mostraron el mismo error al mismo tiempo. El gerente de tecnología dice 'lo sabemos'. Eso no tranquiliza.",
+            optA: (cost) => `Reparación central de emergencia (${cost})`,
+            optADesc: "Red restaurada. Los clientes satisfechos llegan en oleada.",
+            optB: "Apagado temporal controlado (Gratis)",
+            optBDesc: "La aparición de clientes cae un 20% durante cinco minutos.",
+            optC: "🎬 Actualización de software patrocinada (Anuncio)",
+            optCDesc: "ATMs en línea de inmediato, sin costo, con una oleada de clientes agradecidos."
+        }
+    }
+});
+
+Object.assign(translations.ru, {
+    events_extended: {
+        audit: {
+            title: "Внутренний аудит: визит бухгалтера",
+            desc: "Внутренний аудитор прибыл с кожаным портфелем и видом человека, у которого есть вопросы. Отдел ждёт решения.",
+            optA: (cost) => `Юридическая консультация (${cost})`,
+            optADesc: "Аудит закрыт без замечаний. Репутация филиала остаётся безупречной.",
+            optB: "Полное сотрудничество (Бесплатно)",
+            optBDesc: "Аудит завершён корректно. -8% наличных как сбор за соответствие, но получаем 3 Золотых акции.",
+            optC: "🎬 Подать апелляцию (Реклама)",
+            optCDesc: "50% шанс закрыть с бонусом, 50% риск двойного штрафа. Смелый выбор."
+        },
+        maintenance: {
+            title: "Критический сбой оборудования",
+            desc: "Принтер, сервер данных и кофемашина вышли из строя одновременно. Ами знал: этот момент наступит.",
+            optA: (cost) => `Аварийный ремонт (${cost})`,
+            optADesc: "Техник приедет в течение минут. Работа восстанавливается немедленно.",
+            optB: "Ждать внутреннюю команду (Бесплатно)",
+            optBDesc: "Производительность касс падает на 30% на пять минут до ремонта.",
+            optC: "🎬 Внешний подрядчик (Реклама)",
+            optCDesc: "Ремонт быстрее стандартного варианта — и бесплатно."
+        },
+        power_outage: {
+            title: "Отключение электричества в филиале",
+            desc: "Свет погас. Клиенты оглядываются. Инкассатор всё ещё бежит — инстинкты ветерана.",
+            optA: (cost) => `Запустить аварийный генератор (${cost})`,
+            optADesc: "Филиал продолжает работу на полной мощности без перебоев.",
+            optB: "Ручной аварийный протокол (Бесплатно)",
+            optBDesc: "Филиал работает на 50% мощности до восстановления электроснабжения.",
+            optC: "🎬 Финансируемый генератор (Реклама)",
+            optCDesc: "Новый генератор полностью профинансирован. Работа возобновляется мгновенно и бесплатно."
+        },
+        robbery_attempt: {
+            title: "Попытка ограбления — тревога",
+            desc: "Камеры зафиксировали подозрительную активность у входа. Алон уже в пути. Ситуация под контролем — пока.",
+            optA: (cost) => `Усиленная охрана (${cost})`,
+            optADesc: "Угроза нейтрализована. Филиал получает бонус репутации и страховую выплату.",
+            optB: "Вызвать полицию (Бесплатно)",
+            optBDesc: "Угроза устранена без потерь. Клиенты чувствуют себя в безопасности.",
+            optC: "🎬 Обновление системы охраны (Реклама)",
+            optCDesc: "Угроза устранена плюс страховой денежный бонус."
+        },
+        celebrity_visit: {
+            title: "Знаменитость хочет открыть счёт",
+            desc: "Известная ТВ-персона вошла с двумя охранниками и требованием деликатного обслуживания. Персонал смотрит на вас.",
+            optA: (cost) => `Полный VIP-сервис (${cost})`,
+            optADesc: "Знаменитость впечатлена. Частота появления VIP-клиентов +15% на час.",
+            optB: "Стандартное обслуживание (Бесплатно)",
+            optBDesc: "Знаменитость умеренно довольна. Получаем хороший разовый платёж.",
+            optC: "🎬 Премьер-пакет (Реклама)",
+            optCDesc: "Знаменитость упоминает нас подписчикам. VIP +15% на час и денежный бонус."
+        },
+        lottery_winner: {
+            title: "Победитель лотереи вносит миллионы",
+            desc: "Клиент, обычно вносящий 500 шекелей, пришёл с сумкой, содержащей 4 миллиона. Ваш кассир сохранил невозмутимость. Профессионал.",
+            optA: (cost) => `Предложить инвестиционный пакет (${cost})`,
+            optADesc: "Клиент остаётся инвестированным в банк. Каждые 10 минут приносят 30x EPS в течение часа.",
+            optB: "Стандартная обработка (Бесплатно)",
+            optBDesc: "Обычный депозит. Получаем единовременную выплату в размере 60x EPS.",
+            optC: "🎬 Быстрый VIP-сервис (Реклама)",
+            optCDesc: "Регулярный доход и единовременный платёж. Лучшее из обоих миров."
+        },
+        competitor_news: {
+            title: "Банк-конкурент обанкротился",
+            desc: "Название не называем, но отделение напротив закрылось сегодня утром. Растерянные клиенты стоят на улице. Возможность очевидна.",
+            optA: (cost) => `Агрессивная маркетинговая кампания (${cost})`,
+            optADesc: "Частота появления клиентов умножается в 1.5 раза на час. Вся улица — наша.",
+            optB: "Тихий профессиональный приём (Бесплатно)",
+            optBDesc: "Частота появления растёт на +5%. Незаметно, но работает.",
+            optC: "🎬 Реклама привлечения клиентов (Реклама)",
+            optCDesc: "Частота появления клиентов умножается в 2 раза на час. Конкурент должен был учиться."
+        },
+        economic_boom: {
+            title: "Экономический бум на рынке",
+            desc: "Индексы растут, настроения позитивные, клиенты приходят с деньгами и амбициями. Генеральный директор — это вы — должен воспользоваться.",
+            optA: (cost) => `Инвестировать сейчас, расти быстро (${cost})`,
+            optADesc: "EPS растёт на +20% в течение полного часа. Это золотое окно.",
+            optB: "Осторожный рост (Бесплатно)",
+            optBDesc: "EPS растёт на +10%. Безопасно, стабильно, и именно настолько скучно, насколько нужно.",
+            optC: "🎬 Быстрый сбор капитала (Реклама)",
+            optCDesc: "EPS растёт на +30% в течение часа. Банк растёт. Экономика плачет от радости."
+        },
+        atm_malfunction: {
+            title: "Массовый сбой сети банкоматов",
+            desc: "200 банкоматов показали одну и ту же ошибку в один момент. Менеджер IT говорит «мы знаем». Это не успокаивает.",
+            optA: (cost) => `Центральный аварийный ремонт (${cost})`,
+            optADesc: "Сеть восстановлена. Довольные клиенты приходят волной.",
+            optB: "Контролируемое временное отключение (Бесплатно)",
+            optBDesc: "Появление клиентов падает на 20% на пять минут до решения проблемы.",
+            optC: "🎬 Спонсируемое обновление ПО (Реклама)",
+            optCDesc: "Банкоматы снова в сети мгновенно, бесплатно, с волной благодарных клиентов."
+        }
+    }
 });
 
 Object.assign(translations.ru, {
@@ -1750,4 +2279,85 @@ Object.assign(translations.ru, {
             desc: "Быстрое обслуж. + Управление портф. ➔ Увеличивает общий доход банка на 10%."
         }
     }
+});
+
+// VIP Personalities — 15 named VIP visitors with dialog lines (he/en/es/ru)
+Object.assign(translations.he, {
+    vipPersonalities: [
+        { name: "ריבקה גולדשטיין", dialog: "הגעתי לבנק הכי טוב בעיר. אל תאכזבו אותי." },
+        { name: "עומר עבדאללה",    dialog: "זמן זה כסף. בבקשה היו מהירים." },
+        { name: "Chen Wei",        dialog: "עסקים קודם. סיפורים אחר כך." },
+        { name: "איזבלה מרטינז",   dialog: "אמרו לי שאתם הכי טובים. אני אבדוק." },
+        { name: "מרקוס ג'ונסון",   dialog: "אני עובד רק עם הטובים ביותר. תוכיחו." },
+        { name: "יוסי כהן",        dialog: "בן אדם, אני לקוח ותיק. תתייחסו בהתאם." },
+        { name: "Natasha Volkova", dialog: "ברוסיה היה לי בנקאי אישי. מה אתם מציעים?" },
+        { name: "אהרון לוי",       dialog: "חיכיתי הרבה. הכסף לא חיכה." },
+        { name: "Sofia Andreescu", dialog: "אני מצפה לדיסקרטיות ומהירות. בסדר הזה." },
+        { name: "דוד מזרחי",       dialog: "יש לי פגישה בעוד עשר דקות. נתחיל?" },
+        { name: "James Whitfield III", dialog: "המשפחה שלי בנקאית כאן דורות." },
+        { name: "חנה שפירו",       dialog: "שמעתי שיש כאן שירות מצוין. בואו נראה." },
+        { name: "Carlos Mendez",   dialog: "הזמן שלי שווה זהב. מתחילים?" },
+        { name: "Hiroshi Tanaka",  dialog: "אני סומך על מספרים, לא על מילים. הראו לי תוצאות." },
+        { name: "ולדימיר קוזנצוב", dialog: "המליצו לי על הבנק שלכם. אל תאכזבו." }
+    ]
+});
+
+Object.assign(translations.en, {
+    vipPersonalities: [
+        { name: "Rivka Goldstein",     dialog: "I came to the best bank in town. Don't disappoint me." },
+        { name: "Omar Abdullah",       dialog: "Time is money. Please be quick." },
+        { name: "Chen Wei",            dialog: "Business first. Pleasure later." },
+        { name: "Isabella Martinez",   dialog: "They told me you're the best. I'll be the judge of that." },
+        { name: "Marcus Johnson",      dialog: "I only deal with the best. You better deliver." },
+        { name: "Yossi Cohen",         dialog: "Look, I'm a long-time client. Treat me accordingly." },
+        { name: "Natasha Volkova",     dialog: "In Russia I had a personal banker. What can you offer?" },
+        { name: "Aaron Levy",          dialog: "I waited too long. The money didn't." },
+        { name: "Sofia Andreescu",     dialog: "I expect discretion and speed. In that order." },
+        { name: "David Mizrahi",       dialog: "I have a meeting in ten minutes. Shall we begin?" },
+        { name: "James Whitfield III", dialog: "My family has banked here for generations." },
+        { name: "Hannah Shapiro",      dialog: "I've heard the service here is excellent. Let's see." },
+        { name: "Carlos Mendez",       dialog: "My time is worth gold. Shall we start?" },
+        { name: "Hiroshi Tanaka",      dialog: "I trust numbers, not words. Show me results." },
+        { name: "Vladimir Kuznetsov",  dialog: "I was recommended your bank. Don't let me down." }
+    ]
+});
+
+Object.assign(translations.es, {
+    vipPersonalities: [
+        { name: "Rivka Goldstein",     dialog: "Vine al mejor banco de la ciudad. No me decepcionen." },
+        { name: "Omar Abdullah",       dialog: "El tiempo es dinero. Sean rápidos, por favor." },
+        { name: "Chen Wei",            dialog: "Primero los negocios. Los placeres, después." },
+        { name: "Isabella Martinez",   dialog: "Me han dicho que son los mejores. Espero que sea verdad." },
+        { name: "Marcus Johnson",      dialog: "Solo trabajo con los mejores. Más vale que lo demuestren." },
+        { name: "Yossi Cohen",         dialog: "Soy cliente desde hace años. Tratadme como tal." },
+        { name: "Natasha Volkova",     dialog: "En Rusia tenía un banquero personal. ¿Qué me ofrecen?" },
+        { name: "Aaron Levy",          dialog: "Esperé mucho tiempo. El dinero no espera." },
+        { name: "Sofia Andreescu",     dialog: "Espero discreción y rapidez. En ese orden." },
+        { name: "David Mizrahi",       dialog: "Tengo una reunión en diez minutos. ¿Empezamos?" },
+        { name: "James Whitfield III", dialog: "Mi familia ha tenido cuenta aqui por generaciones." },
+        { name: "Hannah Shapiro",      dialog: "Me han dicho que el servicio aqui es excelente. Veamos." },
+        { name: "Carlos Mendez",       dialog: "Mi tiempo vale oro. ¿Empezamos?" },
+        { name: "Hiroshi Tanaka",      dialog: "Confío en números, no en palabras. Muéstrenme resultados." },
+        { name: "Vladimir Kuznetsov",  dialog: "Me recomendaron su banco. No me decepcionen." }
+    ]
+});
+
+Object.assign(translations.ru, {
+    vipPersonalities: [
+        { name: "Ривка Голдштейн",     dialog: "Я пришла в лучший банк города. Не разочаруйте меня." },
+        { name: "Омар Абдулла",        dialog: "Время — деньги. Пожалуйста, побыстрее." },
+        { name: "Chen Wei",            dialog: "Сначала дело. Потом всё остальное." },
+        { name: "Изабелла Мартинес",   dialog: "Мне сказали, что вы лучшие. Посмотрим." },
+        { name: "Маркус Джонсон",      dialog: "Я работаю только с лучшими. Докажите, что вы — они." },
+        { name: "Йосси Коэн",          dialog: "Я давний клиент. Обращайтесь соответственно." },
+        { name: "Наташа Волкова",      dialog: "В России у меня был личный банкир. Что вы можете предложить?" },
+        { name: "Аарон Леви",          dialog: "Я долго ждал. Деньги не ждут." },
+        { name: "София Андреску",      dialog: "Мне нужна дискретность и скорость. В таком порядке." },
+        { name: "Давид Мизрахи",       dialog: "У меня встреча через десять минут. Начнём?" },
+        { name: "Джеймс Уитфилд III",  dialog: "Моя семья обслуживается здесь уже несколько поколений." },
+        { name: "Ханна Шапиро",        dialog: "Мне говорили, что здесь отличный сервис. Проверим." },
+        { name: "Карлос Мендес",       dialog: "Моё время — золото. Начинаем?" },
+        { name: "Хироши Танака",       dialog: "Я доверяю цифрам, а не словам. Покажите результаты." },
+        { name: "Владимир Кузнецов",   dialog: "Мне рекомендовали ваш банк. Не разочаруйте." }
+    ]
 });

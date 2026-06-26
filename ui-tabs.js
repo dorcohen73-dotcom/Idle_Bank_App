@@ -1,5 +1,15 @@
-(function(window) {
+﻿(function(window) {
 // Tab Rendering & Updates Module for Idle Bank Empire
+
+var _buyBtnCache = null;
+var _lastManagersHash = null;
+var _lastBranchesHash = null;
+
+function invalidateTabHashes() {
+    _lastManagersHash = null;
+    _lastBranchesHash = null;
+    _buyBtnCache = null;
+}
 
 // Helper to create a visual separator HR
 function createSeparator(container) {
@@ -21,13 +31,17 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const nextLevel = entity.level + levelsToBuy;
         const cost = details.cost;
         
-        let capacity, speed, nextCapacity, nextSpeed, avatarStyle, title, desc, speedLabel, capLabel;
+        let capacity, speed, nextCapacity, nextSpeed, avatarImg, title, desc, speedLabel, capLabel;
+        let avatarBgUrl = '', avatarBgPos = 'center 20%', avatarBgSize = 'cover';
         if (type === 'teller') {
             capacity = game.getTellerCapacity(entity.level);
             speed = game.getTellerSpeed(entity.level).toFixed(1);
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
-            avatarStyle = `background-image: url('תמונות/teller-${(id % 7) + 1}.png');`;
+            avatarImg = '';
+            avatarBgUrl = `תמונות/manager-${(id % 6) + 1}.png`;
+            avatarBgPos = 'center 20%';
+            avatarBgSize = 'cover';
             title = tObj.tellerTitle(id + 1, entity.level);
             desc = tObj.tellerDesc;
             speedLabel = tObj.tellerSpeed;
@@ -37,7 +51,10 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             speed = game.getGuardSpeed(entity.level).toFixed(1);
             nextCapacity = game.getGuardCapacity(nextLevel);
             nextSpeed = game.getGuardSpeed(nextLevel).toFixed(1);
-            avatarStyle = `background-image: url('תמונות/guard.png'); background-size: 80%; background-repeat: no-repeat; background-position: center; background-color: rgba(255, 255, 255, 0.03);`;
+            avatarImg = '';
+            avatarBgUrl = 'תמונות/guard.png';
+            avatarBgPos = 'center 8%';
+            avatarBgSize = '220%';
             title = tObj.guardTitle(id + 1, entity.level);
             desc = tObj.guardDesc;
             speedLabel = tObj.guardSpeed;
@@ -45,16 +62,17 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         }
 
         const canBuy = details.canAfford;
-        
+
         card.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="${avatarStyle}"></div>
+                <div class="card-avatar"></div>
                 <div class="card-details">
                     <div class="card-title">${title}${levelsToBuy > 1 ? ` (+${levelsToBuy})` : ''}</div>
                     <div class="card-desc">${desc}</div>
                     <div class="card-stats">
-                        ${speedLabel}: <span>${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}</span> | 
-                        ${capLabel}: <span>${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}</span>
+                        <div class="stat-line">${speedLabel}: <span>${speed}${lang === 'he' ? " ש'" : "s"} ➔ ${nextSpeed}${lang === 'he' ? " ש'" : "s"}</span></div>
+                        <div class="stat-sep"> | </div>
+                        <div class="stat-line">${capLabel}: <span>${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}</span></div>
                     </div>
                 </div>
             </div>
@@ -62,29 +80,37 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 ${translations[lang].upgradeLabel}${levelsToBuy > 1 ? ' +' + levelsToBuy : ''}<br>${formatMoney(cost)}
             </button>
         `;
+        if (avatarBgUrl) {
+            const avEl = card.querySelector('.card-avatar');
+            if (avEl) { avEl.style.backgroundImage = `url('${avatarBgUrl}')`; avEl.style.backgroundPosition = avatarBgPos; avEl.style.backgroundSize = avatarBgSize; }
+        }
     } else {
-        let cost, avatarStyle, title, desc, unlockAction, unlockText;
+        let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 20%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
         if (type === 'teller') {
             cost = game.tellerUnlockCosts[id];
-            avatarStyle = `background-image: url('תמונות/teller-${(id % 7) + 1}.png');`;
+            avatarBgUrl2 = `תמונות/manager-${(id % 6) + 1}.png`;
+            avatarBgPos2 = 'center 20%';
+            avatarBgSize2 = 'cover';
             title = tObj.tellerLocked(id + 1);
             desc = tObj.tellerLockedDesc;
             unlockAction = 'unlock-teller';
             unlockText = translations[lang].unlockLabel;
         } else {
             cost = game.guardUnlockCosts[id];
-            avatarStyle = `background-image: url('תמונות/guard.png'); background-size: 80%; background-repeat: no-repeat; background-position: center; background-color: rgba(0,0,0,0.2);`;
+            avatarBgUrl2 = 'תמונות/guard.png';
+            avatarBgPos2 = 'center 8%';
+            avatarBgSize2 = '220%';
             title = tObj.guardLocked(id + 1);
             desc = tObj.guardLockedDesc;
             unlockAction = 'unlock-guard';
             unlockText = tObj.guardUnlockBtn;
         }
-        
+
         const canBuy = game.state.cash >= cost;
 
         card.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar locked" style="${avatarStyle}">
+                <div class="card-avatar locked">
                     <div class="lock-overlay">🔒</div>
                 </div>
                 <div class="card-details">
@@ -96,6 +122,10 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 ${unlockText}<br>${formatMoney(cost)}
             </button>
         `;
+        if (avatarBgUrl2) {
+            const avEl2 = card.querySelector('.card-avatar');
+            if (avEl2) { avEl2.style.backgroundImage = `url('${avatarBgUrl2}')`; avEl2.style.backgroundPosition = avatarBgPos2; avEl2.style.backgroundSize = avatarBgSize2; }
+        }
     }
     return card;
 }
@@ -104,6 +134,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 function renderUpgradesTab() {
     const container = document.getElementById('tab-upgrades');
     if (!container) return;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -140,7 +171,7 @@ function renderUpgradesTab() {
     vaultCard.className = 'upgrade-card';
     vaultCard.innerHTML = `
         <div class="card-left-section">
-            <div class="card-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
+            <div class="card-avatar"><img src="תמונות/vault-door.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
             <div class="card-details">
                 <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` (+${vLevelsToBuy})` : ''}</div>
                 <div class="card-desc">${tObj.vaultDesc}</div>
@@ -170,10 +201,10 @@ function renderUpgradesTab() {
     const queueCard = document.createElement('div');
     queueCard.className = 'upgrade-card';
 
-    if (queueLvl >= 4) {
+    if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueMaxTitle}</div>
                     <div class="card-desc">${tObj.queueMaxDesc(qCap)}</div>
@@ -186,7 +217,7 @@ function renderUpgradesTab() {
     } else {
         queueCard.innerHTML = `
             <div class="card-left-section">
-                <div class="card-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                <div class="card-avatar"><img src="תמונות/client-1.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
                 <div class="card-details">
                     <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` (+${qLevelsToBuy})` : ''}</div>
                     <div class="card-desc">${tObj.queueDesc}</div>
@@ -290,6 +321,14 @@ const statLabels = {
 function renderManagersTab() {
     const container = document.getElementById('tab-managers');
     if (!container) return;
+    const hash = JSON.stringify({
+        managers: game.state.managers,
+        managerUpgrades: game.state.managerUpgrades,
+        cash: Math.floor(game.state.cash / 1000)
+    });
+    if (hash === _lastManagersHash) return;
+    _lastManagersHash = hash;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -321,7 +360,7 @@ function renderManagersTab() {
         const level = mData.level;
 
         const card = document.createElement('div');
-        card.className = `upgrade-card manager-card ${config.theme} ${isUnlocked ? (isHired ? 'active' : '') : 'locked'}`;
+        card.className = `upgrade-card manager-card feature-card ${config.theme} ${isUnlocked ? (isHired ? 'active' : '') : 'locked'}`;
 
         let bodyHtml = '';
         let footerHtml = '';
@@ -348,7 +387,7 @@ function renderManagersTab() {
                             <span class="star gray-star">★</span>
                             <span class="star gray-star">★</span>
                         </div>
-                        <div class="mgr-lvl-badge">Lv 0</div>
+                        <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item" style="color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">
                                 🔒 ${lang === 'he' ? 'דורש פתיחת מחלקת:' : 'Requires unlocking:'} <br>
@@ -387,7 +426,7 @@ function renderManagersTab() {
                 stat2Lbl = statLabels[lang].bank_yield;
             } else if (type === 'operations') {
                 stat1Lbl = statLabels[lang].courier_speed;
-                stat2Lbl = statLabels[lang].teller_speed;
+                stat2Lbl = statLabels[lang].counter_cap;
             } else if (type === 'service') {
                 stat1Lbl = statLabels[lang].counter_cap;
                 stat2Lbl = statLabels[lang].base_income;
@@ -410,7 +449,7 @@ function renderManagersTab() {
                         <div class="mgr-stars-box">
                             ${starsHtml}
                         </div>
-                        <div class="mgr-lvl-badge">Lv ${level}</div>
+                        <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item">
                                 <span class="mgr-stat-val">${mData.stat1Val}</span> ${stat1Lbl}
@@ -474,6 +513,11 @@ function renderManagersTab() {
             const beforeHired = game.state.managers[type];
 
             game.hireManager(type);
+
+            // Discovery tip on first manager hire
+            if (!beforeHired && game.state.managers[type] && typeof window.showDiscoveryTip === 'function') {
+                window.showDiscoveryTip('manager');
+            }
 
             handlePurchaseFeedback(btn, e, beforeCash, beforeHired, 'hire-manager', type);
             renderManagersTab();
@@ -582,7 +626,7 @@ function renderDepartmentsTab() {
         const canBuy = game.state.cash >= d.cost;
         
         const card = document.createElement('div');
-        card.className = `upgrade-card department-card ${isUnlocked ? 'active' : 'locked'}`;
+        card.className = `upgrade-card department-card feature-card ${isUnlocked ? 'active' : 'locked'}`;
 
         const reward = game.getDepartmentReward(d.id);
         const iconSvg = getDepartmentIconSvg(d.id, isUnlocked);
@@ -668,6 +712,11 @@ function renderDepartmentsTab() {
 
             game.unlockDepartment(idx);
 
+            // Discovery tip on first department unlock
+            if (!beforeUnlocked && typeof window.showDiscoveryTip === 'function') {
+                window.showDiscoveryTip('dept');
+            }
+
             handlePurchaseFeedback(btn, e, beforeCash, beforeUnlocked, 'unlock-dept', idx);
             renderDepartmentsTab();
         });
@@ -678,6 +727,14 @@ function renderDepartmentsTab() {
 function renderBranchesTab() {
     const container = document.getElementById('tab-branches');
     if (!container) return;
+    const hash = JSON.stringify({
+        currentBranch: game.state.currentBranch,
+        shares: game.state.shares,
+        cash: Math.floor(game.state.cash / 1000)
+    });
+    if (hash === _lastBranchesHash) return;
+    _lastBranchesHash = hash;
+    _buyBtnCache = null;
     container.innerHTML = '';
 
     const lang = game.state.language || 'he';
@@ -728,7 +785,7 @@ function renderBranchesTab() {
         
         let actionBtnHtml = '';
         if (isCurrent) {
-            actionBtnHtml = `<span class="branch-status-label">${translations[lang].branches.active.replace(' 🏛', '')}</span>`;
+            actionBtnHtml = '';
         } else if (isSold) {
             actionBtnHtml = `
                 <button class="branch-action-btn disabled" disabled>
@@ -834,8 +891,8 @@ function renderBranchesTab() {
         
         if (key === 'startingCash') {
             maxLvl = 4;
-            const startingCashOptions = [150, 1000, 5000, 25000, 100000];
-            const nextVal = startingCashOptions[currentLvl + 1] || 100000;
+            const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
+            const nextVal = startingCashOptions[currentLvl + 1] || startingCashOptions[startingCashOptions.length - 1];
             desc = upgradeData.desc(currentLvl, nextVal);
         } else if (key === 'guardSpeed' || key === 'premiumYield' || key === 'offlineEarnings' || key === 'tellerCapacityBoost' || key === 'vaultCapacityBoost' || key === 'eventBonus') {
             maxLvl = 5;
@@ -852,34 +909,33 @@ function renderBranchesTab() {
         goldCardsHtml += `
             <div class="gold-upgrade-card">
                 ${isMax ? `<div class="gold-max-badge">MAX</div>` : ''}
-                <div class="gold-up-icon-box">
-                    <img class="gold-up-icon-img" src="${iconSrc}" alt="${upgradeData.title}">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="${iconSrc}" alt="${upgradeData.title}">
                 </div>
-                <div class="gold-upgrade-details">
+                <div class="gold-card-middle">
                     <div class="gold-upgrade-title">${upgradeData.title}</div>
                     <div class="gold-upgrade-desc">${desc}</div>
-                    <div class="gold-upgrade-level">
-                        ${translations[lang].levelLabel || 'רמה'}: 
-                        <span class="gold-level-val">${currentLvl}/${maxLvl}</span>
-                        ${isMax ? `<span class="gold-checkmark">✔</span>` : ''}
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill ${isMax ? 'max' : ''}">
+                            ${currentLvl}/${maxLvl}
+                            ${isMax ? `<span class="gold-checkmark">✔</span>` : ''}
+                        </span>
+                        ${isMax ? `
+                            <span style="background: rgba(223,171,41,0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
+                        ` : `
+                            <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>
+                                ${cost} 🪙
+                            </button>
+                        `}
                     </div>
-                </div>
-                <div class="gold-upgrade-action">
-                    ${isMax ? `
-                        <span class="manager-status hired" style="background: rgba(223, 171, 41, 0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
-                    ` : `
-                        <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>
-                            ${cost} 🪙
-                        </button>
-                    `}
                 </div>
             </div>
         `;
     });
     
     const startingCashLvl = (game.state.goldUpgrades && game.state.goldUpgrades.startingCash) ? game.state.goldUpgrades.startingCash : 0;
-    const startingCashOptions = [150, 1000, 5000, 25000, 100000];
-    const startingCashVal = startingCashOptions[startingCashLvl] || 150;
+    const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
+    const startingCashVal = startingCashOptions[startingCashLvl] || startingCashOptions[0];
     
     const premiumYieldLvl = (game.state.goldUpgrades && game.state.goldUpgrades.premiumYield) ? game.state.goldUpgrades.premiumYield : 0;
     const branchProfitsPct = premiumYieldLvl * 10;
@@ -995,7 +1051,7 @@ function renderMissionsTab() {
         let progressDesc = '';
         const descFn = tObj[titleKey + "Desc"] || tObj.defaultDesc;
         if (typeof descFn === 'function') {
-            if (m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash') {
+            if (m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash' || m.type === 'boost_run') {
                 progressDesc = descFn(formatMoney(m.target));
             } else if (m.type === 'upgrade_teller' || m.type === 'upgrade_guard') {
                 progressDesc = descFn(m.target, (m.targetId !== undefined ? m.targetId + 1 : 1));
@@ -1017,7 +1073,14 @@ function renderMissionsTab() {
             'hire_managers': './תמונות/manager-1.png',
             'earn_eps': './תמונות/gold-vip.png',
             'earn_cash': './תמונות/gold-bars.png',
-            'serve_rich_vip': './תמונות/client-6.png'
+            'serve_rich_vip': './תמונות/client-6.png',
+            'vip_marathon': './תמונות/gold-vip.png',
+            'department_unlock': './תמונות/gold-truck.png',
+            'manager_hire': './תמונות/manager-1.png',
+            'teller_max': './תמונות/teller-7.png',
+            'boost_run': './תמונות/gold-bars.png',
+            'guard_trips': './תמונות/guard.png',
+            'all_managers': './תמונות/manager-1.png'
         };
         const imgSrc = imgMap[m.type] || './תמונות/icon.png';
 
@@ -1032,18 +1095,27 @@ function renderMissionsTab() {
             btnHtml = `
                 <div class="mission-progress-box">
                     <span class="box-progress-fraction">
-                        ${m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash' ? formatMoney(progressVal) : progressVal}
+                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
                         /
-                        ${m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash' ? formatMoney(targetVal) : targetVal}
+                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
                     </span>
                     <span class="box-progress-percent">${Math.round(percent)}%</span>
                 </div>
             `;
         }
 
+        // Resolve reward display (may be cash number or {type,amount} object)
+        let rewardBadgeHtml = '';
+        if (m.reward && typeof m.reward === 'object' && m.reward.type) {
+            const shareLbl = lang === 'he' ? 'מניות זהב' : 'Gold Shares';
+            rewardBadgeHtml = `<span>${lang === 'he' ? 'פרס:' : 'Reward:'} +${m.reward.amount} ${shareLbl} 🪙</span>`;
+        } else {
+            rewardBadgeHtml = `<span>${lang === 'he' ? 'רווח:' : 'Reward:'} +${formatMoney(m.reward)} 💰</span>`;
+        }
+
         card.innerHTML = `
             <div class="mission-reward-badge">
-                <span>${lang === 'he' ? 'רווח:' : 'Reward:'} +${formatMoney(m.reward)} 💰</span>
+                ${rewardBadgeHtml}
             </div>
             <div class="mission-action-zone">
                 ${btnHtml}
@@ -1055,9 +1127,9 @@ function renderMissionsTab() {
                     <div class="mission-progress-outer">
                         <div class="mission-progress-bar" style="width: ${percent}%"></div>
                         <div class="progress-text-overlay">
-                            ${m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash' ? formatMoney(progressVal) : progressVal}
+                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
                             /
-                            ${m.type === 'earn_eps' || m.type === 'accumulate_cash' || m.type === 'earn_cash' ? formatMoney(targetVal) : targetVal}
+                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
                         </div>
                     </div>
                     <div class="mission-progress-pct">${Math.round(percent)}%</div>
@@ -1085,13 +1157,25 @@ function renderMissionsTab() {
             initSound();
             const missionId = btn.getAttribute('data-mission-id');
             const collected = game.claimMissionReward(missionId);
-            
-            if (collected > 0) {
+
+            if (collected && collected.type !== 'none' && collected.amount > 0) {
                 const rectBtn = btn.getBoundingClientRect();
-                const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
-                animateCoins(rectBtn, rectCashBox, 10, 'cash');
-                spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
-                
+                if (collected.type === 'cash') {
+                    const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
+                    animateCoins(rectBtn, rectCashBox, 10, 'cash');
+                    spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
+                } else {
+                    // shares / gold reward
+                    const rectSharesBox = document.getElementById('stat-shares');
+                    if (rectSharesBox) {
+                        const rectShares = rectSharesBox.getBoundingClientRect();
+                        animateCoins(rectBtn, rectShares, collected.amount, 'gold');
+                    }
+                    const lang = (game.state && game.state.language) || 'he';
+                    const shareLbl = lang === 'he' ? 'מניות זהב' : 'Gold Shares';
+                    spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold');
+                }
+
                 renderMissionsTab();
             }
         });
@@ -1100,6 +1184,7 @@ function renderMissionsTab() {
 
 // Refresh all active tabs
 function refreshAllTabs() {
+    invalidateTabHashes();
     const activeTabEl = document.querySelector('.tab-btn.active');
     const activeTab = activeTabEl ? activeTabEl.getAttribute('data-tab') : 'upgrades';
     if (activeTab === 'upgrades') renderUpgradesTab();
@@ -1119,7 +1204,8 @@ function updateButtonAffordability() {
     if (activeTab === 'upgrades') {
         const container = document.getElementById('tab-upgrades');
         if (!container) return;
-        const buttons = container.querySelectorAll('.buy-btn');
+        if (!_buyBtnCache) _buyBtnCache = container.querySelectorAll('.buy-btn');
+        const buttons = _buyBtnCache;
         buttons.forEach(btn => {
             const type = btn.getAttribute('data-type');
             const id = parseInt(btn.getAttribute('data-id'));
@@ -1261,7 +1347,7 @@ function updateButtonAffordability() {
                     if (card) {
                         const lvlBadge = card.querySelector('.mgr-lvl-badge');
                         if (lvlBadge) {
-                            lvlBadge.innerText = `Lv ${mgr.level}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
+                            lvlBadge.innerText = `${translations[lang].levelAbbr || 'Lv'} ${mgr.level}${details.levels > 1 ? ` (+${details.levels})` : ''}`;
                         }
 
                         const starsBox = card.querySelector('.mgr-stars-box');
@@ -1275,25 +1361,28 @@ function updateButtonAffordability() {
 
                         const statVals = card.querySelectorAll('.mgr-stat-val');
                         if (statVals.length >= 2) {
+                            const coefs = GAME_CONFIG.MANAGER_COEFFICIENTS[type];
                             let s1 = '', s2 = '';
-                            if (type === 'customer') {
-                                s1 = `+${6 * mgr.level}%`;
-                                s2 = `+${3 * mgr.level}%`;
-                            } else if (type === 'finance') {
-                                s1 = lang === 'he' ? 'אוטומטי' : (lang === 'es' ? 'Auto' : (lang === 'ru' ? 'Авто' : 'Auto'));
-                                s2 = `+${5 * mgr.level}%`;
-                            } else if (type === 'operations') {
-                                s1 = `+${4 * mgr.level}%`;
-                                s2 = `+${3 * mgr.level}%`;
-                            } else if (type === 'service') {
-                                s1 = `+${5 * mgr.level}%`;
-                                s2 = `+${4 * mgr.level}%`;
-                            } else if (type === 'vip') {
-                                s1 = `+${7 * mgr.level}%`;
-                                s2 = `+${4 * mgr.level}%`;
-                            } else if (type === 'marketing') {
-                                s1 = `+${10 * mgr.level}%`;
-                                s2 = `+${mgr.level}`;
+                            if (coefs) {
+                                if (type === 'customer') {
+                                    s1 = `+${Math.round(coefs.spawnIntervalBoost * 100 * mgr.level)}%`;
+                                    s2 = `+${Math.round(coefs.incomeBoost * 100 * mgr.level)}%`;
+                                } else if (type === 'finance') {
+                                    s1 = lang === 'he' ? 'אוטומטי' : (lang === 'es' ? 'Auto' : (lang === 'ru' ? 'Авто' : 'Auto'));
+                                    s2 = `+${Math.round(coefs.deptIncomeBoost * 100 * mgr.level)}%`;
+                                } else if (type === 'operations') {
+                                    s1 = `+${Math.round(coefs.guardSpeedBoost * 100 * mgr.level)}%`;
+                                    s2 = `+${Math.round(coefs.guardCapBoost * 100 * mgr.level)}%`;
+                                } else if (type === 'service') {
+                                    s1 = `+${Math.round(coefs.capacityBoost * 100 * mgr.level)}%`;
+                                    s2 = `+${Math.round(coefs.epsBoost * 100 * mgr.level)}%`;
+                                } else if (type === 'vip') {
+                                    s1 = `+${Math.round(coefs.incomeBoost * 100 * mgr.level)}%`;
+                                    s2 = `+${Math.round(coefs.prestigeSharesBoost * 100 * mgr.level)}%`;
+                                } else if (type === 'marketing') {
+                                    s1 = `+${Math.round(coefs.adBoost * 100 * mgr.level)}%`;
+                                    s2 = `+${coefs.offlineLimitBoost * mgr.level}`;
+                                }
                             }
                             statVals[0].innerText = s1;
                             statVals[1].innerText = s2;
@@ -1303,13 +1392,9 @@ function updateButtonAffordability() {
                         if (footerVal) {
                             const eps = game.getEarningsPerSecond();
                             let contribution = 0;
-                            if (isHired) {
-                                if (type === 'customer') contribution = 0.03 * mgr.level;
-                                else if (type === 'finance') contribution = 0.05 * mgr.level;
-                                else if (type === 'operations') contribution = 0.02 * mgr.level;
-                                else if (type === 'service') contribution = 0.04 * mgr.level;
-                                else if (type === 'vip') contribution = 0.07 * mgr.level;
-                                else if (type === 'marketing') contribution = 0.05 * mgr.level;
+                            const coefsFV = GAME_CONFIG.MANAGER_COEFFICIENTS[type];
+                            if (isHired && coefsFV && coefsFV.incomeBoost) {
+                                contribution = coefsFV.incomeBoost * mgr.level;
                             }
                             const extraHourly = eps * 3600 * contribution;
                             const perHourStr = lang === 'he' ? 'לשעה' : (lang === 'es' ? '/ h' : (lang === 'ru' ? '/ ч' : '/ hr'));
@@ -1352,6 +1437,7 @@ function updateButtonAffordability() {
     window.renderMissionsTab = renderMissionsTab;
     window.refreshAllTabs = refreshAllTabs;
     window.updateButtonAffordability = updateButtonAffordability;
+    window.invalidateTabHashes = invalidateTabHashes;
 })(window);
 
 

@@ -1,4 +1,4 @@
-(function(window) {
+﻿(function(window) {
 // Visual Drawing & Formatting Module for Idle Bank Empire
 
 // LRU cache for SVG/HTML client portraits — Map preserves insertion order, giving O(1) lookup and eviction
@@ -20,6 +20,17 @@ var lastMultiplier = -1;
 var lastBranch = -1;
 var lastLang = '';
 var lastGuardStatusText = '';
+
+function getVaultTargetRect() {
+    let targetEl = DOM_CACHE.vaultGraphic;
+    if (window.innerWidth <= 768) {
+        const miniIcon = document.querySelector('.vault-mini-icon');
+        if (miniIcon && window.getComputedStyle(miniIcon).display !== 'none') {
+            targetEl = miniIcon;
+        }
+    }
+    return targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
+}
 
 var cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
 var cachedFallback = ' מפלצתי';
@@ -133,7 +144,7 @@ function getClientSVG(type, seed) {
     }
     
     const resultHtml = `
-        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-sizing: border-box; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d; display: flex; align-items: center; justify-content: center;">
+        <div style="position: absolute; inset: 0; border-radius: 50%; overflow: hidden; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d;">
             <img src="תמונות/client-${imgNum}.png" alt="Client" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
         </div>
     `;
@@ -148,25 +159,86 @@ function getClientSVG(type, seed) {
 }
 
 // Unified floating text animator
-function spawnFloating(text, x, y, type = 'gold') {
-    const floatContainer = DOM_CACHE.floatingContainer;
+var floatingTextPool = [];
+const FLOATING_POOL_SIZE = 40;
+var activeFloatingText = [];
+
+function initFloatingPool() {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById('floating-container');
     if (!floatContainer) return;
+    
+    for (let i = 0; i < FLOATING_POOL_SIZE; i++) {
+        const div = document.createElement('div');
+        div.className = 'floating-cash';
+        div.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;position:absolute;left:0;top:0;';
+        floatContainer.appendChild(div);
+        floatingTextPool.push({
+            element: div,
+            active: false
+        });
+    }
+}
 
-    const floatDiv = document.createElement('div');
-    floatDiv.className = 'floating-cash';
-    
-    if (type === 'gold') floatDiv.style.color = 'var(--primary-gold)';
-    else if (type === 'red' || type === 'danger') floatDiv.style.color = 'var(--danger-red)';
-    else if (type === 'green' || type === 'money') floatDiv.style.color = 'var(--green-light)';
-    else floatDiv.style.color = type;
-    
-    floatDiv.innerText = text;
-    
-    floatDiv.style.left = `${x}px`;
-    floatDiv.style.top = `${y}px`;
+function getFloatingFromPool() {
+    if (floatingTextPool.length === 0) initFloatingPool();
+    for (let i = 0; i < floatingTextPool.length; i++) {
+        if (!floatingTextPool[i].active) return floatingTextPool[i];
+    }
+    if (activeFloatingText.length > 0) {
+        const oldest = activeFloatingText[0];
+        activeFloatingText.shift();
+        oldest.poolObj.active = false;
+        oldest.element.style.display = 'none';
+        return oldest.poolObj;
+    }
+    return floatingTextPool[0];
+}
 
-    floatContainer.appendChild(floatDiv);
-    setTimeout(() => floatDiv.remove(), 1200);
+function spawnFloating(text, x, y, type = 'gold') {
+    const floatObj = getFloatingFromPool();
+    if (!floatObj) return;
+    floatObj.active = true;
+    const div = floatObj.element;
+    
+    let colorStr = type;
+    if (type === 'gold') colorStr = 'var(--primary-gold)';
+    else if (type === 'red' || type === 'danger') colorStr = 'var(--danger-red)';
+    else if (type === 'green' || type === 'money') colorStr = 'var(--green-light)';
+    
+    div.innerText = text;
+    
+    activeFloatingText.push({
+        poolObj: floatObj,
+        element: div,
+        startX: x,
+        startY: y,
+        colorStr: colorStr,
+        progress: 0,
+        duration: 1.2
+    });
+}
+
+function updateFloatingText(dt) {
+    for (let i = activeFloatingText.length - 1; i >= 0; i--) {
+        const f = activeFloatingText[i];
+        f.progress += dt;
+        const t = Math.min(1.0, f.progress / f.duration);
+        
+        const easeT = 1 - Math.pow(1 - t, 3);
+        const currentY = f.startY - easeT * 50;
+        
+        let opacity = 1;
+        if (t < 0.15) opacity = t / 0.15;
+        else if (t > 0.7) opacity = 1 - ((t - 0.7) / 0.3);
+        
+        f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};will-change:transform,opacity;position:absolute;left:0;top:0;`;
+        
+        if (t >= 1.0) {
+            f.element.style.display = 'none';
+            f.poolObj.active = false;
+            activeFloatingText.splice(i, 1);
+        }
+    }
 }
 
 // updateActiveCoins handles updating all coin animations per tick (requestAnimationFrame) to prevent memory leaks and setTimeout issues when backgrounded.
@@ -180,7 +252,7 @@ function initCoinPool() {
     for (let i = 0; i < COIN_POOL_SIZE; i++) {
         const coin = document.createElement('div');
         coin.className = 'flying-coin';
-        coin.style.cssText = 'display:none;opacity:0;';
+        coin.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;';
         floatContainer.appendChild(coin);
         coinPool.push({
             element: coin,
@@ -229,34 +301,36 @@ function updateActiveCoins(dt) {
         if (c.delay > 0) {
             c.delay -= dt;
             if (c.delay <= 0) {
-                c.element.style.cssText = `left:${c.startX}px;top:${c.startY}px;opacity:1;display:block;`;
+                c.element.style.cssText = `transform:translate3d(${c.startX}px,${c.startY}px,0);opacity:1;display:block;position:absolute;left:0;top:0;`;
             }
             continue;
         }
         
         c.progress += dt;
         const t = Math.min(1.0, c.progress / c.duration);
-        // Custom bezier easing for quick throw and decelerating fall
         const easeT = t * (2 - t);
         
         const currentX = c.startX + (c.endX - c.startX) * easeT;
-        // Parabolic arc Y-offset: throw upward by arcHeight in a nice curve
         const arcY = -c.arcHeight * Math.sin(t * Math.PI);
         const currentY = c.startY + (c.endY - c.startY) * easeT + arcY;
         
-        // Custom scale and rotation depending on type (coin vs cash)
         let transformStr = "";
-        if (c.type === 'cash') {
-            // Cash wiggles naturally with custom phase to look organic
+        let opacity = 1.0 - t * 0.65;
+        
+        if (c.type === 'particle') {
+            const spin = c.randomPhase * 40 + t * 360;
+            const scale = 1.0 - t * 0.8;
+            transformStr = `scale(${scale}) rotate(${spin}deg)`;
+            opacity = 1.0 - Math.pow(t, 2);
+        } else if (c.type === 'cash') {
             const wiggle = Math.sin(t * Math.PI * 4.5 + c.randomPhase) * 22;
             transformStr = `scale(${1.2 - t * 0.25}) rotate(${wiggle}deg)`;
         } else {
-            // Coins spin 360 degrees plus random starting angle
             const spin = c.randomPhase * 40 + t * 480;
             transformStr = `scale(${1.1 - t * 0.25}) rotate(${spin}deg)`;
         }
         
-        c.element.style.cssText = `left:${currentX}px;top:${currentY}px;transform:${transformStr};opacity:${1.0 - t * 0.65};display:block;`;
+        c.element.style.cssText = `transform:translate3d(${currentX}px,${currentY}px,0) ${transformStr};opacity:${opacity};display:block;position:absolute;left:0;top:0;will-change:transform,opacity;`;
         
         if (t >= 1.0) {
             c.element.style.cssText = 'display:none;opacity:0;';
@@ -269,6 +343,41 @@ function updateActiveCoins(dt) {
             }
             activeCoins.splice(i, 1);
         }
+    }
+}
+
+function spawnParticles(x, y, count = 10, type = 'gold') {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById('floating-container');
+    if (!floatContainer) return;
+    if (coinPool.length === 0) initCoinPool();
+
+    for (let i = 0; i < count; i++) {
+        const coinObj = getCoinFromPool();
+        if (!coinObj) continue;
+        coinObj.active = true;
+        const coin = coinObj.element;
+        coin.innerText = type === 'star' ? '✨' : (type === 'sparkle' ? '🌟' : '💰');
+        coin.style.display = 'none';
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 40 + Math.random() * 80;
+        
+        activeCoins.push({
+            poolObj: coinObj,
+            element: coin,
+            startX: x,
+            startY: y,
+            endX: x + Math.cos(angle) * distance,
+            endY: y + Math.sin(angle) * distance,
+            duration: 0.6 + Math.random() * 0.4,
+            progress: 0,
+            delay: 0,
+            type: 'particle',
+            isLast: false,
+            playedSound: true,
+            arcHeight: -20 + Math.random() * 40,
+            randomPhase: Math.random() * Math.PI * 2
+        });
     }
 }
 
@@ -321,6 +430,7 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
 function rebuildTellersDOM() {
     const lang = game.state.language || 'he';
     DOM_CACHE.tellersZone.innerHTML = '';
+    DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
     
     // Reset cached teller elements
     for (let id = 0; id < 4; id++) {
@@ -335,7 +445,8 @@ function rebuildTellersDOM() {
         
         if (t.unlocked) {
             div.innerHTML = `
-                <div class="glass-showcase" style="background-image: url('תמונות/teller-${(t.id % 7) + 1}.png');">
+                <div class="glass-showcase">
+                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 7) + 1}.png?v=20260625" alt="" />
                     <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
                 </div>
                 <div class="gold-plaque">
@@ -383,7 +494,7 @@ function rebuildTellersDOM() {
                 const collected = game.collectTellerCash(t.id);
                 if (collected > 0) {
                     const rectBtn = collectBtn.getBoundingClientRect();
-                    const rectVault = DOM_CACHE.vaultGraphic.getBoundingClientRect();
+                    const rectVault = getVaultTargetRect();
                     animateCoins(rectBtn, rectVault, 6, 'coin');
                     spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
                 }
@@ -426,6 +537,7 @@ function draw() {
     if (game.state.cash !== lastCash || lang !== lastLang) {
         lastCash = game.state.cash;
         DOM_CACHE.cash.innerText = formatMoney(game.state.cash);
+        if (typeof window.checkPrestigeTip === 'function') window.checkPrestigeTip();
     }
     
     const currentEps = game.getEarningsPerSecond();
@@ -444,6 +556,27 @@ function draw() {
         lastMultiplier = mult;
         DOM_CACHE.multiplier.innerText = mult.toFixed(1) + 'x';
     }
+
+    // Ad Boost UI logic
+    if (DOM_CACHE.btnWatchAd && DOM_CACHE.adBoostTimer) {
+        if (game.state.boost2xTimeLeft > 0) {
+            DOM_CACHE.btnWatchAd.classList.add('hidden');
+            DOM_CACHE.adBoostTimer.classList.remove('hidden');
+            
+            const hours = Math.floor(game.state.boost2xTimeLeft / 3600);
+            const minutes = Math.floor((game.state.boost2xTimeLeft % 3600) / 60);
+            const seconds = Math.floor(game.state.boost2xTimeLeft % 60);
+            
+            const hStr = hours < 10 ? '0' + hours : hours;
+            const mStr = minutes < 10 ? '0' + minutes : minutes;
+            const sStr = seconds < 10 ? '0' + seconds : seconds;
+            
+            DOM_CACHE.adBoostTimer.innerText = `${tObj.timeLeftLabel || 'נותרו'}: ${hStr}:${mStr}:${sStr}`;
+        } else {
+            DOM_CACHE.btnWatchAd.classList.remove('hidden');
+            DOM_CACHE.adBoostTimer.classList.add('hidden');
+        }
+    }
     
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
         lastBranch = game.state.currentBranch;
@@ -459,7 +592,7 @@ function draw() {
         if (budget === 0) {
             DOM_CACHE.advSlider.value = 0;
         } else {
-            DOM_CACHE.advSlider.value = Math.round(1000 * Math.pow(budget / maxBudget, 1/3));
+            DOM_CACHE.advSlider.value = Math.round(1000 * (budget / maxBudget));
         }
         
         const maxLabelEl = DOM_CACHE.advLimitMax;
@@ -480,9 +613,9 @@ function draw() {
             const offerEnd = window._boostOfferEndTime || 0;
             if (offerEnd > nowMs) {
                 const offerSec = Math.ceil((offerEnd - nowMs) / 1000);
-                const offerLang = (game.state && game.state.language) || 'he';
-                DOM_CACHE.boostBtn.innerText = offerLang === 'he'
-                    ? `⚡ הצעה! ${formatTime(offerSec)}`
+                const boostOfferFn = tObj.boostOfferText;
+                DOM_CACHE.boostBtn.innerText = typeof boostOfferFn === 'function'
+                    ? boostOfferFn(formatTime(offerSec))
                     : `⚡ OFFER! ${formatTime(offerSec)}`;
                 DOM_CACHE.boostBtn.classList.add('offer');
                 DOM_CACHE.boostBtn.classList.remove('active');
@@ -557,9 +690,19 @@ function draw() {
                 
                 if (!existingNode) {
                     existingNode = document.createElement('div');
-                    existingNode.className = `customer-avatar`;
+                    existingNode.className = `visual-client-icon`;
                     existingNode.setAttribute('data-id', clientId);
-                    existingNode.innerHTML = getClientSVG(client.type, client.seed);
+                    const _ct = client.type || 'normal';
+                    const _cs = (client.seed === undefined || client.seed === null || isNaN(client.seed)) ? 0 : client.seed;
+                    const _cn = (_ct === 'rich') ? 9 : (_ct === 'vip') ? 10 : ((_cs % 8) + 1);
+                    existingNode.style.backgroundImage = `url('תמונות/client-${_cn}.png')`;
+                    if (_ct === 'vip') {
+                        existingNode.style.borderColor = 'rgba(192,132,252,0.85)';
+                        existingNode.style.boxShadow = '0 0 8px rgba(192,132,252,0.4)';
+                    } else if (_ct === 'rich') {
+                        existingNode.style.borderColor = 'rgba(251,191,36,0.85)';
+                        existingNode.style.boxShadow = '0 0 8px rgba(251,191,36,0.4)';
+                    }
                 }
                 
                 if (DOM_CACHE.customerLine.children[idx] !== existingNode) {
@@ -598,13 +741,13 @@ function draw() {
                 tNode.classList.add('processing');
                 if (tData.progressPercent !== tCache.lastPercent) {
                     tCache.lastPercent = tData.progressPercent;
-                    if (progressFill) progressFill.style.width = `${tData.progressPercent}%`;
+                    if (progressFill) progressFill.style.transform = `scaleX(${tData.progressPercent / 100})`;
                 }
             } else {
                 tNode.classList.remove('processing');
                 if (tCache.lastPercent !== 0) {
                     tCache.lastPercent = 0;
-                    if (progressFill) progressFill.style.width = '0%';
+                    if (progressFill) progressFill.style.transform = 'scaleX(0)';
                 }
             }
 
@@ -632,9 +775,15 @@ function draw() {
                 if (prevTellerClientStates[tData.id] !== cacheKey) {
                     if (tData.isProcessing) {
                         clientSlot.classList.add('active');
-                        clientSlot.innerHTML = getClientSVG(tData.customerType, tData.customerSeed);
-                        
-                        // VIP & Rich serving glow effects
+                        const _t = tData.customerType || 'normal';
+                        const _s = (tData.customerSeed === undefined || tData.customerSeed === null || isNaN(tData.customerSeed)) ? 0 : tData.customerSeed;
+                        const _n = (_t === 'rich') ? 9 : (_t === 'vip') ? 10 : ((_s % 8) + 1);
+                        clientSlot.style.setProperty('background-image', `url('תמונות/client-${_n}.png')`, 'important');
+                        clientSlot.style.setProperty('background-size', 'cover', 'important');
+                        clientSlot.style.setProperty('background-position', 'center top', 'important');
+                        clientSlot.innerHTML = '';
+
+                        // VIP & Rich serving glow effects — batch read then write
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                         if (tData.customerType === 'vip') {
                             tNode.classList.add('vip-serving-glow');
@@ -648,6 +797,7 @@ function draw() {
                     } else {
                         clientSlot.classList.remove('active');
                         clientSlot.innerHTML = '';
+                        clientSlot.style.removeProperty('background-image');
                         tNode.classList.remove('vip-serving-glow', 'rich-serving-glow');
                     }
                     prevTellerClientStates[tData.id] = cacheKey;
@@ -708,7 +858,8 @@ function draw() {
                 runner = document.createElement('div');
                 runner.className = 'guard-runner';
                 runner.setAttribute('data-guard-id', gData.id);
-                
+                runner.style.willChange = 'transform';
+
                 const avatarEl = document.createElement('div');
                 avatarEl.className = 'guard-runner-avatar';
                 runner.appendChild(avatarEl);
@@ -780,17 +931,11 @@ function draw() {
             const unlockedCount = unlockedGuards.length;
             const totalCount = game.state.guards.length;
             
-            // Map the language-specific singular/plural label
-            let courierLabel = "";
-            if (lang === 'he') {
-                courierLabel = unlockedCount > 1 ? "בלדרים" : "בלדר";
-            } else if (lang === 'es') {
-                courierLabel = unlockedCount > 1 ? "Mensajeros" : "Mensajero";
-            } else if (lang === 'ru') {
-                courierLabel = unlockedCount > 1 ? "Курьеры" : "Курьер";
-            } else {
-                courierLabel = unlockedCount > 1 ? "Couriers" : "Courier";
-            }
+            // Map the language-specific singular/plural label (from locales.js)
+            const tObjLang = translations[lang];
+            const courierLabel = unlockedCount > 1
+                ? (tObjLang.guardsLabel || "Couriers")
+                : (tObjLang.guardLabel || "Courier");
             
             // Get raw state text
             let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
@@ -873,7 +1018,7 @@ function draw() {
             } else if (prevState === 'moving_to_vault' && gData.state === 'depositing') {
                 const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
                 const rectGuard = runner ? runner.getBoundingClientRect() : (DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null);
-                const rectVault = DOM_CACHE.vaultGraphic ? DOM_CACHE.vaultGraphic.getBoundingClientRect() : null;
+                const rectVault = getVaultTargetRect();
                 
                 reads.push({
                     type: 'depositing',
@@ -914,7 +1059,7 @@ function draw() {
         if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
         // עדכון vault mini bar ב-portrait mode
         if (typeof window.updateVaultMiniBar === 'function') {
-            window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0);
+            window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0, vaultData.cashStored, vaultData.capacity, vaultData.yieldPerHour);
         }
     }
     

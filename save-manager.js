@@ -44,16 +44,17 @@ class SaveManager {
         if (serverTime) {
             this.serverTimeOffset = serverTime - Date.now();
             this.isServerTimeVerified = true;
-            console.log(`Server time verified. Local clock offset: ${this.serverTimeOffset}ms`);
         } else {
             this.serverTimeOffset = 0;
             this.isServerTimeVerified = false;
-            console.log("Using unverified local clock for time calculations.");
         }
         
         // Execute offline calculations now that time verification status is settled
         this.calculateOfflineEarnings();
-        
+
+        // Daily Login Bonus: check once per session after time is verified
+        this.checkDailyLogin();
+
         // Trigger offline earnings modal if there is a pending report
         if (this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0) {
             const elModal = document.getElementById('offline-modal');
@@ -70,6 +71,23 @@ class SaveManager {
         // Refresh UI elements
         if (typeof window.refreshAllTabs === 'function') {
             window.refreshAllTabs();
+        }
+
+        // Show daily login reward modal if pending — wait until no other modal is open
+        if (this.game.state.pendingLoginReward) {
+            const hasOffline = this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0;
+            const initialDelay = hasOffline ? 2000 : 1500;
+            const tryShow = (retriesLeft) => {
+                if (!retriesLeft) return;
+                if (document.querySelector('.modal-overlay.active')) {
+                    setTimeout(() => tryShow(retriesLeft - 1), 1500);
+                    return;
+                }
+                if (typeof window.showLoginRewardModal === 'function') {
+                    window.showLoginRewardModal();
+                }
+            };
+            setTimeout(() => tryShow(8), initialDelay);
         }
     }
 
@@ -133,15 +151,20 @@ class SaveManager {
         // Construct final JSON string by inserting checksum directly to avoid a second expensive stringify
         const finalJsonStr = jsonStr.slice(0, -1) + `,"checksum":"${checksum}"}`;
         
-        // CRIT-1: Prevent stack overflow for large saves by encoding bytes using a loop
+        // CRIT-1: Prevent stack overflow for large saves by encoding bytes in chunks
         const bytes = new TextEncoder().encode(finalJsonStr);
         let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
+        const chunkSize = 8192;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
         }
         const encryptedState = btoa(binary);
-        window.localStorage.setItem('idle_bank_save', encryptedState);
-        
+        try {
+            window.localStorage.setItem('idle_bank_save', encryptedState);
+        } catch (e) {
+            console.warn('Save failed — localStorage unavailable (e.g. iOS Safari Private Mode):', e);
+        }
+
         this.lastSaveTime = Date.now();
     }
 
@@ -151,6 +174,7 @@ class SaveManager {
             clearTimeout(this.saveTimeout);
             this.saveTimeout = null;
         }
+        if (this.game._tempQueueBonusTimeout) { clearTimeout(this.game._tempQueueBonusTimeout); this.game._tempQueueBonusTimeout = null; }
         window.localStorage.removeItem('idle_bank_save');
         this.game.initDefaultState();
         // CRIT-4: Pass force=true to allow saving default state even while isResetting is true, and only disable isResetting afterward
@@ -205,7 +229,7 @@ class SaveManager {
         if (!isNum(state.shares) || state.shares < 0) state.shares = 0;
         else state.shares = Math.floor(state.shares);
 
-        if (!isNum(state.currentBranch) || state.currentBranch < 0 || state.currentBranch > 3) state.currentBranch = 0;
+        if (!isNum(state.currentBranch) || state.currentBranch < 0 || state.currentBranch >= GAME_CONFIG.BRANCHES.length) state.currentBranch = 0;
         if (!isNum(state.maxBranchUnlocked) || state.maxBranchUnlocked < 0) state.maxBranchUnlocked = state.currentBranch;
         if (!isString(state.language)) state.language = 'he';
 
@@ -223,12 +247,27 @@ class SaveManager {
 
         // Fortune Wheel
         if (!isNum(state.lastSpinTime) || state.lastSpinTime < 0) state.lastSpinTime = 0;
+        if (!isNum(state.lastAdSpinTime) || state.lastAdSpinTime < 0) state.lastAdSpinTime = 0;
 
         // VIP Visitor
         if (!isNum(state.nextVipVisit) || state.nextVipVisit < 0) state.nextVipVisit = 0;
         if (!isBool(state.vipVisitActive)) state.vipVisitActive = false;
         if (!isNum(state.vipVisitExpiry) || state.vipVisitExpiry < 0) state.vipVisitExpiry = 0;
         if (!isNum(state.vipServedTotal) || state.vipServedTotal < 0) state.vipServedTotal = 0;
+        if (!isNum(state.guardTripsTotal) || state.guardTripsTotal < 0) state.guardTripsTotal = 0;
+        if (state.boost2xUsedEver !== true) state.boost2xUsedEver = false;
+
+        // Daily Login Bonus
+        if (!isNum(state.lastLoginDate) || state.lastLoginDate < 0) state.lastLoginDate = 0;
+        if (!isNum(state.loginStreak) || state.loginStreak < 0) state.loginStreak = 0;
+        if (state.pendingLoginReward !== null && state.pendingLoginReward !== undefined) {
+            if (typeof state.pendingLoginReward !== 'object' || !state.pendingLoginReward.type) {
+                state.pendingLoginReward = null;
+            }
+        }
+
+        // Branch Welcome Bonus
+        if (!Array.isArray(state.visitedBranches)) state.visitedBranches = [];
 
         // Daily Challenges
         if (!isNum(state.lastDailyReset) || state.lastDailyReset < 0) state.lastDailyReset = 0;
@@ -278,6 +317,32 @@ class SaveManager {
                 }
             });
         }
+
+        // C-14: backup save before any migration, to allow recovery if migration fails
+        try { localStorage.setItem('idle_bank_save_backup', localStorage.getItem('idle_bank_save')); } catch(e) {}
+
+        // C-15: Deutsche Bank was inserted at index 2, shifting old branches 2→3 and 3→4.
+        // Detect old saves by checking the migrations.deutsche flag (previously stored as a string sentinel inside visitedBranches).
+        if (!state.migrations) state.migrations = {};
+        // Backward compat: if the old sentinel string was already pushed into visitedBranches, promote it to migrations flag and clean the array
+        if (Array.isArray(state.visitedBranches) && state.visitedBranches.includes('deutsche_migrated')) {
+            state.migrations.deutsche = true;
+            state.visitedBranches = state.visitedBranches.filter(v => v !== 'deutsche_migrated');
+        }
+        if (!state.migrations.deutsche) {
+            if (state.currentBranch >= 2) state.currentBranch++;
+            if (state.maxBranchUnlocked >= 2) state.maxBranchUnlocked++;
+            if (!Array.isArray(state.visitedBranches)) state.visitedBranches = [];
+            // Shift existing visited branch indices: 2→3, 3→4
+            state.visitedBranches = state.visitedBranches
+                .map(idx => (typeof idx === 'number' && idx >= 2) ? idx + 1 : idx)
+                .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
+            state.migrations.deutsche = true; // flag — never re-run
+        }
+        // Cap branch indices to valid range after any migration
+        const _maxBranchIdx = GAME_CONFIG.BRANCHES.length - 1;
+        if (state.currentBranch > _maxBranchIdx) state.currentBranch = _maxBranchIdx;
+        if (state.maxBranchUnlocked > _maxBranchIdx) state.maxBranchUnlocked = _maxBranchIdx;
 
         // Backward compatibility migration from Rachel, Alan, Dan to 6 managers:
         if (state.managers && (state.managers.teller !== undefined || state.managers.guard !== undefined || state.managers.vault !== undefined)) {
@@ -414,16 +479,16 @@ class SaveManager {
         }
 
         // guards
+        const _defaultGuard = (i) => ({
+            id: i, unlocked: (i === 0), level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0,
+            targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0
+        });
         if (!Array.isArray(state.guards)) {
-            state.guards = [
-                { id: 0, unlocked: true, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 1, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 2, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 }
-            ];
+            state.guards = [_defaultGuard(0), _defaultGuard(1), _defaultGuard(2)];
         } else {
             state.guards.forEach((g, i) => {
                 if (!g || typeof g !== 'object') {
-                    state.guards[i] = { id: i, unlocked: (i === 0), level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 };
+                    state.guards[i] = _defaultGuard(i);
                 } else {
                     if (!isNum(g.id)) g.id = i;
                     if (!isBool(g.unlocked)) g.unlocked = (i === 0);
@@ -433,6 +498,22 @@ class SaveManager {
                     if (!isNum(g.position) || g.position < 0) g.position = 0;
                     if (!isString(g.state)) g.state = 'idle';
                     if (!isNum(g.timer) || g.timer < 0) g.timer = 0;
+                    // Multi-stop fields — migrate old saves that lack them
+                    if (!isNum(g.targetTellerIndex) || g.targetTellerIndex < 0) g.targetTellerIndex = 0;
+                    if (!Array.isArray(g.tellerVisitQueue)) g.tellerVisitQueue = [];
+                    if (!isNum(g.segmentPosition) || g.segmentPosition < 0) g.segmentPosition = g.position;
+                    if (!isNum(g.carriedAmount) || g.carriedAmount < 0) g.carriedAmount = g.loadedCash;
+                    else g.carriedAmount = roundCents(g.carriedAmount);
+                    // Normalise states that no longer exist in new machine → idle so game.js rebuilds them
+                    const validStates = ['idle', 'moving_to_vault', 'depositing'];
+                    const isMultiStop = g.state.startsWith('moving_to_teller_') || g.state.startsWith('collecting_from_teller_');
+                    if (!validStates.includes(g.state) && !isMultiStop) {
+                        g.state = 'idle';
+                        g.carriedAmount = 0;
+                        g.loadedCash = 0;
+                        g.segmentPosition = 0;
+                        g.tellerVisitQueue = [];
+                    }
                 }
             });
         }
@@ -494,11 +575,22 @@ class SaveManager {
 
                     if (!isNum(m.target) || m.target <= 0 || isNaN(m.target)) m.target = 1;
                     if (!isNum(m.progress) || isNaN(m.progress)) m.progress = 0;
-                    if (!isNum(m.reward) || isNaN(m.reward)) m.reward = 100;
+                    // Heal reward: may be a number (cash) or { type, amount } object (shares/gold)
+                    if (m.reward && typeof m.reward === 'object' && m.reward.type) {
+                        if (!isNum(m.reward.amount) || m.reward.amount < 1) m.reward.amount = 1;
+                    } else if (!isNum(m.reward) || isNaN(m.reward)) {
+                        m.reward = 100;
+                    }
                     if (!isBool(m.completed)) m.completed = false;
                     if (!isBool(m.claimed)) m.claimed = false;
                     if (m.type === 'clients' && (m.startProgress !== undefined && (!isNum(m.startProgress) || m.startProgress < 0 || m.startProgress > state.stats.clientsServed))) {
                         m.startProgress = undefined;
+                    }
+                    // B-3: department_unlock missions saved before startProgress was introduced
+                    // would never complete because startProgress defaults to current dept count on first
+                    // checkMissions() run, making the delta always 0. Reset to 0 so any future unlock counts.
+                    if (m.type === 'department_unlock' && m.startProgress === undefined) {
+                        m.startProgress = 0;
                     }
                 }
             });
@@ -706,6 +798,19 @@ class SaveManager {
         
         // Sync last save time to now to prevent double-claiming
         this.game.state.lastSaveTime = now;
+    }
+
+    checkDailyLogin() {
+        const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
+        const lastLogin = this.game.state.lastLoginDate || 0;
+        const daysSince = Math.floor((now - lastLogin) / 86400000);
+
+        if (daysSince >= 1) {
+            this.game.state.loginStreak = (daysSince === 1) ? ((this.game.state.loginStreak || 0) + 1) : 1;
+            this.game.state.lastLoginDate = now;
+            this.game.state.pendingLoginReward = this.game.getDailyLoginReward(this.game.state.loginStreak);
+            this.game.saveGame();
+        }
     }
 }
 

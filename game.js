@@ -79,9 +79,9 @@ class IdleBankGame {
             ],
 
             guards: [
-                { id: 0, unlocked: true, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 1, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 },
-                { id: 2, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0 }
+                { id: 0, unlocked: true,  level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0, targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0 },
+                { id: 1, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0, targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0 },
+                { id: 2, unlocked: false, level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0, targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0 }
             ],
 
             managers: {
@@ -103,10 +103,10 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
-                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
-                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
-                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 50, cost: 15000 },
+                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 200, cost: 500000 },
+                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 800, cost: 25000000 },
+                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 3000, cost: 5000000000 }
             ],
 
             missions: [],
@@ -137,7 +137,25 @@ class IdleBankGame {
 
             // Daily Challenges
             dailyChallenges: [],
-            lastDailyReset: 0
+            lastDailyReset: 0,
+
+            // Daily Login Bonus
+            lastLoginDate: 0,
+            loginStreak: 0,
+            pendingLoginReward: null,
+
+            // Branch Welcome Bonus
+            visitedBranches: [],
+
+            // Migration flags — prevent re-running one-time data migrations on old saves
+            migrations: {},
+
+            // Tutorial (legacy — kept for save compatibility)
+            tutorialStep: 0,
+            tutorialCompleted: false,
+
+            // Discovery tips — tracks which contextual tips were already shown
+            discoveredTips: {}
         };
 
         this._contextualAdPending = null;
@@ -281,6 +299,10 @@ class IdleBankGame {
     ensureTellersCount() {
         if (!this.state || !this.state.tellers) return;
         const maxTellers = this.getMaxTellers();
+        // Trim excess tellers from old/corrupted saves
+        if (this.state.tellers.length > maxTellers) {
+            this.state.tellers = this.state.tellers.slice(0, maxTellers);
+        }
         while (this.state.tellers.length < maxTellers) {
             const nextId = this.state.tellers.length;
             this.state.tellers.push({
@@ -364,6 +386,8 @@ class IdleBankGame {
             window.gameAudio.playClick();
             if (type === 'teller') {
                 this.recalculateEps();
+            } else if (type === 'vault' && this.economyManager) {
+                this.economyManager._cachedVaultCap = new Map();
             }
             this.saveGame();
             return true;
@@ -397,6 +421,8 @@ class IdleBankGame {
                 window.gameAudio.playClick();
                 if (type === 'teller') {
                     this.recalculateEps();
+                } else if (type === 'vault' && this.economyManager) {
+                    this.economyManager._cachedVaultCap = new Map();
                 }
                 this.saveGame();
                 return true;
@@ -600,15 +626,36 @@ class IdleBankGame {
     }
 
     calculatePrestigeShares() {
+        // H-06: cache result — invalidate only when lifetimeCash or shares change
         const lifetimeCash = this.state.lifetimeCash || 180;
-        let rawGain = 10 * Math.sqrt(lifetimeCash / 30000);
-        if (this.state.managers && this.state.managers.vip && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
-            const vipLvl = this.state.managerUpgrades.vip.level;
+        const shares = this.state.shares || 0;
+        const vipHired = !!(this.state.managers && this.state.managers.vip);
+        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
+        const cacheKey = `${lifetimeCash}:${shares}:${vipHired}:${vipLvl}`;
+        if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
+            return this._cachedPrestigeShares;
+        }
+        let rawGain = 10 * Math.pow(lifetimeCash / 100000, 0.45);
+        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
         }
-        let gain = Math.floor(rawGain) - (this.state.shares || 0);
-        return Math.min(1000, Math.max(0, gain));
+        let gain = Math.floor(rawGain) - shares;
+        const result = Math.min(10000, Math.max(0, gain));
+        this._cachedPrestigeSharesKey = cacheKey;
+        this._cachedPrestigeShares = result;
+        return result;
+    }
+
+    getDailyLoginReward(streak) {
+        const eps = this.getEarningsPerSecond();
+        if (streak >= 30) return { type: 'shares', value: 10 };
+        if (streak >= 14) return { type: 'shares', value: 3 };
+        if (streak >= 7)  return { type: 'shares', value: 1 };
+        if (streak >= 5)  return { type: 'boost', value: 1800 };
+        if (streak >= 3)  return { type: 'gold', value: 1 };
+        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
+        return { type: 'cash', value: Math.max(180, eps * 300) };
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -617,24 +664,26 @@ class IdleBankGame {
         if (doubleShares) {
             // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
             sharesGained *= 3;
-            // CAP: after tripling, clamp to 1000 per prestige event
-            sharesGained = Math.min(1000, sharesGained);
+            // CAP: after tripling, clamp to 10000 per prestige event
+            sharesGained = Math.min(10000, sharesGained);
         }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
             this.isResetting = false;
             return false;
         }
 
-        // Apply Prestige — total shares capped at 3000
-        this.state.shares = Math.min(3000, (this.state.shares || 0) + sharesGained);
+        // Apply Prestige — total shares capped at 100000
+        this.state.shares = Math.min(100000, (this.state.shares || 0) + sharesGained);
         this.state.currentBranch = targetBranchIndex;
         this.state.maxBranchUnlocked = Math.max(this.state.maxBranchUnlocked || 0, targetBranchIndex);
         
         // Reset cash based on starting cash options in GAME_CONFIG
         const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
         const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
-        
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
+
+        // Branch Welcome Bonus: isNewBranch checked before reset, amount computed after recalculateEps
+        const isNewBranch = !this.state.visitedBranches || !this.state.visitedBranches.includes(targetBranchIndex);
+
         const savedShares = this.state.shares;
         const savedMaxBranch = this.state.maxBranchUnlocked;
         const savedGoldUpgrades = this.state.goldUpgrades;
@@ -643,7 +692,16 @@ class IdleBankGame {
         const savedMissionsCompleted = this.state.missionsCompleted;
         const savedLastWeeklyReward = this.state.lastWeeklyReward;
         const savedLastSpinTime = this.state.lastSpinTime;
+        const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
+        const savedLoginDate = this.state.lastLoginDate || 0;
+        const savedLoginStreak = this.state.loginStreak || 0;
+        const savedPendingLoginReward = this.state.pendingLoginReward || null;
+        const savedBoost2xUsedEver = this.state.boost2xUsedEver || false;
+        const savedDailyChallenges = this.state.dailyChallenges;
+        const savedLastDailyReset = this.state.lastDailyReset;
+        const savedMigrations = this.state.migrations ? Object.assign({}, this.state.migrations) : {};
 
+        if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
         this.initDefaultState();
 
         this.state.shares = savedShares;
@@ -655,6 +713,19 @@ class IdleBankGame {
         this.state.missionsCompleted = savedMissionsCompleted;
         this.state.lastWeeklyReward = savedLastWeeklyReward;
         this.state.lastSpinTime = savedLastSpinTime;
+        this.state.lastLoginDate = savedLoginDate;
+        this.state.loginStreak = savedLoginStreak;
+        this.state.pendingLoginReward = savedPendingLoginReward;
+        this.state.boost2xUsedEver = savedBoost2xUsedEver;
+        this.state.dailyChallenges = savedDailyChallenges;
+        this.state.lastDailyReset = savedLastDailyReset;
+        this.state.migrations = savedMigrations;
+
+        // Restore visitedBranches and add targetBranch if new
+        if (!savedVisitedBranches.includes(targetBranchIndex)) {
+            savedVisitedBranches.push(targetBranchIndex);
+        }
+        this.state.visitedBranches = savedVisitedBranches;
 
         // Reset cash based on starting cash options in GAME_CONFIG
         this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
@@ -677,6 +748,30 @@ class IdleBankGame {
         
         window.gameAudio.playUnlock();
         this.recalculateEps();
+
+        // Branch Welcome Bonus: computed here so EPS reflects the new branch
+        const welcomeBonusCash = isNewBranch ? (this.getEarningsPerSecond() * 60) : 0;
+        if (isNewBranch && welcomeBonusCash > 0) {
+            this.state.cash = Math.round((this.state.cash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
+            this.state.lifetimeCash = Math.round((this.state.lifetimeCash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
+            if (typeof window.showToast === 'function') {
+                const lang = this.state.language || 'he';
+                const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
+                const branchName = (this.branches && this.branches[targetBranchIndex]) ? this.branches[targetBranchIndex].name : ('סניף ' + targetBranchIndex);
+                const amt = Math.round(welcomeBonusCash).toLocaleString();
+                const msg = (tObj && typeof tObj.welcomeBonusMsg === 'function')
+                    ? tObj.welcomeBonusMsg(branchName, amt)
+                    : ('ברוכים הבאים ל' + branchName + '! קיבלת $' + amt + ' כמתנת פתיחה');
+                window.showToast(msg, 'success');
+            }
+        }
+
+        // Rebase daily_earn_cash startProgress so progress earned before prestige survives
+        this.state.dailyChallenges.forEach(c => {
+            if (c.completed || c.claimed || c.type !== 'daily_earn_cash') return;
+            c.startProgress = this.state.lifetimeCash - (c.progress || 0);
+        });
+
         this.isResetting = false;
         this.saveGame(true); // Force save immediately during prestige
         return true;
@@ -686,13 +781,22 @@ class IdleBankGame {
         const guard = this.state.guards[id];
         if (!guard || !guard.unlocked || guard.state !== 'idle') return false;
 
-        const anyTellerHasCash = this.state.tellers.some(t => t.unlocked && t.cashStored > 0);
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
         const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
 
-        if (anyTellerHasCash && vaultSpaceLeft > 0) {
-            guard.state = 'moving_to_tellers';
-            guard.position = 0;
+        // Build ordered queue of tellers with cash
+        const queue = [];
+        this.state.tellers.forEach((t, idx) => {
+            if (t.unlocked && t.cashStored > 0) queue.push(idx);
+        });
+
+        if (queue.length > 0 && vaultSpaceLeft > 0) {
+            guard.tellerVisitQueue = queue;
+            guard.targetTellerIndex = queue[0];
+            guard.carriedAmount = 0;
+            guard.loadedCash = 0;
+            guard.segmentPosition = guard.segmentPosition || guard.position || GAME_CONFIG.GUARD_VAULT_ANCHOR;
+            guard.state = 'moving_to_teller_' + queue[0];
             guard.timer = 0;
             window.gameAudio.playClick();
             return true;
@@ -714,7 +818,7 @@ class IdleBankGame {
 
     // --- GAME LOOP UPDATE ---
     update(dt) {
-        this.tickTimer('boost2xTimeLeft', dt);
+        this.tickTimer('boost2xTimeLeft', dt, () => { if (this.economyManager) this.economyManager.cachedTotalMult = null; });
         this.tickTimer('tellerSpeedBoostTimer', dt, () => this.recalculateEps());
 
         const advBudget = this.state.advBudget || 0;
@@ -724,14 +828,9 @@ class IdleBankGame {
                 this.state.cash = Math.round((this.state.cash - costThisFrame + Number.EPSILON) * 100) / 100;
                 this.state.advActive = true;
             } else {
-                const eps = this.getEarningsPerSecond();
-                if (eps > (advBudget / 60)) {
-                    this.state.advActive = true;
-                } else {
-                    this.state.advBudget = 0;
-                    this.state.advActive = false;
-                    this.saveGame();
-                }
+                this.state.advBudget = 0;
+                this.state.advActive = false;
+                this.saveGame();
             }
         } else {
             this.state.advActive = false;
@@ -826,6 +925,8 @@ class IdleBankGame {
         const finalRewardForTick = baseRewardForTick * this.getTotalMultiplier();
 
         // Updating Teller processing timers
+        let _tickVipCount = 0;
+        let _tickHadNonVip = false;
         this.state.tellers.forEach(t => {
             if (t.unlocked && t.isProcessing) {
                 t.processingTimeLeft -= dt;
@@ -837,9 +938,22 @@ class IdleBankGame {
                         if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
                         this.state.stats.vipServed++;
                         this._contextualAdPending = 'vip';
+                        _tickVipCount++;
+                    } else {
+                        _tickHadNonVip = true;
                     }
                     this.missionsDirty = true;
-                    
+
+                    // boost_run tracking: accumulate cash earned while boost is active
+                    if (this.state.boost2xTimeLeft > 0) {
+                        this.state.boost2xUsedEver = true;
+                        this.state.missions.forEach(m => {
+                            if (m.type === 'boost_run' && !m.completed) {
+                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + finalRewardForTick;
+                            }
+                        });
+                    }
+
                     t.cashStored = Math.round((t.cashStored + finalRewardForTick + Number.EPSILON) * 100) / 100;
 
                     const cap = this.getTellerCapacity(t.level);
@@ -850,94 +964,178 @@ class IdleBankGame {
             }
         });
 
-        // Update Guards state machine
+
+
+        // Update Guards state machine — multi-stop route
+        // Route: idle → moving_to_teller_N → collecting_from_teller_N (repeat per teller) → moving_to_vault → depositing → idle
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
+
+        // Collect teller indices currently targeted by other guards
+        const _claimedTellers = [];
+        this.state.guards.forEach(cg => {
+            if (!cg.unlocked) return;
+            if (cg.state.startsWith('moving_to_teller_') || cg.state.startsWith('collecting_from_teller_')) {
+                _claimedTellers.push(cg.targetTellerIndex);
+            }
+        });
+
+        const _getTellerAnchor = (ti) =>
+            GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] !== undefined ? GAME_CONFIG.GUARD_TELLER_ANCHORS[ti] : 0.5;
+        const VAULT_ANCHOR = GAME_CONFIG.GUARD_VAULT_ANCHOR;
+
         this.state.guards.forEach(g => {
             if (!g.unlocked) return;
 
             const transitDuration = this.getGuardSpeed(g.level);
             const capacity = this.getGuardCapacity(g.level);
+            const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
 
-            switch (g.state) {
-                case 'idle': {
-                    const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
-                    // CRIT-10: If guard has loaded cash, try to deposit if there is space, otherwise stay idle
-                    if (g.loadedCash > 0) {
-                        if (vaultSpaceLeft > 0) {
-                            g.state = 'depositing';
-                            g.timer = 0.5;
-                        }
-                    } else {
-                        const anyTellerHasCash = this.state.tellers.some(t => t.unlocked && t.cashStored > 0);
-                        if (this.state.managers.operations) {
-                            if (vaultSpaceLeft > 0 && anyTellerHasCash) {
-                                g.state = 'moving_to_tellers';
-                                g.timer = 0;
-                            }
-                        }
-                    }
-                    break;
-                }
+            // Ensure new fields exist (migration safety)
+            if (!Array.isArray(g.tellerVisitQueue)) g.tellerVisitQueue = [];
+            if (typeof g.segmentPosition !== 'number') g.segmentPosition = g.position || 0;
+            if (typeof g.carriedAmount !== 'number')   g.carriedAmount = g.loadedCash || 0;
+            if (typeof g.targetTellerIndex !== 'number') g.targetTellerIndex = 0;
 
-                case 'moving_to_tellers': {
-                    g.position += dt / transitDuration;
-                    if (g.position >= 1.0) {
-                        g.position = 1.0;
-                        g.state = 'collecting';
-                        g.timer = 0.5;
-                    }
-                    break;
-                }
+            // Normalise legacy states that no longer exist
+            if (g.state === 'moving_to_tellers' || g.state === 'collecting') {
+                g.state = 'idle';
+            }
 
-                case 'collecting': {
-                    g.timer -= dt;
-                    if (g.timer <= 0) {
-                        let cargo = 0;
-                        this.state.tellers.forEach(t => {
-                            if (t.unlocked && t.cashStored > 0 && cargo < capacity) {
-                                const spaceLeft = capacity - cargo;
-                                const taken = Math.min(t.cashStored, spaceLeft);
-                                t.cashStored = Math.round((t.cashStored - taken + Number.EPSILON) * 100) / 100;
-                                cargo += taken;
-                            }
-                        });
-                        g.loadedCash = Math.round((cargo + Number.EPSILON) * 100) / 100;
+            if (g.state === 'idle') {
+                // ── IDLE ──────────────────────────────────────────────────────
+                if (g.carriedAmount > 0) {
+                    // Had leftover cargo (e.g. vault was full) — try depositing now
+                    if (vaultSpaceLeft > 0) {
                         g.state = 'moving_to_vault';
                     }
-                    break;
-                }
-
-                case 'moving_to_vault': {
-                    g.position -= dt / transitDuration;
-                    if (g.position <= 0.0) {
-                        g.position = 0.0;
-                        g.state = 'depositing';
-                        g.timer = 0.5;
+                } else if (this.state.managers.operations && vaultSpaceLeft > 0) {
+                    let nextTi = -1;
+                    for (let i = 0; i < this.state.tellers.length; i++) {
+                        const t = this.state.tellers[i];
+                        if (t && t.unlocked && t.cashStored > 0 && !_claimedTellers.includes(i)) {
+                            nextTi = i;
+                            break;
+                        }
                     }
-                    break;
+                    if (nextTi >= 0) {
+                        g.targetTellerIndex = nextTi;
+                        g.carriedAmount = 0;
+                        g.state = 'moving_to_teller_' + nextTi;
+                        _claimedTellers.push(nextTi);
+                    }
                 }
 
-                case 'depositing': {
+            } else if (g.state.startsWith('moving_to_teller_')) {
+                // ── MOVING TO TELLER N ────────────────────────────────────────
+                const ti = parseInt(g.state.slice('moving_to_teller_'.length), 10);
+                const targetAnchor = _getTellerAnchor(ti);
+                const curPos = g.segmentPosition;
+                const dir = targetAnchor > curPos ? 1 : -1;
+                const step = dt / transitDuration;
+                g.segmentPosition = curPos + dir * step;
+
+                const reached = dir > 0 ? g.segmentPosition >= targetAnchor
+                                         : g.segmentPosition <= targetAnchor;
+                if (reached) {
+                    g.segmentPosition = targetAnchor;
+                    g.targetTellerIndex = ti;
+                    g.state = 'collecting_from_teller_' + ti;
+                    g.timer = 0.4;
+                }
+                g.position = g.segmentPosition;
+
+            } else if (g.state.startsWith('collecting_from_teller_')) {
+                // ── COLLECTING FROM TELLER N ──────────────────────────────────
+                g.timer -= dt;
+                if (g.timer <= 0) {
+                    const ti = parseInt(g.state.slice('collecting_from_teller_'.length), 10);
+                    const teller = this.state.tellers[ti];
+                    if (teller && teller.unlocked && teller.cashStored > 0) {
+                        const spaceLeft = capacity - g.carriedAmount;
+                        const taken = Math.min(teller.cashStored, spaceLeft);
+                        teller.cashStored = Math.round((teller.cashStored - taken + Number.EPSILON) * 100) / 100;
+                        g.carriedAmount = Math.round((g.carriedAmount + taken + Number.EPSILON) * 100) / 100;
+                        // Store actual collected amount and source teller so ui-draw can display
+                        // the correct floating text and coin animation when this state transition
+                        // is detected (prev=collecting_from_teller_N → cur=moving_to_* or moving_to_vault).
+                        g.lastCollectedAmount = taken;
+                        g.lastCollectedTellerIndex = ti;
+                    } else {
+                        g.lastCollectedAmount = 0;
+                        g.lastCollectedTellerIndex = ti;
+                    }
+                    // Remove this teller from the visit queue
+                    g.tellerVisitQueue = g.tellerVisitQueue.filter(idx => idx !== ti);
+
+                    // Find next teller in order (1, 2, 3...) that has cash
+                    let nextTi = -1;
+                    const isFull = g.carriedAmount >= capacity;
+                    if (!isFull) {
+                        for (let i = ti + 1; i < this.state.tellers.length; i++) {
+                            const t = this.state.tellers[i];
+                            if (t && t.unlocked && t.cashStored > 0 && !_claimedTellers.includes(i)) {
+                                nextTi = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (nextTi >= 0) {
+                        g.targetTellerIndex = nextTi;
+                        g.state = 'moving_to_teller_' + nextTi;
+                        _claimedTellers.push(nextTi);
+                    } else {
+                        // Done collecting — head to vault
+                        g.tellerVisitQueue = [];
+                        g.state = 'moving_to_vault';
+                    }
+                    // Sync loadedCash for UI / save compatibility
+                    g.loadedCash = g.carriedAmount;
+                }
+
+            } else if (g.state === 'moving_to_vault') {
+                // ── MOVING TO VAULT ───────────────────────────────────────────
+                const curPos = g.segmentPosition;
+                const dir = VAULT_ANCHOR > curPos ? 1 : -1;
+                const step = dt / transitDuration;
+                g.segmentPosition = curPos + dir * step;
+
+                const reached = dir > 0 ? g.segmentPosition >= VAULT_ANCHOR
+                                         : g.segmentPosition <= VAULT_ANCHOR;
+                if (reached) {
+                    g.segmentPosition = VAULT_ANCHOR;
+                    g.state = 'depositing';
+                    g.timer = 0.5;
+                }
+                g.position = g.segmentPosition;
+
+            } else if (g.state === 'depositing') {
+                // ── DEPOSITING ────────────────────────────────────────────────
+                // C-12: vault completely full — go idle immediately
+                if (vaultSpaceLeft <= 0) {
+                    g.state = 'idle';
+                } else {
                     g.timer -= dt;
                     if (g.timer <= 0) {
                         const spaceInVault = vaultCapacity - this.state.vault.cashStored;
                         if (spaceInVault <= 0) {
-                            // Vault is full, return guard to idle to prevent infinite active depositing ticks
                             g.state = 'idle';
                         } else {
-                            const depositAmount = Math.min(g.loadedCash, spaceInVault);
+                            const depositAmount = Math.min(g.carriedAmount, spaceInVault);
                             this.state.vault.cashStored = Math.round((this.state.vault.cashStored + depositAmount + Number.EPSILON) * 100) / 100;
-                            g.loadedCash = Math.round((g.loadedCash - depositAmount + Number.EPSILON) * 100) / 100;
+                            g.carriedAmount = Math.round((g.carriedAmount - depositAmount + Number.EPSILON) * 100) / 100;
+                            g.loadedCash = g.carriedAmount;
 
-                            if (g.loadedCash > 0) {
-                                g.state = 'depositing';
+                            if (g.carriedAmount > 0) {
+                                // Vault partially full — retry next tick
                                 g.timer = 0.5;
                             } else {
                                 g.state = 'idle';
+                                // guard_trips tracking: count completed deposit trips
+                                this.state.guardTripsTotal = (this.state.guardTripsTotal || 0) + 1;
                             }
                         }
                     }
-                    break;
                 }
             }
         });
@@ -1003,6 +1201,10 @@ class IdleBankGame {
         if (this.state.shares >= cost) {
             this.state.shares -= cost;
             this.state.goldUpgrades[type]++;
+            if ((type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') && this.economyManager) {
+                this.economyManager._cachedVaultCap = new Map();
+                this.economyManager._cachedTellerCap = null;
+            }
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();
@@ -1094,6 +1296,7 @@ class IdleBankGame {
         const secondsToAdd = hours * 3600;
         const maxSeconds = 8 * 3600;
         this.state.boost2xTimeLeft = Math.min(maxSeconds, (this.state.boost2xTimeLeft || 0) + secondsToAdd);
+        if (this.economyManager) this.economyManager.cachedTotalMult = null;
         window.gameAudio.playUnlock();
         this.saveGame();
         return true;
@@ -1171,11 +1374,16 @@ class IdleBankGame {
     triggerTempQueueBonus(amount, durationMs) {
         // NOTE: tempQueueBonus is intentionally a volatile property on the game instance.
         // It does not persist across page reloads. If a reload occurs while active,
-        // the bonus resets. The Math.max(0, ...) guard below prevents negative values 
+        // the bonus resets. The Math.max(0, ...) guard below prevents negative values
         // if a timeout clears after a reload/reset.
         this.tempQueueBonus = (this.tempQueueBonus || 0) + amount;
-        setTimeout(() => {
+        if (this._tempQueueBonusTimeout) {
+            clearTimeout(this._tempQueueBonusTimeout);
+            this._tempQueueBonusTimeout = null;
+        }
+        this._tempQueueBonusTimeout = setTimeout(() => {
             this.tempQueueBonus = Math.max(0, (this.tempQueueBonus || 0) - amount);
+            this._tempQueueBonusTimeout = null;
         }, durationMs);
     }
 
@@ -1261,9 +1469,12 @@ class IdleBankGame {
             loadedCash: g.loadedCash,
             capacity,
             speed,
-            position: g.position,
+            position: g.segmentPosition !== undefined ? g.segmentPosition : g.position,
             state: g.state,
-            timer: g.timer
+            timer: g.timer,
+            targetTellerIndex: g.targetTellerIndex || 0,
+            carriedAmount: g.carriedAmount || 0,
+            tellerVisitQueue: g.tellerVisitQueue || []
         };
     }
 

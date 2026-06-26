@@ -91,10 +91,13 @@
         langModalText: null,
         settingsDangerTitle: null,
         settingsThemeTitle: null,
-        labelAdvControl: null
+        labelAdvControl: null,
+        vaultGraphicLabel: null,
+        cashLiveBadge: null,
+        splashSubtitle: null
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => { try {
         // Populate the cache once
         window.DOM_CACHE.cash = document.getElementById('cash-value');
         window.DOM_CACHE.eps = document.getElementById('eps-value');
@@ -109,6 +112,8 @@
         window.DOM_CACHE.analyticsBtn = document.getElementById('analytics-btn');
         window.DOM_CACHE.langBtn = document.getElementById('lang-btn');
         window.DOM_CACHE.langModal = document.getElementById('lang-modal');
+        window.DOM_CACHE.btnWatchAd = document.getElementById('btn-watch-ad');
+        window.DOM_CACHE.adBoostTimer = document.getElementById('ad-boost-timer');
         window.DOM_CACHE.langModalClose = document.getElementById('lang-modal-close');
         window.DOM_CACHE.bulkSelector = document.getElementById('global-bulk-selector');
         window.DOM_CACHE.customerLine = document.getElementById('customer-line');
@@ -168,11 +173,14 @@
         window.DOM_CACHE.settingsDangerTitle = document.getElementById('settings-danger-title');
         window.DOM_CACHE.settingsThemeTitle = document.getElementById('settings-theme-title');
         window.DOM_CACHE.labelAdvControl = document.getElementById('label-adv-control');
+        window.DOM_CACHE.vaultGraphicLabel = document.getElementById('vault-graphic-label');
+        window.DOM_CACHE.cashLiveBadge = document.getElementById('cash-live-badge');
+        window.DOM_CACHE.splashSubtitle = document.getElementById('splash-subtitle');
 
         // Instantiate game logic and secure global IdleBankGame class
         if (typeof window.IdleBankGame !== 'function') {
             console.error('IdleBankGame class is not defined. game.js may have failed to load.');
-            return;
+            throw new Error('IdleBankGame not defined — caught by boot try/catch');
         }
         window.game = new window.IdleBankGame();
         delete window.IdleBankGame;
@@ -263,6 +271,16 @@
             window.renderBranchesTab();
         }
 
+        // Hide Splash Screen
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) {
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                splashScreen.style.visibility = 'hidden';
+                setTimeout(() => splashScreen.remove(), 800);
+            }, 800);
+        }
+
         // Start tick loop
         window.lastTime = performance.now();
         cancelAnimationFrame(window.rafId);
@@ -272,15 +290,22 @@
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
                 .then(reg => {
-                    console.log('Service Worker registered', reg);
                     reg.update();
                 })
                 .catch(err => console.error('Service Worker registration failed', err));
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (typeof window.game !== 'undefined' && window.game && typeof window.game.saveGame === 'function') {
+                    window.game.saveGame(true);
+                }
                 window.location.reload();
             });
         }
+    } catch(bootErr) {
+        console.error('[IDLE BANK BOOT ERROR]', bootErr);
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) { splashScreen.style.opacity = '0'; splashScreen.style.visibility = 'hidden'; setTimeout(() => splashScreen.remove(), 800); }
+    }
     });
 
     // Forced save on page close/reload
@@ -297,7 +322,6 @@
         if (activeGame) {
             try {
                 activeGame.saveGame(true); // Force immediate save on crash
-                console.log("State successfully saved during window.onerror crash recovery.");
             } catch (saveErr) {
                 console.error("Failed to save state during window.onerror crash recovery:", saveErr);
             }
@@ -311,7 +335,6 @@
         if (activeGame) {
             try {
                 activeGame.saveGame(true); // Force immediate save on crash
-                console.log("State successfully saved during unhandledrejection crash recovery.");
             } catch (saveErr) {
                 console.error("Failed to save state during unhandledrejection crash recovery:", saveErr);
             }
