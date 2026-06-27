@@ -1428,6 +1428,11 @@ function triggerRandomEvent() {
 
     if (AdService.isInCooldown()) {
         container.querySelectorAll('.ad-option').forEach(btn => btn.remove());
+        
+        const adDependentEvents = ['crowd', 'security', 'rescue', 'rush_hours', 'investor', 'celebrity_visit'];
+        if (adDependentEvents.includes(eventType) && container.children.length <= 1) {
+            return;
+        }
     }
 
     eventModal.classList.add('active');
