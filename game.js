@@ -445,6 +445,7 @@ class IdleBankGame {
         const cost = this.tellerUnlockCosts[id];
         if (this.spendCash(cost)) {
             teller.unlocked = true;
+            this.missionsDirty = true;
             teller.level = 1;
             window.gameAudio.playUnlock();
             this.recalculateEps();
@@ -465,6 +466,7 @@ class IdleBankGame {
         const cost = this.guardUnlockCosts[id];
         if (this.spendCash(cost)) {
             guard.unlocked = true;
+            this.missionsDirty = true;
             guard.level = 1;
             window.gameAudio.playUnlock();
             this.saveGame();
@@ -528,6 +530,7 @@ class IdleBankGame {
         const cost = this.managerCosts[type];
         if (this.spendCash(cost)) {
             this.state.managers[type] = true;
+            this.missionsDirty = true;
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();
@@ -542,6 +545,7 @@ class IdleBankGame {
 
         if (this.spendCash(dept.cost)) {
             dept.unlocked = true;
+            this.missionsDirty = true;
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();
@@ -1240,6 +1244,7 @@ class IdleBankGame {
         
         if (this.spendCash(cost)) {
             mgr.level++;
+            this.missionsDirty = true;
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();
@@ -1257,6 +1262,7 @@ class IdleBankGame {
         const details = this.getBulkUpgradeDetails('manager', type, mode, mgr.level, this.state.cash);
         if (details.canAfford && details.levels > 0 && this.spendCash(details.cost)) {
             mgr.level += details.levels;
+            this.missionsDirty = true;
             window.gameAudio.playUnlock();
             this.recalculateEps();
             this.saveGame();

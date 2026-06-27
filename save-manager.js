@@ -586,6 +586,10 @@ class SaveManager {
                     if (m.type === 'clients' && (m.startProgress !== undefined && (!isNum(m.startProgress) || m.startProgress < 0 || m.startProgress > state.stats.clientsServed))) {
                         m.startProgress = undefined;
                     }
+                    const deltaTypes = ['earn_cash', 'serve_rich_vip', 'spend_cash', 'vip_collector', 'guard_trips'];
+                    if (deltaTypes.includes(m.type) && m.startProgress !== undefined) {
+                        if (!isNum(m.startProgress) || m.startProgress < 0) m.startProgress = undefined;
+                    }
                     // B-3: department_unlock missions saved before startProgress was introduced
                     // would never complete because startProgress defaults to current dept count on first
                     // checkMissions() run, making the delta always 0. Reset to 0 so any future unlock counts.
