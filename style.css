@@ -96,7 +96,7 @@ body {
 
 /* App Layout */
 .app-container {
-    max-width: 1200px;
+    max-width: 1600px;
     width: 100%;
     margin: 0 auto;
     padding: 1rem;
@@ -104,6 +104,100 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Juiciness - Button Squish Animation */
+.buy-btn, .claim-reward-btn, .tab-btn, .collect-vault-btn, .upg-v2-buy-btn {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease-out, filter 0.15s ease-out, background 0.2s ease, border-color 0.2s ease !important;
+}
+
+.buy-btn:not(:disabled):active, 
+.claim-reward-btn:active, 
+.tab-btn:not(.active):active, 
+.collect-vault-btn:active,
+.upg-v2-buy-btn:not(:disabled):active {
+    transform: scale(0.92) !important;
+    filter: brightness(0.9);
+}
+
+/* Smart Notifications & Highlights */
+.notification-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--danger-red);
+    border-radius: 50%;
+    border: 2px solid var(--surface-color);
+    box-shadow: 0 0 8px var(--danger-red);
+    animation: pulse-dot 1.5s infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes pulse-dot {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px var(--danger-red); }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.smart-recommendation-glow {
+    animation: smart-card-pulse 2s infinite alternate !important;
+}
+
+@keyframes smart-card-pulse {
+    0% {
+        box-shadow: 0 0 5px 2px rgba(251,191,36,0.3);
+        border-color: rgba(251,191,36,0.5);
+    }
+    100% {
+        box-shadow: 0 0 20px 5px rgba(251,191,36,0.8);
+        border-color: rgba(251,191,36,1);
+    }
+}
+
+.recommended-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(90deg, #dfab29, #fceb9c);
+    color: #111827;
+    font-size: 0.85rem;
+    font-weight: 900;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(223, 171, 41, 0.5);
+    z-index: 10;
+    pointer-events: none;
+    animation: badge-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+[dir="ltr"] .recommended-badge {
+    right: auto;
+    left: 20px;
+}
+
+@keyframes badge-pop {
+    0% { transform: scale(0) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.idle-zzz {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    font-weight: bold;
+    animation: float-zzz 2s ease-in-out infinite;
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+@keyframes float-zzz {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    50% { transform: translateY(-15px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
 }
 
 /* Header Area */
@@ -207,7 +301,7 @@ body {
 
 /* App Layout */
 .app-container {
-    max-width: 1200px;
+    max-width: 1600px;
     width: 100%;
     margin: 0 auto;
     padding: 1rem;
@@ -215,6 +309,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Juiciness - Button Squish Animation */
+.btn-squish {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease-out, filter 0.15s ease-out !important;
+}
+.btn-squish:active {
+    transform: scale(0.92) !important;
+    filter: brightness(0.9);
 }
 
 /* Header Area */
@@ -1601,7 +1704,6 @@ header {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 600px;
 }
 
 /* Tabs Navigation */
@@ -1656,20 +1758,23 @@ header {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Tab Content */
 .tab-content {
     flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding-right: 0.2rem;
+    position: relative;
+    min-height: 0;
 }
 
 .tab-pane {
     display: none;
     flex-direction: column;
     gap: 0.75rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    padding-right: 0.2rem;
 }
 
 .tab-pane.active {
@@ -2592,15 +2697,19 @@ footer {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); /* Premium dark blue gradient */
     border: 2px solid rgba(49, 130, 206, 0.45); /* Thin blue border for in-progress */
     border-radius: 24px;
-    padding: 1.2rem 1.5rem;
-    display: flex;
-    flex-direction: row;
+    padding: 1.25rem 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 
+        "details image"
+        "progress progress"
+        "action action";
+    gap: 1rem;
     align-items: center;
-    justify-content: space-between;
-    gap: 1.4rem;
+    direction: rtl;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    min-height: 120px;
+    min-height: 140px;
     overflow: visible;
     cursor: pointer;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
@@ -2629,7 +2738,7 @@ footer {
 #tab-missions .mission-reward-badge {
     position: absolute;
     top: -12px;
-    right: 24px;
+    right: 12px;
     background: #000000; /* Pure black background for high contrast */
     border: 2px solid #dfab29; /* Gold border */
     color: #fbbf24; /* Gold reward text */
@@ -2652,17 +2761,17 @@ footer {
 
 /* Middle details */
 #tab-missions .mission-details {
+    grid-area: details;
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
-    flex-grow: 1;
     direction: rtl;
     text-align: right;
     min-width: 0; /* Prevents layout expansion from long content */
 }
 
 #tab-missions .mission-card .mission-title {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.85);
@@ -2683,11 +2792,12 @@ footer {
 
 /* Flex Row for gold bar and percentage */
 #tab-missions .mission-progress-row {
+    grid-area: progress;
     display: flex;
     align-items: center;
     gap: 0.8rem;
     width: 100%;
-    margin-top: 0.3rem;
+    margin-top: 0;
 }
 
 /* Progress bar container (gold liquid capsule) */
@@ -2749,8 +2859,8 @@ footer {
 
 /* Action Zone (Left side) */
 #tab-missions .mission-action-zone {
-    width: 96px;
-    flex-shrink: 0;
+    grid-area: action;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2764,7 +2874,7 @@ footer {
     border: 2px solid #bbf7d0;
     background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 900;
     cursor: pointer;
     display: flex;
@@ -2823,13 +2933,13 @@ footer {
 }
 
 #tab-missions .box-progress-fraction {
-    font-size: 0.80rem;
+    font-size: 0.70rem;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.9);
     font-family: 'Outfit', sans-serif;
     text-align: center;
     white-space: nowrap;
-    max-width: 88px;
+    max-width: 70px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -2843,9 +2953,9 @@ footer {
 
 /* Right Side: Image illustration with blue radial glow */
 #tab-missions .mission-image-box {
+    grid-area: image;
     width: 86px;
     height: 86px;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;

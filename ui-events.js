@@ -2403,7 +2403,11 @@ function initUIEvents() {
             DOM_CACHE.bulkSelector.querySelectorAll('.bulk-btn-option').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            if (typeof updateButtonAffordability === 'function') {
+            if (typeof refreshAllTabs === 'function') {
+                const scrollPos = document.getElementById('tab-upgrades') ? document.getElementById('tab-upgrades').scrollTop : 0;
+                refreshAllTabs();
+                if (document.getElementById('tab-upgrades')) document.getElementById('tab-upgrades').scrollTop = scrollPos;
+            } else if (typeof updateButtonAffordability === 'function') {
                 updateButtonAffordability();
             }
         });
@@ -2467,7 +2471,13 @@ function initUIEvents() {
                     if (typeof window.recalcGuardAnchors === 'function') window.recalcGuardAnchors();
                 }
             } else {
-                updateButtonAffordability();
+                const scrollPos = tabUpgrades.scrollTop;
+                if (typeof refreshAllTabs === 'function') {
+                    refreshAllTabs();
+                } else if (typeof updateButtonAffordability === 'function') {
+                    updateButtonAffordability();
+                }
+                tabUpgrades.scrollTop = scrollPos;
             }
         });
     }

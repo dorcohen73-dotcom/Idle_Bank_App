@@ -771,7 +771,7 @@ function draw() {
                         }
                     } else {
                         clientSlot.classList.remove('active');
-                        clientSlot.innerHTML = '';
+                        clientSlot.innerHTML = '<div class="idle-zzz">Zzz</div>';
                         clientSlot.style.removeProperty('background-image');
                         clientSlot.style.removeProperty('background-size');
                         clientSlot.style.removeProperty('background-position');
@@ -1148,6 +1148,90 @@ function draw() {
         const textFn = prestigePreviewTexts[cachedLang] || prestigePreviewTexts.he;
         previewEl.innerText = textFn(pendingShares);
     }
+
+    // Dynamic vault visual progression
+    const vaultImg = document.querySelector('.vault-door-img');
+    if (vaultImg) {
+        if (vaultData.level >= 50) {
+            vaultImg.style.filter = 'drop-shadow(0 0 20px gold) hue-rotate(45deg) brightness(1.2)';
+            vaultImg.style.transform = 'scale(1.05)';
+        } else if (vaultData.level >= 25) {
+            vaultImg.style.filter = 'drop-shadow(0 0 10px silver) brightness(1.1)';
+            vaultImg.style.transform = 'scale(1.02)';
+        } else {
+            vaultImg.style.filter = 'none';
+            vaultImg.style.transform = 'scale(1)';
+        }
+    }
+
+    updateNotifications();
+}
+
+function updateTabDot(tabId, show) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (!btn) return;
+    let dot = btn.querySelector('.notification-dot');
+    if (show) {
+        if (!dot) {
+            dot = document.createElement('div');
+            dot.className = 'notification-dot';
+            btn.style.position = 'relative';
+            btn.appendChild(dot);
+        }
+    } else {
+        if (dot) dot.remove();
+    }
+    
+    // Also update bottom nav if it exists
+    const bottomBtn = document.querySelector(`.bottom-nav-btn[data-tab="${tabId}"]`);
+    if (bottomBtn) {
+        let bottomDot = bottomBtn.querySelector('.notification-dot');
+        if (show) {
+            if (!bottomDot) {
+                bottomDot = document.createElement('div');
+                bottomDot.className = 'notification-dot';
+                bottomBtn.style.position = 'relative';
+                bottomBtn.appendChild(bottomDot);
+            }
+        } else {
+            if (bottomDot) bottomDot.remove();
+        }
+    }
+}
+
+function updateNotifications() {
+    let hasMissions = false;
+    if (game.state.missions) {
+        for (let i=0; i<game.state.missions.length; i++) {
+            if (game.state.missions[i].status === 'completed') {
+                hasMissions = true;
+                break;
+            }
+        }
+    }
+    
+    let hasUpgrades = false;
+    if (game.state.cash > 0) {
+        if (game.state.cash >= game.getVaultUpgradeCost()) hasUpgrades = true;
+        else if (game.state.cash >= game.getQueueUpgradeCost()) hasUpgrades = true;
+        else {
+            for (let i=0; i<game.state.tellers.length; i++) {
+                if (game.state.tellers[i].unlocked && game.state.cash >= game.getTellerUpgradeCost(game.state.tellers[i].id)) {
+                    hasUpgrades = true; break;
+                }
+            }
+            if (!hasUpgrades) {
+                for (let i=0; i<game.state.guards.length; i++) {
+                    if (game.state.guards[i].unlocked && game.state.cash >= game.getGuardUpgradeCost(game.state.guards[i].id)) {
+                        hasUpgrades = true; break;
+                    }
+                }
+            }
+        }
+    }
+
+    updateTabDot('missions', hasMissions);
+    updateTabDot('upgrades', hasUpgrades);
 }
 
     // Exports

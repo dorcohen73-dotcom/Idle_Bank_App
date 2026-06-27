@@ -375,6 +375,61 @@ function renderUpgradesTab() {
         `;
     }
     container.appendChild(queueCard);
+
+    // Smart Recommendation Highlight
+    let bestBtnSelector = null;
+    let maxRatio = -1;
+
+    // Check tellers for best EPS/Cost ratio
+    game.state.tellers.forEach(t => {
+        if (!t.unlocked) return;
+        const details = game.getBulkUpgradeDetails('teller', t.id, currentUpgradeMode, t.level, game.state.cash);
+        if (details.canAfford && details.cost > 0) {
+            const nextLvl = t.level + details.levels;
+            const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));
+            const currentSpeed = Math.max(0.1, game.getTellerSpeed(t.level));
+            const epsIncrease = (1 / nextSpeed) - (1 / currentSpeed);
+            
+            let ratio = epsIncrease / details.cost;
+            if (epsIncrease === 0) {
+                // If speed is maxed out, fallback to most levels per cost
+                ratio = (details.levels * 0.0000001) / details.cost;
+            }
+            if (ratio > maxRatio) {
+                maxRatio = ratio;
+                bestBtnSelector = `.buy-btn[data-type="teller"][data-id="${t.id}"]`;
+            }
+        }
+    });
+
+    if (bestBtnSelector) {
+        const btn = container.querySelector(bestBtnSelector);
+        if (btn) {
+            const card = btn.closest('.upgrade-card');
+            if (card) {
+                card.classList.add('smart-recommendation-glow');
+                card.style.position = 'relative';
+                const badge = document.createElement('div');
+                badge.className = 'recommended-badge';
+                badge.innerText = (lang === 'he') ? '🔥 הכי משתלם' : '🔥 Best Value';
+                card.appendChild(badge);
+            }
+        }
+    } else {
+        // Fallback: Just highlight the first affordable upgrade
+        const firstAffordable = container.querySelector('.buy-btn:not(.disabled)');
+        if (firstAffordable) {
+            const card = firstAffordable.closest('.upgrade-card');
+            if (card) {
+                card.classList.add('smart-recommendation-glow');
+                card.style.position = 'relative';
+                const badge = document.createElement('div');
+                badge.className = 'recommended-badge';
+                badge.innerText = (lang === 'he') ? '🔥 הכי משתלם' : '🔥 Best Value';
+                card.appendChild(badge);
+            }
+        }
+    }
 }
 
 const statLabels = {
@@ -1308,24 +1363,15 @@ function renderMissionsTab() {
             rewardAmtHtml = `<span class="claim-reward-amount">+${formatMoney(m.reward)} 💰</span>`;
         }
 
-        let btnHtml = '';
+        let actionZoneHtml = '';
         if (m.completed && !m.claimed) {
-            btnHtml = `
+            actionZoneHtml = `
+            <div class="mission-action-zone">
                 <button class="claim-reward-btn" data-mission-id="${m.id}">
                     ${rootT.claimReward || 'Claim!'}
                     ${rewardAmtHtml}
                 </button>
-            `;
-        } else {
-            btnHtml = `
-                <div class="mission-progress-box">
-                    <span class="box-progress-fraction">
-                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                        /
-                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
-                    </span>
-                    <span class="box-progress-percent">${Math.round(percent)}%</span>
-                </div>
+            </div>
             `;
         }
 
@@ -1342,23 +1388,21 @@ function renderMissionsTab() {
             <div class="mission-reward-badge">
                 ${rewardBadgeHtml}
             </div>
-            <div class="mission-action-zone">
-                ${btnHtml}
-            </div>
+            ${actionZoneHtml}
             <div class="mission-details">
                 <div class="mission-title">${title}</div>
                 <div class="mission-desc">${progressDesc}</div>
-                <div class="mission-progress-row">
-                    <div class="mission-progress-outer">
-                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
-                        <div class="progress-text-overlay">
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                            /
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
-                        </div>
+            </div>
+            <div class="mission-progress-row">
+                <div class="mission-progress-outer">
+                    <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                    <div class="progress-text-overlay">
+                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                        /
+                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
                     </div>
-                    <div class="mission-progress-pct">${Math.round(percent)}%</div>
                 </div>
+                <div class="mission-progress-pct">${Math.round(percent)}%</div>
             </div>
             <div class="mission-image-box">
                 <div class="mission-image-glow"></div>
