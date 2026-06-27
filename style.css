@@ -896,13 +896,13 @@ header {
 .plaque-title {
     color: #e5c060;
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 1.0rem;
     letter-spacing: 0.3px;
 }
 .plaque-level {
     color: #dfab29;
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     background: rgba(223, 171, 41, 0.08);
     padding: 0px 4px;
     border-radius: 3px;
@@ -916,7 +916,7 @@ header {
     align-items: center;
 }
 .plaque-cash {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: #dfab29;
     font-family: 'Outfit', sans-serif;
@@ -927,7 +927,7 @@ header {
     color: #000 !important;
     border: none;
     border-radius: 5px;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 800;
     padding: 0.25rem 0.5rem;
     cursor: pointer;
@@ -3284,20 +3284,20 @@ footer {
     }
 
     .plaque-title {
-        font-size: 0.78rem !important;
+        font-size: 0.95rem !important;
     }
 
     .plaque-level {
-        font-size: 0.72rem !important;
+        font-size: 0.85rem !important;
         padding: 0px 3px !important;
     }
 
     .plaque-cash {
-        font-size: 0.85rem !important;
+        font-size: 1.05rem !important;
     }
 
     .plaque-collect-btn {
-        font-size: 0.72rem !important;
+        font-size: 0.85rem !important;
         padding: 0.2rem 0.4rem !important;
     }
 
