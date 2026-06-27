@@ -2759,7 +2759,7 @@ footer {
 /* Green claim reward button with glowing neon green aura */
 #tab-missions .claim-reward-btn {
     width: 100%;
-    height: 48px;
+    height: 56px;
     border-radius: 12px;
     border: 2px solid #bbf7d0;
     background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
@@ -2768,8 +2768,10 @@ footer {
     font-weight: 900;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
         0 0 15px rgba(34, 197, 94, 0.55), 
@@ -2788,6 +2790,14 @@ footer {
 
 #tab-missions .claim-reward-btn:active {
     transform: scale(0.96);
+}
+
+#tab-missions .claim-reward-amount {
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.9;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 @keyframes pulse-claim {

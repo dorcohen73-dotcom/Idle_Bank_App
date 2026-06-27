@@ -194,25 +194,26 @@ function getFloatingFromPool() {
     return floatingTextPool[0];
 }
 
-function spawnFloating(text, x, y, type = 'gold') {
+function spawnFloating(text, x, y, type = 'gold', fontSize = null) {
     const floatObj = getFloatingFromPool();
     if (!floatObj) return;
     floatObj.active = true;
     const div = floatObj.element;
-    
+
     let colorStr = type;
     if (type === 'gold') colorStr = 'var(--primary-gold)';
     else if (type === 'red' || type === 'danger') colorStr = 'var(--danger-red)';
     else if (type === 'green' || type === 'money') colorStr = 'var(--green-light)';
-    
+
     div.innerText = text;
-    
+
     activeFloatingText.push({
         poolObj: floatObj,
         element: div,
         startX: x,
         startY: y,
         colorStr: colorStr,
+        fontSize: fontSize || '1.2rem',
         progress: 0,
         duration: 1.2
     });
@@ -231,7 +232,7 @@ function updateFloatingText(dt) {
         if (t < 0.15) opacity = t / 0.15;
         else if (t > 0.7) opacity = 1 - ((t - 0.7) / 0.3);
         
-        f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};will-change:transform,opacity;position:absolute;left:0;top:0;`;
+        f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};font-size:${f.fontSize || '1.2rem'};will-change:transform,opacity;position:absolute;left:0;top:0;`;
         
         if (t >= 1.0) {
             f.element.style.display = 'none';

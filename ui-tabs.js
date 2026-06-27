@@ -1276,11 +1276,20 @@ function renderMissionsTab() {
         };
         const imgSrc = imgMap[m.type] || './תמונות/icon.png';
 
+        let rewardAmtHtml = '';
+        if (m.reward && typeof m.reward === 'object' && m.reward.type) {
+            const shareLbl = rootT.sharesLabel || 'Gold Shares';
+            rewardAmtHtml = `<span class="claim-reward-amount">+${m.reward.amount} ${shareLbl} 🪙</span>`;
+        } else {
+            rewardAmtHtml = `<span class="claim-reward-amount">+${formatMoney(m.reward)} 💰</span>`;
+        }
+
         let btnHtml = '';
         if (m.completed && !m.claimed) {
             btnHtml = `
                 <button class="claim-reward-btn" data-mission-id="${m.id}">
                     ${rootT.claimReward || 'Claim!'}
+                    ${rewardAmtHtml}
                 </button>
             `;
         } else {
@@ -1355,7 +1364,7 @@ function renderMissionsTab() {
                 if (collected.type === 'cash') {
                     const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
                     animateCoins(rectBtn, rectCashBox, 10, 'cash');
-                    spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
+                    spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem');
                 } else {
                     // shares / gold reward
                     const rectSharesBox = document.getElementById('stat-shares');
@@ -1365,7 +1374,7 @@ function renderMissionsTab() {
                     }
                     const lang = (game.state && game.state.language) || 'he';
                     const shareLbl = (translations[lang] || translations.he).sharesLabel || 'Gold Shares';
-                    spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold');
+                    spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');
                 }
 
                 renderMissionsTab();
