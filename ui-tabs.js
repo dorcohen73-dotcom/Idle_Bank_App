@@ -63,21 +63,73 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 
         const canBuy = details.canAfford;
 
+        card.className = 'upgrade-card premium-upg-card';
+        const eps = capacity / speed;
+        const nextEps = nextCapacity / nextSpeed;
+        
         card.innerHTML = `
-            <div class="card-left-section">
-                <div class="card-avatar"></div>
-                <div class="card-details">
-                    <div class="card-title">${title}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${levelsToBuy})</span>` : ''}</div>
-                    <div class="card-desc">${desc}</div>
-                    <div class="card-stats">
-                        <div class="stat-line">${speedLabel}: <span>${speed}${translations[lang].secAbbr || 's'} ➔ ${nextSpeed}${translations[lang].secAbbr || 's'}</span></div>
-                        <div class="stat-sep"> | </div>
-                        <div class="stat-line">${capLabel}: <span>${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}</span></div>
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${title} <span class="upg-v2-level-up">${levelsToBuy > 1 ? '(+'+levelsToBuy+')' : ''}</span></div>
+                    <div class="upg-v2-desc">${desc}</div>
+                    
+                    <div class="upg-v2-divider"></div>
+                    
+                    <div class="upg-v2-stats">
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${speedLabel}</div>
+                                <div class="upg-v2-stat-val">${speed} <span class="arrow">➔</span> ${nextSpeed}</div>
+                            </div>
+                        </div>
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${capLabel}</div>
+                                <div class="upg-v2-stat-val">${formatMoney(capacity)} <span class="arrow">➔</span> ${formatMoney(nextCapacity)}</div>
+                            </div>
+                        </div>
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${lang === 'he' ? 'תגמול כולל' : 'Total Yield'}</div>
+                                <div class="upg-v2-stat-val">${formatMoney(eps)}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button class="buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
-                ${translations[lang].upgradeLabel}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ''}<br>${formatMoney(cost)}
+            
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
+                        <span class="upg-v2-btn-amount">+${levelsToBuy}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
+                    </div>
+                </div>
+                <div class="upg-v2-btn-sparkles">✨</div>
             </button>
         `;
         if (avatarBgUrl) {
@@ -108,18 +160,34 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 
         const canBuy = game.state.cash >= cost;
 
+        card.className = 'upgrade-card premium-upg-card locked-card';
         card.innerHTML = `
-            <div class="card-left-section">
-                <div class="card-avatar locked">
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap locked">
+                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
                     <div class="lock-overlay">🔒</div>
                 </div>
-                <div class="card-details">
-                    <div class="card-title">${title}</div>
-                    <div class="card-desc">${desc}</div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${title}</div>
+                    <div class="upg-v2-desc">${desc}</div>
                 </div>
             </div>
-            <button class="buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
-                ${unlockText}<br>${formatMoney(cost)}
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${unlockText}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'עלות פתיחה' : 'Unlock Cost'}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
+                    </div>
+                </div>
             </button>
         `;
         if (avatarBgUrl2) {
@@ -168,24 +236,54 @@ function renderUpgradesTab() {
     const vCanBuy = details.canAfford;
 
     const vaultCard = document.createElement('div');
-    vaultCard.className = 'upgrade-card';
+    vaultCard.className = 'upgrade-card premium-upg-card';
     vaultCard.innerHTML = `
-        <div class="card-left-section">
-            <div class="card-avatar"></div>
-            <div class="card-details">
-                <div class="card-title">${tObj.vaultTitle(vault.level)}${vLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${vLevelsToBuy})</span>` : ''}</div>
-                <div class="card-desc">${tObj.vaultDesc}</div>
-                <div class="card-stats">
-                    ${tObj.vaultCap}: <span>${formatMoney(vCap)} ➔ ${formatMoney(nextVCap)}</span>
+        <div class="upg-v2-info">
+            <div class="upg-v2-avatar-wrap">
+                <div class="upg-v2-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
+            </div>
+            <div class="upg-v2-details">
+                <div class="upg-v2-title">${tObj.vaultTitle(vault.level)} <span class="upg-v2-level-up">${vLevelsToBuy > 1 ? '(+'+vLevelsToBuy+')' : ''}</span></div>
+                <div class="upg-v2-desc">${tObj.vaultDesc}</div>
+                
+                <div class="upg-v2-divider"></div>
+                
+                <div class="upg-v2-stats">
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                        </div>
+                        <div class="upg-v2-stat-text">
+                            <div class="upg-v2-stat-label">${tObj.vaultCap}</div>
+                            <div class="upg-v2-stat-val">${formatMoney(vCap)} <span class="arrow">➔</span> ${formatMoney(nextVCap)}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <button class="buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'}>
-            ${translations[lang].upgradeLabel}${vLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${vLevelsToBuy}</span>` : ''}<br>${formatMoney(vCost)}
+        
+        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'}>
+            <div class="upg-v2-btn-left-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+            </div>
+            <div class="upg-v2-btn-content">
+                <div class="upg-v2-btn-top">
+                    <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
+                    <span class="upg-v2-btn-amount">+${vLevelsToBuy}</span>
+                </div>
+                <div class="upg-v2-btn-divider"></div>
+                <div class="upg-v2-btn-bottom">
+                    <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                    <span class="upg-v2-btn-cost">${formatMoney(vCost)}</span>
+                </div>
+            </div>
+            <div class="upg-v2-btn-sparkles">✨</div>
         </button>
     `;
-    const vaultAv = vaultCard.querySelector('.card-avatar');
-    if (vaultAv) vaultAv.style.backgroundImage = "url('תמונות/vault-door.png')";
     container.appendChild(vaultCard);
 
     // Separator line
@@ -204,37 +302,78 @@ function renderUpgradesTab() {
     queueCard.className = 'upgrade-card';
 
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
+        queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-            <div class="card-left-section">
-                <div class="card-avatar"></div>
-                <div class="card-details">
-                    <div class="card-title">${tObj.queueMaxTitle}</div>
-                    <div class="card-desc">${tObj.queueMaxDesc(qCap)}</div>
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${tObj.queueMaxTitle}</div>
+                    <div class="upg-v2-desc">${tObj.queueMaxDesc(qCap)}</div>
                 </div>
             </div>
-            <button class="buy-btn disabled" disabled>
-                ${translations[lang].maxLevel}
+            <button class="upg-v2-buy-btn buy-btn disabled" disabled>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${translations[lang].maxLevel}</span>
+                    </div>
+                </div>
             </button>
         `;
     } else {
+        queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-            <div class="card-left-section">
-                <div class="card-avatar"></div>
-                <div class="card-details">
-                    <div class="card-title">${tObj.queueTitle(queueLvl)}${qLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">(+${qLevelsToBuy})</span>` : ''}</div>
-                    <div class="card-desc">${tObj.queueDesc}</div>
-                    <div class="card-stats">
-                        ${tObj.queueCap}: <span>${qCap} ${tObj.clientsShort} ➔ ${nextQCap} ${tObj.clientsShort}</span>
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${tObj.queueTitle(queueLvl)} <span class="upg-v2-level-up">${qLevelsToBuy > 1 ? '(+'+qLevelsToBuy+')' : ''}</span></div>
+                    <div class="upg-v2-desc">${tObj.queueDesc}</div>
+                    
+                    <div class="upg-v2-divider"></div>
+                    
+                    <div class="upg-v2-stats">
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${tObj.queueCap}</div>
+                                <div class="upg-v2-stat-val">${qCap} <span class="arrow">➔</span> ${nextQCap}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button class="buy-btn ${qCanBuy ? '' : 'disabled'}" id="upgrade-queue-btn" ${qCanBuy ? '' : 'disabled'}>
-                ${tObj.queueUpgradeBtn}${qLevelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${qLevelsToBuy}</span>` : ''}<br>${formatMoney(qCost)}
+            
+            <button class="upg-v2-buy-btn buy-btn ${qCanBuy ? '' : 'disabled'}" id="upgrade-queue-btn" ${qCanBuy ? '' : 'disabled'}>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${tObj.queueUpgradeBtn}</span>
+                        <span class="upg-v2-btn-amount">+${qLevelsToBuy}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(qCost)}</span>
+                    </div>
+                </div>
+                <div class="upg-v2-btn-sparkles">✨</div>
             </button>
         `;
     }
-    const queueAv = queueCard.querySelector('.card-avatar');
-    if (queueAv) queueAv.style.backgroundImage = "url('תמונות/client-1.png')";
     container.appendChild(queueCard);
 }
 
@@ -1268,24 +1407,27 @@ function updateButtonAffordability() {
                     const details = game.getBulkUpgradeDetails('teller', id, currentUpgradeMode, t.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
-                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
-                    if (btn.innerHTML !== newText) {
-                        btn.innerHTML = newText;
-                        const card = btn.closest('.upgrade-card');
+                    
+                    if (btn.classList.contains('upg-v2-buy-btn')) {
+                        const amtEl = btn.querySelector('.upg-v2-btn-amount');
+                        const costEl = btn.querySelector('.upg-v2-btn-cost');
+                        if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
+                        if (costEl) costEl.innerText = formatMoney(details.cost);
+                        
+                        const card = btn.closest('.premium-upg-card');
                         if (card) {
-                            const titleEl = card.querySelector('.card-title');
-                            if (titleEl) {
-                                titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.tellerTitle(id + 1, t.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
-                            }
-                            const statsSpans = card.querySelectorAll('.card-stats span');
-                            if (statsSpans.length >= 2) {
+                            const titleAmtEl = card.querySelector('.upg-v2-level-up');
+                            if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                            
+                            const statVals = card.querySelectorAll('.upg-v2-stat-val');
+                            if (statVals.length >= 2) {
                                 const capacity = game.getTellerCapacity(t.level);
                                 const speed = game.getTellerSpeed(t.level).toFixed(1);
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                                 const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
-                                const lang = game.state.language || 'he';
-                                statsSpans[0].innerText = `${speed}${(translations[lang] || translations.he).secAbbr || 's'} ➔ ${nextSpeed}${(translations[lang] || translations.he).secAbbr || 's'}`;
-                                statsSpans[1].innerText = `${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}`;
+                                statVals[0].innerHTML = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
+                                statVals[1].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                                if (statVals[2]) statVals[2].innerHTML = formatMoney(capacity / speed);
                             }
                         }
                     }
@@ -1301,24 +1443,27 @@ function updateButtonAffordability() {
                     const details = game.getBulkUpgradeDetails('guard', id, currentUpgradeMode, g.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
-                    const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
-                    if (btn.innerHTML !== newText) {
-                        btn.innerHTML = newText;
-                        const card = btn.closest('.upgrade-card');
+                    
+                    if (btn.classList.contains('upg-v2-buy-btn')) {
+                        const amtEl = btn.querySelector('.upg-v2-btn-amount');
+                        const costEl = btn.querySelector('.upg-v2-btn-cost');
+                        if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
+                        if (costEl) costEl.innerText = formatMoney(details.cost);
+                        
+                        const card = btn.closest('.premium-upg-card');
                         if (card) {
-                            const titleEl = card.querySelector('.card-title');
-                            if (titleEl) {
-                                titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.guardTitle(id + 1, g.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
-                            }
-                            const statsSpans = card.querySelectorAll('.card-stats span');
-                            if (statsSpans.length >= 2) {
-                                const speed = game.getGuardSpeed(g.level).toFixed(1);
+                            const titleAmtEl = card.querySelector('.upg-v2-level-up');
+                            if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                            
+                            const statVals = card.querySelectorAll('.upg-v2-stat-val');
+                            if (statVals.length >= 2) {
                                 const capacity = game.getGuardCapacity(g.level);
-                                const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
+                                const speed = game.getGuardSpeed(g.level).toFixed(1);
                                 const nextCapacity = game.getGuardCapacity(g.level + details.levels);
-                                const lang = game.state.language || 'he';
-                                statsSpans[0].innerText = `${speed}${(translations[lang] || translations.he).secAbbr || 's'} ➔ ${nextSpeed}${(translations[lang] || translations.he).secAbbr || 's'}`;
-                                statsSpans[1].innerText = `${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}`;
+                                const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
+                                statVals[0].innerHTML = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
+                                statVals[1].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                                if (statVals[2]) statVals[2].innerHTML = formatMoney(capacity / speed);
                             }
                         }
                     }
@@ -1332,20 +1477,22 @@ function updateButtonAffordability() {
                 const details = game.getBulkUpgradeDetails('vault', null, currentUpgradeMode, game.state.vault.level, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
-                const newText = `${translations[game.state.language || 'he'].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
-                if (btn.innerHTML !== newText) {
-                    btn.innerHTML = newText;
-                    const card = btn.closest('.upgrade-card');
+                if (btn.classList.contains('upg-v2-buy-btn')) {
+                    const amtEl = btn.querySelector('.upg-v2-btn-amount');
+                    const costEl = btn.querySelector('.upg-v2-btn-cost');
+                    if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
+                    if (costEl) costEl.innerText = formatMoney(details.cost);
+                    
+                    const card = btn.closest('.premium-upg-card');
                     if (card) {
-                        const titleEl = card.querySelector('.card-title');
-                        if (titleEl) {
-                            titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.vaultTitle(game.state.vault.level)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
-                        }
-                        const statsSpan = card.querySelector('.card-stats span');
-                        if (statsSpan) {
+                        const titleAmtEl = card.querySelector('.upg-v2-level-up');
+                        if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                        
+                        const statVals = card.querySelectorAll('.upg-v2-stat-val');
+                        if (statVals.length >= 1) {
                             const capacity = game.getVaultCapacity(game.state.vault.level);
                             const nextCapacity = game.getVaultCapacity(game.state.vault.level + details.levels);
-                            statsSpan.innerText = `${formatMoney(capacity)} ➔ ${formatMoney(nextCapacity)}`;
+                            statVals[0].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
                         }
                     }
                 }
@@ -1353,20 +1500,22 @@ function updateButtonAffordability() {
                 const details = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
-                const newText = `${translations[game.state.language || 'he'].upgrades.queueUpgradeBtn}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;
-                if (btn.innerHTML !== newText) {
-                    btn.innerHTML = newText;
-                    const card = btn.closest('.upgrade-card');
+                if (btn.classList.contains('upg-v2-buy-btn')) {
+                    const amtEl = btn.querySelector('.upg-v2-btn-amount');
+                    const costEl = btn.querySelector('.upg-v2-btn-cost');
+                    if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
+                    if (costEl) costEl.innerText = formatMoney(details.cost);
+                    
+                    const card = btn.closest('.premium-upg-card');
                     if (card) {
-                        const titleEl = card.querySelector('.card-title');
-                        if (titleEl) {
-                            titleEl.innerHTML = `${translations[game.state.language || 'he'].upgrades.queueTitle(game.state.queueUpgradeLevel || 1)}${details.levels > 1 ? ` <span class="upgrade-amount-text">(+${details.levels})</span>` : ''}`;
-                        }
-                        const statsSpan = card.querySelector('.card-stats span');
-                        if (statsSpan) {
+                        const titleAmtEl = card.querySelector('.upg-v2-level-up');
+                        if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                        
+                        const statVals = card.querySelectorAll('.upg-v2-stat-val');
+                        if (statVals.length >= 1) {
                             const capacity = game.getQueueCapacity(game.state.queueUpgradeLevel || 1);
                             const nextCapacity = game.getQueueCapacity((game.state.queueUpgradeLevel || 1) + details.levels);
-                            statsSpan.innerText = `${capacity} ${translations[game.state.language || 'he'].upgrades.clientsShort} ➔ ${nextCapacity} ${translations[game.state.language || 'he'].upgrades.clientsShort}`;
+                            statVals[0].innerHTML = capacity + ' <span class="arrow">➔</span> ' + nextCapacity;
                         }
                     }
                 }

@@ -5472,6 +5472,12 @@ header, .control-panel, .bank-floor {
     font-size: 0.9rem !important;
   }
 
+  .upg-v2-stat-text {
+    min-width: 0;
+    font-size: 0.85rem;
+    word-break: break-word; /* Allow text to wrap nicely */
+  }
+
   .stat-box {
     min-width: 0 !important;
     padding: 0.25rem 0.45rem !important;
@@ -8466,6 +8472,25 @@ header {
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
+.upg-new-btn.upg-v2-level-up {
+    color: #4ade80; /* Green color for the level up text like in mockup */
+    font-size: 1.1rem;
+}
+
+.upg-v2-desc {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-top: 0.15rem;
+}
+
+.upg-v2-divider {
+    height: 1px;
+    background: #1e293b;
+    margin: 0.6rem 0;
+    width: 100%;
+}
+
 .upg-new-btn.disabled .upg-btn-icon {
     border-color: #888;
     color: #888;
@@ -8592,13 +8617,6 @@ header {
     flex-wrap: wrap;
 }
 
-.upg-stat-label {
-    color: #cbd5e1;
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
 .upg-stat-val {
     font-size: 0.85rem;
     font-family: 'Outfit', sans-serif;
@@ -8638,186 +8656,302 @@ header {
     background-position: center top;
 }
 
-@media (max-width: 600px) {
-    /* === Card layout === */
-    .upg-new-layout {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: stretch;
-        padding: 0.5rem 0.55rem;
-        margin-bottom: 0.45rem;
-        gap: 0.5rem;
-        border-radius: 14px;
-        border: 1px solid rgba(226, 192, 87, 0.14);
-        background: linear-gradient(120deg, #0d1018 0%, #111827 100%);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-
-    /* === Portrait === */
-    .upg-new-portrait {
-        width: 48px;
-        height: 48px;
-        align-self: center;
-        flex-shrink: 0;
-        border-width: 2px;
-        border-color: rgba(226, 192, 87, 0.7);
-        box-shadow: 0 0 0 3px rgba(226, 192, 87, 0.1), 0 2px 8px rgba(0,0,0,0.5);
-    }
-
-    /* === Content === */
-    .upg-new-content {
-        flex-grow: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 0.28rem;
-    }
-
-    /* === Header === */
-    .upg-new-header {
-        font-size: 0.85rem;
-        font-weight: 800;
-        margin-bottom: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.2;
-    }
-    .upg-title-name {
-        color: #f0f4ff;
-    }
-    .upg-title-level {
-        color: #d4a93a;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-    .upg-title-levels {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: #0f121a;
-        background: #7deba0;
-        border-radius: 4px;
-        padding: 0 0.22rem;
-        margin-right: 0.15rem;
-        vertical-align: middle;
-        line-height: 1.5;
-    }
-
-    /* === Description === */
-    .upg-new-desc {
-        display: none;
-    }
-
-    /* === Stats === */
-    .upg-new-stats {
-        flex-direction: row;
-        gap: 0.3rem;
-        flex-wrap: nowrap;
-        align-items: center;
-    }
-    .upg-new-stat-row {
-        display: flex;
-        border-bottom: none;
-        padding-bottom: 0;
-        gap: 0.2rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 6px;
-        padding: 0.15rem 0.28rem;
-        align-items: center;
-    }
-    .upg-stat-icon {
-        width: 14px;
-        height: 14px;
-        border: none;
-        background: none;
-        box-shadow: none;
-        color: #b8942e;
-        flex-shrink: 0;
-    }
-    .upg-stat-icon svg {
-        width: 11px;
-        height: 11px;
-    }
-    .upg-stat-info {
-        flex-direction: row;
-        align-items: baseline;
-        gap: 0.18rem;
-        flex-wrap: nowrap;
-    }
-    .upg-stat-label {
-        display: none;
-    }
-    .upg-stat-val {
-        font-size: 0.77rem;
-        white-space: nowrap;
-        font-family: 'Outfit', sans-serif;
-    }
-    .upg-stat-val .val-old {
-        color: #8a7540;
-        font-weight: 600;
-    }
-    .upg-stat-val .val-new {
-        color: #6ee89a;
-        font-weight: 800;
-    }
-
-    /* === Button === */
-    .upg-new-btn-wrapper {
-        align-self: stretch;
-        flex-shrink: 0;
-        width: 68px;
-        min-width: 68px;
-        max-width: 68px;
-    }
-    .upg-new-btn {
-        height: 100%;
-        min-height: 52px;
-        flex-direction: column;
-        gap: 2px;
-        padding: 0.3rem 0.4rem;
-        border-radius: 10px;
-        border-width: 1.5px;
-        box-shadow: 0 0 14px rgba(226, 192, 87, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
-    }
-    .upg-new-btn.disabled {
-        box-shadow: none;
-        border-color: #555;
-    }
-    .upg-btn-icon {
-        display: none;
-    }
-    .upg-btn-title {
-        font-size: 0.6rem;
-        font-weight: 700;
-        margin-bottom: 0;
-        opacity: 0.75;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-    }
-    .upg-btn-cost {
-        font-size: 0.9rem;
-        font-weight: 900;
-        letter-spacing: -0.02em;
-        line-height: 1;
-    }
-    .upg-btn-glow {
-        display: none;
-    }
+/* ==============================================================
+   Premium Upgrades Redesign (V2)
+============================================================== */
+.upgrade-card.premium-upg-card {
+    background: #101421;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    direction: rtl;
+    transition: all 0.3s ease;
+    flex-wrap: wrap; /* CRITICAL: Allows button to drop gracefully instead of squishing */
 }
 
-@media (max-width: 600px) {
-    .buy-btn {
-        font-size: 1.3rem !important;
-        padding: 0.8rem 1.2rem !important;
-        line-height: 1.4 !important;
-    }
-    .card-title {
-        font-size: 1.35rem !important;
-    }
-    .upgrade-amount-text {
-        font-size: 1.2em !important;
-    }
+.upgrade-card.premium-upg-card:hover {
+    background: #141a29;
+    border-color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
+
+.upgrade-card.premium-upg-card.locked-card {
+    opacity: 0.8;
+}
+
+/* Info Section */
+.upg-v2-info {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1 1 250px; /* Forces wrap on very narrow columns */
+    min-width: 0;
+}
+
+.upg-v2-avatar-wrap {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #374151;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.upgrade-card.premium-upg-card:hover .upg-v2-avatar-wrap {
+    border-color: rgba(223, 171, 41, 0.5);
+    box-shadow: 0 0 15px rgba(223, 171, 41, 0.2), inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.upg-v2-avatar {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.upg-v2-avatar-wrap.locked {
+    filter: grayscale(1) brightness(0.4);
+    border-color: #1f2937;
+}
+
+.upg-v2-avatar-wrap.locked .lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: rgba(255,255,255,0.8);
+}
+
+/* Details */
+.upg-v2-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    min-width: 0; /* CRITICAL */
+}
+
+.upg-v2-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap; /* allow title to wrap */
+}
+
+.upg-v2-level-up {
+    color: #4ade80;
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+.upg-v2-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.15rem;
+}
+
+.upg-v2-divider {
+    height: 1px;
+    background: #1f2937;
+    width: 100%;
+    margin: 0.75rem 0;
+}
+
+/* Stats */
+.upg-v2-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.upg-v2-stat {
+    display: flex;
+    flex-direction: column; /* Stack icon and text for clean grid look in narrow columns */
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.upg-v2-stat-icon {
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+}
+
+.upg-v2-stat-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    min-width: 0;
+}
+
+.upg-v2-stat-label {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
+}
+
+.upg-v2-stat-val {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    word-break: break-word; /* Prevents overflow */
+    line-height: 1.15;
+}
+
+.upg-v2-stat-val .arrow {
+    color: #dfab29;
+    font-size: 0.75rem;
+    margin: 0 0.15rem;
+}
+
+/* Action Button */
+button.upg-v2-buy-btn {
+    background: linear-gradient(180deg, #fceb9c 0%, #d4b055 100%);
+    border: none !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(223, 171, 41, 0.2), inset 0 2px 4px rgba(255,255,255,0.4) !important;
+    position: relative;
+    flex: 1 1 140px; /* Let it grow and take available space if wrapped */
+    min-width: 140px;
+    overflow: hidden;
+    text-align: right;
+    font-family: inherit;
+}
+
+button.upg-v2-buy-btn:hover:not(.disabled) {
+    transform: translateY(-2px) !important;
+    filter: brightness(1.05);
+    box-shadow: 0 6px 20px rgba(223, 171, 41, 0.35), inset 0 2px 4px rgba(255,255,255,0.5) !important;
+}
+
+button.upg-v2-buy-btn:active:not(.disabled) {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 5px rgba(223, 171, 41, 0.3) !important;
+}
+
+.upg-v2-btn-left-icon {
+    background: #131720;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 12px 12px 0;
+    border-left: 2px solid #2a3143;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.upg-v2-btn-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 0.6rem 1rem 0.6rem 0.75rem;
+    align-items: flex-start;
+    z-index: 2;
+}
+
+.upg-v2-btn-top {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #453510;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.15rem;
+}
+
+.upg-v2-btn-amount {
+    color: #166534;
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.upg-v2-btn-divider {
+    height: 1px;
+    background: rgba(69, 53, 16, 0.2);
+    width: 100%;
+    margin: 0.15rem 0 0.25rem 0;
+}
+
+.upg-v2-btn-bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+.upg-v2-btn-sub {
+    font-size: 0.65rem;
+    color: #5c4716;
+}
+
+.upg-v2-btn-cost {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #111827;
+}
+
+.upg-v2-btn-sparkles {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Button Disabled State */
+button.upg-v2-buy-btn.disabled {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+    border: 1px solid #1e293b !important;
+}
+
+button.upg-v2-buy-btn.disabled .upg-v2-btn-left-icon {
+    background: #0b0f19;
+    border-left-color: #1e293b;
+}
+
+button.upg-v2-buy-btn.disabled .upg-v2-btn-top,
+button.upg-v2-buy-btn.disabled .upg-v2-btn-sub,
+button.upg-v2-buy-btn.disabled .upg-v2-btn-cost {
+    color: #64748b;
+}
+
+button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
+    color: #475569;
+}
+
+button.upg-v2-buy-btn.disabled svg {
+    stroke: #475569;
+}
+
+
+
