@@ -2295,7 +2295,7 @@ Object.assign(translations.ru, {
     synergiesDesc: "Активируйте уникальные комбинации навыков менеджеров смежных отделов, чтобы разблокировать мощные бонусы.",
     synergiesList: {
         operational: {
-            name: "Операционная ответственность (Рахиль + Алан)",
+            name: "Операционная эффективность (Рахиль + Алан)",
             desc: "Быстрое обслуж. + Быстрый бег ➔ Кассиры и инкассаторы работают на 10% быстрее."
         },
         logistics: {
@@ -2590,7 +2590,7 @@ Object.assign(translations.ru, {
     boostMilestoneMsg: "🎉 Цель по деньгам! Активировать буст x2?",
     boostActivatedMsg: "⚡ Буст x2 активирован!",
     weeklyTitle: "🏆 Отличная неделя!",
-    weeklyText: "Целая неделя управления империей! Ваша команда готова к буст!",
+    weeklyText: "Целая неделя управления империей! Ваша команда готова к бусту!",
     weeklyStats: (eps, served, shares) => `💰 EPS: <strong>${eps}</strong><br>👥 Клиентов обслужено: <strong>${served}</strong><br>⭐ Золотые акции: <strong>${shares}</strong>`,
     boost8hMsg: "⚡ Буст на 8 часов!",
     errorTitle: "Ой! Что-то пошло не так",
