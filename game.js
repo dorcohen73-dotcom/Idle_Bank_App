@@ -645,7 +645,7 @@ class IdleBankGame {
         if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
             return this._cachedPrestigeShares;
         }
-        let rawGain = 10 * Math.pow(lifetimeCash / 100000, 0.45);
+        let rawGain = 10 * Math.pow(lifetimeCash / 100000, 0.25);
         if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
             rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);

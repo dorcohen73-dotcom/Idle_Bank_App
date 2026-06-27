@@ -1111,11 +1111,7 @@ function renderBranchesTab() {
             if (!currentCanPrestige) return;
             initSound();
             const target = parseInt(btn.getAttribute('data-prestige-branch'));
-            if (typeof window.showPrestigeNearMissBanner === 'function') {
-                window.showPrestigeNearMissBanner(() => openPrestigeModal(target));
-            } else {
-                openPrestigeModal(target);
-            }
+            openPrestigeModal(target);
         });
     });
 
@@ -1126,11 +1122,7 @@ function renderBranchesTab() {
             const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
             if (!currentCanPrestige) return;
             initSound();
-            if (typeof window.showPrestigeNearMissBanner === 'function') {
-                window.showPrestigeNearMissBanner(() => openPrestigeModal(game.state.currentBranch));
-            } else {
-                openPrestigeModal(game.state.currentBranch);
-            }
+            openPrestigeModal(game.state.currentBranch);
         });
     }
 

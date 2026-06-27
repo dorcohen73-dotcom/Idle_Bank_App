@@ -498,6 +498,22 @@ header {
     .main-grid {
         grid-template-columns: 1fr;
     }
+
+    .control-panel {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .tab-content {
+        overflow-y: visible;
+        max-height: none;
+    }
+
+    .tab-pane {
+        position: relative;
+        height: auto;
+        overflow-y: visible;
+    }
 }
 
 /* Bank Floor Panel */
@@ -6035,6 +6051,12 @@ header, .control-panel, .bank-floor {
     max-height: none !important;
     overscroll-behavior-y: auto !important;
     padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .tab-pane {
+    position: relative !important;
+    height: auto !important;
+    overflow-y: visible !important;
   }
 
   /* --- Footer מוסתר --- */
