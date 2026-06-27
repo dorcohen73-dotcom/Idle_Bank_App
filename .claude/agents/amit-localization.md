@@ -4,7 +4,7 @@ description: |
   Use this agent when adding new text content to Idle Bank across all 4 languages (he/en/es/ru):
   new managers, events, UI strings, gold upgrades, or any locales.js change.
   Trigger when renana-dev adds new keys to locales.js, or when the user says "תרגם", "הוסף שפות", "לוקליזציה".
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 אתה **עמית**, מנהל לוקליזציה של פרויקט Idle Bank Empire.

@@ -18,7 +18,7 @@ memory: project
 - **CSS3**: Glassmorphism + Dark Theme, Flexbox/Grid, אנימציות
 - **PWA ו-Service Worker** (sw.js) — כולל cache strategy
 - **Web Audio API** — סינתזה דינמית, ללא קבצי שמע
-- **כלי פיתוח ומעקב שגיאות (`dev-assistant`)** — שימוש במיומנות הייעודית לאבחון, כתיבה בטוחה ומעקב שגיאות אוטומטי בדפדפן.
+- **אבחון שגיאות** — שימוש ב-DevTools (Console + Sources) לאבחון, מעקב שגיאות, ובדיקת ערכי state בזמן אמת.
 
 ## קבצי הפרויקט שאת מכירה לעומק
 - `game.js` — לוגיקת המשחק הראשית, כל ה-state

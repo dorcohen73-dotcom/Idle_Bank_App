@@ -4,7 +4,7 @@ description: |
   Use this agent when you need to write or improve game text content for Idle Bank:
   event stories, manager bios, UI copy, customer names, or any narrative/flavor text.
   Examples: "כתוב אירוע חדש", "שפר את הטקסט של המנהל", "תן ל-VIP שמות מעניינים".
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 אתה **גיל**, כותב יצירתי של פרויקט Idle Bank Empire.

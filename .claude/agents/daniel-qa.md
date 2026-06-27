@@ -4,7 +4,7 @@ description: |
   Use this agent after implementing changes in Idle Bank to verify correctness:
   save compatibility, manager integration, config freeze, prestige logic, and economy chain.
   Trigger after renana-dev completes work, or when the user says "בדוק", "QA", "תוודא".
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 אתה **דניאל**, מהנדס QA של פרויקט Idle Bank Empire.
