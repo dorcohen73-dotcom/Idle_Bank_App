@@ -1,0 +1,359 @@
+/* =========================================
+   AI PREMIUM DASHBOARD DESIGN
+   ========================================= */
+
+.luxury-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* HERO CARD */
+.ai-hero-card {
+    background: linear-gradient(145deg, #0a101d 0%, #060913 100%);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.5), transparent);
+}
+
+/* Text Section */
+.ai-hero-text-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+}
+
+.ai-hero-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-badge-label {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+}
+
+.ai-badge-active {
+    background: rgba(15, 28, 21, 0.8);
+    border: 1px solid rgba(22, 101, 52, 0.5);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    color: #4ade80;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ai-badge-active .status-dot {
+    width: 6px;
+    height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+    animation: ai-pulse 2s infinite;
+}
+
+.ai-hero-cash {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+    line-height: 1.1;
+}
+
+.ai-hero-eps {
+    color: #4ade80;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+/* Icon Section (Radar) */
+.ai-hero-icon-section {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.ai-hero-radar-ring {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px dashed rgba(74, 222, 128, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: ai-spin 30s linear infinite;
+}
+
+.ai-hero-radar-inner {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1px solid rgba(74, 222, 128, 0.6);
+    background: rgba(74, 222, 128, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+    animation: ai-spin-reverse 30s linear infinite;
+}
+
+.ai-bank-icon {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 0 8px rgba(223, 171, 41, 0.6));
+}
+
+.radar-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+}
+.dot-1 { top: -2px; left: 50%; transform: translateX(-50%); }
+.dot-2 { bottom: -2px; left: 50%; transform: translateX(-50%); }
+.dot-3 { left: -2px; top: 50%; transform: translateY(-50%); }
+.dot-4 { right: -2px; top: 50%; transform: translateY(-50%); }
+
+/* SECONDARY GRID */
+.ai-secondary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.ai-secondary-card {
+    background: linear-gradient(145deg, #0a101d 0%, #060913 100%);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-sec-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ai-sec-title {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ai-sec-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+}
+
+.ai-sec-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ai-sec-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Multiplier Specifics */
+.ai-multiplier-card {
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(168, 85, 247, 0.05);
+}
+.ai-multiplier-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+}
+.purple-glow {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    color: #d8b4fe;
+}
+.val-highlight-purple {
+    color: #c084fc;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+/* Gold Specifics */
+.ai-gold-card {
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(234, 179, 8, 0.05);
+}
+.ai-gold-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.5), transparent);
+}
+.gold-glow {
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+    color: #fde047;
+}
+.val-highlight-gold {
+    color: #facc15;
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+}
+
+/* Animations */
+@keyframes ai-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+@keyframes ai-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes ai-spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .ai-hero-cash { font-size: 2.2rem; }
+    .ai-hero-icon-section { width: 90px; height: 90px; }
+    .ai-hero-radar-ring { width: 80px; height: 80px; }
+    .ai-hero-radar-inner { width: 55px; height: 55px; }
+    .ai-bank-icon { width: 30px; height: 30px; }
+    .ai-secondary-grid { gap: 8px; }
+    .ai-sec-value { font-size: 1.2rem; }
+    .ai-sec-icon-circle { width: 40px; height: 40px; }
+    .ai-sec-icon { width: 20px; height: 20px; }
+}
+
+
+/* =========================================
+   AI PREMIUM DASHBOARD - EXTRA ANIMATIONS
+   ========================================= */
+
+/* 1. Floating Effect for Main Icons */
+@keyframes ai-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+.ai-bank-icon, .ai-sec-icon {
+    animation: ai-float 4s ease-in-out infinite;
+}
+
+/* 2. Glass Sweep / Shimmer Effect on Hero Card */
+.ai-hero-card {
+    position: relative;
+    /* Ensure overflow hidden is there from previous CSS */
+}
+.ai-hero-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.03) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: ai-shimmer-sweep 7s infinite;
+    z-index: 1; /* Behind text but above background */
+    pointer-events: none;
+}
+@keyframes ai-shimmer-sweep {
+    0% { left: -150%; }
+    20% { left: 250%; }
+    100% { left: 250%; }
+}
+
+/* 3. Breathing Glow on Secondary Cards */
+@keyframes ai-purple-breathe {
+    0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(168, 85, 247, 0.02); }
+    50% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 25px rgba(168, 85, 247, 0.15); }
+}
+.ai-multiplier-card {
+    animation: ai-purple-breathe 4s ease-in-out infinite;
+}
+
+@keyframes ai-gold-breathe {
+    0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(234, 179, 8, 0.02); }
+    50% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 25px rgba(234, 179, 8, 0.15); }
+}
+.ai-gold-card {
+    animation: ai-gold-breathe 4s ease-in-out infinite 2s; /* Delayed start so it alternates */
+}
+
+/* 4. Twinkling Effect for Emojis */
+@keyframes ai-twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    50% { opacity: 0.6; transform: scale(0.8); filter: brightness(1.5); }
+}
+.ai-sparkle, .ai-star {
+    display: inline-block;
+    animation: ai-twinkle 3s ease-in-out infinite;
+}
+.ai-star {
+    animation-delay: 1.5s; /* Offset from sparkle */
+}
+
+/* 5. Income Arrow Bounce */
+@keyframes ai-arrow-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+.eps-arrow {
+    display: inline-block;
+    animation: ai-arrow-bounce 2s ease-in-out infinite;
+}
+
+
+
+
+

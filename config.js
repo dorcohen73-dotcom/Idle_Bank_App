@@ -69,6 +69,7 @@ const GAME_CONFIG = {
         customer: 50,
         operations: 5000,
         finance: 100000,
+        accountant: 300000,
         service: 1500000,
         vip: 50000000,
         marketing: 2000000000
@@ -78,6 +79,7 @@ const GAME_CONFIG = {
         customer: [0, 300, 1000, 5000, 25000],
         operations: [0, 15000, 50000, 180000, 600000],
         finance: [0, 300000, 1000000, 3200000, 10000000],
+        accountant: [0, 800000, 2500000, 8000000, 25000000],
         service: [0, 4500000, 15000000, 50000000, 150000000],
         vip: [0, 150000000, 500000000, 1600000000, 5000000000],
         marketing: [0, 6000000000, 20000000000, 60000000000, 200000000000]
@@ -106,7 +108,8 @@ const GAME_CONFIG = {
         customer: { spawnIntervalBoost: 0.06, incomeBoost: 0.06 },
         finance: { incomeBoost: 0.10, deptIncomeBoost: 0.12 },
         operations: { guardSpeedBoost: 0.04, tellerSpeedBoost: 0.03, guardCapBoost: 0.20 },
-        service: { capacityBoost: 0.05, incomeBoost: 0.08, epsBoost: 0.05, offlineLimitBoost: 2 },
+        accountant: { offlineLimitBoost: 2.0, offlineIncomeBoost: 0.15 },
+        service: { capacityBoost: 0.05, incomeBoost: 0.08, epsBoost: 0.05, offlineLimitBoost: 0 },
         vip: { incomeBoost: 0.07, prestigeBoost: 0.04, prestigeSharesBoost: 0.08 },
         marketing: { adBoost: 0.10, offlineLimitBoost: 1 }
     },

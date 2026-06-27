@@ -446,6 +446,7 @@ const statLabels = {
         gold_shares: "מניות זהב בפרסטיז'",
         ad_bonus: "בונוס פרסום",
         offline_time: "שעות אופליין מקסימליות",
+        offline_income: "הכנסות אופליין",
         hourlyProfit: "רווח נוסף:",
         perHour: "לשעה",
         lockedLabel: "נעול",
@@ -470,6 +471,7 @@ const statLabels = {
         gold_shares: "Prestige Gold Shares",
         ad_bonus: "Ad Campaign Boost",
         offline_time: "Max Offline Hours",
+        offline_income: "Offline Income",
         hourlyProfit: "Extra Yield:",
         perHour: "/ hr",
         lockedLabel: "Locked",
@@ -494,6 +496,7 @@ const statLabels = {
         gold_shares: "Acciones de Oro",
         ad_bonus: "Bono de Publicidad",
         offline_time: "Horas Offline Máx",
+        offline_income: "Ingresos Offline",
         hourlyProfit: "Rendimiento Extra:",
         perHour: "/ h",
         lockedLabel: "Bloqueado",
@@ -518,6 +521,7 @@ const statLabels = {
         gold_shares: "Золотые акции",
         ad_bonus: "Бонус рекламы",
         offline_time: "Макс. часов оффлайн",
+        offline_income: "Оффлайн доход",
         hourlyProfit: "Доп. доход:",
         perHour: "/ ч",
         lockedLabel: "Закрыто",
@@ -548,10 +552,11 @@ function renderManagersTab() {
     const lang = game.state.language || 'he';
     const tObj = translations[lang].managers;
 
-    const managersKeys = ['customer', 'operations', 'finance', 'service', 'vip', 'marketing'];
+    const managersKeys = ['customer', 'operations', 'finance', 'accountant', 'service', 'vip', 'marketing'];
     const managerConfigs = {
         customer: { theme: 'theme-gold', gem: '👑', img: 'manager-1.png' },
         finance: { theme: 'theme-blue', gem: '💎', img: 'manager-2.png' },
+        accountant: { theme: 'theme-teal', gem: '⏱️', img: 'manager-7.png' },
         operations: { theme: 'theme-purple', gem: '🔮', img: 'manager-3.png' },
         service: { theme: 'theme-amber', gem: '🔸', img: 'manager-4.png' },
         vip: { theme: 'theme-red', gem: '💰', img: 'manager-5.png' },
@@ -670,6 +675,20 @@ function renderManagersTab() {
                 stat2Lbl = statLabels[lang].offline_time;
                 icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 11 2v20a10 10 0 0 0 11-10z"></path></svg>';
                 icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+            } else if (type === 'accountant') {
+                stat1Lbl = statLabels[lang].offline_time;
+                stat2Lbl = statLabels[lang].offline_income;
+                icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+                icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
+                
+                // Fallback in case game.js cache fails to update
+                if (!mData.stat1Val || mData.stat1Val === '') {
+                    const c = GAME_CONFIG.MANAGER_COEFFICIENTS['accountant'];
+                    if (c) {
+                        mData.stat1Val = `+${c.offlineLimitBoost * level}h`;
+                        mData.stat2Val = `+${Math.round(c.offlineIncomeBoost * 100 * level)}%`;
+                    }
+                }
             }
 
             bodyHtml = `
@@ -1345,9 +1364,10 @@ function renderMissionsTab() {
             'vip_marathon': './תמונות/gold-vip.png',
             'vip_collector': './תמונות/gold-vip.png',
             'department_unlock': './תמונות/gold-truck.png',
-            'manager_hire': './תמונות/manager-1.png',
-            'teller_max': './תמונות/teller-7.png',
-            'boost_run': './תמונות/gold-bars.png',
+            'manager-5': './תמונות/manager-5.png',
+            'manager-6': './תמונות/manager-6.png',
+            'manager-7': './תמונות/manager-7.png',
+            'upgrade_arrows': './תמונות/upgrade-arrows.png',
             'guard_trips': './תמונות/guard.png',
             'all_managers': './תמונות/manager-1.png',
             'department_grind': './תמונות/manager-1.png',
@@ -1661,6 +1681,9 @@ function updateButtonAffordability() {
                                 } else if (type === 'marketing') {
                                     s1 = `+${Math.round(coefs.adBoost * 100 * mgr.level)}%`;
                                     s2 = `+${coefs.offlineLimitBoost * mgr.level}`;
+                                } else if (type === 'accountant') {
+                                    s1 = `+${coefs.offlineLimitBoost * mgr.level}h`;
+                                    s2 = `+${Math.round(coefs.offlineIncomeBoost * 100 * mgr.level)}%`;
                                 }
                             }
                             statVals[0].innerText = s1;

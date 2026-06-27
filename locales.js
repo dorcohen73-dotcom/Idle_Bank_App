@@ -108,6 +108,7 @@ const translations = {
                 customer: "מנהל לקוחות",
                 finance: "מנהל כספים",
                 operations: "מנהל תפעול",
+                accountant: "רואה חשבון (אופליין)",
                 service: "מנהל שירות",
                 vip: "מנהל VIP",
                 marketing: "מנהל שיווק"
@@ -116,7 +117,8 @@ const translations = {
                 customer: "+6% מהירות לקוחות | +6% הכנסות (לכל רמה)",
                 finance: "ריקון כספת אוטומטי | +12% הכנסות מחלקות (לכל רמה)",
                 operations: "+4% מהירות בלדרים | +20% קיבולת שומר (לכל רמה)",
-                service: "+5% קיבולת עמדות | +5% EPS | +2 שעות אופליין (לכל רמה)",
+                accountant: "+2 שעות פעילות באופליין | +15% הכנסות אופליין (לכל רמה)",
+                service: "+5% קיבולת עמדות | +5% EPS (לכל רמה)",
                 vip: "+7% הכנסות מחלקות | +8% מניות זהב בפרסטיג' (לכל רמה)",
                 marketing: "+10% בונוס פרסום | +1 שעה אופליין מקסימלית (לכל רמה)"
             }
@@ -340,6 +342,7 @@ const translations = {
                 customer: "Customer Manager",
                 finance: "Finance Manager",
                 operations: "Operations Manager",
+                accountant: "Chief Accountant",
                 service: "Service Manager",
                 vip: "VIP Manager",
                 marketing: "Marketing Manager"
@@ -348,7 +351,8 @@ const translations = {
                 customer: "+6% Client Speed | +6% Income (per level)",
                 finance: "Auto-collects vault | +12% Dept Income (per level)",
                 operations: "+4% Courier Speed | +20% Guard Capacity (per level)",
-                service: "+5% Counter Capacity | +5% EPS | +2 Offline Hours (per level)",
+                accountant: "+2 Max Offline Hours | +15% Offline Income (per level)",
+                service: "+5% Counter Capacity | +5% EPS (per level)",
                 vip: "+7% Dept Yields | +8% Golden Shares in Prestige (per level)",
                 marketing: "+10% Ad Campaign Bonus | +1 Hour Max Offline Time (per level)"
             }

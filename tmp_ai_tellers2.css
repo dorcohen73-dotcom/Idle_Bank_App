@@ -1,0 +1,139 @@
+
+/* =========================================
+   AI TELLER CARDS - ISOLATED MOBILE LAYOUT
+   ========================================= */
+
+/* Isolated Grid specifically for tellers */
+.ai-tellers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* AI Teller Card Base */
+.ai-teller-card {
+    width: calc(50% - 6px);
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: 1px solid rgba(223, 171, 41, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    background-size: cover;
+    background-position: center;
+    padding: 0 !important; /* Override .upgrade-card padding */
+}
+
+/* Dark gradient overlay for text readability */
+.ai-teller-gradient {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 70%;
+    background: linear-gradient(to top, rgba(10, 15, 25, 0.95) 0%, rgba(10, 15, 25, 0.6) 50%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Content layout */
+.ai-teller-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Left Column (Level & Button) */
+.ai-teller-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.ai-teller-level {
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+}
+
+.ai-teller-buy-btn {
+    background: linear-gradient(180deg, #fcd34d 0%, #d97706 100%) !important;
+    border: 1px solid #fef3c7 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    color: #0f172a !important;
+    font-weight: 800 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    min-width: 60px;
+}
+
+.ai-teller-buy-btn.disabled {
+    background: linear-gradient(180deg, #475569 0%, #1e293b 100%) !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+/* Right Column (Title & EPS) */
+.ai-teller-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-align: right;
+}
+
+.ai-teller-title {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #f8fafc;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+
+.ai-teller-eps {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fcd34d;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+
+.ai-teller-eps-icon {
+    font-size: 1rem;
+}
+
+/* Small screens adjustments */
+@media (max-width: 400px) {
+    .ai-teller-card {
+        height: 160px;
+    }
+    .ai-teller-title { font-size: 0.9rem; }
+    .ai-teller-eps { font-size: 0.8rem; }
+    .ai-teller-buy-btn { font-size: 0.75rem !important; padding: 3px 6px !important; }
+}
+
+/* Locked Card Variant */
+.ai-teller-card.locked-card {
+    filter: grayscale(0.8) brightness(0.6);
+}
+.ai-teller-card.locked-card .ai-teller-buy-btn {
+    font-size: 0.8rem !important;
+}

@@ -362,6 +362,7 @@ class SaveManager {
                 finance: oldV,
                 operations: oldG,
                 service: false,
+                accountant: false,
                 vip: false,
                 marketing: false
             };
@@ -371,6 +372,7 @@ class SaveManager {
                 finance: { level: oldVUp.level || 1, skill: null },
                 operations: { level: oldGUp.level || 1, skill: null },
                 service: { level: 1, skill: null },
+                accountant: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
                 marketing: { level: 1, skill: null }
             };
@@ -406,7 +408,7 @@ class SaveManager {
             });
         }
 
-        const newMgrKeys = ['customer', 'finance', 'operations', 'service', 'vip', 'marketing'];
+        const newMgrKeys = ['customer', 'finance', 'operations', 'service', 'accountant', 'vip', 'marketing'];
 
         // managers
         if (!state.managers || typeof state.managers !== 'object') {
@@ -415,6 +417,7 @@ class SaveManager {
                 finance: false,
                 operations: true,
                 service: false,
+                accountant: false,
                 vip: false,
                 marketing: false
             };
@@ -433,6 +436,7 @@ class SaveManager {
                 finance: { level: 1, skill: null },
                 operations: { level: 1, skill: null },
                 service: { level: 1, skill: null },
+                accountant: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
                 marketing: { level: 1, skill: null }
             };
@@ -707,18 +711,28 @@ class SaveManager {
         if (timePassedSec < 15) return;
 
         let offlineCashEarned = 0;
-        let limitHours = 8;
+        let limitHours = 2; // Reduced base offline limit to 2 hours
+        
+        // Accountant manager adds offline time
+        if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineLimitBoost * this.game.state.managerUpgrades.accountant.level);
+        }
+        
         if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
             limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * this.game.state.managerUpgrades.marketing.level); // +1 hour per level
         }
         // Offline limit boost from service manager (merged from tech)
         const svcMgr = this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service;
         const svcLvl = svcMgr ? (this.game.state.managerUpgrades.service.level || 1) : 0;
-        const svcOfflineBonus = svcMgr ? (GAME_CONFIG.MANAGER_COEFFICIENTS.service.offlineLimitBoost * svcLvl) : 0;
+        const svcOfflineBonus = svcMgr ? ((GAME_CONFIG.MANAGER_COEFFICIENTS.service.offlineLimitBoost || 0) * svcLvl) : 0;
         limitHours += svcOfflineBonus;
+        
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.offlineEarnings) {
             limitHours += (this.game.state.goldUpgrades.offlineEarnings * 2); // +2 hours per level
         }
+        
+        // Hard cap total offline time at 12 hours as requested by user
+        limitHours = Math.min(12, limitHours);
         
         let maxAllowedSec = limitHours * 3600;
         
@@ -743,6 +757,12 @@ class SaveManager {
             const normalTime = elapsedSec - boostTimeActiveOffline;
             offlineCashEarned = (baseEps * boostTimeActiveOffline * 2.0) + (baseEps * normalTime);
             
+            // Apply accountant income multiplier if active
+            if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+                offlineCashEarned *= accountantBoost;
+            }
+            
             this.game.state.cash = roundCents(this.game.state.cash + offlineCashEarned);
             this.game.state.lifetimeCash = roundCents(this.game.state.lifetimeCash + offlineCashEarned);
             this.game.offlineEarningsReport = roundCents(offlineCashEarned);
@@ -766,6 +786,12 @@ class SaveManager {
             
             offlineCashEarned = Math.min(vaultSpaceLeft, potentialOfflineCash);
             this.game.state.vault.cashStored = roundCents(this.game.state.vault.cashStored + offlineCashEarned);
+            
+            // Apply accountant income multiplier if active
+            if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+                offlineCashEarned *= accountantBoost;
+            }
             
             this.game.offlineEarningsReport = roundCents(offlineCashEarned);
         } 
@@ -799,6 +825,13 @@ class SaveManager {
                     totalAdded += added;
                 }
             });
+            
+            // Apply accountant income multiplier if active
+            if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+                totalAdded *= accountantBoost;
+            }
+            
             this.game.offlineEarningsReport = roundCents(totalAdded);
         }
         
