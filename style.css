@@ -4185,10 +4185,18 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
     box-shadow: none !important;
 }
 
-/* Main Layout: Portrait on the left, info on the right */
+/* Main Layout: Header on top, Portrait and info below */
+.mgr-header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.6rem;
+}
+
 .mgr-body-row {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     width: 100%;
 }
 
@@ -4265,8 +4273,7 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
     flex-direction: column;
     flex-grow: 1;
     margin-right: 0.9rem; /* RTL margin right */
-    align-items: center;
-    text-align: center;
+    justify-content: center;
 }
 
 html[dir="ltr"] .mgr-info-box {

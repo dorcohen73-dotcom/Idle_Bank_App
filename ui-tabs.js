@@ -592,24 +592,26 @@ function renderManagersTab() {
                                 (type === 'marketing' ? translations[lang].departments.names[4] : ''))));
 
             bodyHtml = `
+                <div class="mgr-header-row">
+                    <div class="mgr-title-box">
+                        <div class="mgr-title">${tObj.names[type]}</div>
+                        <div class="mgr-title-divider"></div>
+                    </div>
+                    <div class="mgr-stars-box">
+                        <span class="star gray-star">★</span>
+                        <span class="star gray-star">★</span>
+                        <span class="star gray-star">★</span>
+                        <span class="star gray-star">★</span>
+                        <span class="star gray-star">★</span>
+                    </div>
+                    <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
+                </div>
                 <div class="mgr-body-row">
                     <div class="mgr-portrait-box">
                         <img src="תמונות/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-info-box">
-                        <div class="mgr-title-box">
-                            <div class="mgr-title">${tObj.names[type]}</div>
-                            <div class="mgr-title-divider"></div>
-                        </div>
-                        <div class="mgr-stars-box">
-                            <span class="star gray-star">★</span>
-                            <span class="star gray-star">★</span>
-                            <span class="star gray-star">★</span>
-                            <span class="star gray-star">★</span>
-                            <span class="star gray-star">★</span>
-                        </div>
-                        <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item" style="justify-content: center; padding: 1rem 0;">
                                 <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
@@ -692,20 +694,22 @@ function renderManagersTab() {
             }
 
             bodyHtml = `
+                <div class="mgr-header-row">
+                    <div class="mgr-title-box">
+                        <div class="mgr-title">${tObj.names[type]}</div>
+                        <div class="mgr-title-divider"></div>
+                    </div>
+                    <div class="mgr-stars-box">
+                        ${starsHtml}
+                    </div>
+                    <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
+                </div>
                 <div class="mgr-body-row">
                     <div class="mgr-portrait-box">
                         <img src="תמונות/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-info-box">
-                        <div class="mgr-title-box">
-                            <div class="mgr-title">${tObj.names[type]}</div>
-                            <div class="mgr-title-divider"></div>
-                        </div>
-                        <div class="mgr-stars-box">
-                            ${starsHtml}
-                        </div>
-                        <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
                         <div class="mgr-stats-list">
                             <div class="mgr-stat-item">
                                 <div class="mgr-stat-left">
