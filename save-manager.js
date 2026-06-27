@@ -34,7 +34,7 @@ class SaveManager {
                 }
             }
         } catch (e) {
-            console.warn("Failed to fetch server time, using unverified local time.", e);
+            // server time fetch failed — will use unverified local time
         }
         return null;
     }
@@ -717,8 +717,7 @@ class SaveManager {
         
         // Anti-Cheat Time-Travel prevention: limit offline earnings to 1 hour max if clock is unverified
         if (!this.isServerTimeVerified) {
-            maxAllowedSec = Math.min(maxAllowedSec, 3600); // Capped at 1 hour max
-            console.warn("Offline earnings calculated using unverified local clock, capped at 1 hour max.");
+            maxAllowedSec = Math.min(maxAllowedSec, 3600);
         }
 
         const elapsedSec = Math.min(timePassedSec, maxAllowedSec);

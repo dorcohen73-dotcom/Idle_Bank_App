@@ -93,7 +93,7 @@ class MissionController {
         });
 
         // Serve VIP / Rich clients — suppressed once VIP dept (index 3) is unlocked; vip_collector takes over
-        const vipDeptAlreadyUnlocked = this.game.state.departments && this.game.state.departments[3] && this.game.state.departments[3].unlocked;
+        const vipDeptAlreadyUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === 3)?.unlocked);
         if (!vipDeptAlreadyUnlocked) {
             pool.push({
                 type: 'serve_rich_vip',
@@ -133,7 +133,7 @@ class MissionController {
 
 
         // 1. vip_collector — only if VIP dept (index 3) is unlocked
-        const vipDeptUnlocked = this.game.state.departments && this.game.state.departments[3] && this.game.state.departments[3].unlocked;
+        const vipDeptUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === 3)?.unlocked);
         if (vipDeptUnlocked) {
             pool.push({
                 type: 'vip_collector',
@@ -243,7 +243,7 @@ class MissionController {
         const availableDeptMgrs = deptMgrMap.filter(({ mgrType, deptIdx }) => {
             const deptUnlocked = this.game.state.departments[deptIdx] && this.game.state.departments[deptIdx].unlocked;
             const mgr = this.game.state.managerUpgrades && this.game.state.managerUpgrades[mgrType];
-            return deptUnlocked && mgr && mgr.level < 4; // max level is 5, target can be up to +2
+            return deptUnlocked && mgr && mgr.level < 5; // max level is 5
         });
         if (availableDeptMgrs.length > 0) {
             const chosen = availableDeptMgrs[Math.floor(Math.random() * availableDeptMgrs.length)];
@@ -610,7 +610,8 @@ class DailyChallengeController {
     }
 
     checkAndReset() {
-        const now = Date.now();
+        const sm = this.game.saveManager;
+        const now = (sm && sm.isServerTimeVerified) ? (Date.now() + sm.serverTimeOffset) : Date.now();
         const todayMidnight = new Date();
         todayMidnight.setHours(0, 0, 0, 0);
 

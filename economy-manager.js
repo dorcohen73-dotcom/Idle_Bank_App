@@ -4,6 +4,7 @@ class EconomyManager {
         this.cachedTotalMult = null;
         this._cachedVaultCap = new Map();
         this._cachedTellerCap = null;
+        this._cachedGuardCap = null;
     }
 
     getPrestigeMultiplier() {
@@ -48,6 +49,10 @@ class EconomyManager {
             }
             if (this.game.state.managers.finance && this.game.state.managerUpgrades.finance) {
                 mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.incomeBoost * this.game.state.managerUpgrades.finance.level);
+                const hasHigherDept = this.game.state.departments && this.game.state.departments.some(d => d.id > 0 && d.unlocked);
+                if (hasHigherDept) {
+                    mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.deptIncomeBoost * this.game.state.managerUpgrades.finance.level);
+                }
             }
             if (this.game.state.managers.service && this.game.state.managerUpgrades.service) {
                 mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.incomeBoost * this.game.state.managerUpgrades.service.level);
@@ -134,13 +139,15 @@ class EconomyManager {
     }
 
     getGuardCapacity(level) {
+        if (!this._cachedGuardCap) this._cachedGuardCap = new Map();
+        if (this._cachedGuardCap.has(level)) return this._cachedGuardCap.get(level);
         const baseCap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
         let cap = (this.game.state.managers && this.game.state.managers.operations) ? Math.round(baseCap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR) : baseCap;
-        // Guard capacity boost (merged from logistics into operations)
         if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
             const opsCapLvl = this.game.state.managerUpgrades.operations.level;
             cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.operations.guardCapBoost * opsCapLvl));
         }
+        this._cachedGuardCap.set(level, cap);
         return cap;
     }
 
@@ -273,13 +280,7 @@ class EconomyManager {
     getDepartmentReward(id) {
         const d = this.game.state.departments.find(dept => dept.id === id);
         if (!d) return 0;
-        let reward = d.baseReward * this.getTotalMultiplier();
-        // Department income boost (merged from risk into finance)
-        if (id > 0 && this.game.state.managers && this.game.state.managers.finance && this.game.state.managerUpgrades && this.game.state.managerUpgrades.finance) {
-            const finLvl = this.game.state.managerUpgrades.finance.level;
-            reward = Math.round(reward * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.deptIncomeBoost * finLvl));
-        }
-        return reward;
+        return d.baseReward * this.getTotalMultiplier();
     }
 
     getEarningsPerSecond() {
@@ -291,6 +292,7 @@ class EconomyManager {
         this.cachedTotalMult = null;
         this._cachedVaultCap = new Map();
         this._cachedTellerCap = null;
+        this._cachedGuardCap = null;
         const freshMult = this.getTotalMultiplier();
         const baseRewardWithMultiplier = this.getCurrentBaseReward() * freshMult;
         this.game.state.tellers.forEach(t => {

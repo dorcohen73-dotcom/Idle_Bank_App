@@ -103,10 +103,10 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 50, cost: 15000 },
-                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 200, cost: 500000 },
-                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 800, cost: 25000000 },
-                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 3000, cost: 5000000000 }
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
+                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
+                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
+                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
             ],
 
             missions: [],
@@ -128,12 +128,15 @@ class IdleBankGame {
 
             // Fortune Wheel
             lastSpinTime: 0,
+            lastAdSpinTime: 0,
 
             // VIP Visitor
             nextVipVisit: 0,
             vipVisitActive: false,
             vipVisitExpiry: 0,
             vipServedTotal: 0,
+            guardTripsTotal: 0,
+            boost2xUsedEver: false,
 
             // Daily Challenges
             dailyChallenges: [],
@@ -323,8 +326,8 @@ class IdleBankGame {
         if (type === 'customer' || type === 'operations') return true;
         if (type === 'finance') return this.state.departments[1] && this.state.departments[1].unlocked;
         if (type === 'service') return this.state.departments[2] && this.state.departments[2].unlocked;
-        if (type === 'vip') return this.state.departments[3] && this.state.departments[3].unlocked;
-        if (type === 'marketing') return this.state.departments[4] && this.state.departments[4].unlocked;
+        if (type === 'vip') return !!(this.state.departments && this.state.departments.find(d => d.id === 3)?.unlocked);
+        if (type === 'marketing') return !!(this.state.departments && this.state.departments.find(d => d.id === 4)?.unlocked);
         return false;
     }
 
