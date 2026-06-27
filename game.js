@@ -1179,7 +1179,7 @@ class IdleBankGame {
         const nowMs = Date.now();
         if (!this.state.vipVisitActive) {
             if (!this.state.nextVipVisit || this.state.nextVipVisit === 0) {
-                this.state.nextVipVisit = nowMs + (600 + Math.random() * 300) * 1000;
+                this.state.nextVipVisit = nowMs + (600 + Math.random() * 60) * 1000;
             } else if (nowMs >= this.state.nextVipVisit) {
                 if (this.state.boost2xTimeLeft <= 0) {
                     this.state.vipVisitActive = true;
@@ -1194,7 +1194,7 @@ class IdleBankGame {
             }
         } else if (this.state.vipVisitExpiry && nowMs > this.state.vipVisitExpiry) {
             this.state.vipVisitActive = false;
-            this.state.nextVipVisit = nowMs + (600 + Math.random() * 300) * 1000;
+            this.state.nextVipVisit = nowMs + (300 + Math.random() * 30) * 1000;
             this.state.vipVisitExpiry = 0;
             if (typeof window.removeVipVisitBanner === 'function') {
                 window.removeVipVisitBanner();

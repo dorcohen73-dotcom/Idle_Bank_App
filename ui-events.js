@@ -3004,60 +3004,68 @@ function initUIEvents() {
 
     var vipBannerCountdownInterval = null;
 
-    function triggerVipVisitBanner() {
-        if (document.querySelector('.modal-overlay.active')) {
-            // מודל פתוח — דחה את הבאנר
-            window._vipBannerRetryTimeout = setTimeout(triggerVipVisitBanner, 2000);
-            return;
-        }
+    window.triggerVipVisitBanner = function() {
+        if (document.getElementById('vip-visit-banner')) return;
 
         const lang = (game.state && game.state.language) || 'he';
         const tObj = translations[lang] || translations.he;
-
-        const existing = document.getElementById('vip-visit-banner');
-        if (existing) existing.remove();
 
         const banner = document.createElement('div');
         banner.id = 'vip-visit-banner';
         banner.className = 'vip-visit-banner';
 
-        const serveText = tObj.vipServeBtn || 'שרת (כסף)';
-        const premiumText = tObj.vipPremiumBtn || 'VIP Premium';
+        let prestigeAmount = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 10;
+        let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.30));
 
-        // Pick a random VIP personality for this visit
-        const personalities = tObj.vipPersonalities;
-        const vip = personalities && personalities.length
-            ? personalities[Math.floor(Math.random() * personalities.length)]
-            : null;
-        const vipName   = vip ? vip.name   : (tObj.vipBannerTitle || 'לקוח VIP');
-        const vipDialog = vip ? vip.dialog : '';
+        let hourlyProfit = typeof game.getEarningsPerSecond === 'function' ? game.getEarningsPerSecond() * 3600 : 0;
+        let cashReward = Math.ceil(hourlyProfit * 0.30);
+
+        const serveText = tObj.vipCloseBtn || 'המשך כרגיל';
+        const rewardType = Math.random() < 0.5 ? 'shares' : 'cash';
+        
+        let premiumText = '';
+        if (rewardType === 'shares') {
+            premiumText = typeof tObj.vipPremiumBtn === 'function' ? tObj.vipPremiumBtn(shareReward) : (tObj.vipPremiumBtn || 'VIP Premium');
+        } else {
+            premiumText = tObj.vipPremiumCashBtn ? tObj.vipPremiumCashBtn(formatMoney(cashReward)) : `VIP Premium (פרסומת + ${formatMoney(cashReward)})`;
+        }
+
+        const vipName = tObj.vipBannerTitle || 'לקוח עסקי';
 
         banner.innerHTML = `
-            <div class="vip-banner-row">
-                <span class="vip-banner-icon">💎</span>
-                <div class="vip-banner-content">
-                    <span class="vip-banner-title">${vipName}</span>
-                    ${vipDialog ? `<span class="vip-banner-dialog">"${vipDialog}"</span>` : ''}
-                    <span class="vip-banner-timer" id="vip-banner-timer">25</span>
+            <div class="vip-premium-content">
+                <div class="vip-red-carpet"></div>
+                <div class="vip-shimmer"></div>
+                <div class="vip-profile">
+                    <div class="vip-avatar">💎</div>
+                    <div class="vip-ring"></div>
                 </div>
-            </div>
-            <div class="vip-banner-btns">
-                <button class="vip-serve-btn" id="vip-serve-cash">${serveText}</button>
-                ${!AdService.isInCooldown() ? `<button class="vip-serve-btn vip-premium-btn" id="vip-serve-premium">${premiumText}</button>` : ''}
+                <div class="vip-info">
+                    <div class="vip-title-wrap"><span class="vip-badge">VIP</span> <span class="vip-name">${vipName}</span></div>
+                </div>
+                <div class="vip-progress-wrap">
+                    <div class="vip-progress-bar" id="vip-progress-bar"></div>
+                </div>
+                <div class="vip-actions">
+                    ${!AdService.isInCooldown() ? `
+                    <button class="vip-btn vip-serve-premium" id="vip-serve-ad"><span class="btn-icon">🎬</span> ${premiumText}</button>
+                    ` : ''}
+                    <button class="vip-btn vip-serve-cash" id="vip-serve-cash">${serveText}</button>
+                </div>
             </div>
         `;
         document.body.appendChild(banner);
 
         let secsLeft = 25;
-        const timerEl = document.getElementById('vip-banner-timer');
+        const totalSecs = 25;
+        const progressBar = document.getElementById('vip-progress-bar');
 
         if (vipBannerCountdownInterval) clearInterval(vipBannerCountdownInterval);
         vipBannerCountdownInterval = setInterval(() => {
             secsLeft--;
-            const lang2 = (game.state && game.state.language) || 'he';
-            const tObj2 = translations[lang2] || translations.he;
-            if (timerEl) {
-                timerEl.textContent = tObj2.vipBannerTimer ? tObj2.vipBannerTimer(secsLeft) : secsLeft + 's';
+            if (progressBar) {
+                const pct = (secsLeft / totalSecs) * 100;
+                progressBar.style.width = pct + '%';
             }
             if (secsLeft <= 0) {
                 clearInterval(vipBannerCountdownInterval);
@@ -3067,13 +3075,13 @@ function initUIEvents() {
 
         document.getElementById('vip-serve-cash').addEventListener('click', () => {
             initSound();
-            serveVipVisitor(false);
+            serveVipVisitor('none');
         });
-        const premiumBtn = document.getElementById('vip-serve-premium');
-        if (premiumBtn) {
-            premiumBtn.addEventListener('click', () => {
+        const premiumAdBtn = document.getElementById('vip-serve-ad');
+        if (premiumAdBtn) {
+            premiumAdBtn.addEventListener('click', () => {
                 initSound();
-                serveVipVisitor(true);
+                serveVipVisitor(rewardType);
             });
         }
     }
@@ -3091,31 +3099,44 @@ function initUIEvents() {
         if (banner) banner.remove();
     }
 
-    function serveVipVisitor(withAd) {
+    function serveVipVisitor(rewardType) {
         removeVipVisitBanner();
         game.state.vipVisitActive = false;
-        game.state.nextVipVisit = Date.now() + (600 + Math.random() * 300) * 1000;
+        game.state.nextVipVisit = Date.now() + (600 + Math.random() * 60) * 1000;
         game.state.vipVisitExpiry = 0;
         game.state.vipServedTotal = (game.state.vipServedTotal || 0) + 1;
         game.missionsDirty = true;
 
-        const lang = (game.state && game.state.language) || 'he';
-        const tObj = translations[lang] || translations.he;
-
-        if (withAd) {
+        if (rewardType === 'shares') {
             playAd(() => {
-                game.state.shares = Math.min((game.state.shares || 0) + 3, 100000);
-                const msg = (tObj.vipRewardGold) || 'קיבלת 3 מניות זהב!';
-                spawnFloating('🥇 ' + msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
+                let prestigeAmount = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 10;
+                let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.30));
+                
+                game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1000000000);
+                const msg = `⭐ ${shareReward} VIP Shares ⭐`;
+                spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => spawnFloating('💎', window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), 'gold'), Math.random() * 800);
+                }
+                game.saveGame();
+                draw();
+            });
+        } else if (rewardType === 'cash') {
+            playAd(() => {
+                let hourlyProfit = typeof game.getEarningsPerSecond === 'function' ? game.getEarningsPerSecond() * 3600 : 0;
+                let cashReward = Math.ceil(hourlyProfit * 0.30);
+
+                game.state.cash = Math.round((game.state.cash + cashReward + Number.EPSILON) * 100) / 100;
+                game.state.lifetimeCash = Math.round((game.state.lifetimeCash + cashReward + Number.EPSILON) * 100) / 100;
+                const msg = `💵 +${formatMoney(cashReward)} 💵`;
+                spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'green');
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => spawnFloating('💵', window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), 'green'), Math.random() * 800);
+                }
                 game.saveGame();
                 draw();
             });
         } else {
-            const reward = Math.round(game.getEarningsPerSecond() * 180);
-            game.state.cash = Math.round((game.state.cash + reward + Number.EPSILON) * 100) / 100;
-            game.state.lifetimeCash = Math.round((game.state.lifetimeCash + reward + Number.EPSILON) * 100) / 100;
-            const msg = tObj.vipRewardCash ? tObj.vipRewardCash(formatMoney(reward)) : `+${formatMoney(reward)}`;
-            spawnFloating('💎 ' + msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'green');
             game.saveGame();
             draw();
         }

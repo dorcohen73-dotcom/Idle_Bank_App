@@ -7400,83 +7400,214 @@ header {
 
 .vip-visit-banner {
     position: fixed;
-    bottom: 80px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: 92%;
-    max-width: 360px;
-    background: linear-gradient(135deg, rgba(20, 24, 36, 0.97) 0%, rgba(30, 22, 55, 0.97) 100%);
-    border: 1px solid #a855f7;
-    border-radius: 14px;
-    padding: 0.7rem 1rem;
-    z-index: 2100;
-    box-shadow: 0 4px 24px rgba(168, 85, 247, 0.35), 0 2px 10px rgba(0,0,0,0.5);
-    animation: slideUpIn 0.3s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    z-index: 2500;
+    padding: 0;
+    pointer-events: none;
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    animation: vipZoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.vip-banner-row {
+@keyframes vipZoomIn {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.vip-premium-content {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(145deg, rgba(25, 20, 35, 0.95) 0%, rgba(10, 8, 15, 0.98) 100%);
+    border: 2px solid #e1b343;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(225, 179, 67, 0.4), inset 0 0 20px rgba(225, 179, 67, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    pointer-events: auto;
+    overflow: hidden;
+}
+
+.vip-red-carpet {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 30px;
+    background: radial-gradient(ellipse at bottom, rgba(220, 38, 38, 0.6) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.vip-shimmer {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(30deg);
+    animation: vipShimmerAnim 3s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes vipShimmerAnim {
+    0% { transform: rotate(30deg) translateY(0) translateX(-100%); }
+    100% { transform: rotate(30deg) translateY(0) translateX(100%); }
+}
+
+.vip-profile {
+    position: relative;
+    z-index: 1;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vip-ring {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    border: 2px dashed #e1b343;
+    animation: vipSpinRing 10s linear infinite;
+}
+
+@keyframes vipSpinRing {
+    100% { transform: rotate(360deg); }
+}
+
+.vip-avatar {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px rgba(225, 179, 67, 0.8));
+    animation: vipFloatAvatar 3s ease-in-out infinite;
+}
+
+@keyframes vipFloatAvatar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.vip-info {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.vip-title-wrap {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-}
-
-.vip-banner-icon {
-    font-size: 1.6rem;
-    flex-shrink: 0;
-}
-
-.vip-banner-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-}
-
-.vip-banner-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #e2b4fd;
-}
-
-.vip-banner-timer {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-}
-
-.vip-banner-btns {
-    display: flex;
+    justify-content: center;
     gap: 0.5rem;
 }
 
-.vip-serve-btn {
-    flex: 1;
-    padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-    border: 1px solid rgba(168, 85, 247, 0.4);
-    background: rgba(168, 85, 247, 0.15);
-    color: #e2b4fd;
-    font-size: 0.75rem;
+.vip-badge {
+    background: #e1b343;
+    color: #000;
+    font-weight: 900;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.vip-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.vip-dialog {
+    font-size: 0.95rem;
+    color: #ffd700;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.vip-progress-wrap {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    z-index: 1;
+    margin-top: 0.5rem;
+}
+
+.vip-progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #e1b343, #fff2a8);
+    box-shadow: 0 0 10px #e1b343;
+    transition: width 1s linear;
+}
+
+.vip-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    z-index: 1;
+    margin-top: 0.5rem;
+}
+
+.vip-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    font-weight: 600;
-    transition: background var(--transition-speed), transform var(--transition-speed);
+    border: none;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.vip-serve-btn:hover {
-    background: rgba(168, 85, 247, 0.3);
-    transform: translateY(-1px);
+.vip-btn:active {
+    transform: scale(0.97);
 }
 
-.vip-premium-btn {
-    border-color: var(--primary-gold);
-    background: rgba(223, 171, 41, 0.15);
-    color: var(--primary-gold);
+.vip-serve-cash {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-.vip-premium-btn:hover {
-    background: rgba(223, 171, 41, 0.28);
+.vip-serve-cash:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.vip-serve-premium {
+    background: linear-gradient(135deg, #dfaa28 0%, #b8860b 100%);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(223, 171, 41, 0.4);
+    font-size: 1.1rem;
+}
+
+.vip-serve-premium:hover {
+    box-shadow: 0 6px 20px rgba(223, 171, 41, 0.6);
+    filter: brightness(1.1);
+}
+
+.vip-serve-premium .btn-icon {
+    font-size: 1.2rem;
 }
 
 /* ==========================================
