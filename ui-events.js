@@ -2572,6 +2572,7 @@ function initUIEvents() {
     if (prestigeCancelBtn) {
         prestigeCancelBtn.addEventListener('click', () => {
             initSound();
+            game.state.prestigeNearMissBonus = 0;
             if (prestigeModal) {
                 prestigeModal.classList.remove('active');
             }

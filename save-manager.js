@@ -245,6 +245,9 @@ class SaveManager {
         if (!isNum(state.missionsCompleted) || state.missionsCompleted < 0) state.missionsCompleted = 0;
         if (!isNum(state.lastSaveTime)) state.lastSaveTime = Date.now();
 
+        // Prestige near-miss bonus
+        if (!isNum(state.prestigeNearMissBonus) || state.prestigeNearMissBonus < 0 || state.prestigeNearMissBonus > 1) state.prestigeNearMissBonus = 0;
+
         // Fortune Wheel
         if (!isNum(state.lastSpinTime) || state.lastSpinTime < 0) state.lastSpinTime = 0;
         if (!isNum(state.lastAdSpinTime) || state.lastAdSpinTime < 0) state.lastAdSpinTime = 0;

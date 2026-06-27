@@ -65,6 +65,7 @@ class IdleBankGame {
             boost2xTimeLeft: 0,
             tellerSpeedBoostTimer: 0,
             tellerSpeedBoostFactor: 1,
+            prestigeNearMissBonus: 0,
             
             vault: {
                 level: 1,
