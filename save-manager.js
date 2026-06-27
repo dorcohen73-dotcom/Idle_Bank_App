@@ -782,17 +782,16 @@ class SaveManager {
             // CRIT-18: Correctly apply 2x boost multiplier to vault offline earnings
             const baseEps = boostTimeActiveOffline > 0 ? (eps / 2.0) : eps;
             const normalTime = elapsedSec - boostTimeActiveOffline;
-            const potentialOfflineCash = (baseEps * boostTimeActiveOffline * 2.0) + (baseEps * normalTime);
-            
-            offlineCashEarned = Math.min(vaultSpaceLeft, potentialOfflineCash);
-            this.game.state.vault.cashStored = roundCents(this.game.state.vault.cashStored + offlineCashEarned);
-            
-            // Apply accountant income multiplier if active
+            let potentialOfflineCash = (baseEps * boostTimeActiveOffline * 2.0) + (baseEps * normalTime);
+
+            // Apply accountant income multiplier before capacity cap so state and report match
             if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
                 const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
-                offlineCashEarned *= accountantBoost;
+                potentialOfflineCash *= accountantBoost;
             }
-            
+
+            offlineCashEarned = Math.min(vaultSpaceLeft, potentialOfflineCash);
+            this.game.state.vault.cashStored = roundCents(this.game.state.vault.cashStored + offlineCashEarned);
             this.game.offlineEarningsReport = roundCents(offlineCashEarned);
         } 
         else {
@@ -804,34 +803,34 @@ class SaveManager {
                 this.game.state.boost2xTimeLeft = Math.max(0, this.game.state.boost2xTimeLeft - elapsedSec);
             }
             
+            // Compute accountant boost factor before the loop so state and report match
+            let accountantBoostFactor = 1;
+            if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+                accountantBoostFactor = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+            }
+
             this.game.state.tellers.forEach(t => {
                 if (t.unlocked) {
                     const capacity = this.game.economyManager.getTellerCapacity(t.level);
                     const spaceLeft = Math.max(0, capacity - t.cashStored);
                     const speed = this.game.economyManager.getTellerSpeed(t.level);
-                    
+
                     const totalMult = this.game.economyManager.getTotalMultiplier();
                     const isBoosted = boostTimeActiveOffline > 0;
                     const baseMult = isBoosted ? (totalMult / 2.0) : totalMult;
-                    
+
                     const baseReward = this.game.economyManager.getCurrentBaseReward() * baseMult;
                     const boostedReward = baseReward * 2.0;
-                    
+
                     const clientsProcessedBoost = Math.floor(boostTimeActiveOffline / speed);
                     const clientsProcessedNormal = Math.floor((elapsedSec - boostTimeActiveOffline) / speed);
-                    
-                    const added = Math.min(spaceLeft, (clientsProcessedBoost * boostedReward) + (clientsProcessedNormal * baseReward));
+
+                    const added = Math.min(spaceLeft, ((clientsProcessedBoost * boostedReward) + (clientsProcessedNormal * baseReward)) * accountantBoostFactor);
                     t.cashStored = roundCents(t.cashStored + added);
                     totalAdded += added;
                 }
             });
-            
-            // Apply accountant income multiplier if active
-            if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
-                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
-                totalAdded *= accountantBoost;
-            }
-            
+
             this.game.offlineEarningsReport = roundCents(totalAdded);
         }
         

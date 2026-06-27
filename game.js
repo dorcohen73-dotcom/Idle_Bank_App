@@ -91,7 +91,8 @@ class IdleBankGame {
                 finance: false,
                 service: false,
                 vip: false,
-                marketing: false
+                marketing: false,
+                accountant: false
             },
             managerUpgrades: {
                 customer: { level: 1, skill: null },
@@ -99,7 +100,8 @@ class IdleBankGame {
                 finance: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                accountant: { level: 1, skill: null }
             },
 
             departments: [
