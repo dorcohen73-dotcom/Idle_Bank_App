@@ -21,6 +21,17 @@ var lastBranch = -1;
 var lastLang = '';
 var lastGuardStatusText = '';
 
+// Module-scope statics — allocated once, reused every frame
+var _guardAnimTriggers = [];
+var _lastNotifMissions = null;
+var _lastNotifUpgrades = null;
+var _prestigePreviewTexts = {
+    he: (val) => `אם תעשה Prestige עכשיו: +${val} מניות 🏅`,
+    en: (val) => `Prestige now: +${val} shares 🏅`,
+    es: (val) => `Prestigio ahora: +${val} acciones 🏅`,
+    ru: (val) => `Престиж сейчас: +${val} акций 🏅`
+};
+
 function getVaultTargetRect() {
     let targetEl = DOM_CACHE.vaultGraphic;
     if (window.innerWidth <= 768) {
@@ -630,10 +641,10 @@ function draw() {
     }
 
     // Update customer queue count display and visual status indicators (Premium Redesign)
-    const capLabel = document.getElementById('queue-capacity-label');
-    const fillBar = document.getElementById('queue-progress-fill');
-    const statText = document.getElementById('queue-status-text');
-    const statIcon = document.getElementById('queue-status-icon');
+    const capLabel = DOM_CACHE.queueCapLabel;
+    const fillBar  = DOM_CACHE.queueFillBar;
+    const statText = DOM_CACHE.queueStatText;
+    const statIcon = DOM_CACHE.queueStatIcon;
     const elQueueZone = DOM_CACHE.queueZone;
     
     if (capLabel) {
@@ -954,7 +965,7 @@ function draw() {
     }
 
     // Dynamic Coin animations for parallel guards - Batched Reads/Writes to avoid layout reflows
-    const guardAnimationsToTrigger = [];
+    _guardAnimTriggers.length = 0;
 
     game.state.guards.forEach((g, idx) => {
         if (!g.unlocked) return;
@@ -962,7 +973,7 @@ function draw() {
         if (!gData) return;
         const prevState = prevGuardStates[idx];
         if (prevState !== gData.state) {
-            guardAnimationsToTrigger.push({
+            _guardAnimTriggers.push({
                 g,
                 gData,
                 idx,
@@ -971,10 +982,10 @@ function draw() {
         }
     });
 
-    if (guardAnimationsToTrigger.length > 0) {
+    if (_guardAnimTriggers.length > 0) {
         // Step 1: Batch all DOM Reads (getBoundingClientRect)
         const reads = [];
-        guardAnimationsToTrigger.forEach(item => {
+        _guardAnimTriggers.forEach(item => {
             const { g, gData, prevState } = item;
             const prevIsMoving = prevState && prevState.startsWith('moving_to_teller_');
             const currIsCollecting = gData.state.startsWith('collecting_from_teller_');
@@ -1035,7 +1046,7 @@ function draw() {
         });
 
         // Update previous state cache
-        guardAnimationsToTrigger.forEach(item => {
+        _guardAnimTriggers.forEach(item => {
             prevGuardStates[item.idx] = item.gData.state;
         });
     }
@@ -1135,22 +1146,16 @@ function draw() {
         });
     }
 
-    // Update prestige shares preview
-    const prestigePreviewTexts = {
-        he: (val) => `אם תעשה Prestige עכשיו: +${val} מניות 🏅`,
-        en: (val) => `Prestige now: +${val} shares 🏅`,
-        es: (val) => `Prestigio ahora: +${val} acciones 🏅`,
-        ru: (val) => `Престиж сейчас: +${val} акций 🏅`
-    };
+    // Update prestige shares preview (_prestigePreviewTexts is defined at module scope)
     const pendingShares = game.calculatePrestigeShares();
     const previewEl = DOM_CACHE.prestigePreviewLabel;
     if (previewEl) {
-        const textFn = prestigePreviewTexts[cachedLang] || prestigePreviewTexts.he;
+        const textFn = _prestigePreviewTexts[cachedLang] || _prestigePreviewTexts.he;
         previewEl.innerText = textFn(pendingShares);
     }
 
     // Dynamic vault visual progression
-    const vaultImg = document.querySelector('.vault-door-img');
+    const vaultImg = DOM_CACHE.vaultDoorImg;
     if (vaultImg) {
         if (vaultData.level >= 50) {
             vaultImg.style.filter = 'drop-shadow(0 0 20px gold) hue-rotate(45deg) brightness(1.2)';
@@ -1230,8 +1235,14 @@ function updateNotifications() {
         }
     }
 
-    updateTabDot('missions', hasMissions);
-    updateTabDot('upgrades', hasUpgrades);
+    if (hasMissions !== _lastNotifMissions) {
+        _lastNotifMissions = hasMissions;
+        updateTabDot('missions', hasMissions);
+    }
+    if (hasUpgrades !== _lastNotifUpgrades) {
+        _lastNotifUpgrades = hasUpgrades;
+        updateTabDot('upgrades', hasUpgrades);
+    }
 }
 
     // Exports
