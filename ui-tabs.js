@@ -102,7 +102,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
                             </div>
                             <div class="upg-v2-stat-text">
-                                <div class="upg-v2-stat-label">${lang === 'he' ? 'תגמול כולל' : 'Total Yield'}</div>
+                                <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
                                 <div class="upg-v2-stat-val">${formatMoney(eps)}</div>
                             </div>
                         </div>
@@ -125,7 +125,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                     </div>
                     <div class="upg-v2-btn-divider"></div>
                     <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
                         <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
                     </div>
                 </div>
@@ -184,7 +184,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                     </div>
                     <div class="upg-v2-btn-divider"></div>
                     <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'עלות פתיחה' : 'Unlock Cost'}</span>
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).unlockCost}</span>
                         <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
                     </div>
                 </div>
@@ -277,7 +277,7 @@ function renderUpgradesTab() {
                 </div>
                 <div class="upg-v2-btn-divider"></div>
                 <div class="upg-v2-btn-bottom">
-                    <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                    <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
                     <span class="upg-v2-btn-cost">${formatMoney(vCost)}</span>
                 </div>
             </div>
@@ -366,7 +366,7 @@ function renderUpgradesTab() {
                     </div>
                     <div class="upg-v2-btn-divider"></div>
                     <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${lang === 'he' ? 'סה"כ שדרוג' : 'Total Upgrade'}</span>
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
                         <span class="upg-v2-btn-cost">${formatMoney(qCost)}</span>
                     </div>
                 </div>
@@ -396,7 +396,11 @@ const statLabels = {
         lockedLabel: "נעול",
         hireBtn: "גיוס",
         upgradeBtn: "שדרג",
-        activeLabel: "פעיל"
+        activeLabel: "פעיל",
+        totalYield: "תגמול כולל",
+        totalUpgrade: 'סה"כ שדרוג',
+        unlockCost: "עלות פתיחה",
+        autoText: "אוטומטי"
     },
     en: {
         satisfaction: "Satisfaction",
@@ -416,7 +420,11 @@ const statLabels = {
         lockedLabel: "Locked",
         hireBtn: "Hire",
         upgradeBtn: "Upgrade",
-        activeLabel: "Active"
+        activeLabel: "Active",
+        totalYield: "Total Yield",
+        totalUpgrade: "Total Upgrade",
+        unlockCost: "Unlock Cost",
+        autoText: "Auto"
     },
     es: {
         satisfaction: "Satisfacción",
@@ -436,7 +444,11 @@ const statLabels = {
         lockedLabel: "Bloqueado",
         hireBtn: "Contratar",
         upgradeBtn: "Mejorar",
-        activeLabel: "Activo"
+        activeLabel: "Activo",
+        totalYield: "Rendimiento Total",
+        totalUpgrade: "Total Mejora",
+        unlockCost: "Costo de Apertura",
+        autoText: "Auto"
     },
     ru: {
         satisfaction: "Удовлетворение",
@@ -456,7 +468,11 @@ const statLabels = {
         lockedLabel: "Закрыто",
         hireBtn: "Нанять",
         upgradeBtn: "Улучшить",
-        activeLabel: "Активно"
+        activeLabel: "Активно",
+        totalYield: "Общий доход",
+        totalUpgrade: "Итого улучшений",
+        unlockCost: "Стоимость открытия",
+        autoText: "Авто"
     }
 };
 
@@ -1148,7 +1164,7 @@ function renderBranchesTab() {
     if (typeof translations[lang].goldGrandBonus === 'function') {
         grandBonusHtml = translations[lang].goldGrandBonus(prestigeBonusPct);
     } else {
-        grandBonusHtml = `בונוס כולל מכל שדרוגי היוקרה: <span class="gold-grand-bonus-val">+${prestigeBonusPct}% לרווחים בכל הסניפים ⬆</span>`;
+        grandBonusHtml = translations.en.goldGrandBonus(prestigeBonusPct);
     }
 
     const summaryPanelHtml = `
@@ -1587,7 +1603,7 @@ function updateButtonAffordability() {
                                     s1 = `+${Math.round(coefs.spawnIntervalBoost * 100 * mgr.level)}%`;
                                     s2 = `+${Math.round(coefs.incomeBoost * 100 * mgr.level)}%`;
                                 } else if (type === 'finance') {
-                                    s1 = lang === 'he' ? 'אוטומטי' : (lang === 'es' ? 'Auto' : (lang === 'ru' ? 'Авто' : 'Auto'));
+                                    s1 = (statLabels[lang] || statLabels.en).autoText;
                                     s2 = `+${Math.round(coefs.deptIncomeBoost * 100 * mgr.level)}%`;
                                 } else if (type === 'operations') {
                                     s1 = `+${Math.round(coefs.guardSpeedBoost * 100 * mgr.level)}%`;
@@ -1616,7 +1632,7 @@ function updateButtonAffordability() {
                                 contribution = coefsFV.incomeBoost * mgr.level;
                             }
                             const extraHourly = eps * 3600 * contribution;
-                            const perHourStr = lang === 'he' ? 'לשעה' : (lang === 'es' ? '/ h' : (lang === 'ru' ? '/ ч' : '/ hr'));
+                            const perHourStr = (statLabels[lang] || statLabels.en).perHour;
                             footerVal.innerText = `${isHired ? formatMoney(extraHourly) : formatMoney(0)} ${perHourStr}`;
                         }
                     }

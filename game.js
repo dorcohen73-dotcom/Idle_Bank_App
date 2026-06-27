@@ -1554,7 +1554,8 @@ class IdleBankGame {
             stat2Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
         } else if (type === 'finance') {
             const lang = this.state.language || 'he';
-            stat1Val = lang === 'he' ? 'אוטומטי' : (lang === 'es' ? 'Auto' : (lang === 'ru' ? 'Авто' : 'Auto'));
+            const tAuto = (typeof translations !== 'undefined' && translations[lang] && translations[lang].autoText) ? translations[lang].autoText : 'Auto';
+            stat1Val = tAuto;
             stat2Val = `+${Math.round(coefs.deptIncomeBoost * 100 * level)}%`;
         } else if (type === 'operations') {
             stat1Val = `+${Math.round(coefs.guardSpeedBoost * 100 * level)}%`;
