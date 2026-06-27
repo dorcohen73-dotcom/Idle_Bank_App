@@ -5518,7 +5518,7 @@ header, .control-panel, .bank-floor {
   }
 
   .bnav-label {
-    font-size: 0.75rem;
+    font-size: 1.2rem;
     font-weight: 800;
     z-index: 2;
     letter-spacing: 0.3px;
