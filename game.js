@@ -91,7 +91,8 @@ class IdleBankGame {
                 finance: false,
                 service: false,
                 vip: false,
-                marketing: false
+                marketing: false,
+                accountant: false
             },
             managerUpgrades: {
                 customer: { level: 1, skill: null },
@@ -99,7 +100,8 @@ class IdleBankGame {
                 finance: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                accountant: { level: 1, skill: null }
             },
 
             departments: [
@@ -706,6 +708,7 @@ class IdleBankGame {
         const savedMissionsCompleted = this.state.missionsCompleted;
         const savedLastWeeklyReward = this.state.lastWeeklyReward;
         const savedLastSpinTime = this.state.lastSpinTime;
+        const savedLastAdSpinTime = this.state.lastAdSpinTime || 0;
         const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
         const savedLoginDate = this.state.lastLoginDate || 0;
         const savedLoginStreak = this.state.loginStreak || 0;
@@ -727,6 +730,7 @@ class IdleBankGame {
         this.state.missionsCompleted = savedMissionsCompleted;
         this.state.lastWeeklyReward = savedLastWeeklyReward;
         this.state.lastSpinTime = savedLastSpinTime;
+        this.state.lastAdSpinTime = savedLastAdSpinTime;
         this.state.lastLoginDate = savedLoginDate;
         this.state.loginStreak = savedLoginStreak;
         this.state.pendingLoginReward = savedPendingLoginReward;

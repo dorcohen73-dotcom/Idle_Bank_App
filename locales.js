@@ -576,6 +576,7 @@ const translations = {
                 customer: "Gerente de Clientes",
                 finance: "Gerente de Finanzas",
                 operations: "Gerente de Operaciones",
+                accountant: "Contador Jefe",
                 service: "Directora de Servicio al Cliente",
                 vip: "Directora VIP",
                 marketing: "Gerente de Marketing"
@@ -584,6 +585,7 @@ const translations = {
                 customer: "+6% Vel. de Clientes | +6% Ingresos (por nivel)",
                 finance: "Bóveda automática | +12% Ingresos de Deptos (por nivel)",
                 operations: "+4% Vel. de Guardias | +20% Capacidad de Guardia (por nivel)",
+                accountant: "+2 Horas Máx. Offline | +15% Ingresos Offline (por nivel)",
                 service: "+5% Capacidad de Cajeros | +5% EPS | +2 Horas Offline (por nivel)",
                 vip: "+7% Rend. de Deptos | +8% Acciones de Oro en Prestigio (por nivel)",
                 marketing: "+10% Bono de Publicidad | +1 Hora de Tiempo Offline (por nivel)"
@@ -808,6 +810,7 @@ const translations = {
                 customer: "Менеджер по клиентам",
                 finance: "Финансовый менеджер",
                 operations: "Операционный менеджер",
+                accountant: "Главный бухгалтер",
                 service: "Менеджер по сервису",
                 vip: "VIP менеджер",
                 marketing: "Менеджер по маркетингу"
@@ -816,6 +819,7 @@ const translations = {
                 customer: "+6% Скорость клиентов | +6% Доход (за ур.)",
                 finance: "Авто-сбор сейфа | +12% Доход отделов (за уровень)",
                 operations: "+4% Скорость инкасс. | +20% Вместимость охраны (за ур.)",
+                accountant: "+2 часа макс. оффлайн | +15% Оффлайн доход (за уровень)",
                 service: "+5% Вместимость касс | +5% EPS | +2 часа оффлайн (за ур.)",
                 vip: "+7% Доход отделов | +8% Золотые акции при престиже (за ур.)",
                 marketing: "+10% Бонус рекламы | +1 час оффлайн времени (за ур.)"

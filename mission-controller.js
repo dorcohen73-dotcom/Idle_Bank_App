@@ -61,12 +61,12 @@ class MissionController {
             });
         }
 
-        // Hire Managers (Only if not all 6 managers are hired)
+        // Hire Managers (Only if not all 7 managers are hired)
         const hiredMgrsCount = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
-        if (hiredMgrsCount < 6) {
+        if (hiredMgrsCount < 7) {
             pool.push({
                 type: 'hire_managers',
-                target: () => Math.min(6, hiredMgrsCount + 1),
+                target: () => Math.min(7, hiredMgrsCount + 1),
                 reward: (t) => Math.round(1000 * scale + referenceCash * 0.25)
             });
         }
@@ -162,7 +162,7 @@ class MissionController {
 
         // 3. manager_hire — only if at least 1 manager is already hired and there are managers left to hire
         const alreadyHiredCount = this.game.state.managers ? Object.values(this.game.state.managers).filter(v => v === true).length : 0;
-        const managersLeftToHire = 6 - alreadyHiredCount;
+        const managersLeftToHire = 7 - alreadyHiredCount;
         if (alreadyHiredCount >= 1 && managersLeftToHire >= 1) {
             pool.push({
                 type: 'manager_hire',
@@ -205,10 +205,10 @@ class MissionController {
         }
 
         // 7. all_managers — only if at least 4 managers are hired (late game)
-        if (alreadyHiredCount >= 4 && alreadyHiredCount < 6) {
+        if (alreadyHiredCount >= 4 && alreadyHiredCount < 7) {
             pool.push({
                 type: 'all_managers',
-                target: () => 6,
+                target: () => 7,
                 reward: () => ({ type: 'shares', amount: 3 })
             });
         }

@@ -176,6 +176,10 @@
         window.DOM_CACHE.vaultGraphicLabel = document.getElementById('vault-graphic-label');
         window.DOM_CACHE.cashLiveBadge = document.getElementById('cash-live-badge');
         window.DOM_CACHE.splashSubtitle = document.getElementById('splash-subtitle');
+        window.DOM_CACHE.queueCapLabel  = document.getElementById('queue-capacity-label');
+        window.DOM_CACHE.queueFillBar   = document.getElementById('queue-progress-fill');
+        window.DOM_CACHE.queueStatText  = document.getElementById('queue-status-text');
+        window.DOM_CACHE.queueStatIcon  = document.getElementById('queue-status-icon');
 
         // Instantiate game logic and secure global IdleBankGame class
         if (typeof window.IdleBankGame !== 'function') {
@@ -259,6 +263,7 @@
                 vaultGraphicEl.insertBefore(vaultImg, vaultGraphicEl.firstChild);
             }
         }
+        window.DOM_CACHE.vaultDoorImg = document.querySelector('.vault-door-img');
 
         // Initial Layout Rendering with defensive guards
         if (typeof window.rebuildTellersDOM === 'function') {
