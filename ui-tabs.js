@@ -999,7 +999,7 @@ function renderBranchesTab() {
         card.innerHTML = `
             <div class="branch-card-right">
                 <div class="branch-name">${tObj.names[idx]}</div>
-                <div class="branch-desc">${b.desc}</div>
+                <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
                 <div class="branch-req">${requirementText}</div>
                 ${statusPillHtml}
             </div>
@@ -1021,7 +1021,11 @@ function renderBranchesTab() {
             if (!currentCanPrestige) return;
             initSound();
             const target = parseInt(btn.getAttribute('data-prestige-branch'));
-            openPrestigeModal(target);
+            if (typeof window.showPrestigeNearMissBanner === 'function') {
+                window.showPrestigeNearMissBanner(() => openPrestigeModal(target));
+            } else {
+                openPrestigeModal(target);
+            }
         });
     });
 
@@ -1032,7 +1036,11 @@ function renderBranchesTab() {
             const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
             if (!currentCanPrestige) return;
             initSound();
-            openPrestigeModal(game.state.currentBranch);
+            if (typeof window.showPrestigeNearMissBanner === 'function') {
+                window.showPrestigeNearMissBanner(() => openPrestigeModal(game.state.currentBranch));
+            } else {
+                openPrestigeModal(game.state.currentBranch);
+            }
         });
     }
 

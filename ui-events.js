@@ -117,6 +117,22 @@ function applyLanguage(lang) {
     updateTabLabel(DOM_CACHE.tabBtnDepartments, tObj.tabDepartments);
     updateTabLabel(DOM_CACHE.tabBtnMissions, tObj.tabMissions);
     updateTabLabel(DOM_CACHE.tabBtnBranches, tObj.tabBranches);
+
+    // Update bottom nav labels
+    const bnavMap = {
+        'upgrades':    tObj.tabUpgrades,
+        'managers':    tObj.tabManagers,
+        'departments': tObj.tabDepartments,
+        'missions':    tObj.tabMissions,
+        'daily':       tObj.dailyTabBtn,
+        'branches':    tObj.tabBranches
+    };
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        const lbl = btn.querySelector('.bnav-label');
+        if (lbl && bnavMap[btn.dataset.tab]) {
+            lbl.textContent = bnavMap[btn.dataset.tab].replace(/🏆|📅|📆/g, '').trim();
+        }
+    });
     
     const tabBtnDaily = document.getElementById('tab-btn-daily');
     if (tObj.dailyTabBtn) updateTabLabel(tabBtnDaily, tObj.dailyTabBtn);
@@ -373,11 +389,16 @@ function openBoostModal() {
     textEl.innerText = tObj.boostModalText;
     container.innerHTML = '';
     
+    const _boostEps = game.getEarningsPerSecond() || 0;
+    const _projectedEarnings = Math.floor(_boostEps * 4 * 3600);
+    const _earningsHint = _projectedEarnings > 0 && typeof tObj.boostEventEarningsHint === 'function'
+        ? tObj.boostEventEarningsHint(formatMoney(_projectedEarnings))
+        : '';
     const btnAd = document.createElement('button');
     btnAd.className = 'event-option-btn ad-option';
     btnAd.innerHTML = `
         <div class="event-option-title">${tObj.boostEventAdTitle || '🎬 Watch Ad & Activate'}</div>
-        <div class="event-option-desc">${tObj.boostEventAdDesc || 'Adds 4 hours of double earnings (up to 8h)'}</div>
+        <div class="event-option-desc">${tObj.boostEventAdDesc || 'Adds 4 hours of double earnings (up to 8h)'}${_earningsHint}</div>
     `;
     btnAd.addEventListener('click', () => {
         initSound();
@@ -1856,6 +1877,16 @@ function tick(timestamp) {
                 if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
             }
             updateButtonAffordability();
+
+            // Near-miss prestige glow: light up prestige buttons when >= 70% of threshold
+            const _nmBranch = game.branches && game.branches[game.state.currentBranch];
+            if (_nmBranch) {
+                const _nmThreshold = _nmBranch.minCashToPrestige * 0.7;
+                const _nmActive = game.state.lifetimeCash >= _nmThreshold && game.state.cash < _nmBranch.minCashToPrestige;
+                document.querySelectorAll('[data-prestige-branch], #main-prestige-btn').forEach(el => {
+                    el.classList.toggle('prestige-near-miss-glow', _nmActive);
+                });
+            }
         }
 
         fortuneWheelBtnTimer += cappedDt;
@@ -2721,6 +2752,16 @@ function initUIEvents() {
         const modal = document.getElementById('fortune-wheel-modal');
         if (!modal) return;
 
+        // Update i18n strings in static HTML
+        const titleEl = document.getElementById('fortune-wheel-title');
+        if (titleEl) titleEl.textContent = tObj.fortuneWheelTitle || 'גלגל המזל היומי';
+        const subtitleEl = document.getElementById('fortune-wheel-subtitle');
+        if (subtitleEl) subtitleEl.textContent = tObj.fortuneWheelSubtitle || 'סובב פעם ביום וזכה בפרס!';
+        const spinHintEl = document.getElementById('fortune-spin-hint');
+        if (spinHintEl) spinHintEl.textContent = tObj.fortuneWheelSpinHint || '👇 לחץ על הכפתור למטה כדי לסובב את הגלגל';
+        const closeBtnEl = document.getElementById('fortune-close-btn');
+        if (closeBtnEl) closeBtnEl.textContent = tObj.fortuneWheelClose || '✕ סגור וחזור למשחק';
+
         const now = Date.now();
         const lastSpin = game.state.lastSpinTime || 0;
         const cooldownMs = 86400000; // 24 hours
@@ -2823,7 +2864,11 @@ function initUIEvents() {
                 }
 
                 setTimeout(() => {
-                    const prize = _wheelWeightedRandom(GAME_CONFIG.WHEEL_PRIZES);
+                    // Ad spin guarantees non-cash prize (minimum gold_1 value)
+                    const prizePool = adSpinGranted
+                        ? GAME_CONFIG.WHEEL_PRIZES.filter(p => p.type !== 'cash')
+                        : GAME_CONFIG.WHEEL_PRIZES;
+                    const prize = _wheelWeightedRandom(prizePool);
                     let prizeText = '';
                     const lang2 = (game.state && game.state.language) || 'he';
                     const tObj2 = translations[lang2] || translations.he;
@@ -3048,8 +3093,8 @@ function initUIEvents() {
 
         if (withAd) {
             playAd(() => {
-                game.state.shares = (game.state.shares || 0) + 1;
-                const msg = (tObj.vipRewardGold) || 'קיבלת מניית זהב!';
+                game.state.shares = Math.min((game.state.shares || 0) + 3, 100000);
+                const msg = (tObj.vipRewardGold) || 'קיבלת 3 מניות זהב!';
                 spawnFloating('🥇 ' + msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
                 game.saveGame();
                 draw();
@@ -3063,6 +3108,55 @@ function initUIEvents() {
             game.saveGame();
             draw();
         }
+    }
+
+    // ==========================================
+    // PRESTIGE NEAR-MISS BONUS BANNER
+    // ==========================================
+
+    function showPrestigeNearMissBanner(onComplete) {
+        const existing = document.getElementById('prestige-near-miss-banner');
+        if (existing) existing.remove();
+
+        const lang = (game.state && game.state.language) || 'he';
+        const tObj = translations[lang] || translations.he;
+
+        const banner = document.createElement('div');
+        banner.id = 'prestige-near-miss-banner';
+        banner.className = 'prestige-near-miss-banner';
+        banner.innerHTML = `
+            <div class="pnm-content">
+                <div class="pnm-title">${tObj.prestigeNearMissTitle || 'Bonus Available!'}</div>
+                <div class="pnm-desc">${tObj.prestigeNearMissDesc || 'Watch a short ad and earn +20% extra shares on this prestige.'}</div>
+                <div class="pnm-btns">
+                    <button class="pnm-ad-btn" id="pnm-ad-btn">${tObj.prestigeNearMissAdBtn || '🎬 Watch Ad (+20%)'}</button>
+                    <button class="pnm-skip-btn" id="pnm-skip-btn">${tObj.prestigeNearMissSkipBtn || 'Skip'}</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        const doComplete = (watchedAd) => {
+            const el = document.getElementById('prestige-near-miss-banner');
+            if (el) el.remove();
+            if (typeof onComplete === 'function') onComplete(watchedAd);
+        };
+
+        document.getElementById('pnm-skip-btn').addEventListener('click', () => {
+            initSound();
+            doComplete(false);
+        });
+        document.getElementById('pnm-ad-btn').addEventListener('click', () => {
+            initSound();
+            const adBtn = document.getElementById('pnm-ad-btn');
+            const skipBtn = document.getElementById('pnm-skip-btn');
+            if (adBtn) adBtn.disabled = true;
+            if (skipBtn) skipBtn.disabled = true;
+            playAd(() => {
+                game.state.prestigeNearMissBonus = 0.20;
+                doComplete(true);
+            });
+        });
     }
 
     // ==========================================
@@ -3175,6 +3269,7 @@ function initUIEvents() {
     window.playAd = playAd;
     window.formatTime = formatTime;
     window.openPrestigeModal = openPrestigeModal;
+    window.showPrestigeNearMissBanner = showPrestigeNearMissBanner;
     window.openBoostModal = openBoostModal;
     window.openAnalyticsModal = openAnalyticsModal;
     window.handleCrowdEvent = handleCrowdEvent;

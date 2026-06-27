@@ -1561,7 +1561,8 @@ Object.assign(translations.he, {
     fortuneWheelCooldown: (h, m) => `חוזר בעוד ${h}:${m}`,
     fortuneWheelPrizeTitle: "זכית ב",
     fortuneWheelAdSpinBtn: "📺 סיבוב נוסף — צפה בפרסומת",
-    fortuneWheelClose: "סגור",
+    fortuneWheelClose: "✕ סגור וחזור למשחק",
+    fortuneWheelSpinHint: "👇 לחץ על הכפתור למטה כדי לסובב את הגלגל",
     wheelPrizes: {
         cash_small: "כסף",
         cash_big: "כסף גדול",
@@ -1575,9 +1576,9 @@ Object.assign(translations.he, {
     vipBannerTitle: "לקוח VIP פנימה!",
     vipBannerTimer: (s) => `${s} שניות`,
     vipServeBtn: "שרת (פרס כסף)",
-    vipPremiumBtn: "VIP Premium (פרסומת + זהב)",
+    vipPremiumBtn: "VIP Premium (פרסומת + 3 מניות זהב)",
     vipRewardCash: (amt) => `קיבלת +${amt} ממזומן`,
-    vipRewardGold: "קיבלת מניית זהב!",
+    vipRewardGold: "קיבלת 3 מניות זהב!",
     // Daily Challenges
     dailyTabBtn: "אתגרי יום",
     dailyChallengesTitle: "אתגרי היום",
@@ -1605,7 +1606,8 @@ Object.assign(translations.en, {
     fortuneWheelCooldown: (h, m) => `Returns in ${h}:${m}`,
     fortuneWheelPrizeTitle: "You won",
     fortuneWheelAdSpinBtn: "📺 Extra Spin — Watch an Ad",
-    fortuneWheelClose: "Close",
+    fortuneWheelClose: "✕ Close & Back to Game",
+    fortuneWheelSpinHint: "👇 Press the button below to spin the wheel",
     wheelPrizes: {
         cash_small: "Cash",
         cash_big: "Big Cash",
@@ -1618,9 +1620,9 @@ Object.assign(translations.en, {
     vipBannerTitle: "VIP Client Inside!",
     vipBannerTimer: (s) => `${s} seconds`,
     vipServeBtn: "Serve (Cash Prize)",
-    vipPremiumBtn: "VIP Premium (Ad + Gold)",
+    vipPremiumBtn: "VIP Premium (Ad + 3 Gold Shares)",
     vipRewardCash: (amt) => `Received +${amt} cash`,
-    vipRewardGold: "Received a Gold Share!",
+    vipRewardGold: "Received 3 Gold Shares!",
     dailyTabBtn: "Daily",
     dailyChallengesTitle: "Daily Challenges",
     dailyChallengesSubtitle: "3 hard challenges that reset at midnight",
@@ -1647,7 +1649,8 @@ Object.assign(translations.es, {
     fortuneWheelCooldown: (h, m) => `Vuelve en ${h}:${m}`,
     fortuneWheelPrizeTitle: "Ganaste",
     fortuneWheelAdSpinBtn: "📺 Giro Extra — Ver Anuncio",
-    fortuneWheelClose: "Cerrar",
+    fortuneWheelClose: "✕ Cerrar y Volver al Juego",
+    fortuneWheelSpinHint: "👇 Presiona el botón de abajo para girar la ruleta",
     wheelPrizes: {
         cash_small: "Efectivo",
         cash_big: "Gran Efectivo",
@@ -1660,9 +1663,9 @@ Object.assign(translations.es, {
     vipBannerTitle: "¡Cliente VIP adentro!",
     vipBannerTimer: (s) => `${s} segundos`,
     vipServeBtn: "Atender (Premio en Efectivo)",
-    vipPremiumBtn: "VIP Premium (Anuncio + Oro)",
+    vipPremiumBtn: "VIP Premium (Anuncio + 3 Acciones de Oro)",
     vipRewardCash: (amt) => `Recibiste +${amt} efectivo`,
-    vipRewardGold: "¡Recibiste una Acción de Oro!",
+    vipRewardGold: "¡Recibiste 3 Acciones de Oro!",
     dailyTabBtn: "Diario",
     dailyChallengesTitle: "Desafíos Diarios",
     dailyChallengesSubtitle: "3 desafíos que se reinician a medianoche",
@@ -1689,7 +1692,8 @@ Object.assign(translations.ru, {
     fortuneWheelCooldown: (h, m) => `Вернется через ${h}:${m}`,
     fortuneWheelPrizeTitle: "Вы выиграли",
     fortuneWheelAdSpinBtn: "📺 Доп. кручение — Смотреть рекламу",
-    fortuneWheelClose: "Закрыть",
+    fortuneWheelClose: "✕ Закрыть и вернуться в игру",
+    fortuneWheelSpinHint: "👇 Нажмите кнопку ниже, чтобы крутить колесо",
     wheelPrizes: {
         cash_small: "Наличные",
         cash_big: "Большие наличные",
@@ -1702,9 +1706,9 @@ Object.assign(translations.ru, {
     vipBannerTitle: "VIP-клиент внутри!",
     vipBannerTimer: (s) => `${s} секунд`,
     vipServeBtn: "Обслужить (Наличные)",
-    vipPremiumBtn: "VIP Премиум (Реклама + Золото)",
+    vipPremiumBtn: "VIP Премиум (Реклама + 3 золотые акции)",
     vipRewardCash: (amt) => `Получено +${amt} наличных`,
-    vipRewardGold: "Получена Золотая Акция!",
+    vipRewardGold: "Получено 3 золотые акции!",
     dailyTabBtn: "Ежедневно",
     dailyChallengesTitle: "Ежедневные задания",
     dailyChallengesSubtitle: "3 сложных задания, сбрасываемых в полночь",
@@ -2441,7 +2445,12 @@ Object.assign(translations.he, {
     prestigeResetLabel: "מתאפס...",
     goldSharesLabel: "מניות זהב",
     boostActivated4h: "בוסט הופעל! רווחי הבנק הוכפלו ל-4 שעות.",
-    branchLabel: "סניף"
+    branchLabel: "סניף",
+    boostEventEarningsHint: (amount) => ` — בערך 💰${amount} לפי ה-EPS הנוכחי`,
+    prestigeNearMissTitle: "מגיע לך בונוס!",
+    prestigeNearMissDesc: "צפה בפרסומת קצרה וקבל +20% מניות נוספות בפרסטיז' הנוכחי.",
+    prestigeNearMissAdBtn: "🎬 צפה בפרסומת (+20%)",
+    prestigeNearMissSkipBtn: "דלג — פרסטיז' רגיל"
 });
 
 Object.assign(translations.en, {
@@ -2494,7 +2503,12 @@ Object.assign(translations.en, {
     prestigeResetLabel: "resetting...",
     goldSharesLabel: "Gold Shares",
     boostActivated4h: "Boost activated! Bank profits doubled for 4 hours.",
-    branchLabel: "Branch"
+    branchLabel: "Branch",
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} at current EPS`,
+    prestigeNearMissTitle: "Bonus Available!",
+    prestigeNearMissDesc: "Watch a short ad and earn +20% extra shares on this prestige.",
+    prestigeNearMissAdBtn: "🎬 Watch Ad (+20%)",
+    prestigeNearMissSkipBtn: "Skip — Regular Prestige"
 });
 
 Object.assign(translations.es, {
@@ -2547,7 +2561,12 @@ Object.assign(translations.es, {
     prestigeResetLabel: "reiniciando...",
     goldSharesLabel: "Acciones de Oro",
     boostActivated4h: "¡Boost activado! Las ganancias del banco se duplicaron por 4 horas.",
-    branchLabel: "Sucursal"
+    branchLabel: "Sucursal",
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} según EPS actual`,
+    prestigeNearMissTitle: "¡Bono disponible!",
+    prestigeNearMissDesc: "Mira un anuncio corto y gana +20% acciones extra en este prestige.",
+    prestigeNearMissAdBtn: "🎬 Ver Anuncio (+20%)",
+    prestigeNearMissSkipBtn: "Saltar — Prestige Normal"
 });
 
 Object.assign(translations.ru, {
@@ -2600,5 +2619,10 @@ Object.assign(translations.ru, {
     prestigeResetLabel: "сбрасывается...",
     goldSharesLabel: "Золотые акции",
     boostActivated4h: "Буст активирован! Прибыль банка удвоена на 4 часа.",
-    branchLabel: "Филиал"
+    branchLabel: "Филиал",
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} по текущему EPS`,
+    prestigeNearMissTitle: "Бонус доступен!",
+    prestigeNearMissDesc: "Посмотрите короткую рекламу и получите +20% акций в этом престиже.",
+    prestigeNearMissAdBtn: "🎬 Смотреть рекламу (+20%)",
+    prestigeNearMissSkipBtn: "Пропустить — обычный престиж"
 });

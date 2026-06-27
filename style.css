@@ -8963,5 +8963,96 @@ button.upg-v2-buy-btn.disabled svg {
     stroke: #475569;
 }
 
+/* ==========================================
+   PRESTIGE NEAR-MISS GLOW
+   ========================================== */
+
+@keyframes prestige-near-miss-pulse {
+    0%   { box-shadow: 0 0 6px rgba(223, 171, 41, 0.3); }
+    50%  { box-shadow: 0 0 18px rgba(223, 171, 41, 0.75), 0 0 30px rgba(223, 171, 41, 0.3); }
+    100% { box-shadow: 0 0 6px rgba(223, 171, 41, 0.3); }
+}
+
+.prestige-near-miss-glow {
+    animation: prestige-near-miss-pulse 2s ease-in-out infinite;
+}
+
+/* ==========================================
+   PRESTIGE NEAR-MISS BONUS BANNER
+   ========================================== */
+
+.prestige-near-miss-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9000;
+    background: linear-gradient(135deg, rgba(30, 20, 5, 0.97) 0%, rgba(45, 30, 5, 0.97) 100%);
+    border: 1px solid rgba(223, 171, 41, 0.6);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 30px rgba(223, 171, 41, 0.2);
+    text-align: center;
+    direction: inherit;
+}
+
+.pnm-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.pnm-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #dfab29;
+    letter-spacing: 0.02em;
+}
+
+.pnm-desc {
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.pnm-btns {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+.pnm-ad-btn,
+.pnm-skip-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    min-width: 120px;
+}
+
+.pnm-ad-btn {
+    background: linear-gradient(135deg, #dfab29 0%, #b8860b 100%);
+    color: #0f172a;
+}
+
+.pnm-skip-btn {
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.pnm-ad-btn:hover { opacity: 0.88; }
+.pnm-skip-btn:hover { background: rgba(255,255,255,0.14); }
+.pnm-ad-btn:disabled,
+.pnm-skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 

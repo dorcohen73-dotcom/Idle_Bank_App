@@ -674,6 +674,12 @@ class IdleBankGame {
             // CAP: after tripling, clamp to 10000 per prestige event
             sharesGained = Math.min(10000, sharesGained);
         }
+        // Apply near-miss ad bonus (+20%) if the player watched an ad before this prestige
+        if (this.state.prestigeNearMissBonus > 0) {
+            sharesGained = Math.round(sharesGained * (1 + this.state.prestigeNearMissBonus));
+            sharesGained = Math.min(10000, sharesGained);
+            this.state.prestigeNearMissBonus = 0;
+        }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
             this.isResetting = false;
             return false;
@@ -764,7 +770,9 @@ class IdleBankGame {
             if (typeof window.showToast === 'function') {
                 const lang = this.state.language || 'he';
                 const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
-                const branchName = (this.branches && this.branches[targetBranchIndex]) ? this.branches[targetBranchIndex].name : ('Branch ' + targetBranchIndex);
+                const branchName = (tObj && tObj.branches && tObj.branches.names && tObj.branches.names[targetBranchIndex])
+                    ? tObj.branches.names[targetBranchIndex]
+                    : (this.branches && this.branches[targetBranchIndex] ? this.branches[targetBranchIndex].name : ('Branch ' + targetBranchIndex));
                 const amt = Math.round(welcomeBonusCash).toLocaleString();
                 const msg = (tObj && typeof tObj.welcomeBonusMsg === 'function')
                     ? tObj.welcomeBonusMsg(branchName, amt)
