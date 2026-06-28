@@ -1,0 +1,380 @@
+/* 
+ * Premium Departments Tab Styles 
+ * Ultra-premium design exactly matching the 3D depth and glassmorphism of the reference
+ */
+
+.department-card {
+    display: flex;
+    flex-direction: row;
+    direction: ltr; /* Force LTR for layout */
+    align-items: center;
+    background: linear-gradient(180deg, #111a2f 0%, #080d1a 100%);
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Stronger highlight reflection */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 0 40px rgba(59, 130, 246, 0.1), /* Extra inner blue ambient */
+        0 8px 24px rgba(0, 0, 0, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.dept-card-body {
+    display: flex;
+    flex-direction: row; /* Icon on the left */
+    align-items: center;
+    flex: 1;
+    gap: 16px;
+    z-index: 2;
+}
+
+/* --- THE LEFT ICON FRAME (Ultra Premium) --- */
+.dept-icon-frame {
+    position: relative;
+    width: 82px;
+    height: 82px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #0b1221;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Background ambient glow behind the icon frame */
+.dept-icon-frame::before {
+    content: '';
+    position: absolute;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, transparent 65%); /* Stronger blue aura */
+    z-index: -1;
+}
+
+.dept-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+/* The thick glowing neon blue outer ring */
+.dept-ring-1 {
+    width: 90%;
+    height: 90%;
+    border: 1.5px solid rgba(96, 165, 250, 0.5);
+    border-top-color: rgba(147, 197, 253, 0.5); /* Brighter edge */
+    border-left-color: rgba(147, 197, 253, 0.2);
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+    border-right-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 
+        inset 0 0 15px rgba(59, 130, 246, 0.4),
+        0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Inner dark void bowl */
+.dept-ring-2 {
+    width: 76%;
+    height: 76%;
+    background: radial-gradient(circle at top left, #0e172a, #020617);
+    border: 1px solid rgba(0,0,0,0.8);
+    box-shadow: inset 0 6px 10px rgba(0,0,0,0.9);
+}
+
+/* The actual icon content - massive glowing gold */
+.dept-icon-content {
+    position: relative;
+    z-index: 2;
+    color: #fff4bd; /* Blazing white-gold */
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 20px rgba(251, 191, 36, 0.7));
+}
+
+.dept-icon-content svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+/* --- TEXTS AND BADGES --- */
+.dept-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: right;
+    direction: rtl; /* Text remains right-aligned naturally */
+    gap: 8px;
+    overflow: hidden;
+}
+
+.dept-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.dept-title-shield {
+    color: #fbbf24;
+    display: inline-flex;
+    align-items: center;
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8)); /* Stronger shield glow */
+    flex-shrink: 0;
+}
+
+.dept-title-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* The dark green pill */
+.dept-active-badge {
+    background: linear-gradient(180deg, #0e3b1f 0%, #071f10 100%);
+    border: 1px solid #115e2e;
+    color: #4ade80;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+    flex-shrink: 0;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80, 0 0 12px #4ade80;
+}
+
+/* --- STATS GRID --- */
+.dept-stats-row {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    row-gap: 6px;
+    column-gap: 12px;
+    justify-content: start; /* Align everything to the right in RTL */
+    align-items: center;
+}
+
+.dept-stat-item {
+    display: contents; /* Allows children to participate in the grid for perfect tabular alignment */
+}
+
+.dept-stat-label {
+    font-size: 0.85rem;
+    color: #8b9bb4;
+    text-align: right;
+    font-weight: 500;
+}
+
+.dept-stat-value-box {
+    background: #030712; /* Pitch black */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Very subtle grey outline */
+    padding: 3px 16px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.dept-stat-value-box span {
+    color: #ffd700;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5), 0 2px 4px rgba(0,0,0,0.9); /* Brilliant gold glow */
+}
+
+/* --- VERTICAL GLOWING DIVIDER --- */
+.dept-card-divider {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(180deg, transparent 0%, #fbbf24 50%, transparent 100%);
+    box-shadow: 0 0 15px 2px rgba(251, 191, 36, 0.7), 0 0 5px rgba(255, 255, 255, 0.5); /* Thicker laser beam */
+    margin: 0 16px;
+    z-index: 2;
+    border-radius: 2px;
+}
+
+/* --- ACTION AREA (MAX JEWEL) --- */
+.dept-card-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 100px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Soft green ambient light for the right section */
+.dept-card-action::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Max Jewel styling */
+.max-jewel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+/* Pedestal for the MAX jewel */
+.max-jewel-container::before {
+    content: '';
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 10px;
+    background: radial-gradient(ellipse, rgba(34, 197, 94, 0.6) 0%, transparent 70%);
+    border-bottom: 2px solid rgba(34, 197, 94, 0.8);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+/* The actual Hexagon 3D body */
+.max-jewel {
+    position: relative;
+    width: 76px;
+    height: 86px;
+    background: linear-gradient(180deg, #34d399 0%, #064e3b 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+    z-index: 1;
+}
+
+/* Inner bevel of the Hexagon */
+.max-jewel::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(180deg, #22c55e 0%, #14532d 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    z-index: 1;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+}
+
+.jewel-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffffff;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+}
+
+.jewel-check {
+    font-size: 2.6rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: -4px;
+}
+
+.jewel-text {
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.max-jewel-label {
+    color: #4ade80;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 1;
+    text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+}
+
+/* Locked State */
+.department-card.locked {
+    filter: grayscale(100%) opacity(0.7);
+    background: linear-gradient(180deg, #0a0f1c 0%, #040810 100%);
+    box-shadow: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.department-card.locked .dept-card-divider {
+    background: linear-gradient(180deg, transparent 0%, #334155 50%, transparent 100%);
+    box-shadow: none;
+}
+
+.department-card.locked .dept-icon-frame {
+    background: #0f172a;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.department-card.locked .dept-icon-content {
+    color: #64748b;
+    filter: none;
+}
+
+.department-card.locked .dept-ring-1 {
+    border-color: #1e293b;
+    box-shadow: none;
+}
+
+.department-card.locked .dept-ring-2 {
+    background: #020617;
+    box-shadow: none;
+}
+
+.department-card.locked .dept-title-shield {
+    color: #475569;
+    filter: none;
+}
+
+.department-card.locked .dept-title-text {
+    color: #94a3b8;
+}
+
+.department-card.locked .dept-stat-value-box {
+    border-color: transparent;
+    background: #0a0f1c;
+}
+
+.department-card.locked .dept-stat-value-box span {
+    color: #94a3b8;
+    text-shadow: none;
+}

@@ -950,9 +950,12 @@ function renderDepartmentsTab() {
                             <div class="jewel-text">MAX</div>
                         </div>
                     </div>
+                    <div class="max-jewel-label">מקסימלי</div>
                 </div>
             `;
         }
+
+        const titleShieldHtml = isUnlocked ? `<span class="dept-title-shield"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 13.5 10.5 16 11 14 13 14.5 15.5 12 14.5 9.5 15.5 10 13 8 11 10.5 10.5 12 8" fill="currentColor" stroke="none"/></svg></span>` : '';
 
         card.innerHTML = `
             <div class="dept-card-body">
@@ -966,6 +969,7 @@ function renderDepartmentsTab() {
                 </div>
                 <div class="dept-details">
                     <div class="dept-title-row">
+                        ${titleShieldHtml}
                         <span class="dept-title-text">${tObj.names[d.id]}</span>
                         ${activeBadgeHtml}
                     </div>
@@ -975,6 +979,7 @@ function renderDepartmentsTab() {
                     </div>
                 </div>
             </div>
+            <div class="dept-card-divider"></div>
             <div class="dept-card-action">
                 ${actionBtnHtml}
             </div>
