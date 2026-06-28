@@ -1003,7 +1003,7 @@ Object.assign(translations.he, {
             desc: (lvl, nextVal) => `התחל כל סבב עם הון עצמי גבוה יותר. (רמה ${lvl}/4 -> התחלה עם $${nextVal})`
         },
         guardSpeed: {
-            title: "👮 בלדרות פדרלית",
+            title: "בלדרות פדרלית",
             desc: (lvl) => `בונוס מהירות קבוע של +10% לבלדרים לכל רמה. (רמה ${lvl}/5)`
         },
         premiumYield: {

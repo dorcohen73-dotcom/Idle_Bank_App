@@ -850,11 +850,6 @@ function draw() {
 
                 const avatarEl = document.createElement('div');
                 avatarEl.className = 'guard-runner-avatar';
-                avatarEl.innerHTML = '👮';
-                avatarEl.style.fontSize = '32px';
-                avatarEl.style.display = 'flex';
-                avatarEl.style.alignItems = 'center';
-                avatarEl.style.justifyContent = 'center';
                 
                 runner.appendChild(avatarEl);
 
