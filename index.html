@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
-    
+
     <meta property="og:title" content="אימפריית הבנקים">
-    <meta property="og:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
+    <meta property="og:description"
+        content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
     <meta property="og:image" content="תמונות/icon.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="אימפריית הבנקים">
-    <meta name="twitter:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
+    <meta name="twitter:description"
+        content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
     <meta name="twitter:image" content="תמונות/icon.png">
-    
+
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,13 +28,14 @@
     <link rel="preload" href="תמונות/nav_bank.png" as="image">
 
     <!-- Application Styles -->
-    <link rel="stylesheet" href="style.css?v=20260627_09">
+    <link rel="stylesheet" href="style.css?v=20260628_17">
     <link rel="stylesheet" href="premium_depts.css?v=20260628_05">
-    
+    <link rel="stylesheet" href="premium_managers.css?v=20260628_15">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#dfab29">
-    
+
     <!-- iOS PWA Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -38,6 +43,7 @@
     <link rel="icon" type="image/png" href="תמונות/icon.png">
     <link rel="apple-touch-icon" href="תמונות/icon.png">
 </head>
+
 <body>
     <a href="#main-content" class="skip-link">דלג לתוכן</a>
 
@@ -50,7 +56,7 @@
     </div>
 
     <div class="app-container">
-        
+
         <!-- Header / Stats Dashboard -->
         <header>
 
@@ -92,11 +98,16 @@
                     </div>
                 </div>
                 <div class="header-buttons-row">
-                    <button class="sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה" aria-label="דוח ביצועים ואנליטיקה"><span aria-hidden="true">📊</span></button>
-                    <button class="boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2" aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span> BOOST x2</button>
-                    <button class="sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn" title="גלגל המזל היומי" aria-label="גלגל המזל היומי"><span aria-hidden="true">🎡</span></button>
-                    <button class="sound-toggle-btn" id="lang-btn" title="הגדרות ושפה / Settings & Language" aria-label="הגדרות ושפה"><span aria-hidden="true">⚙️</span></button>
-                    <button class="sound-toggle-btn" id="mute-btn" title="השתק" aria-label="השתק והפעלת סאונד">🔊</button>
+                    <button class="sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה"
+                        aria-label="דוח ביצועים ואנליטיקה"><span aria-hidden="true">📊</span></button>
+                    <button class="boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
+                        aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span> BOOST x2</button>
+                    <button class="sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn"
+                        title="גלגל המזל היומי" aria-label="גלגל המזל היומי"><span aria-hidden="true">🎡</span></button>
+                    <button class="sound-toggle-btn" id="lang-btn" title="הגדרות ושפה / Settings & Language"
+                        aria-label="הגדרות ושפה"><span aria-hidden="true">⚙️</span></button>
+                    <button class="sound-toggle-btn" id="mute-btn" title="השתק"
+                        aria-label="השתק והפעלת סאונד">🔊</button>
                 </div>
             </div>
 
@@ -149,45 +160,46 @@
             </div>
 
             <div class="top-overlay-ui">
-            <!-- Portrait Vault Mini Bar -->
-            <div class="vault-mini-bar" id="vault-mini-bar">
-              <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
-              <div class="vault-mini-top">
-                <img class="vault-mini-icon" src="תמונות/vault-door.png" alt="כספת">
-                <div class="vault-mini-name-col">
-                  <span class="vault-mini-label">כספת</span>
-                  <span class="vault-mini-level" id="vault-mini-level">Lv.1</span>
+                <!-- Portrait Vault Mini Bar -->
+                <div class="vault-mini-bar" id="vault-mini-bar">
+                    <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
+                    <div class="vault-mini-top">
+                        <img class="vault-mini-icon" src="תמונות/vault-door.png" alt="כספת">
+                        <div class="vault-mini-name-col">
+                            <span class="vault-mini-label">כספת</span>
+                            <span class="vault-mini-level" id="vault-mini-level">Lv.1</span>
+                        </div>
+                        <div class="vault-mini-spacer"></div>
+                        <div class="vault-mini-amounts">
+                            <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span>
+                            <span class="vault-mini-slash"> / </span>
+                            <span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
+                        </div>
+                        <button class="vault-mini-collect" id="vault-mini-btn">💰 גבה</button>
+                    </div>
+                    <!-- שורה 2: פס מילוי + אחוז + תשואה -->
+                    <div class="vault-mini-bottom">
+                        <div class="vault-mini-track">
+                            <div id="vault-mini-fill" class="vault-mini-fill"></div>
+                        </div>
+                        <div class="vault-mini-details">
+                            <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
+                            <span class="vault-mini-sep">·</span>
+                            <span id="vault-mini-yield">+$0/h</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="vault-mini-spacer"></div>
-                <div class="vault-mini-amounts">
-                  <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span>
-                  <span class="vault-mini-slash"> / </span>
-                  <span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
-                </div>
-                <button class="vault-mini-collect" id="vault-mini-btn">💰 גבה</button>
-              </div>
-              <!-- שורה 2: פס מילוי + אחוז + תשואה -->
-              <div class="vault-mini-bottom">
-                <div class="vault-mini-track">
-                  <div id="vault-mini-fill" class="vault-mini-fill"></div>
-                </div>
-                <div class="vault-mini-details">
-                  <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
-                  <span class="vault-mini-sep">·</span>
-                  <span id="vault-mini-yield">+$0/h</span>
-                </div>
-              </div>
-            </div>
             </div>
         </header>
 
         <!-- Main Workspace Grid -->
         <main id="main-content" class="main-grid">
-            
+
             <!-- Bank Floor Visual Simulation -->
             <section class="bank-floor" aria-label="תצוגת סניף הבנק">
                 <div class="panel-header">
-                    <div class="panel-title"><span aria-hidden="true">🏛️</span> <span id="label-simulator-title">סימולטור הבנק</span></div>
+                    <div class="panel-title"><span aria-hidden="true">🏛️</span> <span
+                            id="label-simulator-title">סימולטור הבנק</span></div>
                     <div class="panel-badge" id="label-panel-badge">זרימת כספים פעילה</div>
                 </div>
 
@@ -200,7 +212,7 @@
                     <div class="bank-decor gold-pillar pillar-r" aria-hidden="true">🏛️</div>
                     <div class="bank-decor potted-plant plant-l" aria-hidden="true">🌿</div>
                     <div class="bank-decor potted-plant plant-r" aria-hidden="true">🌿</div>
-                    
+
                     <!-- Customer Queue Group (Premium Redesign) -->
                     <div class="queue-wrapper queue-premium-design">
                         <!-- Top Progress Section -->
@@ -210,7 +222,7 @@
                                 <div class="queue-progress-fill" id="queue-progress-fill"></div>
                             </div>
                         </div>
-                        
+
                         <!-- Subtitle Status Section -->
                         <div class="queue-status-section">
                             <span class="queue-status-text" id="queue-status-text">התור פנוי</span>
@@ -221,12 +233,14 @@
                     <!-- Advertising Campaign budget control -->
                     <div class="advertising-control" id="label-adv-control" title="קמפיין שיווק ממומן להבאת לקוחות">
                         <div class="adv-header">
-                            <span class="adv-title" id="label-adv-title"><span aria-hidden="true">📢</span> קמפיין פרסום ושיווק</span>
+                            <span class="adv-title" id="label-adv-title"><span aria-hidden="true">📢</span> קמפיין פרסום
+                                ושיווק</span>
                             <span class="adv-value" id="adv-budget-display">כבוי</span>
                         </div>
                         <div class="adv-slider-wrapper">
                             <span class="adv-limit" id="label-adv-limit-off">כבוי</span>
-                            <input type="range" id="adv-budget-slider" min="0" max="1000" step="10" value="0" class="adv-slider" aria-label="תקציב קמפיין פרסום">
+                            <input type="range" id="adv-budget-slider" min="0" max="1000" step="10" value="0"
+                                class="adv-slider" aria-label="תקציב קמפיין פרסום">
                             <span class="adv-limit" id="label-adv-limit-max">$1,000</span>
                         </div>
                     </div>
@@ -251,7 +265,7 @@
                             <img class="vault-door-img" src="תמונות/vault-door.png" alt="" />
                             <div class="vault-graphic-label" id="vault-graphic-label">BANK</div>
                         </div>
-                        
+
                         <!-- Right: Vault Info -->
                         <div class="vault-info">
                             <!-- Top Row: Title & Action Button -->
@@ -261,15 +275,16 @@
                                         <span class="vault-shield-icon" aria-hidden="true">🛡️</span>
                                         <div class="vault-title" id="label-vault-title">כספת ראשית</div>
                                     </div>
-                                    <div class="vault-subtitle" id="label-vault-subtitle">הכנסה פסיבית מהכספת הראשית</div>
+                                    <div class="vault-subtitle" id="label-vault-subtitle">הכנסה פסיבית מהכספת הראשית
+                                    </div>
                                 </div>
-                                
+
                                 <button class="collect-vault-btn" id="collect-vault-btn" aria-label="רוקן כספת">
                                     <span class="collect-btn-icon" aria-hidden="true">🚛</span>
                                     <span class="collect-btn-text" id="label-collect-vault-btn">רוקן כספת</span>
                                 </button>
                             </div>
-                            
+
                             <!-- Progress Bar Row -->
                             <div class="vault-progress-row">
                                 <span class="vault-progress-label" id="vault-progress-label">מילוי כספת: 0%</span>
@@ -277,7 +292,7 @@
                                     <div class="vault-fill-bar-fill" id="vault-fill"></div>
                                 </div>
                             </div>
-                            
+
                             <!-- Stats Cards Grid -->
                             <div class="vault-stats-grid">
                                 <!-- Card 1: Yield -->
@@ -288,7 +303,7 @@
                                         <span class="vault-stat-value text-green" id="vault-yield-value">+$0</span>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Card 2: Capacity -->
                                 <div class="vault-stat-card cap-card">
                                     <span class="vault-stat-icon" aria-hidden="true">💵</span>
@@ -297,7 +312,7 @@
                                         <span class="vault-stat-value text-gold" id="vault-cap-value">$0</span>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Card 3: Volume -->
                                 <div class="vault-stat-card volume-card">
                                     <span class="vault-stat-icon" aria-hidden="true">📊</span>
@@ -305,7 +320,8 @@
                                         <span class="vault-stat-label" id="label-vault-volume-title">נפח</span>
                                         <span class="vault-stat-value" id="vault-stats">$0 / $0</span>
                                     </div>
-                                    <button class="vault-info-btn" id="vault-info-btn" title="מידע על ריבית הכספת" aria-label="מידע על ריבית הכספת">i</button>
+                                    <button class="vault-info-btn" id="vault-info-btn" title="מידע על ריבית הכספת"
+                                        aria-label="מידע על ריבית הכספת">i</button>
                                 </div>
                             </div>
                         </div>
@@ -356,7 +372,7 @@
 
                 <!-- Tab Contents -->
                 <div class="tab-content">
-                    
+
                     <!-- Upgrades Tab Pane -->
                     <div class="tab-pane active" id="tab-upgrades">
                         <!-- Dynamic Upgrades rendered here -->
@@ -400,7 +416,8 @@
 
         <!-- Footer Section -->
         <footer role="contentinfo">
-            <p id="label-footer"><span id="footer-flavor">אימפריית הבנקים © 2026 - משחק Idle פרימיום. כל הזכויות שמורות.</span></p>
+            <p id="label-footer"><span id="footer-flavor">אימפריית הבנקים © 2026 - משחק Idle פרימיום. כל הזכויות
+                    שמורות.</span></p>
             <div class="footer-links">
                 <a href="privacy.html" class="footer-link" target="_blank" rel="noopener">מדיניות פרטיות</a> |
                 <span class="footer-version">v1.2.0</span>
@@ -409,7 +426,8 @@
     </div>
 
     <!-- Daily Login Reward Modal -->
-    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true" aria-labelledby="login-reward-title">
+    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true"
+        aria-labelledby="login-reward-title">
         <div class="modal-box">
             <div class="modal-icon" aria-hidden="true">🎁</div>
             <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
@@ -425,10 +443,12 @@
         <div class="modal-box">
             <div class="modal-icon" aria-hidden="true">💰</div>
             <h2 class="modal-title" id="offline-modal-title">ברוך שובך, מנכ"ל!</h2>
-            <p class="modal-text" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור הבנק!</p>
+            <p class="modal-text" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור
+                הבנק!</p>
             <div class="modal-amount" id="modal-amount">$0</div>
             <div class="prestige-options prestige-options-mt">
-                <button id="offline-double-btn" class="modal-close-btn prestige-double-btn"><span aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 2!</button>
+                <button id="offline-double-btn" class="modal-close-btn prestige-double-btn"><span
+                        aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 2!</button>
                 <button id="offline-claim-btn" class="modal-close-btn secondary-btn">קבל סכום רגיל</button>
             </div>
         </div>
@@ -439,8 +459,9 @@
         <div class="modal-box language-modal-box">
             <div class="modal-icon" aria-hidden="true">🌐</div>
             <h2 class="modal-title" id="lang-modal-title">בחר שפה / Choose Language</h2>
-            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred language:</p>
-            
+            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred
+                language:</p>
+
             <div class="lang-options-grid">
                 <button class="lang-option-card" data-lang="he">
                     <span class="lang-flag" aria-hidden="true">🇮🇱</span>
@@ -469,33 +490,38 @@
                     <button class="theme-option-btn-choice active" data-theme="blue">כחול / Blue</button>
                 </div>
             </div>
-            
+
             <div class="settings-danger-section">
                 <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
                 <div class="reset-confirm-wrapper">
                     <input type="checkbox" id="reset-confirm-checkbox">
                     <label for="reset-confirm-checkbox">אני מאשר איפוס מלא / I confirm full reset</label>
                 </div>
-                <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
+                <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span
+                        aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
             </div>
-            
-            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים מסכם</button>
+
+            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים
+                מסכם</button>
             <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
         </div>
     </div>
 
     <!-- Prestige Confirmation Modal -->
-    <div class="modal-overlay" id="prestige-modal" role="dialog" aria-modal="true" aria-labelledby="prestige-modal-title">
+    <div class="modal-overlay" id="prestige-modal" role="dialog" aria-modal="true"
+        aria-labelledby="prestige-modal-title">
         <div class="modal-box">
             <div class="modal-icon" aria-hidden="true">🚀</div>
             <h2 class="modal-title" id="prestige-modal-title">מכור והקם סניף חדש!</h2>
-            <p class="modal-text" id="prestige-modal-text">הקמת סניף חדש תאפס את המזומנים, עמדות השדרוג והמחלקות שלך, אך תעניק לך מניות זהב קבועות שישפרו את כל רווחיך!</p>
+            <p class="modal-text" id="prestige-modal-text">הקמת סניף חדש תאפס את המזומנים, עמדות השדרוג והמחלקות שלך, אך
+                תעניק לך מניות זהב קבועות שישפרו את כל רווחיך!</p>
             <div class="prestige-reward-box">
                 <span id="prestige-reward-label">מניות זהב שתקבל:</span>
                 <span class="modal-amount" id="prestige-shares-gained">+0</span>
             </div>
             <div class="prestige-options">
-                <button class="modal-close-btn prestige-double-btn" id="prestige-ad-btn"><span aria-hidden="true">🎬</span> הכפל ל-<span id="prestige-shares-doubled">0</span> מניות!</button>
+                <button class="modal-close-btn prestige-double-btn" id="prestige-ad-btn"><span
+                        aria-hidden="true">🎬</span> הכפל ל-<span id="prestige-shares-doubled">0</span> מניות!</button>
                 <button class="modal-close-btn secondary-btn" id="prestige-regular-btn">איפוס רגיל</button>
             </div>
             <button class="modal-cancel-btn" id="prestige-cancel-btn">ביטול</button>
@@ -503,15 +529,18 @@
     </div>
 
     <!-- Analytics Dashboard Modal -->
-    <div class="modal-overlay" id="analytics-modal" role="dialog" aria-modal="true" aria-labelledby="analytics-modal-title">
+    <div class="modal-overlay" id="analytics-modal" role="dialog" aria-modal="true"
+        aria-labelledby="analytics-modal-title">
         <div class="modal-box analytics-modal-box">
             <div class="modal-icon" aria-hidden="true">📊</div>
             <h2 class="modal-title" id="analytics-modal-title">דוח ביצועים אנליטי</h2>
             <div class="analytics-content">
                 <div class="analytic-group">
                     <h3 id="analytics-title-general">נתונים כלליים</h3>
-                    <div class="analytic-stat"><span id="analytics-label-eps">סך רווח לשנייה:</span> <strong id="analytics-total-eps">$0</strong></div>
-                    <div class="analytic-stat"><span id="analytics-label-vault">ניצולת כספת:</span> <strong id="analytics-vault-util">0%</strong></div>
+                    <div class="analytic-stat"><span id="analytics-label-eps">סך רווח לשנייה:</span> <strong
+                            id="analytics-total-eps">$0</strong></div>
+                    <div class="analytic-stat"><span id="analytics-label-vault">ניצולת כספת:</span> <strong
+                            id="analytics-vault-util">0%</strong></div>
                 </div>
                 <div class="analytic-group">
                     <h3 id="analytics-title-tellers">תפוקת כספרים</h3>
@@ -550,55 +579,56 @@
 
     <!-- Portrait Bottom Navigation -->
     <nav class="bottom-nav" id="bottom-nav" aria-label="ניווט תחתון">
-      <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_bank.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_upgrades">עמדות</span>
-        <div class="active-star">✨</div>
-      </button>
-      <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_suit.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_managers">מנהלים</span>
-        <div class="active-star">✨</div>
-      </button>
-      <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_building.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_departments">מחלקות</span>
-        <div class="active-star">✨</div>
-      </button>
-      <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_trophy.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_missions">משימות</span>
-        <div class="active-star">✨</div>
-      </button>
-      <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_calendar.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_daily">יומי</span>
-        <div class="active-star">✨</div>
-      </button>
-      <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches">
-        <div class="nav-icon-wrapper">
-          <img src="תמונות/nav_globe.png" class="nav-3d-icon" alt="" />
-        </div>
-        <span class="bnav-label" data-i18n="tab_branches">סניפים</span>
-        <div class="active-star">✨</div>
-      </button>
+        <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_bank.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_upgrades">עמדות</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_suit.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_managers">מנהלים</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_building.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_departments">מחלקות</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_trophy.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_missions">משימות</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_calendar.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_daily">יומי</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches">
+            <div class="nav-icon-wrapper">
+                <img src="תמונות/nav_globe.png" class="nav-3d-icon" alt="" />
+            </div>
+            <span class="bnav-label" data-i18n="tab_branches">סניפים</span>
+            <div class="active-star">✨</div>
+        </button>
     </nav>
 
     <!-- JavaScript Controller -->
     <script src="config.js" defer></script>
 
     <!-- Fortune Wheel Modal -->
-    <div class="modal-overlay" id="fortune-wheel-modal" role="dialog" aria-modal="true" aria-labelledby="fortune-wheel-title">
+    <div class="modal-overlay" id="fortune-wheel-modal" role="dialog" aria-modal="true"
+        aria-labelledby="fortune-wheel-title">
         <div class="modal-box fortune-wheel-box">
             <h2 class="modal-title" id="fortune-wheel-title">גלגל המזל היומי</h2>
             <p class="modal-text fortune-wheel-subtitle" id="fortune-wheel-subtitle">סובב פעם ביום וזכה בפרס!</p>
@@ -629,7 +659,8 @@
             <p class="modal-text" id="weekly-modal-text">עברת שבוע מלא של ניהול אימפריה. הצוות שלך ממתין לדרבן!</p>
             <div id="weekly-stats-box" class="weekly-stats-box"></div>
             <div class="prestige-options weekly-prestige-options">
-                <button id="weekly-ad-btn" class="modal-close-btn prestige-double-btn"><span aria-hidden="true">🎬</span> קבל בוסט x2 ל-8 שעות!</button>
+                <button id="weekly-ad-btn" class="modal-close-btn prestige-double-btn"><span
+                        aria-hidden="true">🎬</span> קבל בוסט x2 ל-8 שעות!</button>
                 <button id="weekly-close-btn" class="modal-close-btn secondary-btn">סגור</button>
             </div>
         </div>
@@ -655,8 +686,9 @@
     <script src="mission-controller.js?v=20260626_10" defer></script>
     <script src="game.js?v=20260627_99" defer></script>
     <script src="ui-draw.js?v=20260627_03"></script>
-    <script src="ui-tabs.js?v=20260627_22"></script>
+    <script src="ui-tabs.js?v=20260628_13"></script>
     <script src="ui-events.js?v=20260627_11" defer></script>
     <script src="app.js?v=20260626_10" defer></script>
 </body>
+
 </html>

@@ -592,49 +592,44 @@ function renderManagersTab() {
                                 (type === 'marketing' ? translations[lang].departments.names[4] : ''))));
 
             bodyHtml = `
-                <div class="mgr-header-row">
-                    <div class="mgr-title-box">
-                        <div class="mgr-title">${tObj.names[type]}</div>
-                        <div class="mgr-title-divider"></div>
-                    </div>
-                    <div class="mgr-stars-box">
-                        <span class="star gray-star">★</span>
-                        <span class="star gray-star">★</span>
-                        <span class="star gray-star">★</span>
-                        <span class="star gray-star">★</span>
-                        <span class="star gray-star">★</span>
-                    </div>
-                    <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
-                </div>
-                <div class="mgr-body-row">
-                    <div class="mgr-portrait-box">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
                         <img src="תמונות/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
-                    <div class="mgr-info-box">
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">${tObj.names[type]}</div>
+                                <div class="mgr-stars"><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">🔒</div></div>
+                        </div>
                         <div class="mgr-stats-list">
-                            <div class="mgr-stat-item" style="justify-content: center; padding: 1rem 0;">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
                                 <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
                                     🔒 ${translations[lang].requiresUnlocking || 'Requires unlocking:'} <br>
                                     <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">${deptName}</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
             `;
 
             footerHtml = `
-                <div class="mgr-footer-row">
-                    <div class="mgr-footer-info">
-                        <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
-                        <div class="mgr-footer-val-box">
-                            <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled>
+                                ${statLabels[lang].lockedLabel} 🔒
+                            </button>
                         </div>
                     </div>
-                    <button class="buy-btn mgr-buy-btn disabled" disabled>
-                        ${statLabels[lang].lockedLabel} 🔒
-                    </button>
                 </div>
             `;
         } else {
@@ -694,46 +689,37 @@ function renderManagersTab() {
             }
 
             bodyHtml = `
-                <div class="mgr-header-row">
-                    <div class="mgr-title-box">
-                        <div class="mgr-title">${tObj.names[type]}</div>
-                        <div class="mgr-title-divider"></div>
-                    </div>
-                    <div class="mgr-stars-box">
-                        ${starsHtml}
-                    </div>
-                    <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
-                </div>
-                <div class="mgr-body-row">
-                    <div class="mgr-portrait-box">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col">
                         <img src="תמונות/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
-                    <div class="mgr-info-box">
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">${tObj.names[type]}</div>
+                                <div class="mgr-stars">${starsHtml}</div>
+                                <div class="mgr-lvl-badge">${translations[lang].levelAbbr || 'Lv'} ${level}</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">💎</div></div>
+                        </div>
                         <div class="mgr-stats-list">
-                            <div class="mgr-stat-item">
-                                <div class="mgr-stat-left">
-                                    <span class="mgr-stat-val">${mData.stat1Val}</span>
-                                    <span class="mgr-stat-sep">|</span>
-                                </div>
-                                <div class="mgr-stat-right">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">${mData.stat1Val}</div>
+                                <div class="mgr-stat-label-group">
                                     <span class="mgr-stat-label">${stat1Lbl}</span>
                                     <div class="mgr-stat-icon-circle">${icon1}</div>
                                 </div>
                             </div>
-                            <div class="mgr-stat-item">
-                                <div class="mgr-stat-left">
-                                    <span class="mgr-stat-val">${mData.stat2Val}</span>
-                                    <span class="mgr-stat-sep">|</span>
-                                </div>
-                                <div class="mgr-stat-right">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">${mData.stat2Val}</div>
+                                <div class="mgr-stat-label-group">
                                     <span class="mgr-stat-label">${stat2Lbl}</span>
                                     <div class="mgr-stat-icon-circle">${icon2}</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
             `;
 
             // Action button
@@ -764,15 +750,17 @@ function renderManagersTab() {
             }
 
             footerHtml = `
-                <div class="mgr-footer-row">
-                    <div class="mgr-footer-info">
-                        <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
-                        <div class="mgr-footer-val-box">
-                            <span class="mgr-footer-val">${isHired ? formatMoney(mData.extraHourly) : formatMoney(0)}</span>
-                            <span class="per-hour-lbl">${statLabels[lang].perHour}</span>
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val">${isHired ? formatMoney(mData.extraHourly) : formatMoney(0)}</span>
+                                    <span class="per-hour-lbl">${statLabels[lang].perHour}</span>
+                                </div>
+                            </div>
+                            ${actionBtnHtml}
                         </div>
                     </div>
-                    ${actionBtnHtml}
                 </div>
             `;
         }

@@ -9108,43 +9108,50 @@ header {
 
 /* Action Button */
 button.upg-v2-buy-btn {
-    background: linear-gradient(180deg, #fceb9c 0%, #d4b055 100%);
-    border: none !important;
+    background: linear-gradient(180deg, #ffe066 0%, #d4af37 45%, #b8860b 55%, #8b6508 100%);
+    border: 1px solid #ffeb99 !important;
     border-radius: 12px !important;
     display: flex !important;
     align-items: stretch !important;
     padding: 0 !important;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(223, 171, 41, 0.2), inset 0 2px 4px rgba(255,255,255,0.4) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 6px rgba(0,0,0,0.5) !important;
     position: relative;
-    flex: 1 1 140px; /* Let it grow and take available space if wrapped */
+    flex: 1 1 140px; 
     min-width: 140px;
     overflow: hidden;
     text-align: right;
     font-family: inherit;
+    transition: transform 0.1s, filter 0.2s;
 }
 
 button.upg-v2-buy-btn:hover:not(.disabled) {
     transform: translateY(-2px) !important;
-    filter: brightness(1.05);
-    box-shadow: 0 6px 20px rgba(223, 171, 41, 0.35), inset 0 2px 4px rgba(255,255,255,0.5) !important;
+    filter: brightness(1.15);
+    box-shadow: 0 8px 24px rgba(223, 171, 41, 0.4), inset 0 2px 4px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(0,0,0,0.4) !important;
 }
 
 button.upg-v2-buy-btn:active:not(.disabled) {
-    transform: translateY(0) !important;
-    box-shadow: 0 2px 5px rgba(223, 171, 41, 0.3) !important;
+    transform: translateY(1px) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.8), inset 0 3px 8px rgba(0,0,0,0.6) !important;
 }
 
 .upg-v2-btn-left-icon {
-    background: #131720;
+    background: linear-gradient(180deg, #1e2532 0%, #0b0f16 100%);
     width: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0 12px 12px 0;
-    border-left: 2px solid #2a3143;
+    border-radius: 0 11px 11px 0;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    box-shadow: inset -3px 0 6px rgba(0,0,0,0.6);
     flex-shrink: 0;
     z-index: 2;
+}
+
+.upg-v2-btn-left-icon svg {
+    stroke: #ffe066 !important;
+    filter: drop-shadow(0 0 4px rgba(255, 224, 102, 0.4));
 }
 
 .upg-v2-btn-content {
@@ -9158,24 +9165,25 @@ button.upg-v2-buy-btn:active:not(.disabled) {
 }
 
 .upg-v2-btn-top {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: #453510;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #2b1f02;
     display: flex;
     align-items: center;
     gap: 0.35rem;
     margin-bottom: 0.15rem;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
 }
 
 .upg-v2-btn-amount {
-    color: #166534;
+    color: #0b4a1c;
     font-size: 1.15rem;
     font-weight: 900;
 }
 
 .upg-v2-btn-divider {
     height: 1px;
-    background: rgba(69, 53, 16, 0.2);
+    background: linear-gradient(90deg, rgba(69, 53, 16, 0.3) 0%, transparent 100%);
     width: 100%;
     margin: 0.15rem 0 0.25rem 0;
 }
@@ -9187,13 +9195,15 @@ button.upg-v2-buy-btn:active:not(.disabled) {
 
 .upg-v2-btn-sub {
     font-size: 0.65rem;
-    color: #5c4716;
+    color: #4a380e;
+    font-weight: 700;
 }
 
 .upg-v2-btn-cost {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 900;
-    color: #111827;
+    color: #0f172a;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
 }
 
 .upg-v2-btn-sparkles {
@@ -9209,28 +9219,31 @@ button.upg-v2-buy-btn:active:not(.disabled) {
 /* Button Disabled State */
 button.upg-v2-buy-btn.disabled {
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
-    box-shadow: none !important;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05) !important;
     cursor: not-allowed;
-    border: 1px solid #1e293b !important;
+    border: 1px solid #334155 !important;
 }
 
 button.upg-v2-buy-btn.disabled .upg-v2-btn-left-icon {
-    background: #0b0f19;
+    background: #080b12;
     border-left-color: #1e293b;
+    box-shadow: inset -2px 0 4px rgba(0,0,0,0.8);
+}
+
+button.upg-v2-buy-btn.disabled .upg-v2-btn-left-icon svg {
+    stroke: #475569 !important;
+    filter: none;
 }
 
 button.upg-v2-buy-btn.disabled .upg-v2-btn-top,
 button.upg-v2-buy-btn.disabled .upg-v2-btn-sub,
 button.upg-v2-buy-btn.disabled .upg-v2-btn-cost {
     color: #64748b;
+    text-shadow: none;
 }
 
 button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     color: #475569;
-}
-
-button.upg-v2-buy-btn.disabled svg {
-    stroke: #475569;
 }
 
 /* ==========================================

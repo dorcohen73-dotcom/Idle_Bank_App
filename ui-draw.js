@@ -560,7 +560,7 @@ function draw() {
     
     if (game.state.shares !== lastShares || lang !== lastLang) {
         lastShares = game.state.shares;
-        DOM_CACHE.shares.innerText = game.state.shares;
+        DOM_CACHE.shares.innerText = game.state.shares.toLocaleString();
     }
     
     const mult = game.getTotalMultiplier();
