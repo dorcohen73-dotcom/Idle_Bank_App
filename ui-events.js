@@ -3020,7 +3020,14 @@ function initUIEvents() {
         banner.className = 'vip-visit-banner';
 
         let prestigeAmount = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 10;
-        let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.30));
+        let ownedShares = (game.state && game.state.shares) ? game.state.shares : 0;
+        let totalEffectiveShares = ownedShares + prestigeAmount;
+        
+        // VIP Share Reward Rules:
+        // 1. 30% of potential prestige gain
+        // 2. 5% of total effective shares (so it's always relevant even if gain is 0)
+        // 3. Absolute minimum of 3 shares
+        let shareReward = Math.max(3, Math.ceil(prestigeAmount * 0.30), Math.ceil(totalEffectiveShares * 0.05));
 
         let hourlyProfit = typeof game.getEarningsPerSecond === 'function' ? game.getEarningsPerSecond() * 3600 : 0;
         let cashReward = Math.ceil(hourlyProfit * 0.30);

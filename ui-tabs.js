@@ -1726,9 +1726,17 @@ function updateButtonAffordability() {
             const dept = game.state.departments.find(d => d.id === deptId);
             if (dept && !dept.unlocked) {
                 const cost = dept.cost;
-                const canBuy = game.state.cash >= cost;
-                btn.classList.toggle('disabled', !canBuy);
-                btn.disabled = !canBuy;
+                const canBuy = window.game.state.cash >= cost;
+                
+                if (canBuy) {
+                    btn.classList.remove('disabled');
+                    btn.removeAttribute('disabled');
+                    btn.disabled = false;
+                } else {
+                    btn.classList.add('disabled');
+                    btn.setAttribute('disabled', 'disabled');
+                    btn.disabled = true;
+                }
             }
         });
     }
