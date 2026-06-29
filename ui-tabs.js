@@ -1360,7 +1360,8 @@ function renderMissionsTab() {
             'guard_trips': './תמונות/guard.png',
             'all_managers': './תמונות/manager-1.png',
             'department_grind': './תמונות/manager-1.png',
-            'missions_veteran': './תמונות/gold-chest.png'
+            'missions_veteran': './תמונות/gold-chest.png',
+            'boost_run': './תמונות/boost-run.png'
         };
         const imgSrc = imgMap[m.type] || './תמונות/icon.png';
 
