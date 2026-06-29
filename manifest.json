@@ -1,10 +1,12 @@
 {
+  "id": "/",
   "name": "אימפריית הבנקים",
-  "short_name": "בנק Empire",
+  "short_name": "Bank Empire",
   "description": "משחק Idle בנקאי פרימיום — בנה אימפריית בנקים עולמית",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0f172a",
   "theme_color": "#dfab29",
   "orientation": "portrait",

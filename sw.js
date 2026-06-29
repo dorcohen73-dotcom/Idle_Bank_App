@@ -1,19 +1,53 @@
+const CACHE_NAME = 'idle-bank-v1';
+
+const SHELL_URLS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './תמונות/icon.png',
+  './תמונות/icon-192.png',
+];
+
 self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_URLS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.map(key => caches.delete(key)));
-    }).then(() => {
-      self.registration.unregister();
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (e) => {
-  // Pass through all requests directly to the network
-  const fetchOptions = e.request.method === 'GET' ? { cache: 'no-store' } : undefined;
-  e.respondWith(fetch(e.request, fetchOptions).catch(() => new Response('', { status: 503 })));
+  if (e.request.method !== 'GET') return;
+
+  // Network-first for navigation — always get the latest index.html
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Cache-first for all other assets (JS, CSS, images, fonts)
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(response => {
+        if (response && response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        }
+        return response;
+      }).catch(() => new Response('', { status: 503 }));
+    })
+  );
 });
