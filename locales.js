@@ -2443,7 +2443,7 @@ Object.assign(translations.he, {
     atmBackMsg: "ATM חזרו לפעולה!",
     speed20MinusMsg: "-20% מהירות לכ-5 דקות",
     atmFixedWaveMsg: "ATM מתוקנים — גל לקוחות!",
-    boostVIPMsg: "💎 לקוח VIP שורת! הכפל רווח עם פרסומת?",
+    boostVIPMsg: "💎 לקוח VIP שירת! הכפל רווח עם פרסומת?",
     boostMilestoneMsg: "🎉 יעד כסף הושג! הפעל בוסט x2?",
     boostActivatedMsg: "⚡ בוסט x2 הופעל!",
     weeklyTitle: "🏆 שבוע מצוין!",

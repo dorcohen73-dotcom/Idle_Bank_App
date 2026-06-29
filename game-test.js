@@ -937,7 +937,6 @@ class IdleBankGame {
                     if (t.customerType === 'vip' || t.customerType === 'rich') {
                         if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
                         this.state.stats.vipServed++;
-                        this._contextualAdPending = 'vip';
                         _tickVipCount++;
                     } else {
                         _tickHadNonVip = true;
