@@ -2180,10 +2180,10 @@ header {
 
 /* Branch Unlock Card */
 .branch-card {
-    background: #0b0f19;
-    border: 1px solid var(--border-color);
+    background: #050811; /* Fallback */
+    border: 1px solid rgba(223, 171, 41, 0.4);
     border-radius: 14px;
-    padding: 1.2rem;
+    padding: 1.25rem 1.5rem; /* Wider padding */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -2191,11 +2191,18 @@ header {
     position: relative;
     overflow: hidden;
     min-height: 145px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     direction: rtl;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 15px rgba(212, 175, 55, 0.1), inset 0 2px 10px rgba(0,0,0,0.6);
+}
+
+.branch-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.9), inset 0 2px 10px rgba(0,0,0,0.6);
+    border-color: rgba(223, 171, 41, 0.7);
 }
 
 .branch-card::before {
@@ -2206,11 +2213,16 @@ header {
     right: 0;
     bottom: 0;
     background-size: cover;
-    background-position: center;
+    background-position: left center;
     background-repeat: no-repeat;
     z-index: 1;
-    filter: brightness(1.28) contrast(1.1) saturate(1.18);
-    transition: filter 0.3s ease;
+    filter: brightness(1.1) contrast(1.1) saturate(1.1);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.branch-card:hover::before {
+    transform: scale(1.03);
+    filter: brightness(1.15) contrast(1.1) saturate(1.1);
 }
 
 .branch-card::after {
@@ -2220,82 +2232,103 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(270deg, rgba(11, 15, 25, 0.98) 0%, rgba(11, 15, 25, 0.9) 45%, rgba(11, 15, 25, 0.35) 75%, rgba(11, 15, 25, 0) 100%);
+    /* Darken right side to rgba(10, 15, 30, 0.95), fading to 0 over the city */
+    background: linear-gradient(270deg, rgba(10, 15, 30, 0.98) 0%, rgba(10, 15, 30, 0.8) 40%, rgba(10, 15, 30, 0) 80%);
     z-index: 2;
     pointer-events: none;
 }
 
 .branch-card.current {
-    border-color: var(--primary-gold);
-    box-shadow: 0 0 15px rgba(223, 171, 41, 0.15);
+    border-color: #dfab29;
+    box-shadow: 0 0 20px rgba(223, 171, 41, 0.2), inset 0 2px 10px rgba(0,0,0,0.6);
 }
 
 /* Dynamic branch background rules on pseudo-element */
-.branch-card.bg-branch-0::before {
-    background-image: url('תמונות/branch-bg-1.png');
-}
-.branch-card.bg-branch-1::before {
-    background-image: url('תמונות/branch-bg-2.png');
-}
-.branch-card.bg-branch-2::before {
-    background-image: url('תמונות/branch-bg-3.png');
-}
-.branch-card.bg-branch-3::before {
-    background-image: url('תמונות/branch-bg-4.png');
-}
-.branch-card.bg-branch-4::before {
-    background-image: url('תמונות/branch-bg-5.png');
-}
-
-/* Goldman Sachs custom golden overlay */
-.branch-card.bg-branch-4::after {
-    background: linear-gradient(270deg, rgba(20, 16, 8, 0.98) 0%, rgba(20, 16, 8, 0.9) 45%, rgba(20, 16, 8, 0.35) 75%, rgba(20, 16, 8, 0) 100%);
-}
+.branch-card.bg-branch-0::before { background-image: url('תמונות/local_branch_bg.png'); }
+.branch-card.bg-branch-1::before { background-image: url('תמונות/london_branch_bg.png'); }
+.branch-card.bg-branch-2::before { background-image: url('תמונות/frankfurt_branch_bg.png'); }
+.branch-card.bg-branch-3::before { background-image: url('תמונות/wallstreet_branch_bg.png'); }
+.branch-card.bg-branch-4::before { background-image: url('תמונות/goldman_branch_bg.png'); }
 
 .branch-card-right {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: flex-start;
     flex: 1;
-    padding-left: 1rem;
     z-index: 3;
+    padding-left: 1.5rem; /* Gap between text and left action area */
+}
+
+.branch-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
 }
 
 .branch-card-right .branch-name {
-    font-size: 1.1rem;
-    font-weight: 800;
+    font-size: 1.2rem;
+    font-weight: 900;
     color: #ffffff;
-    margin-bottom: 0.35rem;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+.branch-nav-arrow-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,175,55,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #D4AF37;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.5));
 }
 
 .branch-card-right .branch-desc {
     font-size: 0.9rem;
-    color: #b3bac5;
-    line-height: 1.35;
-    margin-bottom: 0.5rem;
-    text-align: right;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    max-width: 90%;
 }
 
-.branch-card-right .branch-req {
+.branch-req-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
     font-size: 0.88rem;
     color: #9ca3af;
     font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    background: transparent !important;
+}
+
+.branch-req-text {
+    color: #f3f4f6;
+}
+
+.crown-icon {
+    font-size: 0.9rem;
+    filter: drop-shadow(0 0 2px rgba(212,175,55,0.6));
 }
 
 .branch-status-pill {
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    color: #34d399;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #6ee7b7;
     padding: 0.25rem 0.65rem;
     border-radius: 20px;
     font-size: 0.88rem;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
-    margin-top: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin-top: auto; /* Pushes the pill cleanly to the bottom right */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 0 8px rgba(16, 185, 129, 0.2);
 }
 
 .branch-status-pill .pulse-dot {
@@ -2317,66 +2350,93 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    width: 112px;
+    align-items: stretch;
+    width: 110px; /* Exact width constraint */
     flex-shrink: 0;
     z-index: 3;
-    background: rgba(11, 15, 25, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 0.6rem;
-    box-sizing: border-box;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    gap: 1.5rem;
+    background: transparent !important;
 }
 
-.branch-multiplier-badge {
-    background: #064e3b;
-    border: 1px solid #10b981;
-    color: #34d399;
-    padding: 0.25rem 0.55rem;
-    border-radius: 6px;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 800;
-    font-size: 0.82rem;
-    letter-spacing: 0.5px;
-    width: 100%;
-    text-align: center;
+.multiplier-glass-badge {
+    background: rgba(16, 25, 40, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(223, 171, 41, 0.8);
+    box-shadow: 0 0 15px rgba(223, 171, 41, 0.3), inset 0 0 10px rgba(223, 171, 41, 0.15);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
     box-sizing: border-box;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.multiplier-glass-badge .mult-val {
+    color: #fde047;
+    font-size: 1.3rem;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    text-shadow: 0 0 8px rgba(253, 224, 71, 0.6);
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.multiplier-glass-badge .mult-lbl {
+    color: #fef08a;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.branch-action-wrapper {
+    width: 100%;
 }
 
 .branch-action-btn {
-    background: linear-gradient(135deg, #f5d06d 0%, #dfab29 100%);
-    color: #111827;
-    font-weight: 800;
-    border: none;
+    width: 110px;
     border-radius: 8px;
-    padding: 0.45rem 0.5rem;
+    padding: 0.5rem 0;
     cursor: pointer;
-    font-size: 0.92rem;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255,255,255,0.3);
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
-    white-space: nowrap;
-    width: 100%;
+    font-size: 0.95rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, filter 0.2s ease;
     text-align: center;
     box-sizing: border-box;
 }
 
-.branch-action-btn:hover:not(.disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.45), inset 0 1.5px 1.5px rgba(255,255,255,0.4);
-    filter: brightness(1.08);
+.branch-action-btn.solid-gold {
+    background: linear-gradient(180deg, #dfab29 0%, #b48518 100%);
+    color: #111827;
+    font-weight: 800;
+    border: 1px solid #fef08a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
+    text-shadow: none;
 }
 
-.branch-action-btn.disabled {
-    background: #1f2937;
-    color: #9ca3af;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-    width: 100%;
-    text-align: center;
+.branch-action-btn.solid-gold:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+}
+
+.branch-action-btn.ghost-gold {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid #F5D070;
+    color: #F5D070;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(245, 208, 112, 0.15), inset 0 0 8px rgba(245, 208, 112, 0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.branch-action-btn.ghost-gold:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 208, 112, 0.3), inset 0 0 12px rgba(245, 208, 112, 0.2);
+    filter: brightness(1.1);
 }
 
 .branch-status-label {

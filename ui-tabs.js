@@ -1057,22 +1057,13 @@ function renderBranchesTab() {
         card.className = `branch-card bg-branch-${idx} ${isCurrent ? 'current' : ''}`;
         
         let actionBtnHtml = '';
-        if (isCurrent) {
-            actionBtnHtml = '';
-        } else if (isSold) {
+        if (!isSold) {
+            const btnClass = isCurrent ? 'branch-action-btn solid-gold' : 'branch-action-btn ghost-gold';
             actionBtnHtml = `
-                <button class="branch-action-btn disabled" disabled>
-                    ${translations[lang].branches.sold.replace(' 💰', '')}
-                </button>
-            `;
-        } else if (isNext) {
-            actionBtnHtml = `
-                <button class="branch-action-btn ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled'}>
+                <button class="${btnClass}">
                     ${translations[lang].branches.sellAndBuild.replace('!', '')}
                 </button>
             `;
-        } else {
-            actionBtnHtml = `<span class="branch-status-label disabled">${translations[lang].branches.locked.split('(')[0].trim()}</span>`;
         }
 
         const requirementText = isSold ? translations[lang].branches.sold : `${translations[lang].branches.minCash(formatMoney(b.minCashToPrestige))}`;
@@ -1085,14 +1076,23 @@ function renderBranchesTab() {
 
         card.innerHTML = `
             <div class="branch-card-right">
-                <div class="branch-name">${tObj.names[idx]}</div>
+                <div class="branch-header-row">
+                    <div class="branch-nav-arrow-icon" dir="ltr"><i class="fas fa-chevron-right"></i></div>
+                    <div class="branch-name">${tObj.names[idx]}</div>
+                </div>
                 <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
-                <div class="branch-req">${requirementText}</div>
+                <div class="branch-req-row">
+                    <span class="crown-icon">👑</span>
+                    <span class="branch-req-text">${requirementText}</span>
+                </div>
                 ${statusPillHtml}
             </div>
             <div class="branch-card-left">
-                <div class="branch-multiplier-badge">${translations[lang].multiplier}: ${b.baseMultiplier}x</div>
-                <div class="branch-action-wrapper" style="margin-top: auto;">
+                <div class="multiplier-glass-badge">
+                    <div class="mult-val">${b.baseMultiplier}x</div>
+                    <div class="mult-lbl">${translations[lang].multiplier}</div>
+                </div>
+                <div class="branch-action-wrapper">
                     ${actionBtnHtml}
                 </div>
             </div>
