@@ -539,12 +539,15 @@ const statLabels = {
 function renderManagersTab() {
     const container = document.getElementById('tab-managers');
     if (!container) return;
-    const hash = JSON.stringify({
-        managers: game.state.managers,
-        managerUpgrades: game.state.managerUpgrades,
-        cash: Math.floor(game.state.cash / 1000)
-    });
-    if (hash === _lastManagersHash) return;
+    let hash = null;
+    try {
+        hash = JSON.stringify({
+            managers: game.state.managers,
+            managerUpgrades: game.state.managerUpgrades,
+            cash: Math.floor(game.state.cash / 1000)
+        });
+    } catch (e) { /* render unconditionally on serialization error */ }
+    if (hash && hash === _lastManagersHash) return;
     _lastManagersHash = hash;
     _buyBtnCache = null;
     container.innerHTML = '';
@@ -1001,12 +1004,15 @@ function renderDepartmentsTab() {
 function renderBranchesTab() {
     const container = document.getElementById('tab-branches');
     if (!container) return;
-    const hash = JSON.stringify({
-        currentBranch: game.state.currentBranch,
-        shares: game.state.shares,
-        cash: Math.floor(game.state.cash / 1000)
-    });
-    if (hash === _lastBranchesHash) return;
+    let hash = null;
+    try {
+        hash = JSON.stringify({
+            currentBranch: game.state.currentBranch,
+            shares: game.state.shares,
+            cash: Math.floor(game.state.cash / 1000)
+        });
+    } catch (e) { /* render unconditionally on serialization error */ }
+    if (hash && hash === _lastBranchesHash) return;
     _lastBranchesHash = hash;
     _buyBtnCache = null;
     container.innerHTML = '';

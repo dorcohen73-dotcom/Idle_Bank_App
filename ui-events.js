@@ -251,7 +251,11 @@ function applyTheme(themeName) {
         }
     });
     
-    window.localStorage.setItem('idle_bank_theme', themeName);
+    try {
+        window.localStorage.setItem('idle_bank_theme', themeName);
+    } catch (e) {
+        console.warn('Could not save theme preference:', e);
+    }
 }
 
 var AdService = {
@@ -2306,13 +2310,13 @@ function initUIEvents() {
 
     if (DOM_CACHE.langModal) {
         DOM_CACHE.langModal.addEventListener('click', (e) => {
-            if (e.target === DOM_CACHE.langModal && window.localStorage.getItem('idle_bank_language_chosen')) {
-                try {
+            try {
+                if (e.target === DOM_CACHE.langModal && window.localStorage.getItem('idle_bank_language_chosen')) {
                     initSound();
                     DOM_CACHE.langModal.classList.remove('active');
-                } catch (err) {
-                    console.error("Error closing language modal on overlay click:", err);
                 }
+            } catch (err) {
+                console.error("Error closing language modal on overlay click:", err);
             }
         });
     }

@@ -144,25 +144,25 @@ class SaveManager {
         // Remove checksum key before stringifying to get original data string
         delete this.game.state.checksum;
 
-        const jsonStr = JSON.stringify(this.game.state);
-        const checksum = this.getChecksum(jsonStr);
-        this.game.state.checksum = checksum;
-
-        // Construct final JSON string by inserting checksum directly to avoid a second expensive stringify
-        const finalJsonStr = jsonStr.slice(0, -1) + `,"checksum":"${checksum}"}`;
-        
-        // CRIT-1: Prevent stack overflow for large saves by encoding bytes in chunks
-        const bytes = new TextEncoder().encode(finalJsonStr);
-        let binary = '';
-        const chunkSize = 8192;
-        for (let i = 0; i < bytes.length; i += chunkSize) {
-            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-        }
-        const encryptedState = btoa(binary);
         try {
+            const jsonStr = JSON.stringify(this.game.state);
+            const checksum = this.getChecksum(jsonStr);
+            this.game.state.checksum = checksum;
+
+            // Construct final JSON string by inserting checksum directly to avoid a second expensive stringify
+            const finalJsonStr = jsonStr.slice(0, -1) + `,"checksum":"${checksum}"}`;
+
+            // CRIT-1: Prevent stack overflow for large saves by encoding bytes in chunks
+            const bytes = new TextEncoder().encode(finalJsonStr);
+            let binary = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+            }
+            const encryptedState = btoa(binary);
             window.localStorage.setItem('idle_bank_save', encryptedState);
         } catch (e) {
-            console.warn('Save failed — localStorage unavailable (e.g. iOS Safari Private Mode):', e);
+            console.warn('Save failed — localStorage unavailable or state is not serializable:', e);
         }
 
         this.lastSaveTime = Date.now();
@@ -175,7 +175,11 @@ class SaveManager {
             this.saveTimeout = null;
         }
         if (this.game._tempQueueBonusTimeout) { clearTimeout(this.game._tempQueueBonusTimeout); this.game._tempQueueBonusTimeout = null; }
-        window.localStorage.removeItem('idle_bank_save');
+        try {
+            window.localStorage.removeItem('idle_bank_save');
+        } catch (e) {
+            console.warn('Could not clear save from localStorage:', e);
+        }
         this.game.initDefaultState();
         // CRIT-4: Pass force=true to allow saving default state even while isResetting is true, and only disable isResetting afterward
         this.executeSave(true); // Force save default state immediately
@@ -610,7 +614,15 @@ class SaveManager {
     }
 
     loadGame() {
-        const saved = window.localStorage.getItem('idle_bank_save');
+        let saved;
+        try {
+            saved = window.localStorage.getItem('idle_bank_save');
+        } catch (e) {
+            console.warn('Could not read save from localStorage:', e);
+            this.game.checkMissions();
+            this.initServerTime();
+            return;
+        }
         if (!saved) {
             this.game.checkMissions();
             // Start async server time query anyway

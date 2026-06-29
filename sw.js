@@ -15,5 +15,5 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   // Pass through all requests directly to the network
   const fetchOptions = e.request.method === 'GET' ? { cache: 'no-store' } : undefined;
-  e.respondWith(fetch(e.request, fetchOptions));
+  e.respondWith(fetch(e.request, fetchOptions).catch(() => new Response('', { status: 503 })));
 });

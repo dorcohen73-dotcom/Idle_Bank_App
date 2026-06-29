@@ -2,7 +2,11 @@
 class AudioEngine {
     constructor() {
         this.ctx = null;
-        this.isMuted = window.localStorage.getItem('idle_bank_muted') === 'true';
+        try {
+            this.isMuted = window.localStorage.getItem('idle_bank_muted') === 'true';
+        } catch (e) {
+            this.isMuted = false;
+        }
         this.volume = 0.15; // Safe comfortable level
     }
 
@@ -18,7 +22,11 @@ class AudioEngine {
 
     toggleMute() {
         this.isMuted = !this.isMuted;
-        window.localStorage.setItem('idle_bank_muted', this.isMuted);
+        try {
+            window.localStorage.setItem('idle_bank_muted', this.isMuted);
+        } catch (e) {
+            console.warn('Could not save mute state:', e);
+        }
         return this.isMuted;
     }
 
