@@ -1343,25 +1343,25 @@ function renderMissionsTab() {
             'clients': './תמונות/client-10.png',
             'accumulate_cash': './תמונות/gold-chest.png',
             'upgrade_teller': './תמונות/teller-7.png',
-            'upgrade_guard': './תמונות/guard.png',
+            'upgrade_guard': './תמונות/guard_circle.png',
             'upgrade_vault': './תמונות/vault.png',
             'unlock_departments': './תמונות/gold-truck.png',
-            'hire_managers': './תמונות/manager-1.png',
-            'earn_eps': './תמונות/gold-vip.png',
+            'hire_managers': './תמונות/manager_circle.png',
+            'earn_eps': './תמונות/eps_circle.png',
             'earn_cash': './תמונות/gold-bars.png',
             'serve_rich_vip': './תמונות/client-6.png',
             'vip_marathon': './תמונות/gold-vip.png',
             'vip_collector': './תמונות/gold-vip.png',
             'department_unlock': './תמונות/gold-truck.png',
-            'upgrade_managers': './תמונות/manager-5.png',
-            'manager_hire': './תמונות/manager-6.png',
+            'upgrade_managers': './תמונות/manager_circle.png',
+            'manager_hire': './תמונות/manager_circle.png',
             'break_the_wall': './תמונות/manager-7.png',
             'upgrade_arrows': './תמונות/upgrade-arrows.png',
-            'guard_trips': './תמונות/guard.png',
-            'all_managers': './תמונות/manager-1.png',
+            'guard_trips': './תמונות/guard_circle.png',
+            'all_managers': './תמונות/manager_circle.png',
             'department_grind': './תמונות/manager-1.png',
             'missions_veteran': './תמונות/gold-chest.png',
-            'boost_run': './תמונות/boost-run.png'
+            'boost_run': './תמונות/boost_run_circle.png'
         };
         const imgSrc = imgMap[m.type] || './תמונות/icon.png';
 
@@ -1394,29 +1394,41 @@ function renderMissionsTab() {
             rewardBadgeHtml = `<span>${rootT.profitLabel || 'Profit:'} +${formatMoney(m.reward)} 💰</span>`;
         }
 
+        const circleRadius = 24;
+        const circleCircumference = 2 * Math.PI * circleRadius;
+        const strokeDashoffset = circleCircumference - (percent / 100) * circleCircumference;
+
         card.innerHTML = `
             <div class="mission-reward-badge">
                 ${rewardBadgeHtml}
             </div>
             ${actionZoneHtml}
-            <div class="mission-details">
-                <div class="mission-title">${title}</div>
-                <div class="mission-desc">${progressDesc}</div>
-            </div>
-            <div class="mission-progress-row">
-                <div class="mission-progress-outer">
-                    <div class="mission-progress-bar" style="width: ${percent}%"></div>
-                    <div class="progress-text-overlay">
-                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                        /
-                        ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
-                    </div>
-                </div>
-                <div class="mission-progress-pct">${Math.round(percent)}%</div>
-            </div>
             <div class="mission-image-box">
                 <div class="mission-image-glow"></div>
                 <img class="mission-illustration" src="${imgSrc}" alt="" />
+            </div>
+            <div class="mission-content-middle">
+                <div class="mission-details">
+                    <div class="mission-title">${title}</div>
+                    <div class="mission-desc">${progressDesc}</div>
+                </div>
+                <div class="mission-progress-row">
+                    <div class="mission-progress-outer">
+                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                        <div class="progress-text-overlay">
+                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                            /
+                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mission-circle-progress">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                </svg>
+                <div class="circle-text">${Math.round(percent)}%</div>
             </div>
         `;
 
