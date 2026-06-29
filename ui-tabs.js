@@ -975,8 +975,9 @@ function renderDepartmentsTab() {
         container.appendChild(card);
     });
 
-    container.querySelectorAll('.dept-action-btn:not(.disabled)').forEach(btn => {
+    container.querySelectorAll('.dept-action-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            if (btn.classList.contains('disabled') || btn.disabled) return;
             initSound();
             const idx = parseInt(btn.getAttribute('data-dept-idx'));
             const beforeCash = game.state.cash;
