@@ -642,30 +642,34 @@ class IdleBankGame {
         // Ensure stats object exists
         if (!this.state.stats) this.state.stats = {};
         
+        const vipHired = !!(this.state.managers && this.state.managers.vip);
+        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
+        
+        // Smarter Scaling Formula: grows reasonably but very hard to hit the 10k cap instantly in late game
+        let rawGain = 1500 * Math.pow(lifetimeCash / 1000000000, 0.22);
+        
+        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
+            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
+        }
+
         // Initialize claimedPrestigeShares for existing players to prevent sudden infinite shares
+        // We set it such that they get exactly 800 base shares right now to "un-stick" them from 0.
         if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             this.state.stats.claimedPrestigeShares = this.state.shares || 0;
+             this.state.stats.claimedPrestigeShares = Math.max(0, Math.floor(rawGain) - 800);
         }
         
         const claimedShares = this.state.stats.claimedPrestigeShares;
         
-        const vipHired = !!(this.state.managers && this.state.managers.vip);
-        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
         const cacheKey = `${lifetimeCash}:${claimedShares}:${vipHired}:${vipLvl}`;
         if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
             return this._cachedPrestigeShares;
         }
         
-        // Fixed Scaling Formula (150 * sqrt(L/1e9)) - properly rewards endgame players
-        let rawGain = 150 * Math.pow(lifetimeCash / 1000000000, 0.5);
-        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
-        }
         let gain = Math.floor(rawGain) - claimedShares;
         
-        // Cap raised to 1,000,000 for endgame players
-        const result = Math.min(1000000, Math.max(0, gain));
+        // Reverted cap to 10,000 per user request
+        const result = Math.min(10000, Math.max(0, gain));
         this._cachedPrestigeSharesKey = cacheKey;
         this._cachedPrestigeShares = result;
         return result;
@@ -690,13 +694,13 @@ class IdleBankGame {
         if (doubleShares) {
             // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
             sharesGained *= 3;
-            // CAP: after tripling, clamp to 3,000,000 per prestige event
-            sharesGained = Math.min(3000000, sharesGained);
+            // CAP: reverted to 10000 per user request
+            sharesGained = Math.min(10000, sharesGained);
         }
         // Apply near-miss ad bonus (+20%) if the player watched an ad before this prestige
         if (this.state.prestigeNearMissBonus > 0) {
             sharesGained = Math.round(sharesGained * (1 + this.state.prestigeNearMissBonus));
-            sharesGained = Math.min(3000000, sharesGained);
+            sharesGained = Math.min(10000, sharesGained);
             this.state.prestigeNearMissBonus = 0;
         }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
@@ -704,13 +708,14 @@ class IdleBankGame {
             return false;
         }
 
-        // Apply Prestige — total shares capped at 10,000,000
-        this.state.shares = Math.min(10000000, (this.state.shares || 0) + sharesGained);
+        // Apply Prestige — total wallet shares capped at 100,000 (reverted)
+        this.state.shares = Math.min(100000, (this.state.shares || 0) + sharesGained);
         
         // IMPORTANT: Increment claimedPrestigeShares by the BASE amount, NOT the ad-boosted amount
         if (!this.state.stats) this.state.stats = {};
         if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             this.state.stats.claimedPrestigeShares = (this.state.shares || 0) - sharesGained;
+             // Fallback initialization just in case calculatePrestigeShares didn't do it
+             this.state.stats.claimedPrestigeShares = Math.max(0, (this.state.shares || 0) - sharesGained);
         }
         this.state.stats.claimedPrestigeShares += baseSharesGained;
 
