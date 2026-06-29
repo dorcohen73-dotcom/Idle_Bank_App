@@ -179,6 +179,15 @@ function applyLanguage(lang) {
         DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">⚠️</span> ${base}`;
     }
 
+    const gdprTextEl = document.getElementById('gdpr-text');
+    if (gdprTextEl) gdprTextEl.innerText = tObj.gdprText || 'Your data is stored on your device only.';
+    const gdprAcceptEl = document.getElementById('gdpr-accept-btn');
+    if (gdprAcceptEl) gdprAcceptEl.innerText = tObj.gdprAcceptBtn || 'Got it ✓';
+    const gdprPrivacyLinkEl = document.getElementById('gdpr-privacy-link');
+    if (gdprPrivacyLinkEl) gdprPrivacyLinkEl.innerText = tObj.privacyPolicyLink || '🔒 Privacy Policy';
+    const settingsPrivacyLink = document.getElementById('settings-privacy-link');
+    if (settingsPrivacyLink) settingsPrivacyLink.innerText = tObj.privacyPolicyLink || '🔒 Privacy Policy';
+
     const elLangOptions = document.querySelectorAll('.lang-option-card');
     elLangOptions.forEach(opt => {
         if (opt.getAttribute('data-lang') === lang) {
@@ -1968,7 +1977,10 @@ function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour, va
     const miniBar = document.getElementById('vault-mini-bar');
     if (!miniPct) return;
     miniPct.textContent = Math.round(pct) + '%';
-    if (miniFill) miniFill.style.width = pct + '%';
+    if (miniFill) {
+        miniFill.style.width = pct + '%';
+        miniFill.setAttribute('aria-valuenow', Math.round(pct));
+    }
     if (miniBtn) {
         miniBtn.disabled = !isReady;
     }
@@ -2346,6 +2358,11 @@ function initUIEvents() {
 
             btn.classList.add('active');
             const targetPane = document.getElementById(`tab-${tabId}`);
+
+            // Update ARIA for accessibility
+            document.querySelectorAll('.tab-btn[role="tab"]').forEach(b => {
+                b.setAttribute('aria-selected', b.classList.contains('active') ? 'true' : 'false');
+            });
             if (targetPane) targetPane.classList.add('active');
 
             if (DOM_CACHE.bulkSelector) {
@@ -2513,6 +2530,15 @@ function initUIEvents() {
         });
     }
 
+    const gdprAcceptBtn = document.getElementById('gdpr-accept-btn');
+    if (gdprAcceptBtn) {
+        gdprAcceptBtn.addEventListener('click', () => {
+            localStorage.setItem('gdpr_consent', '1');
+            const banner = document.getElementById('gdpr-banner');
+            if (banner) banner.style.display = 'none';
+        });
+    }
+
     if (DOM_CACHE.btnWatchAd) {
         DOM_CACHE.btnWatchAd.addEventListener('click', () => {
             initSound();
@@ -2641,6 +2667,24 @@ function initUIEvents() {
                         break;
                     }
                 }
+            }
+        });
+        // Keyboard support for non-button interactive div
+        DOM_CACHE.securityPath.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                DOM_CACHE.securityPath.click();
+            }
+        });
+    }
+
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+        // Keyboard support for non-button interactive div
+        vaultGraphicEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
             }
         });
     }

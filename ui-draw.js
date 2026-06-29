@@ -657,6 +657,7 @@ function draw() {
         if (fillBar) {
             const pct = Math.min(100, Math.max(0, (currentLen / maxCap) * 100));
             fillBar.style.width = `${pct}%`;
+            fillBar.setAttribute('aria-valuenow', Math.round(pct));
         }
         
         const isTooLow = currentLen <= 1;
@@ -1052,7 +1053,10 @@ function draw() {
     
     if (vPercent !== lastVaultPercent) {
         lastVaultPercent = vPercent;
-        if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
+        if (DOM_CACHE.vaultFill) {
+            DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
+            DOM_CACHE.vaultFill.setAttribute('aria-valuenow', Math.round(vPercent));
+        }
         // עדכון vault mini bar ב-portrait mode
         if (typeof window.updateVaultMiniBar === 'function') {
             window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0, vaultData.cashStored, vaultData.capacity, vaultData.yieldPerHour);

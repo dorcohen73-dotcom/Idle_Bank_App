@@ -28,7 +28,7 @@
     <link rel="preload" href="תמונות/nav_bank.png" as="image">
 
     <!-- Application Styles -->
-    <link rel="stylesheet" href="style.css?v=20260628_17">
+    <link rel="stylesheet" href="style.css?v=20260629_18">
     <link rel="stylesheet" href="premium_depts.css?v=20260628_05">
     <link rel="stylesheet" href="premium_managers.css?v=20260628_v18">
 
@@ -123,7 +123,7 @@
                             <span class="cash-label" id="label-cash">יתרת מזומנים</span>
                             <span class="cash-live-badge" id="cash-live-badge">● LIVE</span>
                         </div>
-                        <div class="cash-amount" id="cash-value">$0</div>
+                        <div class="cash-amount" id="cash-value" aria-live="polite" aria-atomic="true" aria-label="יתרת מזומנים">$0</div>
                         <div class="cash-eps" id="eps-value-container">
                             <span class="eps-arrow">▲</span>
                             <span id="eps-value">$0</span>
@@ -175,12 +175,12 @@
                             <span class="vault-mini-slash"> / </span>
                             <span class="vault-mini-cap-val" id="vault-mini-cap">$0</span>
                         </div>
-                        <button class="vault-mini-collect" id="vault-mini-btn">💰 גבה</button>
+                        <button class="vault-mini-collect" id="vault-mini-btn" aria-label="גבה את הכספת הצידית">💰 גבה</button>
                     </div>
                     <!-- שורה 2: פס מילוי + אחוז + תשואה -->
                     <div class="vault-mini-bottom">
                         <div class="vault-mini-track">
-                            <div id="vault-mini-fill" class="vault-mini-fill"></div>
+                            <div id="vault-mini-fill" class="vault-mini-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="מילוי כספת צידית"></div>
                         </div>
                         <div class="vault-mini-details">
                             <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
@@ -219,7 +219,7 @@
                         <div class="queue-top-section">
                             <div class="queue-capacity-label" id="queue-capacity-label">0/5</div>
                             <div class="queue-progress-bar">
-                                <div class="queue-progress-fill" id="queue-progress-fill"></div>
+                                <div class="queue-progress-fill" id="queue-progress-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="תור לקוחות"></div>
                             </div>
                         </div>
 
@@ -251,7 +251,7 @@
                     </div>
 
                     <!-- Security Guard Transit Path -->
-                    <div class="security-path" id="security-path" title="לחץ כדי לשלוח את הבלדר ידנית">
+                    <div class="security-path" id="security-path" role="button" tabindex="0" aria-label="שלח בלדר ידנית — לחץ לפעולה ידנית" title="לחץ כדי לשלוח את הבלדר ידנית">
                         <span class="guard-status-text" id="guard-status-text">מאבטח ממתין בכספת...</span>
                         <span class="click-hint" id="label-guard-click-hint">(שלח בלדר 👆)</span>
                         <div class="guard-avatar" id="guard-avatar"></div>
@@ -261,7 +261,7 @@
                     <!-- Vault Zone -->
                     <div class="vault-zone">
                         <!-- Left: Vault Graphic -->
-                        <div class="vault-graphic" id="vault-graphic" title="לחץ כדי לרוקן את הכספת">
+                        <div class="vault-graphic" id="vault-graphic" role="button" tabindex="0" aria-label="כספת — לחץ לרוקן" title="לחץ כדי לרוקן את הכספת">
                             <img class="vault-door-img" src="תמונות/vault-door.png" alt="" />
                             <div class="vault-graphic-label" id="vault-graphic-label">BANK</div>
                         </div>
@@ -289,7 +289,7 @@
                             <div class="vault-progress-row">
                                 <span class="vault-progress-label" id="vault-progress-label">מילוי כספת: 0%</span>
                                 <div class="vault-fill-bar-container">
-                                    <div class="vault-fill-bar-fill" id="vault-fill"></div>
+                                    <div class="vault-fill-bar-fill" id="vault-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="מילוי כספת ראשית"></div>
                                 </div>
                             </div>
 
@@ -333,28 +333,28 @@
             <section class="control-panel" aria-label="לוח בקרה ושדרוגים">
                 <h2 class="sr-only">לוח בקרה</h2>
                 <!-- Navigation Tabs -->
-                <nav class="tabs-nav" aria-label="תפריט ניווט פנימי">
-                    <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades">
+                <nav class="tabs-nav" role="tablist" aria-label="תפריט ניווט פנימי">
+                    <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades">
                         <img src="תמונות/nav_bank.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">עמדות</span>
                     </button>
-                    <button class="tab-btn" data-tab="managers" id="tab-btn-managers">
+                    <button class="tab-btn" data-tab="managers" id="tab-btn-managers" role="tab" aria-selected="false" aria-controls="tab-managers">
                         <img src="תמונות/nav_suit.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">מנהלים</span>
                     </button>
-                    <button class="tab-btn" data-tab="departments" id="tab-btn-departments">
+                    <button class="tab-btn" data-tab="departments" id="tab-btn-departments" role="tab" aria-selected="false" aria-controls="tab-departments">
                         <img src="תמונות/nav_building.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">מחלקות</span>
                     </button>
-                    <button class="tab-btn" data-tab="missions" id="tab-btn-missions">
+                    <button class="tab-btn" data-tab="missions" id="tab-btn-missions" role="tab" aria-selected="false" aria-controls="tab-missions">
                         <img src="תמונות/nav_trophy.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">משימות</span>
                     </button>
-                    <button class="tab-btn" data-tab="daily" id="tab-btn-daily">
+                    <button class="tab-btn" data-tab="daily" id="tab-btn-daily" role="tab" aria-selected="false" aria-controls="tab-daily">
                         <img src="תמונות/nav_calendar.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">יומי</span>
                     </button>
-                    <button class="tab-btn" data-tab="branches" id="tab-btn-branches">
+                    <button class="tab-btn" data-tab="branches" id="tab-btn-branches" role="tab" aria-selected="false" aria-controls="tab-branches">
                         <img src="תמונות/nav_globe.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">סניפים</span>
                     </button>
@@ -374,27 +374,27 @@
                 <div class="tab-content">
 
                     <!-- Upgrades Tab Pane -->
-                    <div class="tab-pane active" id="tab-upgrades">
+                    <div class="tab-pane active" id="tab-upgrades" role="tabpanel" aria-labelledby="tab-btn-upgrades">
                         <!-- Dynamic Upgrades rendered here -->
                     </div>
 
                     <!-- Managers Tab Pane -->
-                    <div class="tab-pane" id="tab-managers">
+                    <div class="tab-pane" id="tab-managers" role="tabpanel" aria-labelledby="tab-btn-managers">
                         <!-- Dynamic Managers rendered here -->
                     </div>
 
                     <!-- Departments Tab Pane -->
-                    <div class="tab-pane" id="tab-departments">
+                    <div class="tab-pane" id="tab-departments" role="tabpanel" aria-labelledby="tab-btn-departments">
                         <!-- Dynamic Departments rendered here -->
                     </div>
 
                     <!-- Missions Tab Pane -->
-                    <div class="tab-pane" id="tab-missions">
+                    <div class="tab-pane" id="tab-missions" role="tabpanel" aria-labelledby="tab-btn-missions">
                         <!-- Dynamic Missions rendered here -->
                     </div>
 
                     <!-- Daily Challenges Tab Pane -->
-                    <div class="tab-pane" id="tab-daily">
+                    <div class="tab-pane" id="tab-daily" role="tabpanel" aria-labelledby="tab-btn-daily">
                         <div class="daily-challenges-wrapper">
                             <div class="daily-challenges-header">
                                 <span class="daily-challenges-icon" aria-hidden="true">📅</span>
@@ -407,7 +407,7 @@
                     </div>
 
                     <!-- Branches & Prestige Tab Pane -->
-                    <div class="tab-pane" id="tab-branches">
+                    <div class="tab-pane" id="tab-branches" role="tabpanel" aria-labelledby="tab-btn-branches">
                         <!-- Dynamic Branches rendered here -->
                     </div>
                 </div>
@@ -503,6 +503,9 @@
 
             <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים
                 מסכם</button>
+            <div class="settings-privacy-row">
+                <a href="privacy.html" target="_blank" id="settings-privacy-link" class="settings-privacy-link">🔒 מדיניות פרטיות</a>
+            </div>
             <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
         </div>
     </div>
@@ -579,42 +582,42 @@
 
     <!-- Portrait Bottom Navigation -->
     <nav class="bottom-nav" id="bottom-nav" aria-label="ניווט תחתון">
-        <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades">
+        <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades" aria-label="עמדות — טאב שדרוגים" aria-current="page">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_bank.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_upgrades">עמדות</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers">
+        <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers" aria-label="מנהלים — טאב מנהלים">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_suit.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_managers">מנהלים</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments">
+        <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments" aria-label="מחלקות — טאב מחלקות">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_building.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_departments">מחלקות</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions">
+        <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions" aria-label="משימות — טאב משימות">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_trophy.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_missions">משימות</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily">
+        <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily" aria-label="אתגרים יומיים — טאב יומי">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_calendar.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_daily">יומי</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches">
+        <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches" aria-label="סניפים — טאב סניפים">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_globe.png" class="nav-3d-icon" alt="" />
             </div>
@@ -679,16 +682,25 @@
         <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
     </div>
 
+    <!-- GDPR / Privacy Consent Banner -->
+    <div id="gdpr-banner" class="gdpr-banner" style="display:none;" role="status" aria-live="polite">
+        <p id="gdpr-text" class="gdpr-text">הנתונים שלך נשמרים על המכשיר בלבד — אין שרת, אין מעקב.</p>
+        <div class="gdpr-actions">
+            <a id="gdpr-privacy-link" href="privacy.html" target="_blank" class="gdpr-privacy-link">🔒 מדיניות פרטיות</a>
+            <button id="gdpr-accept-btn" class="gdpr-accept-btn">הבנתי ✓</button>
+        </div>
+    </div>
+
     <script src="config.js?v=20260627_20" defer></script>
-    <script src="locales.js?v=20260627_21" defer></script>
+    <script src="locales.js?v=20260629_22" defer></script>
     <script src="economy-manager.js?v=20260626_10" defer></script>
     <script src="save-manager.js?v=20260627_20" defer></script>
     <script src="mission-controller.js?v=20260626_10" defer></script>
     <script src="game.js?v=20260629_100" defer></script>
     <script src="ui-draw.js?v=20260627_03"></script>
     <script src="ui-tabs.js?v=20260629_15"></script>
-    <script src="ui-events.js?v=20260629_14" defer></script>
-    <script src="app.js?v=20260626_10" defer></script>
+    <script src="ui-events.js?v=20260629_15" defer></script>
+    <script src="app.js?v=20260629_11" defer></script>
 </body>
 
 </html>

@@ -110,7 +110,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 </div>
             </div>
             
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="שדרג ${title} — ${formatMoney(cost)}">
                 <div class="upg-v2-btn-left-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -172,7 +172,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                     <div class="upg-v2-desc">${desc}</div>
                 </div>
             </div>
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'}>
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="פתח עמדה ${id} — ${formatMoney(cost)}">
                 <div class="upg-v2-btn-left-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -262,7 +262,7 @@ function renderUpgradesTab() {
             </div>
         </div>
         
-        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'}>
+        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="שדרג כספת — ${formatMoney(vCost)}">
             <div class="upg-v2-btn-left-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -729,7 +729,7 @@ function renderManagersTab() {
             let actionBtnHtml = '';
             if (!isHired) {
                 actionBtnHtml = `
-                    <button class="buy-btn buy-mgr-btn mgr-buy-btn ${canBuy ? '' : 'disabled'}" data-mgr="${type}" ${canBuy ? '' : 'disabled'}>
+                    <button class="buy-btn buy-mgr-btn mgr-buy-btn ${canBuy ? '' : 'disabled'}" data-mgr="${type}" ${canBuy ? '' : 'disabled'} aria-label="${statLabels[lang].hireBtn} ${tObj.names[type]} — ${formatMoney(cost)}">
                         ${statLabels[lang].hireBtn}<br>${formatMoney(cost)}
                     </button>
                 `;
@@ -740,7 +740,7 @@ function renderManagersTab() {
                 const levelsToBuy = details.levels;
                 
                 actionBtnHtml = `
-                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? '' : 'disabled'}" data-mgr-type="${type}" ${canUpgrade ? '' : 'disabled'}>
+                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? '' : 'disabled'}" data-mgr-type="${type}" ${canUpgrade ? '' : 'disabled'} aria-label="שדרג מנהל ${tObj.names[type]} — ${formatMoney(costToUpgrade)}">
                         ${statLabels[lang].upgradeBtn}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ''}<br>${formatMoney(costToUpgrade)}
                     </button>
                 `;

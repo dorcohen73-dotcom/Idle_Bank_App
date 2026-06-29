@@ -39,6 +39,56 @@ html {
     -webkit-tap-highlight-color: transparent;
 }
 
+/* WCAG 2.4.7 — Focus Visible: visible focus indicators for keyboard users */
+:focus {
+    outline: none; /* remove browser default — we handle it with focus-visible */
+}
+
+:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Rounded elements */
+.sound-toggle-btn:focus-visible,
+.bottom-nav-btn:focus-visible,
+.lang-option-card:focus-visible,
+.fortune-close-btn-styled:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 3px;
+    border-radius: 50px;
+}
+
+/* Tab buttons */
+.tab-btn:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* Buy buttons */
+.buy-btn:focus-visible,
+.collect-vault-btn:focus-visible,
+.modal-close-btn:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
+/* Role="button" divs */
+[role="button"]:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+/* Slider */
+.adv-slider:focus-visible {
+    outline: 3px solid #dfab29;
+    outline-offset: 2px;
+}
+
 .skip-link {
     position: absolute;
     left: -9999px;
@@ -470,8 +520,8 @@ header {
     background: var(--surface-color);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -933,6 +983,7 @@ header {
     cursor: pointer;
     box-shadow: 0 1.5px 4px rgba(184, 134, 11, 0.4);
     transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    min-height: 44px;
 }
 .plaque-collect-btn:hover {
     filter: brightness(1.15);
@@ -1618,10 +1669,10 @@ header {
     background: rgba(255, 255, 255, 0.08) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: #cbd5e1 !important;
-    width: 16px !important;
-    height: 16px !important;
+    width: 24px !important;
+    height: 24px !important;
     border-radius: 50% !important;
-    font-size: 0.6rem !important;
+    font-size: 0.72rem !important;
     font-weight: 800;
     cursor: pointer;
     display: flex;
@@ -1630,6 +1681,19 @@ header {
     transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
     margin-right: 0.35rem;
     flex-shrink: 0;
+    position: relative;
+}
+
+.vault-info-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    z-index: -1;
 }
 
 .vault-info-btn:hover {
@@ -3159,7 +3223,6 @@ footer {
     height: 6px;
     border-radius: 3px;
     background: rgba(255, 255, 255, 0.1);
-    outline: none;
     cursor: pointer;
 }
 
@@ -3280,8 +3343,8 @@ footer {
     }
 
     .sound-toggle-btn {
-        width: 38px;
-        height: 38px;
+        width: 48px;
+        height: 48px;
     }
 
     .boost-toggle-btn {
@@ -3808,7 +3871,7 @@ footer {
 
     /* Tab buttons: ensure equal minimum size and better touch area */
     .tab-btn {
-        min-height: 40px !important;
+        min-height: 48px !important;
         padding: 0.5rem 0.7rem !important;
         font-size: 0.78rem !important;
     }
@@ -3885,7 +3948,6 @@ html, body {
     cursor: pointer;
     color: var(--text-main);
     transition: var(--transition-prop);
-    outline: none;
 }
 
 .lang-option-card:hover {
@@ -4000,8 +4062,8 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
 
 /* Interactive elements minimum heights for touch targets */
 .buy-btn, .tab-btn, .collect-vault-btn,
-.modal-close-btn, .bulk-btn-option {
-    min-height: 44px;
+.modal-close-btn, .bulk-btn-option, .sound-toggle-btn {
+    min-height: 48px;
 }
 
 /* 375px Extra Small Mobile Breakpoint */
@@ -5568,7 +5630,7 @@ header, .control-panel, .bank-floor {
     height: 100%;
     background: transparent;
     border: none;
-    color: rgba(160, 160, 180, 0.6);
+    color: rgba(180, 183, 200, 0.9);
     font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
@@ -5889,7 +5951,7 @@ header, .control-panel, .bank-floor {
     white-space: nowrap !important;
     flex-shrink: 0 !important;
     touch-action: manipulation !important;
-    min-height: 38px !important;
+    min-height: 48px !important;
     transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 80ms ease !important;
     letter-spacing: 0.3px !important;
   }
@@ -6309,7 +6371,7 @@ header, .control-panel, .bank-floor {
     font-size: 1.35rem !important;
   }
   .vault-mini-collect {
-    min-height: 38px !important;
+    min-height: 48px !important;
     font-size: 0.7rem !important;
     padding: 0.28rem 0.48rem !important;
     border-radius: 10px !important;
@@ -9440,4 +9502,153 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 .pnm-ad-btn:disabled,
 .pnm-skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* WCAG 1.3.1 — Progress bars visual aids */
+[role="progressbar"] {
+    position: relative;
+}
 
+/* ===================================================
+   ACCESSIBILITY: Reduced Motion Support
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Keep functional transitions but remove decorative ones */
+    .vault-fill-bar-fill,
+    .queue-progress-fill,
+    .plaque-progress-fill {
+        transition: width 0.15s linear !important;
+    }
+
+    .tab-pane {
+        transition: none !important;
+    }
+
+    /* Disable specific decorative animations */
+    .notification-dot,
+    .smart-recommendation-glow,
+    .idle-zzz,
+    .brand-icon,
+    .client-slot-3d,
+    .guard-runner-avatar,
+    .guard-runner-load,
+    .cash-card-shimmer {
+        animation: none !important;
+    }
+
+    /* Remove button shine animation */
+    .buy-btn:not(.disabled)::after {
+        animation: none !important;
+        display: none;
+    }
+
+    /* Remove glass shine effects */
+    .glass-showcase::after,
+    .vault-zone::after {
+        animation: none !important;
+    }
+
+    /* Simplify hover transforms */
+    .upgrade-card:hover,
+    .vault-graphic:hover,
+    .buy-btn:hover,
+    .collect-vault-btn:hover {
+        transform: none !important;
+    }
+}
+
+/* ===================================================
+   GDPR CONSENT BANNER
+   =================================================== */
+.gdpr-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 14, 26, 0.97);
+    border-top: 1px solid rgba(223, 171, 41, 0.2);
+    padding: 0.55rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    z-index: 8000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+}
+
+.gdpr-text {
+    font-size: 0.77rem;
+    color: #94a3b8;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.gdpr-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.gdpr-privacy-link {
+    font-size: 0.77rem;
+    color: #dfab29;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.gdpr-accept-btn {
+    background: #dfab29;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.77rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+}
+
+.gdpr-accept-btn:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+    .gdpr-banner {
+        bottom: calc(100px + env(safe-area-inset-bottom));
+        left: 12px;
+        right: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(223, 171, 41, 0.2);
+    }
+}
+
+/* Settings privacy link */
+.settings-privacy-row {
+    text-align: center;
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.settings-privacy-link {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.settings-privacy-link:hover {
+    color: #dfab29;
+}
