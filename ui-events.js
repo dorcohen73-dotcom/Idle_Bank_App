@@ -10,6 +10,7 @@ var contextualOfferTimeout = null;
 var contextualBannerShown = false;
 var boostOfferEndTime = 0;
 var boostOfferNextTime = 0;
+var drawTimer = 0;
 
 // Focus trap: map from modal element -> keydown handler, for clean removal on close
 var _focusTrapHandlers = new Map();
@@ -1913,7 +1914,15 @@ function tick(timestamp) {
             updateFortuneWheelBtnState();
         }
 
-        draw();
+        // Mobile Performance Throttling
+        drawTimer += cappedDt;
+        const isMobile = window.innerWidth <= 768;
+        const targetFpsInterval = isMobile ? (1.0 / 15.0) : 0; // 15 fps on mobile, unlimited on desktop
+        
+        if (drawTimer >= targetFpsInterval) {
+            drawTimer = 0;
+            draw();
+        }
 
         autoSaveTimer += cappedDt;
         if (autoSaveTimer >= GAME_CONFIG.AUTO_SAVE_INTERVAL_SEC) {
