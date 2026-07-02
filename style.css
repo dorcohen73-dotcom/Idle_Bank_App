@@ -9922,4 +9922,19 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     .branch-header-row .branch-name { font-size: 1.1rem !important; }
     .branch-flag { width: 28px !important; height: 28px !important; }
     .branch-stat-val { font-size: 0.9rem !important; }
+
+    /* Upgrades (Courier / בלדר) */
+    .upgrade-card.premium-upg-card { padding: 10px !important; gap: 10px !important; }
+    .upg-v2-avatar-wrap { width: 70px !important; height: 70px !important; }
+    .upg-v2-title { font-size: 1.15rem !important; }
+    .upg-v2-desc { font-size: 0.8rem !important; }
+    .upg-stat-group { gap: 6px !important; }
+    .upg-stat-icon { font-size: 0.9rem !important; }
+    .upg-stat-val, .upg-stat-label { font-size: 0.85rem !important; }
+    .upg-v2-buy-btn { padding: 8px !important; font-size: 0.85rem !important; }
+
+    /* Gold Upgrades */
+    .gold-upgrade-card { padding: 10px !important; }
+    .gold-upg-title { font-size: 1.1rem !important; }
+    .gold-upg-desc { font-size: 0.8rem !important; }
 }
