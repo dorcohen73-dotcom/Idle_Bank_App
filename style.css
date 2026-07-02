@@ -7810,7 +7810,7 @@ header {
 }
 
 /* ==========================================
-   DAILY CHALLENGES (ULTRA PREMIUM V3)
+   DAILY CHALLENGES (AI MOCKUP V4)
    ========================================== */
 
 .daily-challenges-wrapper {
@@ -7821,39 +7821,37 @@ header {
     gap: 0.75rem;
 }
 
-.daily-challenges-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.daily-challenges-icon {
-    font-size: 1.8rem;
-    filter: drop-shadow(0 0 10px rgba(223, 171, 41, 0.8));
-}
-
-.daily-challenges-title {
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-}
-
-.daily-header {
+.daily-header-ai {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.daily-header-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+}
+
+.daily-header-box {
+    display: flex;
+    align-items: center;
     background: linear-gradient(90deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
     border-radius: 12px;
     border: 1px solid rgba(223, 171, 41, 0.4);
     box-shadow: 0 6px 15px rgba(0,0,0,0.4), inset 0 0 15px rgba(223, 171, 41, 0.1);
+    padding: 0.5rem 1rem;
+    gap: 1rem;
 }
 
 .daily-subtitle {
     font-size: 0.9rem;
     color: #e2e8f0;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .daily-reset-timer {
@@ -7869,60 +7867,51 @@ header {
 
 .daily-challenge-card {
     background: linear-gradient(135deg, rgba(35, 42, 60, 0.9) 0%, rgba(20, 25, 40, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(223, 171, 41, 0.4); /* Gold border for active */
     border-radius: 16px;
     padding: 1.25rem;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
-    overflow: hidden;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .daily-challenge-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(223, 171, 41, 0.6);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(223, 171, 41, 0.2);
     background: linear-gradient(135deg, rgba(45, 55, 75, 0.95) 0%, rgba(25, 30, 50, 0.98) 100%);
 }
 
 .daily-challenge-card.completed {
-    border-color: #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(20, 25, 40, 0.95) 100%);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    border-color: #10b981; /* Green border */
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(20, 25, 40, 0.95) 100%);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
 .daily-challenge-card.claimed {
     opacity: 0.5;
     filter: grayscale(0.8);
-    transform: none;
+    border-color: rgba(255,255,255,0.1);
     box-shadow: none;
-    border-color: rgba(255,255,255,0.05);
+    transform: none;
 }
 
-.daily-challenge-top {
+.daily-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
 }
 
-.daily-challenge-type {
-    font-size: 1.1rem;
-    font-weight: 800;
+.daily-card-title {
+    font-size: 1.2rem;
+    font-weight: 900;
     color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
-.daily-challenge-type::before {
-    content: '⭐';
-    font-size: 0.9rem;
-    filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.8));
-}
-
-.daily-challenge-reward {
+.daily-reward-pill {
     font-size: 0.95rem;
     font-weight: 900;
     color: #fff;

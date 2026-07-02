@@ -3287,10 +3287,15 @@ function initUIEvents() {
         const resetText = tObj.dailyResetLabel ? tObj.dailyResetLabel(hToMidnight, mToMidnight) : `${hToMidnight}:${mToMidnight}`;
 
         const headerEl = document.createElement('div');
-        headerEl.className = 'daily-header';
+        headerEl.className = 'daily-header-ai';
         headerEl.innerHTML = `
-            <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || ''}</span>
-            <span class="daily-reset-timer">${resetText}</span>
+            <div class="daily-header-title">
+                <i class="fas fa-calendar-alt" style="color:var(--text-light); margin-left:8px;"></i> ${tObj.dailyChallengesTitle || 'אתגרי היום'}
+            </div>
+            <div class="daily-header-box">
+                <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || '3 אתגרים קשים שמתאפסים בחצות'}</span>
+                <span class="daily-reset-timer">מתאפס בעוד ${resetText}</span>
+            </div>
         `;
         container.appendChild(headerEl);
 
@@ -3316,20 +3321,24 @@ function initUIEvents() {
             const card = document.createElement('div');
             card.className = 'daily-challenge-card' + (c.completed ? ' completed' : '') + (c.claimed ? ' claimed' : '');
             card.innerHTML = `
-                <div class="daily-challenge-top">
-                    <span class="daily-challenge-type">${typeLabel}</span>
-                    <span class="daily-challenge-reward">${rewardText}</span>
+                <div class="daily-card-top">
+                    <span class="daily-reward-pill">${rewardText}</span>
+                    <span class="daily-card-title">${typeLabel} <i class="fas fa-star" style="color:#fde047; margin-right:5px;"></i></span>
                 </div>
-                <div class="daily-progress-bar-wrap">
-                    <div class="daily-progress-bar-fill" style="width:${pct}%"></div>
+                <div class="daily-card-progress">
+                    <div class="daily-progress-wrap">
+                        <div class="daily-progress-fill" style="width:${pct}%"></div>
+                    </div>
                 </div>
-                <div class="daily-challenge-bottom">
-                    <span class="daily-progress-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>
+                <div class="daily-card-bottom">
                     ${c.completed && !c.claimed
-                        ? `<button class="daily-claim-btn" data-idx="${idx}">${tObj.dailyClaimBtn || 'קבל פרס'}</button>`
+                        ? `<button class="daily-claim-btn" data-idx="${idx}">${tObj.dailyClaimBtn || 'קבל פרס'}</button>
+                           <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>`
                         : c.claimed
-                            ? `<span class="daily-claimed-label">${tObj.dailyClaimedLabel || 'נאסף'}</span>`
-                            : `<span class="daily-pct-label">${pct}%</span>`
+                            ? `<span class="daily-claimed-label">${tObj.dailyClaimedLabel || 'נאסף'}</span>
+                               <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>`
+                            : `<span class="daily-pct-text">${pct}%</span>
+                               <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>`
                     }
                 </div>
             `;
