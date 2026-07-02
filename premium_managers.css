@@ -48,8 +48,9 @@
 .theme-teal .mgr-card-bg { --theme-glow: #14b8a6; background-color: rgba(20, 184, 166, 0.05); }
 
 .mgr-layout-wrapper {
-    display: grid;
-    grid-template-columns: 130px 1fr; /* Increased width to make portrait more dominant */
+    display: flex;
+    flex-direction: row; /* In RTL, first item is on the right */
+    align-items: stretch;
     gap: 16px;
     z-index: 1;
     position: relative;
@@ -58,12 +59,14 @@
 .mgr-content-col {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Tighter vertical spacing */
+    gap: 12px;
+    flex: 1;
+    min-width: 0; /* Prevents text blowout */
 }
 
 /* --- PORTRAIT --- */
 .mgr-portrait-col {
-    width: 100%;
+    width: 130px; /* Fixed width instead of grid column */
     height: 100%;
     min-height: 120px; /* Reduced min-height so cards can be shorter */
     position: relative;
@@ -371,10 +374,10 @@ button.buy-btn.mgr-buy-btn.disabled {
         gap: 8px !important;
     }
     .mgr-layout-wrapper {
-        grid-template-columns: 85px 1fr !important;
         gap: 12px !important;
     }
     .mgr-portrait-col {
+        width: 85px !important;
         min-height: 100px !important;
         height: 100px !important;
     }
@@ -413,10 +416,10 @@ button.buy-btn.mgr-buy-btn.disabled {
    =================================================== */
 @media (max-width: 400px) {
     .mgr-layout-wrapper {
-        grid-template-columns: 65px 1fr !important;
         gap: 8px !important;
     }
     .mgr-portrait-col {
+        width: 65px !important;
         min-height: 80px !important;
         height: 80px !important;
     }

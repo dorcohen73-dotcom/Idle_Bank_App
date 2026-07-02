@@ -298,6 +298,14 @@
             }, 800);
         }
 
+        // Show GDPR consent banner on first visit
+        if (!localStorage.getItem('gdpr_consent')) {
+            setTimeout(() => {
+                const banner = document.getElementById('gdpr-banner');
+                if (banner) banner.style.display = 'flex';
+            }, 1800);
+        }
+
         // Start tick loop
         window.lastTime = performance.now();
         cancelAnimationFrame(window.rafId);

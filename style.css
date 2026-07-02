@@ -9847,7 +9847,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     opacity: 0.85;
 }
 
-@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+@media (max-width: 768px), (orientation: portrait) and (max-width: 768px) {
     .gdpr-banner {
         bottom: calc(100px + env(safe-area-inset-bottom));
         left: 12px;
