@@ -9711,6 +9711,8 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     .daily-card-title { font-size: 1.1rem !important; }
     .daily-reward-pill { font-size: 0.85rem !important; padding: 0.3rem 0.6rem !important; }
     .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
+}
+
 .pnm-ad-btn,
 .pnm-skip-btn {
     border: none;

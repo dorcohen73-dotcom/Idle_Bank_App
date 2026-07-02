@@ -36,6 +36,10 @@
         advDisplay: null,
         boostBtn: null,
         analyticsBtn: null,
+        vaultInfoBtn: null,
+        fortuneWheelBtn: null,
+        vaultMiniLabel: null,
+        skipLink: null,
         langBtn: null,
         langModal: null,
         langModalClose: null,
@@ -110,6 +114,10 @@
         window.DOM_CACHE.advDisplay = document.getElementById('adv-budget-display');
         window.DOM_CACHE.boostBtn = document.getElementById('boost-btn');
         window.DOM_CACHE.analyticsBtn = document.getElementById('analytics-btn');
+        window.DOM_CACHE.vaultInfoBtn = document.getElementById('vault-info-btn');
+        window.DOM_CACHE.fortuneWheelBtn = document.getElementById('fortune-wheel-btn');
+        window.DOM_CACHE.vaultMiniLabel = document.getElementById('vault-mini-label');
+        window.DOM_CACHE.skipLink = document.getElementById('skip-link');
         window.DOM_CACHE.langBtn = document.getElementById('lang-btn');
         window.DOM_CACHE.langModal = document.getElementById('lang-modal');
         window.DOM_CACHE.btnWatchAd = document.getElementById('btn-watch-ad');

@@ -208,11 +208,32 @@ function applyLanguage(lang) {
     else if (activeTab === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
 
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
-    if (DOM_CACHE.securityPath) DOM_CACHE.securityPath.title = tObj.tooltips.guard;
-    if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
+    if (DOM_CACHE.securityPath) {
+        DOM_CACHE.securityPath.title = tObj.tooltips.guard;
+        DOM_CACHE.securityPath.setAttribute('aria-label', tObj.tooltips.guard);
+    }
+    if (DOM_CACHE.vaultGraphic) {
+        DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
+        DOM_CACHE.vaultGraphic.setAttribute('aria-label', tObj.tooltips.vault);
+    }
     if (DOM_CACHE.vaultGraphicLabel) DOM_CACHE.vaultGraphicLabel.innerText = tObj.vaultBankLabel || 'BANK';
+    if (DOM_CACHE.vaultMiniLabel) DOM_CACHE.vaultMiniLabel.innerText = tObj.vaultMiniLabel || 'Vault';
     if (DOM_CACHE.cashLiveBadge) DOM_CACHE.cashLiveBadge.innerText = tObj.cashLiveBadge || '● LIVE';
-    if (DOM_CACHE.splashSubtitle) DOM_CACHE.splashSubtitle.innerText = tObj.splashSubtitle || 'טוען את חווית ה-VIP...';
+    if (DOM_CACHE.splashSubtitle) DOM_CACHE.splashSubtitle.innerText = tObj.splashSubtitle || 'Loading VIP experience...';
+    if (DOM_CACHE.skipLink) DOM_CACHE.skipLink.innerText = tObj.skipLinkText || 'Skip to content';
+    if (DOM_CACHE.analyticsBtn) {
+        DOM_CACHE.analyticsBtn.title = tObj.analyticsBtnTitle || 'Metrics & Analytics';
+        DOM_CACHE.analyticsBtn.setAttribute('aria-label', tObj.analyticsBtnTitle || 'Metrics & Analytics');
+    }
+    if (DOM_CACHE.boostBtn) {
+        DOM_CACHE.boostBtn.title = tObj.boostBtnTitle || '2x Income Booster';
+        DOM_CACHE.boostBtn.setAttribute('aria-label', tObj.boostBtnTitle || '2x Income Booster');
+    }
+    if (DOM_CACHE.vaultInfoBtn) DOM_CACHE.vaultInfoBtn.title = tObj.vaultInfoBtnTitle || 'Vault interest info';
+    if (DOM_CACHE.fortuneWheelBtn) {
+        DOM_CACHE.fortuneWheelBtn.title = tObj.fortuneWheelTitle || 'Daily Fortune Wheel';
+        DOM_CACHE.fortuneWheelBtn.setAttribute('aria-label', tObj.fortuneWheelTitle || 'Daily Fortune Wheel');
+    }
 
     updateMuteButton();
     rebuildTellersDOM();
