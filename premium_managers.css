@@ -365,7 +365,7 @@ button.buy-btn.mgr-buy-btn.disabled {
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 500px) {
+@media (max-width: 768px) {
     .upgrade-card.manager-card {
         padding: 8px 10px !important;
         gap: 8px !important;
@@ -411,7 +411,7 @@ button.buy-btn.mgr-buy-btn.disabled {
 /* ===================================================
    ULTRA-SMALL MOBILE MODE (Older Phones, e.g., iPhone SE)
    =================================================== */
-@media (max-width: 380px) {
+@media (max-width: 400px) {
     .mgr-layout-wrapper {
         grid-template-columns: 65px 1fr !important;
         gap: 8px !important;

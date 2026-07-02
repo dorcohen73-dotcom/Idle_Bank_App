@@ -9879,7 +9879,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 /* ===================================================
    MOBILE TABS REFINEMENTS
    =================================================== */
-@media (max-width: 500px) {
+@media (max-width: 768px) {
     /* Missions */
     #tab-missions .mission-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
     #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
@@ -9903,7 +9903,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 /* ===================================================
    ULTRA-SMALL MOBILE MODE (Older Phones)
    =================================================== */
-@media (max-width: 380px) {
+@media (max-width: 400px) {
     /* Missions */
     #tab-missions .mission-card { padding: 8px !important; margin-bottom: 8px !important; }
     #tab-missions .mission-image-box { width: 40px !important; height: 40px !important; }

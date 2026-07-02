@@ -382,7 +382,7 @@
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 500px) {
+@media (max-width: 768px) {
     .department-card {
         padding: 8px 10px !important;
         margin-bottom: 10px !important;
@@ -429,7 +429,7 @@
 /* ===================================================
    ULTRA-SMALL MOBILE MODE (Older Phones)
    =================================================== */
-@media (max-width: 380px) {
+@media (max-width: 400px) {
     .department-card {
         padding: 6px 8px !important;
     }
