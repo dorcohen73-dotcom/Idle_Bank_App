@@ -9680,3 +9680,27 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 .settings-privacy-link:hover {
     color: #dfab29;
 }
+
+/* ===================================================
+   MOBILE TABS REFINEMENTS
+   =================================================== */
+@media (max-width: 500px) {
+    /* Missions */
+    #tab-missions .mission-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
+    #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
+    #tab-missions .mission-title { font-size: 1.1rem !important; }
+    #tab-missions .mission-desc { font-size: 0.8rem !important; }
+    #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
+
+    /* Daily */
+    .daily-challenge-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
+    .daily-challenge-type { font-size: 1.1rem !important; }
+    .daily-challenge-reward { font-size: 0.9rem !important; }
+    .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
+
+    /* Branches */
+    .branch-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
+    .branch-header-row .branch-name { font-size: 1.25rem !important; }
+    .branch-flag { width: 32px !important; height: 32px !important; }
+    .branch-stat-val { font-size: 1rem !important; }
+}

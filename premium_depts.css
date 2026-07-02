@@ -378,3 +378,51 @@
     color: #94a3b8;
     text-shadow: none;
 }
+
+/* ===================================================
+   PORTRAIT MOBILE MODE
+   =================================================== */
+@media (max-width: 500px) {
+    .department-card {
+        padding: 8px 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .dept-card-body {
+        gap: 10px !important;
+    }
+    .dept-icon-frame {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    .dept-icon-content {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    .dept-icon-content svg, .dept-icon-content i {
+        font-size: 24px !important;
+    }
+    .dept-title-text {
+        font-size: 1.25rem !important;
+    }
+    .dept-stat-row {
+        gap: 4px !important;
+    }
+    .dept-stat-label {
+        font-size: 0.8rem !important;
+    }
+    .dept-stat-value-box {
+        padding: 2px 6px !important;
+        min-width: 60px !important;
+    }
+    .dept-stat-value-box span {
+        font-size: 0.95rem !important;
+    }
+    .dept-buy-col {
+        width: 90px !important;
+    }
+    .buy-btn.dept-buy-btn {
+        padding: 6px !important;
+        font-size: 0.9rem !important;
+    }
+}
+

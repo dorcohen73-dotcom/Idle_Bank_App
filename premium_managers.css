@@ -361,3 +361,50 @@ button.buy-btn.mgr-buy-btn.disabled {
     color: #94a3b8;
     font-size: 0.75rem;
 }
+
+/* ===================================================
+   PORTRAIT MOBILE MODE
+   =================================================== */
+@media (max-width: 500px) {
+    .upgrade-card.manager-card {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+    }
+    .mgr-layout-wrapper {
+        grid-template-columns: 85px 1fr !important;
+        gap: 12px !important;
+    }
+    .mgr-portrait-col {
+        min-height: 100px !important;
+        height: 100px !important;
+    }
+    .mgr-title {
+        font-size: 1.25rem !important;
+    }
+    .mgr-stat-val {
+        font-size: 1.1rem !important;
+    }
+    .mgr-stat-label {
+        font-size: 0.95rem !important;
+        gap: 8px !important;
+    }
+    .mgr-stat-icon-circle {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    .mgr-stat-pill {
+        padding: 4px 10px !important;
+    }
+    .mgr-active-badge {
+        font-size: 0.9rem !important;
+        padding: 4px 10px !important;
+    }
+    .mgr-footer-val {
+        font-size: 1rem !important;
+    }
+    button.buy-btn.mgr-buy-btn {
+        padding: 8px !important;
+        font-size: 0.9rem !important;
+    }
+}
+
