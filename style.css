@@ -9881,7 +9881,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
    =================================================== */
 @media (max-width: 500px) {
     /* Missions */
-    #tab-missions .mission-card { padding: 12px 10px !important; margin-bottom: 12px !important; gap: 0.8rem !important; }
+    #tab-missions .mission-card { padding: 36px 10px 12px 10px !important; margin-bottom: 12px !important; gap: 0.8rem !important; }
     #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
     #tab-missions .mission-title { font-size: 1.1rem !important; }
     #tab-missions .mission-desc { font-size: 0.8rem !important; }
@@ -9905,7 +9905,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
    =================================================== */
 @media (max-width: 380px) {
     /* Missions */
-    #tab-missions .mission-card { padding: 8px !important; margin-bottom: 8px !important; gap: 0.5rem !important; }
+    #tab-missions .mission-card { padding: 32px 10px 10px 10px !important; margin-bottom: 8px !important; gap: 0.5rem !important; }
     #tab-missions .mission-image-box { width: 40px !important; height: 40px !important; }
     #tab-missions .mission-title { font-size: 0.95rem !important; }
     #tab-missions .mission-desc { font-size: 0.75rem !important; }
