@@ -426,3 +426,41 @@
     }
 }
 
+/* ===================================================
+   ULTRA-SMALL MOBILE MODE (Older Phones)
+   =================================================== */
+@media (max-width: 380px) {
+    .department-card {
+        padding: 6px 8px !important;
+    }
+    .dept-card-body {
+        gap: 6px !important;
+    }
+    .dept-icon-frame {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    .dept-icon-content {
+        width: 26px !important;
+        height: 26px !important;
+    }
+    .dept-icon-content svg, .dept-icon-content i {
+        font-size: 20px !important;
+    }
+    .dept-title-text {
+        font-size: 1.1rem !important;
+    }
+    .dept-stat-label {
+        font-size: 0.75rem !important;
+    }
+    .dept-stat-value-box span {
+        font-size: 0.85rem !important;
+    }
+    .dept-buy-col {
+        width: 75px !important;
+    }
+    .buy-btn.dept-buy-btn {
+        padding: 4px !important;
+        font-size: 0.8rem !important;
+    }
+}

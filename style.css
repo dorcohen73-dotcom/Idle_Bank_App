@@ -9697,10 +9697,229 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     .daily-challenge-type { font-size: 1.1rem !important; }
     .daily-challenge-reward { font-size: 0.9rem !important; }
     .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
+.pnm-ad-btn,
+.pnm-skip-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    min-width: 120px;
+}
+
+.pnm-ad-btn {
+    background: linear-gradient(135deg, #dfab29 0%, #b8860b 100%);
+    color: #0f172a;
+}
+
+.pnm-skip-btn {
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.pnm-ad-btn:hover { opacity: 0.88; }
+.pnm-skip-btn:hover { background: rgba(255,255,255,0.14); }
+.pnm-ad-btn:disabled,
+.pnm-skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* WCAG 1.3.1 — Progress bars visual aids */
+[role="progressbar"] {
+    position: relative;
+}
+
+/* ===================================================
+   ACCESSIBILITY: Reduced Motion Support
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Keep functional transitions but remove decorative ones */
+    .vault-fill-bar-fill,
+    .queue-progress-fill,
+    .plaque-progress-fill {
+        transition: width 0.15s linear !important;
+    }
+
+    .tab-pane {
+        transition: none !important;
+    }
+
+    /* Disable specific decorative animations */
+    .notification-dot,
+    .smart-recommendation-glow,
+    .idle-zzz,
+    .brand-icon,
+    .client-slot-3d,
+    .guard-runner-avatar,
+    .guard-runner-load,
+    .cash-card-shimmer {
+        animation: none !important;
+    }
+
+    /* Remove button shine animation */
+    .buy-btn:not(.disabled)::after {
+        animation: none !important;
+        display: none;
+    }
+
+    /* Remove glass shine effects */
+    .glass-showcase::after,
+    .vault-zone::after {
+        animation: none !important;
+    }
+
+    /* Simplify hover transforms */
+    .upgrade-card:hover,
+    .vault-graphic:hover,
+    .buy-btn:hover,
+    .collect-vault-btn:hover {
+        transform: none !important;
+    }
+}
+
+/* ===================================================
+   GDPR CONSENT BANNER
+   =================================================== */
+.gdpr-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 14, 26, 0.97);
+    border-top: 1px solid rgba(223, 171, 41, 0.2);
+    padding: 0.55rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    z-index: 8000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+}
+
+.gdpr-text {
+    font-size: 0.77rem;
+    color: #94a3b8;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.gdpr-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.gdpr-privacy-link {
+    font-size: 0.77rem;
+    color: #dfab29;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.gdpr-accept-btn {
+    background: #dfab29;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.77rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+}
+
+.gdpr-accept-btn:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+    .gdpr-banner {
+        bottom: calc(100px + env(safe-area-inset-bottom));
+        left: 12px;
+        right: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(223, 171, 41, 0.2);
+    }
+}
+
+/* Settings privacy link */
+.settings-privacy-row {
+    text-align: center;
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.settings-privacy-link {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.settings-privacy-link:hover {
+    color: #dfab29;
+}
+
+/* ===================================================
+   MOBILE TABS REFINEMENTS
+   =================================================== */
+@media (max-width: 500px) {
+    /* Missions */
+    #tab-missions .mission-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
+    #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
+    #tab-missions .mission-title { font-size: 1.1rem !important; }
+    #tab-missions .mission-desc { font-size: 0.8rem !important; }
+    #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
+
+    /* Daily */
+    .daily-challenge-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
+    .daily-challenge-type { font-size: 1.1rem !important; }
+    .daily-challenge-reward { font-size: 0.9rem !important; }
+    .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
 
     /* Branches */
     .branch-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
     .branch-header-row .branch-name { font-size: 1.25rem !important; }
     .branch-flag { width: 32px !important; height: 32px !important; }
     .branch-stat-val { font-size: 1rem !important; }
+}
+
+/* ===================================================
+   ULTRA-SMALL MOBILE MODE (Older Phones)
+   =================================================== */
+@media (max-width: 380px) {
+    /* Missions */
+    #tab-missions .mission-card { padding: 8px !important; margin-bottom: 8px !important; }
+    #tab-missions .mission-image-box { width: 40px !important; height: 40px !important; }
+    #tab-missions .mission-title { font-size: 0.95rem !important; }
+    #tab-missions .mission-desc { font-size: 0.75rem !important; }
+    #tab-missions .mission-action-zone .buy-btn { padding: 4px !important; font-size: 0.8rem !important; }
+
+    /* Daily */
+    .daily-challenge-card { padding: 8px !important; margin-bottom: 8px !important; }
+    .daily-challenge-type { font-size: 0.95rem !important; }
+    .daily-challenge-reward { font-size: 0.8rem !important; }
+    .daily-claim-btn { padding: 4px 10px !important; font-size: 0.8rem !important; }
+
+    /* Branches */
+    .branch-card { padding: 8px !important; margin-bottom: 8px !important; }
+    .branch-header-row .branch-name { font-size: 1.1rem !important; }
+    .branch-flag { width: 28px !important; height: 28px !important; }
+    .branch-stat-val { font-size: 0.9rem !important; }
 }

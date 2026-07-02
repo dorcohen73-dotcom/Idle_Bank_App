@@ -408,3 +408,48 @@ button.buy-btn.mgr-buy-btn.disabled {
     }
 }
 
+/* ===================================================
+   ULTRA-SMALL MOBILE MODE (Older Phones, e.g., iPhone SE)
+   =================================================== */
+@media (max-width: 380px) {
+    .mgr-layout-wrapper {
+        grid-template-columns: 65px 1fr !important;
+        gap: 8px !important;
+    }
+    .mgr-portrait-col {
+        min-height: 80px !important;
+        height: 80px !important;
+    }
+    .mgr-title {
+        font-size: 1.1rem !important;
+    }
+    .mgr-lvl-badge {
+        font-size: 0.75rem !important;
+        padding: 2px 8px !important;
+    }
+    .mgr-stat-val {
+        font-size: 0.95rem !important;
+    }
+    .mgr-stat-label {
+        font-size: 0.85rem !important;
+        gap: 4px !important;
+    }
+    .mgr-stat-icon-circle {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .mgr-stat-pill {
+        padding: 4px 6px !important;
+    }
+    .mgr-active-badge {
+        font-size: 0.8rem !important;
+        padding: 4px 8px !important;
+    }
+    .mgr-footer-val {
+        font-size: 0.9rem !important;
+    }
+    button.buy-btn.mgr-buy-btn {
+        padding: 6px !important;
+        font-size: 0.8rem !important;
+    }
+}
