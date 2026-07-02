@@ -5716,14 +5716,20 @@ header, .control-panel, .bank-floor {
   }
 
   /* --- Body: מרווח תחתון לbottom nav + buffer --- */
-  body {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  html, body {
+    padding-bottom: calc(85px + env(safe-area-inset-bottom)) !important;
   }
 
   /* --- App Container --- */
   .app-container {
     padding: 0.4rem 0.4rem 0 0.4rem !important;
     gap: 0.4rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  header, main {
+    flex-shrink: 0 !important;
   }
 
   /* --- Header: brand + כפתורים בשורה אחת, stats בשורה שניה --- */
@@ -6072,6 +6078,7 @@ header, .control-panel, .bank-floor {
   .bank-floor {
     padding: 0.5rem !important;
     gap: 0.4rem !important;
+    height: auto !important;
   }
 
   .bank-floor .panel-header {
@@ -6085,6 +6092,8 @@ header, .control-panel, .bank-floor {
     padding: 0.4rem 0.5rem !important;
     gap: 0.5rem !important;
     overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   /* queue-wrapper — גרסה קומפקטית לפורטרייט */
@@ -6124,14 +6133,20 @@ header, .control-panel, .bank-floor {
     font-size: 0.9rem !important;
   }
 
-  /* Tellers: Grid 2 Columns (Portrait Override) */
+  /* Tellers: Grid 2 Columns (Native Scroll) */
   .tellers-zone {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.6rem !important;
     width: 100%;
-    overflow-x: hidden !important;
-    overflow-y: visible !important;
+    overflow: visible !important;
+    position: relative !important;
+    bottom: auto !important;
+    height: auto !important;
+    flex: none !important;
+    min-height: auto !important;
+    z-index: 10 !important;
+    white-space: normal !important;
   }
 
   .tellers-zone::-webkit-scrollbar {
@@ -6139,12 +6154,15 @@ header, .control-panel, .bank-floor {
   }
 
   .teller-counter {
+    display: flex !important;
     min-width: 0 !important;
     max-width: none !important;
     min-height: 145px !important;
     height: auto !important;
     border-radius: 12px !important;
     padding: 0 !important;
+    margin-right: 0 !important;
+    vertical-align: top !important;
   }
 
   .teller-counter .glass-showcase {
@@ -6166,6 +6184,7 @@ header, .control-panel, .bank-floor {
     padding: 0.3rem 0.6rem !important;
     min-height: 36px !important;
     overflow: visible !important;
+    margin-top: 1rem !important;
   }
 
   .guard-status-text {
@@ -6210,6 +6229,8 @@ header, .control-panel, .bank-floor {
     padding: 0.5rem 0.5rem 0 0.5rem !important;
     gap: 0.5rem !important;
     max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   /* הטאבים הקיימים מוסתרים — מוחלפים ע"י bottom nav */
@@ -6220,14 +6241,18 @@ header, .control-panel, .bank-floor {
   .tab-content {
     overflow-y: visible !important;
     max-height: none !important;
-    overscroll-behavior-y: auto !important;
-    padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: 120px !important;
   }
 
   .tab-pane {
     position: relative !important;
     height: auto !important;
     overflow-y: visible !important;
+  }
+
+  /* --- Floating Container z-index fix --- */
+  .floating-container {
+    z-index: 0 !important;
   }
 
   /* --- Footer מוסתר --- */
@@ -6297,6 +6322,9 @@ header, .control-panel, .bank-floor {
   .bulk-upgrade-selector {
     padding: 0.4rem 0.6rem !important;
     gap: 0.5rem !important;
+    position: static !important;
+    margin-bottom: 0.5rem !important;
+    flex-shrink: 0 !important;
   }
 
   .bulk-btn-option {
