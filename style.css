@@ -9903,7 +9903,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 /* ===================================================
    ULTRA-SMALL MOBILE MODE (Older Phones)
    =================================================== */
-@media (max-width: 400px) {
+@media (max-width: 380px) {
     /* Missions */
     #tab-missions .mission-card { padding: 8px !important; margin-bottom: 8px !important; }
     #tab-missions .mission-image-box { width: 40px !important; height: 40px !important; }

@@ -379,7 +379,6 @@ button.buy-btn.mgr-buy-btn.disabled {
     .mgr-portrait-col {
         width: 85px !important;
         min-height: 100px !important;
-        height: 100px !important;
     }
     .mgr-title {
         font-size: 1.25rem !important;
@@ -414,14 +413,13 @@ button.buy-btn.mgr-buy-btn.disabled {
 /* ===================================================
    ULTRA-SMALL MOBILE MODE (Older Phones, e.g., iPhone SE)
    =================================================== */
-@media (max-width: 400px) {
+@media (max-width: 380px) {
     .mgr-layout-wrapper {
         gap: 8px !important;
     }
     .mgr-portrait-col {
         width: 65px !important;
         min-height: 80px !important;
-        height: 80px !important;
     }
     .mgr-title {
         font-size: 1.1rem !important;
