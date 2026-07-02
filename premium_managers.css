@@ -368,7 +368,7 @@ button.buy-btn.mgr-buy-btn.disabled {
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 768px) {
+@media (max-width: 500px) {
     .upgrade-card.manager-card {
         padding: 8px 10px !important;
         gap: 8px !important;

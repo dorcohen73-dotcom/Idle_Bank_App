@@ -382,7 +382,7 @@
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 768px) {
+@media (max-width: 500px) {
     .department-card {
         padding: 8px 10px !important;
         margin-bottom: 10px !important;
