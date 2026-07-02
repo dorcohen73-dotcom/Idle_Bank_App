@@ -9707,9 +9707,9 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
 
     /* Daily */
-    .daily-challenge-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
-    .daily-challenge-type { font-size: 1.1rem !important; }
-    .daily-challenge-reward { font-size: 0.9rem !important; }
+    .daily-challenge-card { padding: 12px !important; }
+    .daily-card-title { font-size: 1.1rem !important; }
+    .daily-reward-pill { font-size: 0.85rem !important; padding: 0.3rem 0.6rem !important; }
     .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
 .pnm-ad-btn,
 .pnm-skip-btn {
@@ -9902,9 +9902,9 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
 
     /* Daily */
-    .daily-challenge-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
-    .daily-challenge-type { font-size: 1.1rem !important; }
-    .daily-challenge-reward { font-size: 0.9rem !important; }
+    .daily-challenge-card { padding: 12px !important; }
+    .daily-card-title { font-size: 1.1rem !important; }
+    .daily-reward-pill { font-size: 0.85rem !important; padding: 0.3rem 0.6rem !important; }
     .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
 
     /* Branches */
@@ -9926,9 +9926,9 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     #tab-missions .mission-action-zone .buy-btn { padding: 4px !important; font-size: 0.8rem !important; }
 
     /* Daily */
-    .daily-challenge-card { padding: 8px !important; margin-bottom: 8px !important; }
-    .daily-challenge-type { font-size: 0.95rem !important; }
-    .daily-challenge-reward { font-size: 0.8rem !important; }
+    .daily-challenge-card { padding: 10px !important; }
+    .daily-card-title { font-size: 1rem !important; }
+    .daily-reward-pill { font-size: 0.8rem !important; padding: 0.25rem 0.5rem !important; }
     .daily-claim-btn { padding: 4px 10px !important; font-size: 0.8rem !important; }
 
     /* Branches */

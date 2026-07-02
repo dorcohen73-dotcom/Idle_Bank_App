@@ -199,12 +199,12 @@
         initUIEvents();
 
         // Set up language choice on load
-        const chosenLang = window.game.state.language || 'he';
+        const chosenLang = window.game.state.language || 'en';
         const isFirstTime = !window.localStorage.getItem('idle_bank_language_chosen');
         
         if (isFirstTime) {
-            window.game.setLanguage('he');
-            applyLanguage('he');
+            window.game.setLanguage('en');
+            applyLanguage('en');
             if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'none'; // Force choice first time
             if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active');
         } else {

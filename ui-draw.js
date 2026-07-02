@@ -49,7 +49,7 @@ var cachedLang = 'he';
 var vaultFullToastShown = false;
 
 function updateCachedSuffixes(lang) {
-    cachedLang = lang || 'he';
+    cachedLang = lang || 'en';
     if (cachedLang === 'en') {
         cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
         cachedFallback = ' monstrous';
@@ -440,7 +440,7 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
 
 // Create & cache Teller DOM containers
 function rebuildTellersDOM() {
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     DOM_CACHE.tellersZone.innerHTML = '';
     DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
     
@@ -536,7 +536,7 @@ function rebuildTellersDOM() {
 
 // Refresh UI values per tick
 function draw() {
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     const vaultData = game.getVaultRenderData();
 

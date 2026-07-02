@@ -291,7 +291,7 @@ var AdService = {
             const overlay = document.createElement('div');
             overlay.className = 'ad-playing-overlay';
             
-            const lang = (window.game && window.game.state && window.game.state.language) || 'he';
+            const lang = (window.game && window.game.state && window.game.state.language) || 'en';
             const tObj = translations[lang] || translations['he'];
             const titleText = tObj.adTitle || 'Watching Sponsored Ad...';
             const subtitleText = tObj.adSubtitle || 'Reward unlocks in:';
@@ -359,7 +359,7 @@ function formatTime(sec) {
 }
 
 function openPrestigeModal(target) {
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     const sharesGained = game.calculatePrestigeShares();
     
@@ -389,7 +389,7 @@ function openPrestigeModal(target) {
 }
 
 function openBoostModal() {
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     
     const eventModal = document.getElementById('event-modal');
@@ -444,7 +444,7 @@ function openAnalyticsModal() {
     const modal = document.getElementById('analytics-modal');
     if (!modal) return;
     
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     
     document.getElementById('analytics-modal-title').innerText = tObj.analyticsTitle;
@@ -1358,7 +1358,7 @@ function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
 function triggerRandomEvent() {
     if (document.querySelector('.modal-overlay.active')) return;
     
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     
     let eventType = 'crowd';
@@ -1454,7 +1454,7 @@ function triggerRandomEvent() {
 
 function updateAdvDisplay(budget) {
     if (!DOM_CACHE.advDisplay) return;
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang];
     if (budget === 0) {
         DOM_CACHE.advDisplay.innerText = tObj.advValueOff;
@@ -1472,8 +1472,8 @@ function updateAdvDisplay(budget) {
 
 function updateMuteButton() {
     if (!DOM_CACHE.muteBtn) return;
-    const lang = window.gameLanguage || 'he';
-    const tObj = translations[lang] || translations.he;
+    const lang = window.gameLanguage || 'en';
+    const tObj = translations[lang] || translations.en;
     const isMuted = window.gameAudio ? window.gameAudio.isMuted : true;
     if (isMuted) {
         DOM_CACHE.muteBtn.innerText = '🔇';
@@ -1711,11 +1711,11 @@ function showContextualAdBanner(type) {
     if (document.querySelector('.modal-overlay.active')) return;
     if (contextualBannerShown) return;
 
-    const lang = (game.state && game.state.language) || 'he';
+    const lang = (game.state && game.state.language) || 'en';
     const existing = document.getElementById('contextual-offer-banner');
     if (existing) existing.remove();
 
-    const tObj = translations[lang] || translations.he;
+    const tObj = translations[lang] || translations.en;
     const msgs = {
         vip: tObj.boostVIPMsg || '💎 VIP served! Double your reward?',
         milestone: tObj.boostMilestoneMsg || '🎉 Cash milestone! Activate x2 boost?'
@@ -1767,8 +1767,8 @@ function showContextualAdBanner(type) {
 }
 
 function openWeeklyRewardModal() {
-    const lang = (game.state && game.state.language) || 'he';
-    const tObj = translations[lang] || translations.he;
+    const lang = (game.state && game.state.language) || 'en';
+    const tObj = translations[lang] || translations.en;
     const modal = document.getElementById('weekly-modal');
     if (!modal) return;
 
@@ -2022,7 +2022,7 @@ function showLoginRewardModal() {
 
     const reward = window.game.state.pendingLoginReward;
     const streak = window.game.state.loginStreak || 1;
-    const lang = (window.game.state.language) || 'he';
+    const lang = (window.game.state.language) || 'en';
     const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : translations.he;
 
     const streakEl = document.getElementById('login-streak-count');
@@ -2098,8 +2098,8 @@ function _applyLoginReward(reward) {
 // ==========================================
 
 function triggerPrestigeCeremony(sharesGained, branchName, callback) {
-    const _pLang = (game.state && game.state.language) || 'he';
-    const _pT = translations[_pLang] || translations.he;
+    const _pLang = (game.state && game.state.language) || 'en';
+    const _pT = translations[_pLang] || translations.en;
     const overlay = document.createElement('div');
     overlay.className = 'prestige-ceremony-overlay';
     overlay.setAttribute('aria-live', 'polite');
@@ -2222,7 +2222,7 @@ function initUIEvents() {
                 window.gameAudio.playClick();
             }
             
-            const lang = game.state.language || 'he';
+            const lang = game.state.language || 'en';
             let confirmMsg = 'האם אתה בטוח שברצונך לאפס את המשחק ולהתחיל מ-0? כל ההתקדמות שלך תימחק לחלוטין!';
             if (lang === 'en') {
                 confirmMsg = 'Are you sure you want to reset the game and start from 0? All your progress will be completely deleted!';
@@ -2557,7 +2557,7 @@ function initUIEvents() {
                 game.saveGame();
                 draw();
                 if (typeof window.showToast === 'function') {
-                    const _bT = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                    const _bT = translations[(game.state && game.state.language) || 'en'] || translations.en;
                     window.showToast(_bT.boostActivated4h || 'Boost activated! Bank profits doubled for 4 hours.', 'success');
                 }
             });
@@ -2585,7 +2585,7 @@ function initUIEvents() {
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
                 const sharesPreview = game.calculatePrestigeShares() * 3;
-                const _prT = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                const _prT = translations[(game.state && game.state.language) || 'en'] || translations.en;
                 const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT.branchLabel || 'Branch') + ' ' + target);
                 prestigeModal.classList.remove('active');
                 playAd(() => {
@@ -2608,7 +2608,7 @@ function initUIEvents() {
             if (prestigeModal) {
                 const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
                 const sharesPreview = game.calculatePrestigeShares();
-                const _prT2 = translations[(game.state && game.state.language) || 'he'] || translations.he;
+                const _prT2 = translations[(game.state && game.state.language) || 'en'] || translations.en;
                 const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT2.branchLabel || 'Branch') + ' ' + target);
                 prestigeModal.classList.remove('active');
                 triggerPrestigeCeremony(sharesPreview, branchName, () => {
@@ -2658,7 +2658,7 @@ function initUIEvents() {
     if (vaultInfoBtn) {
         vaultInfoBtn.addEventListener('click', () => {
             initSound();
-            const lang = game.state.language || 'he';
+            const lang = game.state.language || 'en';
             const tObj = translations[lang];
             if (tObj && typeof window.showToast === 'function') {
                 window.showToast(tObj.vaultInfoMsg, 'info');
@@ -2819,8 +2819,8 @@ function initUIEvents() {
 
     function openFortuneWheel() {
         initSound();
-        const lang = (game.state && game.state.language) || 'he';
-        const tObj = translations[lang] || translations.he;
+        const lang = (game.state && game.state.language) || 'en';
+        const tObj = translations[lang] || translations.en;
 
         const modal = document.getElementById('fortune-wheel-modal');
         if (!modal) return;
@@ -2859,7 +2859,7 @@ function initUIEvents() {
                 const label = (tObj.wheelPrizes && tObj.wheelPrizes[p.label]) || p.label;
                 
                 let valDesc = '';
-                const l = (game.state && game.state.language) || 'he';
+                const l = (game.state && game.state.language) || 'en';
                 if (p.type === 'cash') {
                     const mins = Math.floor(p.value / 60);
                     valDesc = l === 'he' ? `💵 +${mins} דקות רווח` : l === 'es' ? `💵 +${mins}m Efectivo` : l === 'ru' ? `💵 +${mins}m Прибыль` : `💵 +${mins}m EPS`;
@@ -2943,8 +2943,8 @@ function initUIEvents() {
                         : GAME_CONFIG.WHEEL_PRIZES;
                     const prize = _wheelWeightedRandom(prizePool);
                     let prizeText = '';
-                    const lang2 = (game.state && game.state.language) || 'he';
-                    const tObj2 = translations[lang2] || translations.he;
+                    const lang2 = (game.state && game.state.language) || 'en';
+                    const tObj2 = translations[lang2] || translations.en;
                     const prizeLabel = (tObj2.wheelPrizes && tObj2.wheelPrizes[prize.label]) || prize.label;
 
                     if (prize.type === 'cash') {
@@ -3031,8 +3031,8 @@ function initUIEvents() {
                     const sp = document.getElementById('fortune-spin-btn');
                     if (sp) {
                         sp.disabled = false;
-                        const lang3 = (game.state && game.state.language) || 'he';
-                        const t3 = translations[lang3] || translations.he;
+                        const lang3 = (game.state && game.state.language) || 'en';
+                        const t3 = translations[lang3] || translations.en;
                         sp.textContent = t3.fortuneWheelSpinBtn || 'סובב!';
                     }
                     if (resultEl) resultEl.style.display = 'none';
@@ -3069,8 +3069,8 @@ function initUIEvents() {
     window.triggerVipVisitBanner = function() {
         if (document.getElementById('vip-visit-banner')) return;
 
-        const lang = (game.state && game.state.language) || 'he';
-        const tObj = translations[lang] || translations.he;
+        const lang = (game.state && game.state.language) || 'en';
+        const tObj = translations[lang] || translations.en;
 
         const banner = document.createElement('div');
         banner.id = 'vip-visit-banner';
@@ -3219,8 +3219,8 @@ function initUIEvents() {
         const existing = document.getElementById('prestige-near-miss-banner');
         if (existing) existing.remove();
 
-        const lang = (game.state && game.state.language) || 'he';
-        const tObj = translations[lang] || translations.he;
+        const lang = (game.state && game.state.language) || 'en';
+        const tObj = translations[lang] || translations.en;
 
         const banner = document.createElement('div');
         banner.id = 'prestige-near-miss-banner';
@@ -3270,8 +3270,8 @@ function initUIEvents() {
 
         window.dailyChallengeController.checkAndReset();
 
-        const lang = (game.state && game.state.language) || 'he';
-        const tObj = translations[lang] || translations.he;
+        const lang = (game.state && game.state.language) || 'en';
+        const tObj = translations[lang] || translations.en;
         const container = document.getElementById('daily-challenges-content');
         if (!container) return;
 
@@ -3351,8 +3351,8 @@ function initUIEvents() {
                 const idx = parseInt(btn.getAttribute('data-idx'));
                 const claimed = window.dailyChallengeController.claimReward(idx);
                 if (claimed) {
-                    const lang2 = (game.state && game.state.language) || 'he';
-                    const tObj2 = translations[lang2] || translations.he;
+                    const lang2 = (game.state && game.state.language) || 'en';
+                    const tObj2 = translations[lang2] || translations.en;
                     const c = game.state.dailyChallenges[idx];
                     let msg = '+1';
                     if (c && c.reward) {
@@ -3540,7 +3540,7 @@ function initUIEvents() {
         var tipSet = DISCOVERY_TIPS[key];
         if (!tipSet) { _nextDiscoveryTip(); return; }
 
-        var lang = (window.game && window.game.state && window.game.state.language) || 'he';
+        var lang = (window.game && window.game.state && window.game.state.language) || 'en';
         var tip = tipSet[lang] || tipSet.he;
 
         var panel   = document.getElementById('discovery-tip-panel');

@@ -50,7 +50,7 @@ class IdleBankGame {
             shares: 0,                     // Golden Shares
             currentBranch: 0,              // 0: Jerusalem, 1: Tel Aviv, 2: NY, 3: London
             maxBranchUnlocked: 0,
-            language: 'he',
+            language: 'en',
             goldUpgrades: {
                 startingCash: 0,
                 guardSpeed: 0,
@@ -802,7 +802,7 @@ class IdleBankGame {
             this.state.cash = Math.round((this.state.cash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
             this.state.lifetimeCash = Math.round((this.state.lifetimeCash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
             if (typeof window.showToast === 'function') {
-                const lang = this.state.language || 'he';
+                const lang = this.state.language || 'en';
                 const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
                 const branchName = (tObj && tObj.branches && tObj.branches.names && tObj.branches.names[targetBranchIndex])
                     ? tObj.branches.names[targetBranchIndex]
@@ -1585,7 +1585,7 @@ class IdleBankGame {
             stat1Val = `+${Math.round(coefs.spawnIntervalBoost * 100 * level)}%`;
             stat2Val = `+${Math.round(coefs.incomeBoost * 100 * level)}%`;
         } else if (type === 'finance') {
-            const lang = this.state.language || 'he';
+            const lang = this.state.language || 'en';
             const tAuto = (typeof translations !== 'undefined' && translations[lang] && translations[lang].autoText) ? translations[lang].autoText : 'Auto';
             stat1Val = tAuto;
             stat2Val = `+${Math.round(coefs.deptIncomeBoost * 100 * level)}%`;

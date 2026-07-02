@@ -489,7 +489,7 @@ class MissionController {
                 m.completed = true;
                 anyNewlyCompleted = true;
                 if (typeof window.showToast === 'function') {
-                    const lang = this.game.state.language || 'he';
+                    const lang = this.game.state.language || 'en';
                     const msg = lang === 'he' ? '🏆 משימה הושלמה! לחץ אסוף פרס' :
                                (lang === 'ru' ? '🏆 Миссия завершена!' :
                                (lang === 'es' ? '🏆 ¡Misión completada!' : '🏆 Mission Completed!'));

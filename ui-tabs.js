@@ -110,7 +110,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                 </div>
             </div>
             
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="שדרג ${title} — ${formatMoney(cost)}">
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${title} — ${formatMoney(cost)}">
                 <div class="upg-v2-btn-left-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -172,7 +172,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                     <div class="upg-v2-desc">${desc}</div>
                 </div>
             </div>
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="פתח עמדה ${id} — ${formatMoney(cost)}">
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].unlockLabel} ${id + 1} — ${formatMoney(cost)}">
                 <div class="upg-v2-btn-left-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -205,7 +205,7 @@ function renderUpgradesTab() {
     _buyBtnCache = null;
     container.innerHTML = '';
 
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang].upgrades;
 
     // Teller upgrade cards
@@ -262,7 +262,7 @@ function renderUpgradesTab() {
             </div>
         </div>
         
-        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="שדרג כספת — ${formatMoney(vCost)}">
+        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} — ${formatMoney(vCost)}">
             <div class="upg-v2-btn-left-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -411,7 +411,7 @@ function renderUpgradesTab() {
                 card.style.position = 'relative';
                 const badge = document.createElement('div');
                 badge.className = 'recommended-badge';
-                badge.innerText = (lang === 'he') ? '🔥 הכי משתלם' : '🔥 Best Value';
+                badge.innerText = (statLabels[lang] || statLabels.en).bestValue;
                 card.appendChild(badge);
             }
         }
@@ -425,7 +425,7 @@ function renderUpgradesTab() {
                 card.style.position = 'relative';
                 const badge = document.createElement('div');
                 badge.className = 'recommended-badge';
-                badge.innerText = (lang === 'he') ? '🔥 הכי משתלם' : '🔥 Best Value';
+                badge.innerText = (statLabels[lang] || statLabels.en).bestValue;
                 card.appendChild(badge);
             }
         }
@@ -456,7 +456,9 @@ const statLabels = {
         totalYield: "תגמול כולל",
         totalUpgrade: 'סה"כ שדרוג',
         unlockCost: "עלות פתיחה",
-        autoText: "אוטומטי"
+        autoText: "אוטומטי",
+        maxLabel: "מקסימלי",
+        bestValue: "🔥 הכי משתלם"
     },
     en: {
         satisfaction: "Satisfaction",
@@ -481,7 +483,9 @@ const statLabels = {
         totalYield: "Total Yield",
         totalUpgrade: "Total Upgrade",
         unlockCost: "Unlock Cost",
-        autoText: "Auto"
+        autoText: "Auto",
+        maxLabel: "Maximum",
+        bestValue: "🔥 Best Value"
     },
     es: {
         satisfaction: "Satisfacción",
@@ -506,7 +510,9 @@ const statLabels = {
         totalYield: "Rendimiento Total",
         totalUpgrade: "Total Mejora",
         unlockCost: "Costo de Apertura",
-        autoText: "Auto"
+        autoText: "Auto",
+        maxLabel: "Máximo",
+        bestValue: "🔥 Mejor Oferta"
     },
     ru: {
         satisfaction: "Удовлетворение",
@@ -531,7 +537,9 @@ const statLabels = {
         totalYield: "Общий доход",
         totalUpgrade: "Итого улучшений",
         unlockCost: "Стоимость открытия",
-        autoText: "Авто"
+        autoText: "Авто",
+        maxLabel: "Максимум",
+        bestValue: "🔥 Лучшая цена"
     }
 };
 
@@ -552,7 +560,7 @@ function renderManagersTab() {
     _buyBtnCache = null;
     container.innerHTML = '';
 
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang].managers;
 
     const managersKeys = ['customer', 'operations', 'finance', 'accountant', 'service', 'vip', 'marketing'];
@@ -740,7 +748,7 @@ function renderManagersTab() {
                 const levelsToBuy = details.levels;
                 
                 actionBtnHtml = `
-                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? '' : 'disabled'}" data-mgr-type="${type}" ${canUpgrade ? '' : 'disabled'} aria-label="שדרג מנהל ${tObj.names[type]} — ${formatMoney(costToUpgrade)}">
+                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? '' : 'disabled'}" data-mgr-type="${type}" ${canUpgrade ? '' : 'disabled'} aria-label="${statLabels[lang].upgradeBtn} ${tObj.names[type]} — ${formatMoney(costToUpgrade)}">
                         ${statLabels[lang].upgradeBtn}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ''}<br>${formatMoney(costToUpgrade)}
                     </button>
                 `;
@@ -887,7 +895,7 @@ function renderDepartmentsTab() {
     if (!container) return;
     container.innerHTML = '';
 
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang].departments;
     game.state.departments.forEach((d) => {
         const isUnlocked = d.unlocked;
@@ -941,7 +949,7 @@ function renderDepartmentsTab() {
                             <div class="jewel-text">MAX</div>
                         </div>
                     </div>
-                    <div class="max-jewel-label">מקסימלי</div>
+                    <div class="max-jewel-label">${(statLabels[lang] || statLabels.en).maxLabel}</div>
                 </div>
             `;
         }
@@ -1017,7 +1025,7 @@ function renderBranchesTab() {
     _buyBtnCache = null;
     container.innerHTML = '';
 
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang].branches;
     const sharesGained = game.calculatePrestigeShares();
     const canPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
@@ -1288,7 +1296,7 @@ function renderMissionsTab() {
     if (!container) return;
     container.innerHTML = '';
 
-    const lang = game.state.language || 'he';
+    const lang = game.state.language || 'en';
     const tObj = translations[lang].missions;
     const rootT = translations[lang];
     const completedCount = game.state.missionsCompleted || 0;
@@ -1469,8 +1477,8 @@ function renderMissionsTab() {
                         const rectShares = rectSharesBox.getBoundingClientRect();
                         animateCoins(rectBtn, rectShares, collected.amount, 'gold');
                     }
-                    const lang = (game.state && game.state.language) || 'he';
-                    const shareLbl = (translations[lang] || translations.he).sharesLabel || 'Gold Shares';
+                    const lang = (game.state && game.state.language) || 'en';
+                    const shareLbl = (translations[lang] || translations.en).sharesLabel || 'Gold Shares';
                     spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');
                 }
 
@@ -1631,7 +1639,7 @@ function updateButtonAffordability() {
         const container = document.getElementById('tab-managers');
         if (!container) return;
         const buttons = container.querySelectorAll('.buy-btn');
-        const lang = game.state.language || 'he';
+        const lang = game.state.language || 'en';
         for (let i = 0; i < buttons.length; i++) {
             const btn = buttons[i];
             const type = btn.getAttribute('data-type') || btn.getAttribute('data-mgr-type');
