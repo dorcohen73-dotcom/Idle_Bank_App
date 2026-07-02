@@ -40,6 +40,18 @@
         fortuneWheelBtn: null,
         vaultMiniLabel: null,
         skipLink: null,
+        resetConfirmLabel: null,
+        vaultMiniBtn: null,
+        doubleIncomeLabel: null,
+        analyticsFromSettingsBtn: null,
+        footerPrivacyLink: null,
+        controlPanelSection: null,
+        controlPanelSrHeading: null,
+        tabsNav: null,
+        bottomNav: null,
+        vaultMiniIcon: null,
+        vaultMiniFillEl: null,
+        bankFloorSection: null,
         langBtn: null,
         langModal: null,
         langModalClose: null,
@@ -118,6 +130,18 @@
         window.DOM_CACHE.fortuneWheelBtn = document.getElementById('fortune-wheel-btn');
         window.DOM_CACHE.vaultMiniLabel = document.getElementById('vault-mini-label');
         window.DOM_CACHE.skipLink = document.getElementById('skip-link');
+        window.DOM_CACHE.resetConfirmLabel = document.getElementById('reset-confirm-label');
+        window.DOM_CACHE.vaultMiniBtn = document.getElementById('vault-mini-btn');
+        window.DOM_CACHE.doubleIncomeLabel = document.getElementById('double-income-label');
+        window.DOM_CACHE.analyticsFromSettingsBtn = document.getElementById('analytics-from-settings-btn');
+        window.DOM_CACHE.footerPrivacyLink = document.getElementById('footer-privacy-link');
+        window.DOM_CACHE.controlPanelSection = document.getElementById('control-panel-section');
+        window.DOM_CACHE.controlPanelSrHeading = document.getElementById('control-panel-sr-heading');
+        window.DOM_CACHE.tabsNav = document.getElementById('tabs-nav');
+        window.DOM_CACHE.bottomNav = document.getElementById('bottom-nav');
+        window.DOM_CACHE.vaultMiniIcon = document.getElementById('vault-mini-icon');
+        window.DOM_CACHE.vaultMiniFillEl = document.getElementById('vault-mini-fill');
+        window.DOM_CACHE.bankFloorSection = document.getElementById('bank-floor-section');
         window.DOM_CACHE.langBtn = document.getElementById('lang-btn');
         window.DOM_CACHE.langModal = document.getElementById('lang-modal');
         window.DOM_CACHE.btnWatchAd = document.getElementById('btn-watch-ad');

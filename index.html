@@ -149,7 +149,7 @@
                         <div class="secondary-card-accent multiplier-accent"></div>
                         <div class="secondary-card-top">
                             <span class="secondary-icon">✨</span>
-                            <span class="secondary-label">הכפלת הכנסה</span>
+                            <span class="secondary-label" id="double-income-label">הכפלת הכנסה</span>
                         </div>
                         <span class="secondary-value multiplier-value-wrap" id="multiplier-value-container">
                             <span id="label-multiplier">מכפיל</span>: <span id="multiplier-value">1.0x</span>
@@ -164,7 +164,7 @@
                 <div class="vault-mini-bar" id="vault-mini-bar">
                     <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
                     <div class="vault-mini-top">
-                        <img class="vault-mini-icon" src="תמונות/vault-door.png" alt="כספת">
+                        <img class="vault-mini-icon" id="vault-mini-icon" src="תמונות/vault-door.png" alt="כספת">
                         <div class="vault-mini-name-col">
                             <span class="vault-mini-label" id="vault-mini-label">כספת</span>
                             <span class="vault-mini-level" id="vault-mini-level">Lv.1</span>
@@ -196,7 +196,7 @@
         <main id="main-content" class="main-grid">
 
             <!-- Bank Floor Visual Simulation -->
-            <section class="bank-floor" aria-label="תצוגת סניף הבנק">
+            <section class="bank-floor" id="bank-floor-section" aria-label="תצוגת סניף הבנק">
                 <div class="panel-header">
                     <div class="panel-title"><span aria-hidden="true">🏛️</span> <span
                             id="label-simulator-title">סימולטור הבנק</span></div>
@@ -330,10 +330,10 @@
             </section>
 
             <!-- Control & Upgrades Panel -->
-            <section class="control-panel" aria-label="לוח בקרה ושדרוגים">
-                <h2 class="sr-only">לוח בקרה</h2>
+            <section class="control-panel" id="control-panel-section" aria-label="לוח בקרה ושדרוגים">
+                <h2 class="sr-only" id="control-panel-sr-heading">לוח בקרה</h2>
                 <!-- Navigation Tabs -->
-                <nav class="tabs-nav" role="tablist" aria-label="תפריט ניווט פנימי">
+                <nav class="tabs-nav" id="tabs-nav" role="tablist" aria-label="תפריט ניווט פנימי">
                     <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades">
                         <img src="תמונות/nav_bank.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">עמדות</span>
@@ -419,7 +419,7 @@
             <p id="label-footer"><span id="footer-flavor">אימפריית הבנקים © 2026 - משחק Idle פרימיום. כל הזכויות
                     שמורות.</span></p>
             <div class="footer-links">
-                <a href="privacy.html" class="footer-link" target="_blank" rel="noopener">מדיניות פרטיות</a> |
+                <a href="privacy.html" class="footer-link" id="footer-privacy-link" target="_blank" rel="noopener">מדיניות פרטיות</a> |
                 <span class="footer-version">v1.2.0</span>
             </div>
         </footer>
@@ -431,7 +431,7 @@
         <div class="modal-box">
             <div class="modal-icon" aria-hidden="true">🎁</div>
             <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
-            <p class="modal-text" id="login-reward-streak-text">רצף: <strong id="login-streak-count">1</strong> ימים</p>
+            <p class="modal-text" id="login-reward-streak-text">רצף: 1 ימים</p>
             <div class="modal-amount" id="login-reward-amount">+$0</div>
             <p class="modal-text modal-text-muted" id="login-reward-desc"></p>
             <button class="modal-close-btn login-reward-collect-btn" id="login-reward-collect-btn">אסוף!</button>
@@ -495,7 +495,7 @@
                 <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
                 <div class="reset-confirm-wrapper">
                     <input type="checkbox" id="reset-confirm-checkbox">
-                    <label for="reset-confirm-checkbox">אני מאשר איפוס מלא / I confirm full reset</label>
+                    <label for="reset-confirm-checkbox" id="reset-confirm-label">אני מאשר איפוס מלא</label>
                 </div>
                 <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span
                         aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
@@ -625,9 +625,6 @@
             <div class="active-star">✨</div>
         </button>
     </nav>
-
-    <!-- JavaScript Controller -->
-    <script src="config.js" defer></script>
 
     <!-- Fortune Wheel Modal -->
     <div class="modal-overlay" id="fortune-wheel-modal" role="dialog" aria-modal="true"

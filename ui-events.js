@@ -131,9 +131,12 @@ function applyLanguage(lang) {
     document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
         const lbl = btn.querySelector('.bnav-label');
         if (lbl && bnavMap[btn.dataset.tab]) {
-            lbl.textContent = bnavMap[btn.dataset.tab].replace(/🏆|📅|📆/g, '').trim();
+            const cleanLbl = bnavMap[btn.dataset.tab].replace(/🏆|📅|📆/g, '').trim();
+            lbl.textContent = cleanLbl;
+            btn.setAttribute('aria-label', cleanLbl);
         }
     });
+    if (DOM_CACHE.bottomNav) DOM_CACHE.bottomNav.setAttribute('aria-label', tObj.bottomNavLabel || 'Bottom navigation');
     
     const tabBtnDaily = document.getElementById('tab-btn-daily');
     if (tObj.dailyTabBtn) updateTabLabel(tabBtnDaily, tObj.dailyTabBtn);
@@ -179,6 +182,7 @@ function applyLanguage(lang) {
         const base = (tObj.resetGameBtn || 'איפוס משחק מוחלט').replace('⚠️', '').trim();
         DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">⚠️</span> ${base}`;
     }
+    if (DOM_CACHE.resetConfirmLabel) DOM_CACHE.resetConfirmLabel.innerText = tObj.resetConfirmLabel || 'I confirm full reset';
 
     const gdprTextEl = document.getElementById('gdpr-text');
     if (gdprTextEl) gdprTextEl.innerText = tObj.gdprText || 'Your data is stored on your device only.';
@@ -229,11 +233,32 @@ function applyLanguage(lang) {
         DOM_CACHE.boostBtn.title = tObj.boostBtnTitle || '2x Income Booster';
         DOM_CACHE.boostBtn.setAttribute('aria-label', tObj.boostBtnTitle || '2x Income Booster');
     }
-    if (DOM_CACHE.vaultInfoBtn) DOM_CACHE.vaultInfoBtn.title = tObj.vaultInfoBtnTitle || 'Vault interest info';
+    if (DOM_CACHE.vaultInfoBtn) {
+        DOM_CACHE.vaultInfoBtn.title = tObj.vaultInfoBtnTitle || 'Vault interest info';
+        DOM_CACHE.vaultInfoBtn.setAttribute('aria-label', tObj.vaultInfoBtnTitle || 'Vault interest info');
+    }
     if (DOM_CACHE.fortuneWheelBtn) {
         DOM_CACHE.fortuneWheelBtn.title = tObj.fortuneWheelTitle || 'Daily Fortune Wheel';
         DOM_CACHE.fortuneWheelBtn.setAttribute('aria-label', tObj.fortuneWheelTitle || 'Daily Fortune Wheel');
     }
+    if (DOM_CACHE.langBtn) DOM_CACHE.langBtn.setAttribute('aria-label', tObj.langModalTitle || 'Settings & Language');
+    if (DOM_CACHE.vaultMiniBtn) {
+        DOM_CACHE.vaultMiniBtn.innerText = tObj.vaultMiniCollectBtn || '💰 Collect';
+        DOM_CACHE.vaultMiniBtn.setAttribute('aria-label', tObj.tooltips.vault);
+    }
+    if (DOM_CACHE.doubleIncomeLabel) DOM_CACHE.doubleIncomeLabel.innerText = tObj.doubleIncomeLabel || 'Double Income';
+    if (DOM_CACHE.analyticsFromSettingsBtn) DOM_CACHE.analyticsFromSettingsBtn.innerText = tObj.analyticsShortcutBtn || '📊 Analytics Summary';
+    if (DOM_CACHE.footerPrivacyLink) DOM_CACHE.footerPrivacyLink.innerText = tObj.footerPrivacyLink || 'Privacy Policy';
+    if (DOM_CACHE.controlPanelSection) DOM_CACHE.controlPanelSection.setAttribute('aria-label', tObj.controlPanelLabel || 'Control Panel & Upgrades');
+    if (DOM_CACHE.controlPanelSrHeading) DOM_CACHE.controlPanelSrHeading.innerText = tObj.controlPanelLabel || 'Control Panel & Upgrades';
+    if (DOM_CACHE.tabsNav) DOM_CACHE.tabsNav.setAttribute('aria-label', tObj.tabsNavLabel || 'Internal navigation menu');
+    if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.setAttribute('aria-label', tObj.collectVault);
+    if (DOM_CACHE.cash) DOM_CACHE.cash.setAttribute('aria-label', tObj.cashLabel);
+    if (DOM_CACHE.vaultMiniIcon) DOM_CACHE.vaultMiniIcon.setAttribute('alt', tObj.vaultMiniLabel || 'Vault');
+    if (DOM_CACHE.vaultMiniFillEl) DOM_CACHE.vaultMiniFillEl.setAttribute('aria-label', tObj.vaultMiniFillLabel || 'Side vault fill');
+    if (DOM_CACHE.bankFloorSection) DOM_CACHE.bankFloorSection.setAttribute('aria-label', tObj.bankFloorLabel || 'Bank branch view');
+    if (DOM_CACHE.queueFillBar) DOM_CACHE.queueFillBar.setAttribute('aria-label', tObj.queueAriaLabel || 'Customer queue');
+    if (DOM_CACHE.advSlider) DOM_CACHE.advSlider.setAttribute('aria-label', tObj.advSliderLabel || 'Ad campaign budget');
 
     updateMuteButton();
     rebuildTellersDOM();
@@ -2046,7 +2071,7 @@ function showLoginRewardModal() {
     const lang = (window.game.state.language) || 'en';
     const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : translations.he;
 
-    const streakEl = document.getElementById('login-streak-count');
+    const streakTextEl = document.getElementById('login-reward-streak-text');
     const amountEl = document.getElementById('login-reward-amount');
     const descEl = document.getElementById('login-reward-desc');
     const titleEl = document.getElementById('login-reward-title');
@@ -2056,7 +2081,9 @@ function showLoginRewardModal() {
         : translations.he.loginModal;
 
     if (titleEl) titleEl.innerText = lm.title;
-    if (streakEl) streakEl.innerText = streak;
+    if (streakTextEl) {
+        streakTextEl.textContent = typeof lm.streakLabel === 'function' ? lm.streakLabel(streak) : ('Streak: ' + streak + ' days');
+    }
 
     let displayText = '';
     let descText = '';

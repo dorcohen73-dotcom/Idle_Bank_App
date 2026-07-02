@@ -121,7 +121,6 @@ body {
     background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-body);
-    direction: rtl;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -326,7 +325,6 @@ body {
     background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-body);
-    direction: rtl;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -2256,7 +2254,6 @@ header {
     overflow: hidden;
     min-height: 145px;
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    direction: rtl;
     margin-bottom: 1.2rem;
     width: 100%;
     box-sizing: border-box;
@@ -2899,7 +2896,6 @@ footer {
     align-items: center;
     gap: 0.35rem;
     z-index: 10;
-    direction: rtl;
 }
 
 #tab-missions .mission-card.completed .mission-reward-badge {
@@ -2913,7 +2909,6 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    direction: rtl;
     text-align: right;
     min-width: 0;
 }
@@ -5076,7 +5071,6 @@ header, .control-panel, .bank-floor {
     gap: 0.8rem !important;
     flex-grow: 1 !important;
     min-width: 0 !important;
-    direction: rtl !important;
     text-align: right !important;
 }
 
@@ -5353,7 +5347,6 @@ header, .control-panel, .bank-floor {
     transition: box-shadow 0.3s ease, transform 0.2s ease;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    direction: rtl;
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 1.2rem;
@@ -7819,7 +7812,6 @@ header {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    direction: rtl;
 }
 
 .daily-header-ai {
@@ -8201,7 +8193,6 @@ header {
     z-index: 7500;
     transition: bottom 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
     box-shadow: 0 -6px 32px rgba(59, 130, 246, 0.28), 0 -2px 8px rgba(0,0,0,0.4);
-    direction: rtl;
     text-align: right;
 }
 
@@ -8533,7 +8524,6 @@ header {
     display: flex;
     flex-direction: column;
     width: 100%;
-    direction: rtl;
     text-align: right;
     font-family: var(--font-main);
 }
@@ -8895,7 +8885,6 @@ header {
     padding: 0.9rem 1.1rem;
     margin-bottom: 0.8rem;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    direction: rtl;
     text-align: right;
     gap: 1rem;
     flex-wrap: nowrap;
@@ -9155,7 +9144,6 @@ header {
     align-items: center;
     gap: 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    direction: rtl;
     transition: all 0.3s ease;
     flex-wrap: wrap; /* CRITICAL: Allows button to drop gracefully instead of squishing */
 }
