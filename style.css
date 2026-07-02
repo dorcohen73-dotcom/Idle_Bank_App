@@ -6471,14 +6471,14 @@ header, .control-panel, .bank-floor {
 
     /* Floor map shorter on narrow phones (landscape only — portrait overrides below) */
     .floor-map {
-        min-height: 290px !important;
+        min-height: auto !important;
     }
     /* Portrait: keep floor compact at 130px */
     @media (orientation: portrait) {
         .floor-map {
-            min-height: 130px !important;
-            height: 130px !important;
-            max-height: 130px !important;
+            min-height: auto !important;
+            height: auto !important;
+            max-height: none !important;
         }
     }
 
@@ -6533,9 +6533,9 @@ header, .control-panel, .bank-floor {
 /* Portrait override: מנצח את min-height: 290px מ-@media (max-width: 480px) */
 @media (max-width: 480px) and (orientation: portrait) {
   .floor-map {
-    min-height: 0 !important;
-    height: 130px !important;
-    max-height: 130px !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
   }
 
   /* Gold shop — redesigned 2-column layout for portrait mobile */
