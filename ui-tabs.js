@@ -1481,6 +1481,10 @@ function renderMissionsTab() {
                     const shareLbl = (translations[lang] || translations.en).sharesLabel || 'Gold Shares';
                     spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');
                 }
+                
+                if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {
+                    window.gameAudio.playUnlock();
+                }
 
                 renderMissionsTab();
             }
