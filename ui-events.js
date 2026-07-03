@@ -2929,9 +2929,12 @@ function initUIEvents() {
                 } else if (p.type === 'boost') {
                     icon = '⚡';
                     text = `בוסט ${p.value}h`;
-                } else if (p.type === 'gold' || p.type === 'shares') {
-                    icon = p.type === 'gold' ? '🏅' : '📈';
-                    text = 'מניות זהב';
+                } else if (p.type === 'gold') {
+                    icon = '🏅';
+                    text = 'זהב';
+                } else if (p.type === 'shares') {
+                    icon = '📈';
+                    text = 'מניות';
                 }
 
                 seg.innerHTML = `<span style="display:block;font-size:1.8rem" aria-hidden="true">${icon}</span><span style="font-size:0.65rem;font-weight:900">${text}</span>`;
