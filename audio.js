@@ -27,6 +27,11 @@ class AudioEngine {
         } catch (e) {
             console.warn('Could not save mute state:', e);
         }
+        if (this.isMuted) {
+            this.stopMusic();
+        } else {
+            this.startMusic();
+        }
         return this.isMuted;
     }
 
@@ -233,6 +238,72 @@ class AudioEngine {
                 };
             });
         });
+    }
+    startMusic() {
+        if (this.musicInterval) return;
+        this.ensureRunning(() => {
+            let beat = 0;
+            // Cmaj7, Am7, Dm7, G7 (Classic jazz progression)
+            const chords = [
+                [130.81, 164.81, 196.00, 246.94], // Cmaj7
+                [110.00, 130.81, 164.81, 196.00], // Am7
+                [146.83, 174.61, 220.00, 261.63], // Dm7
+                [98.00, 123.47, 146.83, 174.61]   // G7
+            ];
+            
+            this.musicInterval = setInterval(() => {
+                if (!this.ctx || this.isMuted) return;
+                
+                const chordIdx = Math.floor(beat / 4) % 4;
+                const chord = chords[chordIdx];
+                
+                // Play bass on beat 0 and 2
+                if (beat % 2 === 0) {
+                    this._playTone(chord[0] / 2, 'triangle', 0.4, 0.1, 0.5, this.volume * 1.5);
+                }
+                
+                // Play chord stab on beat 1 and 3
+                if (beat % 2 === 1) {
+                    chord.slice(1).forEach(freq => {
+                        this._playTone(freq, 'sine', 0.2, 0.05, 0.2, this.volume * 0.4);
+                    });
+                }
+                
+                // Random melody note on pentatonic scale (occasionally)
+                if (Math.random() > 0.4) {
+                    const melodyScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // C major pentatonic
+                    const note = melodyScale[Math.floor(Math.random() * melodyScale.length)];
+                    this._playTone(note * 2, 'sine', 0.3, 0.1, 0.4, this.volume * 0.3);
+                }
+                
+                beat++;
+            }, 600); // 100 BPM
+        });
+    }
+
+    stopMusic() {
+        if (this.musicInterval) {
+            clearInterval(this.musicInterval);
+            this.musicInterval = null;
+        }
+    }
+
+    _playTone(freq, type, duration, attack, release, maxVol) {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(maxVol, this.ctx.currentTime + attack);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration + release);
+        
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.start(this.ctx.currentTime);
+        osc.stop(this.ctx.currentTime + duration + release);
     }
 }
 

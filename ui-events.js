@@ -1546,6 +1546,9 @@ function initSound() {
     if (!soundInitialized) {
         if (window.gameAudio && typeof window.gameAudio.init === 'function') {
             window.gameAudio.init();
+            if (!window.gameAudio.isMuted && typeof window.gameAudio.startMusic === 'function') {
+                window.gameAudio.startMusic();
+            }
         }
         soundInitialized = true;
     }
