@@ -9712,34 +9712,6 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     .daily-claim-btn { padding: 6px 14px !important; font-size: 0.9rem !important; }
 }
 
-.pnm-ad-btn,
-.pnm-skip-btn {
-    border: none;
-    border-radius: 10px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    min-width: 120px;
-}
-
-.pnm-ad-btn {
-    background: linear-gradient(135deg, #dfab29 0%, #b8860b 100%);
-    color: #0f172a;
-}
-
-.pnm-skip-btn {
-    background: rgba(255,255,255,0.08);
-    color: #94a3b8;
-    border: 1px solid rgba(255,255,255,0.12);
-}
-
-.pnm-ad-btn:hover { opacity: 0.88; }
-.pnm-skip-btn:hover { background: rgba(255,255,255,0.14); }
-.pnm-ad-btn:disabled,
-.pnm-skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
 /* WCAG 1.3.1 — Progress bars visual aids */
 [role="progressbar"] {
     position: relative;

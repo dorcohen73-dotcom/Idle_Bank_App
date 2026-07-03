@@ -23,7 +23,7 @@ const sharedGameGlobals = [
     'renderBranchesTab', 'renderDailyChallengesSection', 'renderDepartmentsTab',
     'renderManagersTab', 'renderMissionsTab', 'renderUpgradesTab',
     'roundCents', 'serveVipVisitor', 'showDiscoveryTip',
-    'showLoginRewardModal', 'showPrestigeNearMissBanner', 'showToast',
+    'showLoginRewardModal', 'showToast',
     'showTutorialStep', 'spawnFloating', 'spawnParticles', 'spawnVaultCoins',
     'startPromoRecording', 'syncBottomNav', 'tick', 'translations',
     'triggerPrestigeCeremony', 'triggerRandomEvent', 'triggerVipVisitBanner',

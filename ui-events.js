@@ -1751,7 +1751,7 @@ function handleMissionRedirect(missionType, targetId) {
     }, 300);
 }
 
-function showContextualAdBanner(type) {
+function showContextualAdBanner() {
     if (AdService.isInCooldown()) return;
     if (game.state.boost2xTimeLeft > 0) return;
     if (document.querySelector('.modal-overlay.active')) return;
@@ -1762,11 +1762,7 @@ function showContextualAdBanner(type) {
     if (existing) existing.remove();
 
     const tObj = translations[lang] || translations.en;
-    const msgs = {
-        vip: tObj.boostVIPMsg || '💎 VIP served! Double your reward?',
-        milestone: tObj.boostMilestoneMsg || '🎉 Cash milestone! Activate x2 boost?'
-    };
-    const msg = msgs[type] || msgs.vip;
+    const msg = tObj.boostMilestoneMsg || '🎉 Cash milestone! Activate x2 boost?';
 
     const banner = document.createElement('div');
     banner.id = 'contextual-offer-banner';
@@ -1899,9 +1895,8 @@ function tick(timestamp) {
 
         // Contextual ad offer
         if (game._contextualAdPending) {
-            const pendingType = game._contextualAdPending;
             game._contextualAdPending = null;
-            showContextualAdBanner(pendingType);
+            showContextualAdBanner();
         }
 
         // Boost offer window management
@@ -2674,7 +2669,6 @@ function initUIEvents() {
     if (prestigeCancelBtn) {
         prestigeCancelBtn.addEventListener('click', () => {
             initSound();
-            game.state.prestigeNearMissBonus = 0;
             if (prestigeModal) {
                 prestigeModal.classList.remove('active');
             }
@@ -3260,55 +3254,6 @@ function initUIEvents() {
     }
 
     // ==========================================
-    // PRESTIGE NEAR-MISS BONUS BANNER
-    // ==========================================
-
-    function showPrestigeNearMissBanner(onComplete) {
-        const existing = document.getElementById('prestige-near-miss-banner');
-        if (existing) existing.remove();
-
-        const lang = (game.state && game.state.language) || 'en';
-        const tObj = translations[lang] || translations.en;
-
-        const banner = document.createElement('div');
-        banner.id = 'prestige-near-miss-banner';
-        banner.className = 'prestige-near-miss-banner';
-        banner.innerHTML = `
-            <div class="pnm-content">
-                <div class="pnm-title">${tObj.prestigeNearMissTitle || 'Bonus Available!'}</div>
-                <div class="pnm-desc">${tObj.prestigeNearMissDesc || 'Watch a short ad and earn +20% extra shares on this prestige.'}</div>
-                <div class="pnm-btns">
-                    <button class="pnm-ad-btn" id="pnm-ad-btn">${tObj.prestigeNearMissAdBtn || '🎬 Watch Ad (+20%)'}</button>
-                    <button class="pnm-skip-btn" id="pnm-skip-btn">${tObj.prestigeNearMissSkipBtn || 'Skip'}</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(banner);
-
-        const doComplete = (watchedAd) => {
-            const el = document.getElementById('prestige-near-miss-banner');
-            if (el) el.remove();
-            if (typeof onComplete === 'function') onComplete(watchedAd);
-        };
-
-        document.getElementById('pnm-skip-btn').addEventListener('click', () => {
-            initSound();
-            doComplete(false);
-        });
-        document.getElementById('pnm-ad-btn').addEventListener('click', () => {
-            initSound();
-            const adBtn = document.getElementById('pnm-ad-btn');
-            const skipBtn = document.getElementById('pnm-skip-btn');
-            if (adBtn) adBtn.disabled = true;
-            if (skipBtn) skipBtn.disabled = true;
-            playAd(() => {
-                game.state.prestigeNearMissBonus = 0.20;
-                doComplete(true);
-            });
-        });
-    }
-
-    // ==========================================
     // DAILY CHALLENGES
     // ==========================================
 
@@ -3427,7 +3372,6 @@ function initUIEvents() {
     window.playAd = playAd;
     window.formatTime = formatTime;
     window.openPrestigeModal = openPrestigeModal;
-    window.showPrestigeNearMissBanner = showPrestigeNearMissBanner;
     window.openBoostModal = openBoostModal;
     window.openAnalyticsModal = openAnalyticsModal;
     window.handleCrowdEvent = handleCrowdEvent;

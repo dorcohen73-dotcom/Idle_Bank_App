@@ -2527,7 +2527,6 @@ Object.assign(translations.he, {
     atmBackMsg: "ATM חזרו לפעולה!",
     speed20MinusMsg: "-20% מהירות לכ-5 דקות",
     atmFixedWaveMsg: "ATM מתוקנים — גל לקוחות!",
-    boostVIPMsg: "💎 לקוח VIP שירת! הכפל רווח עם פרסומת?",
     boostMilestoneMsg: "🎉 יעד כסף הושג! הפעל בוסט x2?",
     boostActivatedMsg: "⚡ בוסט x2 הופעל!",
     weeklyTitle: "🏆 שבוע מצוין!",
@@ -2543,11 +2542,7 @@ Object.assign(translations.he, {
     boostActivated4h: "בוסט הופעל! רווחי הבנק הוכפלו ל-4 שעות.",
     branchLabel: "סניף",
     autoText: "אוטומטי",
-    boostEventEarningsHint: (amount) => ` — בערך 💰${amount} לפי ה-EPS הנוכחי`,
-    prestigeNearMissTitle: "מגיע לך בונוס!",
-    prestigeNearMissDesc: "צפה בפרסומת קצרה וקבל +20% מניות נוספות בפרסטיז' הנוכחי.",
-    prestigeNearMissAdBtn: "🎬 צפה בפרסומת (+20%)",
-    prestigeNearMissSkipBtn: "דלג — פרסטיז' רגיל"
+    boostEventEarningsHint: (amount) => ` — בערך 💰${amount} לפי ה-EPS הנוכחי`
 });
 
 Object.assign(translations.en, {
@@ -2586,7 +2581,6 @@ Object.assign(translations.en, {
     atmBackMsg: "ATMs back online!",
     speed20MinusMsg: "-20% speed for 5 min",
     atmFixedWaveMsg: "ATMs fixed — client wave!",
-    boostVIPMsg: "💎 VIP served! Double your reward?",
     boostMilestoneMsg: "🎉 Cash milestone! Activate x2 boost?",
     boostActivatedMsg: "⚡ Boost x2 activated!",
     weeklyTitle: "🏆 Great Week!",
@@ -2602,11 +2596,7 @@ Object.assign(translations.en, {
     boostActivated4h: "Boost activated! Bank profits doubled for 4 hours.",
     branchLabel: "Branch",
     autoText: "Auto",
-    boostEventEarningsHint: (amount) => ` — ~💰${amount} at current EPS`,
-    prestigeNearMissTitle: "Bonus Available!",
-    prestigeNearMissDesc: "Watch a short ad and earn +20% extra shares on this prestige.",
-    prestigeNearMissAdBtn: "🎬 Watch Ad (+20%)",
-    prestigeNearMissSkipBtn: "Skip — Regular Prestige"
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} at current EPS`
 });
 
 Object.assign(translations.es, {
@@ -2645,7 +2635,6 @@ Object.assign(translations.es, {
     atmBackMsg: "ATMs restaurados!",
     speed20MinusMsg: "-20% velocidad por 5 min",
     atmFixedWaveMsg: "ATMs arreglados — ola de clientes!",
-    boostVIPMsg: "💎 VIP atendido! ¿Duplicar recompensa?",
     boostMilestoneMsg: "🎉 Meta de dinero! ¿Activar boost x2?",
     boostActivatedMsg: "⚡ Boost x2 activado!",
     weeklyTitle: "🏆 Gran Semana!",
@@ -2661,11 +2650,7 @@ Object.assign(translations.es, {
     boostActivated4h: "¡Boost activado! Las ganancias del banco se duplicaron por 4 horas.",
     branchLabel: "Sucursal",
     autoText: "Auto",
-    boostEventEarningsHint: (amount) => ` — ~💰${amount} según EPS actual`,
-    prestigeNearMissTitle: "¡Bono disponible!",
-    prestigeNearMissDesc: "Mira un anuncio corto y gana +20% acciones extra en este prestige.",
-    prestigeNearMissAdBtn: "🎬 Ver Anuncio (+20%)",
-    prestigeNearMissSkipBtn: "Saltar — Prestige Normal"
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} según EPS actual`
 });
 
 Object.assign(translations.ru, {
@@ -2704,7 +2689,6 @@ Object.assign(translations.ru, {
     atmBackMsg: "Банкоматы снова в сети!",
     speed20MinusMsg: "-20% скорость на 5 мин",
     atmFixedWaveMsg: "Банкоматы исправлены — волна клиентов!",
-    boostVIPMsg: "💎 VIP обслужен! Удвоить награду?",
     boostMilestoneMsg: "🎉 Цель по деньгам! Активировать буст x2?",
     boostActivatedMsg: "⚡ Буст x2 активирован!",
     weeklyTitle: "🏆 Отличная неделя!",
@@ -2720,9 +2704,5 @@ Object.assign(translations.ru, {
     boostActivated4h: "Буст активирован! Прибыль банка удвоена на 4 часа.",
     branchLabel: "Филиал",
     autoText: "Авто",
-    boostEventEarningsHint: (amount) => ` — ~💰${amount} по текущему EPS`,
-    prestigeNearMissTitle: "Бонус доступен!",
-    prestigeNearMissDesc: "Посмотрите короткую рекламу и получите +20% акций в этом престиже.",
-    prestigeNearMissAdBtn: "🎬 Смотреть рекламу (+20%)",
-    prestigeNearMissSkipBtn: "Пропустить — обычный престиж"
+    boostEventEarningsHint: (amount) => ` — ~💰${amount} по текущему EPS`
 });

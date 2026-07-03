@@ -65,8 +65,7 @@ class IdleBankGame {
             boost2xTimeLeft: 0,
             tellerSpeedBoostTimer: 0,
             tellerSpeedBoostFactor: 1,
-            prestigeNearMissBonus: 0,
-            
+
             vault: {
                 level: 1,
                 cashStored: 0
@@ -696,12 +695,6 @@ class IdleBankGame {
             sharesGained *= 3;
             // CAP: reverted to 10000 per user request
             sharesGained = Math.min(10000, sharesGained);
-        }
-        // Apply near-miss ad bonus (+20%) if the player watched an ad before this prestige
-        if (this.state.prestigeNearMissBonus > 0) {
-            sharesGained = Math.round(sharesGained * (1 + this.state.prestigeNearMissBonus));
-            sharesGained = Math.min(10000, sharesGained);
-            this.state.prestigeNearMissBonus = 0;
         }
         if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
             this.isResetting = false;
