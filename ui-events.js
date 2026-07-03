@@ -2902,16 +2902,17 @@ function initUIEvents() {
                 if (p.type === 'cash') {
                     const eps = game.getEarningsPerSecond();
                     const timeAmount = 3600 * eps * p.value;
-                    const pctAmount = Math.round(game.state.cash * (p.label === 'cash_small' ? 0.10 : 0.30));
+                    const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
+                    const pctAmount = Math.round(game.state.cash * pct);
                     const finalCash = formatMoney(Math.max(timeAmount, pctAmount));
                     valDesc = `💵 +<span dir="ltr">${finalCash}</span>`;
                 } else if (p.type === 'boost') {
                     valDesc = l === 'he' ? `⚡ +${p.value} שעות בוסט` : l === 'es' ? `⚡ +${p.value}h Boost` : l === 'ru' ? `⚡ +${p.value}h Буст` : `⚡ +${p.value}h Boost`;
-                } else if (p.type === 'gold' || p.type === 'shares') {
-                    const isSmall = (p.label === 'gold_1' || p.label === 'shares_1');
+                } else if (p.type === 'shares') {
+                    const isSmall = (p.label === 'shares_1');
                     let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
                     sharesAmount = Math.min(10000, sharesAmount);
-                    valDesc = l === 'he' ? `🏅 +${sharesAmount} מניות` : l === 'es' ? `🏅 +${sharesAmount} Acciones` : l === 'ru' ? `🏅 +${sharesAmount} Акций` : `🏅 +${sharesAmount} Shares`;
+                    valDesc = l === 'he' ? `📈 +${sharesAmount} מניות זהב` : l === 'es' ? `📈 +${sharesAmount} Acciones` : l === 'ru' ? `📈 +${sharesAmount} Акций` : `📈 +${sharesAmount} Shares`;
                 }
 
                 li.innerHTML = `<span class="wheel-prize-label">${label}<span style="display:block; font-size:0.75rem; color:#a3e635; font-weight:600; margin-top:0.2rem; letter-spacing:0.5px;">${valDesc}</span></span><span class="wheel-prize-weight">${p.weight}%</span>`;
@@ -2931,17 +2932,18 @@ function initUIEvents() {
                 let text = '';
 
                 if (p.type === 'cash') {
-                    icon = p.label === 'cash_small' ? '💰' : '💸';
+                    icon = p.label === 'cash_small' ? '💰' : (p.label === 'cash_medium' ? '💵' : '💸');
                     const eps = game.getEarningsPerSecond();
                     const timeAmount = 3600 * eps * p.value;
-                    const pctAmount = Math.round(game.state.cash * (p.label === 'cash_small' ? 0.10 : 0.30));
+                    const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
+                    const pctAmount = Math.round(game.state.cash * pct);
                     text = `<span dir="ltr">+${formatMoney(Math.max(timeAmount, pctAmount))}</span>`;
                 } else if (p.type === 'boost') {
                     icon = '⚡';
                     text = `<span dir="ltr">+${p.value}h</span>`;
-                } else if (p.type === 'gold' || p.type === 'shares') {
-                    icon = p.type === 'gold' ? '🏅' : '📈';
-                    const isSmall = (p.label === 'gold_1' || p.label === 'shares_1');
+                } else if (p.type === 'shares') {
+                    icon = '📈';
+                    const isSmall = (p.label === 'shares_1');
                     let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
                     sharesAmount = Math.min(10000, sharesAmount);
                     text = `<span dir="ltr">+${sharesAmount}</span>`;

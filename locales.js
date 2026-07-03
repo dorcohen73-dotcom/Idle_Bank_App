@@ -1657,12 +1657,11 @@ Object.assign(translations.he, {
     fortuneWheelSpinHint: "👇 לחץ על הכפתור למטה כדי לסובב את הגלגל",
     wheelPrizes: {
         cash_small: "כסף",
+        cash_medium: "כסף בינוני",
         cash_big: "כסף גדול",
         boost_2x: "בוסט x2",
-        gold_1: "קופת מניות",
-        gold_2: "קופת מניות ענקית",
         shares_1: "מניות זהב",
-        shares_3: "מניות זהב רבות"
+        shares_2: "כספת מניות זהב"
     },
     // VIP Visitor
     vipBannerTitle: "לקוח VIP פנימה!",
