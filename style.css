@@ -8634,7 +8634,7 @@ header {
 }
 
 .mgr-new-title {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: 900;
     color: #ffffff;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
@@ -8643,9 +8643,8 @@ header {
     margin-bottom: 0.2rem;
     font-family: var(--font-heading);
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
+    line-height: 1.1;
 }
 
 .mgr-new-title::after {
