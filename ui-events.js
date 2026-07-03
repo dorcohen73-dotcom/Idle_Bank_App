@@ -2914,30 +2914,34 @@ function initUIEvents() {
         }
 
         const segmentsContainer = document.getElementById('wheel-segments-container');
-        if (segmentsContainer && segmentsContainer.childElementCount === 0) {
+        if (segmentsContainer) {
+            segmentsContainer.innerHTML = '';
             GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                 if (index >= 7) return;
                 const seg = document.createElement('div');
                 seg.className = `wheel-seg seg-${index + 1}`;
-                
+
                 let icon = '🎁';
                 let text = '';
-                
+
                 if (p.type === 'cash') {
                     icon = p.label === 'cash_small' ? '💰' : '💸';
-                    text = p.label === 'cash_small' ? 'כסף' : 'כסף גדול';
+                    const eps = game.getEarningsPerSecond();
+                    const timeAmount = 3600 * eps * p.value;
+                    const pctAmount = Math.round(game.state.cash * (p.label === 'cash_small' ? 0.10 : 0.30));
+                    text = `<span dir="ltr">+${formatMoney(Math.max(timeAmount, pctAmount))}</span>`;
                 } else if (p.type === 'boost') {
                     icon = '⚡';
-                    text = `בוסט ${p.value}h`;
-                } else if (p.type === 'gold') {
-                    icon = '🏅';
-                    text = 'זהב';
-                } else if (p.type === 'shares') {
-                    icon = '📈';
-                    text = 'מניות';
+                    text = `<span dir="ltr">+${p.value}h</span>`;
+                } else if (p.type === 'gold' || p.type === 'shares') {
+                    icon = p.type === 'gold' ? '🏅' : '📈';
+                    const isSmall = (p.label === 'gold_1' || p.label === 'shares_1');
+                    let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
+                    sharesAmount = Math.min(10000, sharesAmount);
+                    text = `<span dir="ltr">+${sharesAmount}</span>`;
                 }
 
-                seg.innerHTML = `<span style="display:block;font-size:1.8rem" aria-hidden="true">${icon}</span><span style="font-size:0.65rem;font-weight:900">${text}</span>`;
+                seg.innerHTML = `<span style="display:block;font-size:1.6rem" aria-hidden="true">${icon}</span><span style="font-size:0.75rem;font-weight:900;letter-spacing:1px">${text}</span>`;
                 segmentsContainer.appendChild(seg);
             });
         }
