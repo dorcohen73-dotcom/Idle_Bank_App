@@ -116,11 +116,11 @@ const GAME_CONFIG = {
 
     WHEEL_PRIZES: [
         { type: 'cash',   label: 'cash_small',  weight: 40, value: 1 },
-        { type: 'shares', label: 'shares_1',    weight: 20, value: 5 },
-        { type: 'cash',   label: 'cash_medium', weight: 15, value: 2 },
-        { type: 'boost',  label: 'boost_2x',    weight: 15, value: 4 },
         { type: 'shares', label: 'shares_2',    weight: 5,  value: 15 },
-        { type: 'cash',   label: 'cash_big',    weight: 5,  value: 4 }
+        { type: 'cash',   label: 'cash_medium', weight: 15, value: 2 },
+        { type: 'cash',   label: 'cash_big',    weight: 5,  value: 4 },
+        { type: 'shares', label: 'shares_1',    weight: 20, value: 5 },
+        { type: 'boost',  label: 'boost_2x',    weight: 15, value: 4 }
     ],
 
     // AdMob configuration IDs
