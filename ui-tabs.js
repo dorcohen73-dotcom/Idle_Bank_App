@@ -1457,10 +1457,14 @@ function renderMissionsTab() {
         container.appendChild(card);
     });
 
-    // Bind claim reward event handlers
     container.querySelectorAll('.claim-reward-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
+            if (window._isClaimingMission) return;
+            window._isClaimingMission = true;
+            setTimeout(() => { window._isClaimingMission = false; }, 500);
+
             initSound();
             const missionId = btn.getAttribute('data-mission-id');
             const collected = game.claimMissionReward(missionId);

@@ -3386,11 +3386,18 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
         });
 
         container.querySelectorAll('.daily-claim-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window._isClaimingDaily) return;
+                window._isClaimingDaily = true;
+                setTimeout(() => { window._isClaimingDaily = false; }, 500);
+
                 initSound();
                 const idx = parseInt(btn.getAttribute('data-idx'));
                 const claimed = window.dailyChallengeController.claimReward(idx);
                 if (claimed) {
+                    btn.disabled = true;
                     const lang2 = (game.state && game.state.language) || 'en';
                     const tObj2 = translations[lang2] || translations.en;
                     const c = game.state.dailyChallenges[idx];
