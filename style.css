@@ -2926,9 +2926,8 @@ footer {
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.85);
     letter-spacing: 0.3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
+    line-height: 1.2;
 }
 
 #tab-missions .mission-card .mission-desc {

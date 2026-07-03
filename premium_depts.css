@@ -133,14 +133,13 @@
 }
 
 .dept-title-text {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 0.2px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
+    line-height: 1.2;
 }
 
 /* The dark green pill */
