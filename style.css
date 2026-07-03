@@ -10146,3 +10146,32 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
         max-height: 200px !important;
     }
 }
+
+
+/* Vault particles */
+.vault-particle {
+    position: absolute;
+    width: 25px;
+    height: 15px;
+    background: #10b981;
+    border-radius: 2px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    z-index: 45; /* behind doors, above modal but wait, modal is opacity 0 */
+    opacity: 0;
+}
+
+#offline-modal.active .vault-particle {
+    animation: fly-out 1.2s ease-out 1.2s forwards;
+}
+
+.vp-1 { top: 50%; left: 50%; transform: rotate(15deg); }
+.vp-2 { top: 50%; left: 50%; transform: rotate(-25deg); }
+.vp-3 { top: 50%; left: 50%; transform: rotate(45deg); }
+.vp-4 { top: 50%; left: 50%; transform: rotate(-65deg); }
+.vp-5 { top: 50%; left: 50%; transform: rotate(10deg); }
+
+@keyframes fly-out {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--tx, 150px), var(--ty, -150px)) scale(1.5) rotate(var(--rot, 360deg)); }
+}

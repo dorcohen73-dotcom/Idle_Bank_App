@@ -440,16 +440,34 @@
 
     <!-- Offline Earnings Welcome Modal -->
     <div class="modal-overlay" id="offline-modal" role="dialog" aria-modal="true" aria-labelledby="offline-modal-title">
-        <div class="modal-box">
-            <div class="modal-icon" aria-hidden="true">💰</div>
-            <h2 class="modal-title" id="offline-modal-title">ברוך שובך, מנכ"ל!</h2>
-            <p class="modal-text" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור
-                הבנק!</p>
-            <div class="modal-amount" id="modal-amount">$0</div>
-            <div class="prestige-options prestige-options-mt">
-                <button id="offline-double-btn" class="modal-close-btn prestige-double-btn"><span
-                        aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 2!</button>
-                <button id="offline-claim-btn" class="modal-close-btn secondary-btn">קבל סכום רגיל</button>
+        <div class="vault-animation-container">
+            <div class="vault-doors">
+                <div class="vault-particle vp-1" style="--tx: -120px; --ty: -180px; --rot: 120deg;">💵</div>
+                <div class="vault-particle vp-2" style="--tx: 140px; --ty: -160px; --rot: -140deg;">💵</div>
+                <div class="vault-particle vp-3" style="--tx: -160px; --ty: 100px; --rot: 240deg;">💰</div>
+                <div class="vault-particle vp-4" style="--tx: 150px; --ty: 120px; --rot: -220deg;">💰</div>
+                <div class="vault-particle vp-5" style="--tx: 0px; --ty: -200px; --rot: 360deg;">💵</div>
+                <div class="vault-door-left">
+                    <div class="vault-hardware hardware-l1"></div>
+                    <div class="vault-hardware hardware-l2"></div>
+                    <div class="vault-wheel-spinner">
+                        <div class="vault-wheel-center"></div>
+                    </div>
+                </div>
+                <div class="vault-door-right">
+                    <div class="vault-hardware hardware-r1"></div>
+                    <div class="vault-hardware hardware-r2"></div>
+                </div>
+            </div>
+            <div class="modal-box">
+                <div class="modal-icon" aria-hidden="true">💰</div>
+                <h2 class="modal-title" id="offline-modal-title">ברוך שובך, מנכ"ל!</h2>
+                <p class="modal-text" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור הבנק!</p>
+                <div class="modal-amount" id="modal-amount" style="text-shadow: 0 0 20px rgba(16,185,129,0.8);">$0</div>
+                <div class="prestige-options prestige-options-mt">
+                    <button id="offline-double-btn" class="modal-close-btn prestige-double-btn"><span aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 2!</button>
+                    <button id="offline-claim-btn" class="modal-close-btn secondary-btn">קבל סכום רגיל</button>
+                </div>
             </div>
         </div>
     </div>
