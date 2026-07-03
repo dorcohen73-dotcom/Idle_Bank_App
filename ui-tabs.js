@@ -1460,11 +1460,12 @@ function renderMissionsTab() {
     // Bind claim reward event handlers
     container.querySelectorAll('.claim-reward-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             initSound();
             const missionId = btn.getAttribute('data-mission-id');
             const collected = game.claimMissionReward(missionId);
-
             if (collected && collected.type !== 'none' && collected.amount > 0) {
+                btn.disabled = true;
                 const rectBtn = btn.getBoundingClientRect();
                 if (collected.type === 'cash') {
                     const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
