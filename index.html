@@ -23,6 +23,7 @@
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- Preload critical assets -->
     <link rel="preload" href="תמונות/icon.png" as="image">
     <link rel="preload" href="תמונות/nav_bank.png" as="image">
@@ -447,8 +448,8 @@
             <div class="vault-particle vp-4" style="--tx: 150px; --ty: 120px; --rot: -220deg;">💰</div>
             <div class="vault-particle vp-5" style="--tx: 0px; --ty: -200px; --rot: 360deg;">💵</div>
             
-            <div class="offline-premium-icon" aria-hidden="true">💰</div>
-            <h2 class="offline-premium-title" id="offline-modal-title">ברוך שובך, <span>מנכ"ל!</span></h2>
+            <img src="premium_bag.png" class="offline-premium-icon-img" alt="Money Bag" aria-hidden="true" />
+            <h2 class="offline-premium-title" id="offline-modal-title">ברוך שובך, מנכ"ל!</h2>
             <p class="offline-premium-subtitle" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור הבנק!</p>
             
             <div class="offline-premium-divider">✧</div>
@@ -459,7 +460,7 @@
 
             <div class="prestige-options prestige-options-mt">
                 <button id="offline-double-btn" class="modal-close-btn offline-premium-btn-ad">
-                    <span aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 3!
+                    צפה בסרטון וקבל פי 3! <span aria-hidden="true" style="font-size: 1.2em;">🎬</span>
                 </button>
                 <button id="offline-claim-btn" class="modal-close-btn offline-premium-btn-claim">קבל סכום רגיל</button>
             </div>
