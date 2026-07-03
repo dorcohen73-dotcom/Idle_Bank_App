@@ -2904,7 +2904,7 @@ function initUIEvents() {
                     const timeAmount = 3600 * eps * p.value;
                     const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
                     const pctAmount = Math.round(game.state.cash * pct);
-                    const finalCash = formatMoney(Math.max(timeAmount, pctAmount));
+                    const finalCash = formatMoney(Math.max(timeAmount, pctAmount), true);
                     valDesc = `💵 +<span dir="ltr">${finalCash}</span>`;
                 } else if (p.type === 'boost') {
                     valDesc = l === 'he' ? `⚡ +${p.value} שעות בוסט` : l === 'es' ? `⚡ +${p.value}h Boost` : l === 'ru' ? `⚡ +${p.value}h Буст` : `⚡ +${p.value}h Boost`;
@@ -2937,7 +2937,7 @@ function initUIEvents() {
                     const timeAmount = 3600 * eps * p.value;
                     const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
                     const pctAmount = Math.round(game.state.cash * pct);
-                    text = `<span dir="ltr">+${formatMoney(Math.max(timeAmount, pctAmount))}</span>`;
+                    text = `<span dir="ltr">+${formatMoney(Math.max(timeAmount, pctAmount), true)}</span>`;
                 } else if (p.type === 'boost') {
                     icon = '⚡';
                     text = `<span dir="ltr">+${p.value}h</span>`;

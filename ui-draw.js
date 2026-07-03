@@ -98,7 +98,7 @@ function fastFormat(num, lang) {
 }
 
 // Big numbers formatter
-function formatMoney(num) {
+function formatMoney(num, noDecimals = false) {
     if (num === null || num === undefined || isNaN(num)) return '$0';
     if (num < 1000) {
         return '$' + fastFormat(Math.floor(num), cachedLang);
@@ -106,8 +106,8 @@ function formatMoney(num) {
     const i = Math.floor(Math.log10(num) / 3);
     const suffix = cachedSuffixes[i] !== undefined ? cachedSuffixes[i] : cachedFallback;
     const rawVal = num / Math.pow(10, i * 3);
-    const formattedVal = parseFloat(rawVal.toFixed(2));
-    return '$' + fastFormat(formattedVal, cachedLang) + suffix;
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return '$' + fastFormat(val, cachedLang) + suffix;
 }
 
 function getClientSVG(type, seed) {
