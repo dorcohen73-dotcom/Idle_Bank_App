@@ -5,9 +5,12 @@
   "main": "app.js",
   "scripts": {
     "test": "vitest run",
-    "build": "node tools/build.js"
+    "build": "node tools/build.js",
+    "lint": "eslint ."
   },
   "devDependencies": {
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
     "sharp": "^0.35.2",
     "vitest": "^1.6.0"
   },

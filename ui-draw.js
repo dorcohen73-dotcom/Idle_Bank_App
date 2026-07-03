@@ -1251,8 +1251,11 @@ function updateNotifications() {
     window.formatMoney = formatMoney;
     window.getClientSVG = getClientSVG;
     window.spawnFloating = spawnFloating;
+    window.updateFloatingText = updateFloatingText;
     window.updateActiveCoins = updateActiveCoins;
     window.animateCoins = animateCoins;
+    window.spawnParticles = spawnParticles;
+    window.initCoinPool = initCoinPool;
     window.rebuildTellersDOM = rebuildTellersDOM;
     window.draw = draw;
     window.clearActiveCoins = clearActiveCoins;
