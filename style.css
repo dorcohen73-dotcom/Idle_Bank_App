@@ -5695,6 +5695,8 @@ header, .control-panel, .bank-floor {
     align-items: center;
     overflow: visible;
     gap: 0;
+    padding: 0 15px;
+    box-sizing: border-box;
   }
 
   .bottom-nav::-webkit-scrollbar {
