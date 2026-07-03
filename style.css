@@ -5675,7 +5675,7 @@ header, .control-panel, .bank-floor {
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+@media (max-width: 950px), (max-height: 500px) {
 
   /* --- Bottom Nav: גלוי ב-portrait --- */
   .bottom-nav {
@@ -7128,7 +7128,7 @@ header {
 /* ════════════════════════════════
    RESPONSIVE — PORTRAIT MOBILE
    ════════════════════════════════ */
-@media (max-width: 559px), (orientation: portrait) and (max-width: 768px) {
+@media (max-width: 950px), (max-height: 500px) {
     header {
         padding: 0.55rem 0.7rem !important;
         gap: 0.55rem !important;
@@ -9743,7 +9743,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     opacity: 0.85;
 }
 
-@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+@media (max-width: 950px), (max-height: 500px) {
     .gdpr-banner {
         bottom: calc(100px + env(safe-area-inset-bottom));
         left: 12px;
@@ -9940,7 +9940,7 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     opacity: 0.85;
 }
 
-@media (max-width: 500px), (orientation: portrait) and (max-width: 768px) {
+@media (max-width: 950px), (max-height: 500px) {
     .gdpr-banner {
         bottom: calc(100px + env(safe-area-inset-bottom));
         left: 12px;
