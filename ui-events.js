@@ -2905,7 +2905,7 @@ function initUIEvents() {
                     const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
                     const pctAmount = Math.round(game.state.cash * pct);
                     const finalCash = formatMoney(Math.max(timeAmount, pctAmount), true);
-                    valDesc = `💵 +<span dir="ltr">${finalCash}</span>`;
+                    valDesc = `💵 +${finalCash}`;
                 } else if (p.type === 'boost') {
                     valDesc = l === 'he' ? `⚡ +${p.value} שעות בוסט` : l === 'es' ? `⚡ +${p.value}h Boost` : l === 'ru' ? `⚡ +${p.value}h Буст` : `⚡ +${p.value}h Boost`;
                 } else if (p.type === 'shares') {
@@ -3097,14 +3097,12 @@ function initUIEvents() {
                         if (cooldownEl) { cooldownEl.textContent = cd2; cooldownEl.style.display = 'block'; }
                     }
 
-                    // Show ad-spin button only after a regular spin (not after an ad spin)
+                    // Show ad-spin button immediately after ANY spin
                     const adSpinEl = document.getElementById('fortune-ad-spin-btn');
-                    if (adSpinEl && canAdSpin && !wasAdSpin) {
+                    if (adSpinEl) {
                         adSpinEl.disabled = false;
                         adSpinEl.style.display = 'block';
                         adSpinEl.textContent = tObj2.fortuneWheelAdSpinBtn || '📺 סיבוב נוסף — צפה בפרסומת';
-                    } else if (adSpinEl) {
-                        adSpinEl.style.display = 'none';
                     }
                 }, 3000);
             };
@@ -3114,7 +3112,7 @@ function initUIEvents() {
         const adSpinBtn = document.getElementById('fortune-ad-spin-btn');
         if (adSpinBtn) {
             adSpinBtn.disabled = false;
-            if (!canSpin && canAdSpin) {
+            if (!canSpin) {
                 adSpinBtn.style.display = 'block';
                 adSpinBtn.textContent = tObj.fortuneWheelAdSpinBtn || '📺 סיבוב נוסף — צפה בפרסומת';
             } else {
