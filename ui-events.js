@@ -2942,7 +2942,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                 const isSmall = (p.label === 'shares_1');
                 let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
                 sharesAmount = Math.min(10000, sharesAmount);
-                text = `+${formatShortAmount(sharesAmount)}`;
+                text = `+${sharesAmount >= 1000 ? (sharesAmount/1000)+'K' : sharesAmount}`;
             }
 
             const isNarrow = p.weight <= 5;
@@ -2990,9 +2990,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                 spinBtn.disabled = true;
                 spinBtn.textContent = tObj.fortuneWheelSpinning || 'מסתובב...';
 
-                const prizePool = adSpinGranted
-                    ? GAME_CONFIG.WHEEL_PRIZES.filter(p => p.type !== 'cash')
-                    : GAME_CONFIG.WHEEL_PRIZES;
+                const prizePool = GAME_CONFIG.WHEEL_PRIZES;
                 const prize = _wheelWeightedRandom(prizePool);
 
                 let currentAngle = 0;
@@ -3028,7 +3026,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                     if (prize.type === 'cash') {
                         const eps = game.getEarningsPerSecond();
                         const timeAmount = 3600 * eps * prize.value; // value is now 1 or 4 hours
-                        const pctAmount = Math.round(game.state.cash * (prize.label === 'cash_small' ? 0.10 : 0.30));
+                        const pctAmount = Math.round(game.state.cash * (prize.label === 'cash_small' ? 0.10 : (prize.label === 'cash_medium' ? 0.20 : 0.30)));
                         const amount = Math.max(timeAmount, pctAmount);
                         game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
                         game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
