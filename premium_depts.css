@@ -138,7 +138,7 @@
     color: #ffffff;
     letter-spacing: 0.2px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-    word-break: break-word;
+    white-space: normal;
     line-height: 1.2;
 }
 

@@ -2926,7 +2926,7 @@ footer {
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.85);
     letter-spacing: 0.3px;
-    word-break: break-word;
+    white-space: normal;
     line-height: 1.2;
 }
 
@@ -8645,7 +8645,7 @@ header {
     margin-bottom: 0.2rem;
     font-family: var(--font-heading);
     text-align: center;
-    word-break: break-word;
+    white-space: normal;
     line-height: 1.1;
 }
 
