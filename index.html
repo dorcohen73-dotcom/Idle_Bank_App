@@ -428,26 +428,42 @@
     <!-- Daily Login Reward Modal -->
     <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true"
         aria-labelledby="login-reward-title">
+        <div class="modal-box">
+            <div class="modal-icon" aria-hidden="true">🎁</div>
+            <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
+            <p class="modal-text" id="login-reward-streak-text">רצף: 1 ימים</p>
+            <div class="modal-amount" id="login-reward-amount">+$0</div>
+            <p class="modal-text modal-text-muted" id="login-reward-desc"></p>
+            <button class="modal-close-btn login-reward-collect-btn" id="login-reward-collect-btn">אסוף!</button>
+        </div>
+    </div>
+
+    <!-- Offline Earnings Welcome Modal -->
+    <div class="modal-overlay" id="offline-modal" role="dialog" aria-modal="true" aria-labelledby="offline-modal-title">
         <div class="modal-box offline-modal-premium">
-    <div class="vault-particle vp-1" style="--tx: -120px; --ty: -180px; --rot: 120deg;">💵</div>
-    <div class="vault-particle vp-2" style="--tx: 140px; --ty: -160px; --rot: -140deg;">💵</div>
-    <div class="vault-particle vp-3" style="--tx: -160px; --ty: 100px; --rot: 240deg;">💰</div>
-    <div class="vault-particle vp-4" style="--tx: 150px; --ty: 120px; --rot: -220deg;">💰</div>
-    <div class="vault-particle vp-5" style="--tx: 0px; --ty: -200px; --rot: 360deg;">💵</div>
-    <div class="offline-premium-icon" aria-hidden="true">💰</div>
-    <h2 class="offline-premium-title" id="offline-modal-title">ברוך שובך, <span>מנכ"ל!</span></h2>
-    <p class="offline-premium-subtitle" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור הבנק!</p>
-    <div class="offline-premium-divider">✧</div>
-    <div class="offline-premium-amount-box">
-        <div class="offline-premium-amount" id="modal-amount">$0</div>
-    </div>
-    <div class="prestige-options prestige-options-mt">
-        <button id="offline-double-btn" class="modal-close-btn offline-premium-btn-ad">
-            <span aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 3!
-        </button>
-        <button id="offline-claim-btn" class="modal-close-btn offline-premium-btn-claim">קבל סכום רגיל</button>
-    </div>
-</div>
+            <div class="vault-particle vp-1" style="--tx: -120px; --ty: -180px; --rot: 120deg;">💵</div>
+            <div class="vault-particle vp-2" style="--tx: 140px; --ty: -160px; --rot: -140deg;">💵</div>
+            <div class="vault-particle vp-3" style="--tx: -160px; --ty: 100px; --rot: 240deg;">💰</div>
+            <div class="vault-particle vp-4" style="--tx: 150px; --ty: 120px; --rot: -220deg;">💰</div>
+            <div class="vault-particle vp-5" style="--tx: 0px; --ty: -200px; --rot: 360deg;">💵</div>
+            
+            <div class="offline-premium-icon" aria-hidden="true">💰</div>
+            <h2 class="offline-premium-title" id="offline-modal-title">ברוך שובך, <span>מנכ"ל!</span></h2>
+            <p class="offline-premium-subtitle" id="offline-modal-text">הצוות והמנהלים שלך עבדו קשה בזמן שהיית רחוק וצברו רווחים עבור הבנק!</p>
+            
+            <div class="offline-premium-divider">✧</div>
+
+            <div class="offline-premium-amount-box">
+                <div class="offline-premium-amount" id="modal-amount">$0</div>
+            </div>
+
+            <div class="prestige-options prestige-options-mt">
+                <button id="offline-double-btn" class="modal-close-btn offline-premium-btn-ad">
+                    <span aria-hidden="true">🎬</span> צפה בסרטון וקבל פי 3!
+                </button>
+                <button id="offline-claim-btn" class="modal-close-btn offline-premium-btn-claim">קבל סכום רגיל</button>
+            </div>
+        </div>
     </div>
 
     <!-- Language Selection & Settings Modal -->
