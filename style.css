@@ -7412,6 +7412,7 @@ header {
     position: relative;
     width: 200px;
     height: 200px;
+    flex-shrink: 0;
     margin: 1.5rem auto;
     border-radius: 50%;
     background: conic-gradient(

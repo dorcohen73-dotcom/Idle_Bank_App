@@ -1,4 +1,4 @@
-const CACHE_NAME = 'idle-bank-v15';
+const CACHE_NAME = 'idle-bank-v16';
 
 const SHELL_URLS = [
   './',
