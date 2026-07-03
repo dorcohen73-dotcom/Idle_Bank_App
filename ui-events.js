@@ -2906,7 +2906,7 @@ function initUIEvents() {
         if (segmentsContainer && wheelGraphic) {
             segmentsContainer.innerHTML = '';
             let currentAngle = 0;
-            const colors = ['#dfab29', '#10b981', '#3b82f6', '#a855f7', '#ef4444', '#06b6d4'];
+            const colors = ['#ca8a04', '#15803d', '#6d28d9', '#1e3a8a', '#b91c1c', '#0284c7'];
             let gradientString = 'conic-gradient(';
 
 GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
