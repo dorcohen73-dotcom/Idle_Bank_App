@@ -3076,9 +3076,11 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
 
                     const spinBtn2 = document.getElementById('fortune-spin-btn');
                     if (spinBtn2) {
-                        const newTimeLeft2 = 86400000;
+                        const lastSpin2 = (game.state && game.state.lastSpinTime) || 0;
+                        let newTimeLeft2 = 86400000 - (Date.now() - lastSpin2);
+                        if (newTimeLeft2 < 0) newTimeLeft2 = 0;
                         const h2 = Math.floor(newTimeLeft2 / 3600000).toString().padStart(2, '0');
-                        const m2 = '00';
+                        const m2 = Math.floor((newTimeLeft2 % 3600000) / 60000).toString().padStart(2, '0');
                         const cd2 = tObj2.fortuneWheelCooldown ? tObj2.fortuneWheelCooldown(h2, m2) : `${h2}:${m2}`;
                         spinBtn2.textContent = cd2;
                         if (cooldownEl) { cooldownEl.textContent = cd2; cooldownEl.style.display = 'block'; }
@@ -3091,7 +3093,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                         adSpinEl.style.display = 'block';
                         adSpinEl.textContent = tObj2.fortuneWheelAdSpinBtn || '📺 סיבוב נוסף — צפה בפרסומת';
                     }
-                }, 3000);
+                }, 4000);
             };
         }
 
