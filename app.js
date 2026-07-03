@@ -144,8 +144,6 @@
         window.DOM_CACHE.bankFloorSection = document.getElementById('bank-floor-section');
         window.DOM_CACHE.langBtn = document.getElementById('lang-btn');
         window.DOM_CACHE.langModal = document.getElementById('lang-modal');
-        window.DOM_CACHE.btnWatchAd = document.getElementById('btn-watch-ad');
-        window.DOM_CACHE.adBoostTimer = document.getElementById('ad-boost-timer');
         window.DOM_CACHE.langModalClose = document.getElementById('lang-modal-close');
         window.DOM_CACHE.bulkSelector = document.getElementById('global-bulk-selector');
         window.DOM_CACHE.customerLine = document.getElementById('customer-line');
@@ -267,9 +265,10 @@
                 
                 if (window.game.offlineEarningsReport && window.game.offlineEarningsReport > 0) {
                     if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
+                    if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
                     if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
                 }
-                
+
                 window.lastTime = performance.now();
                 refreshAllTabs();
                 
@@ -281,6 +280,7 @@
         // Display offline earnings modal if pending
         if (window.game.offlineEarningsReport && window.game.offlineEarningsReport > 0) {
             if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
+            if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
             if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
         }
 

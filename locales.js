@@ -2539,7 +2539,6 @@ Object.assign(translations.he, {
     ctxWatchBtn: "🎬 צפה",
     prestigeResetLabel: "מתאפס...",
     goldSharesLabel: "מניות זהב",
-    boostActivated4h: "בוסט הופעל! רווחי הבנק הוכפלו ל-4 שעות.",
     branchLabel: "סניף",
     autoText: "אוטומטי",
     boostEventEarningsHint: (amount) => ` — בערך 💰${amount} לפי ה-EPS הנוכחי`
@@ -2593,7 +2592,6 @@ Object.assign(translations.en, {
     ctxWatchBtn: "🎬 Watch",
     prestigeResetLabel: "resetting...",
     goldSharesLabel: "Gold Shares",
-    boostActivated4h: "Boost activated! Bank profits doubled for 4 hours.",
     branchLabel: "Branch",
     autoText: "Auto",
     boostEventEarningsHint: (amount) => ` — ~💰${amount} at current EPS`
@@ -2647,7 +2645,6 @@ Object.assign(translations.es, {
     ctxWatchBtn: "🎬 Ver",
     prestigeResetLabel: "reiniciando...",
     goldSharesLabel: "Acciones de Oro",
-    boostActivated4h: "¡Boost activado! Las ganancias del banco se duplicaron por 4 horas.",
     branchLabel: "Sucursal",
     autoText: "Auto",
     boostEventEarningsHint: (amount) => ` — ~💰${amount} según EPS actual`
@@ -2701,7 +2698,6 @@ Object.assign(translations.ru, {
     ctxWatchBtn: "🎬 Смотреть",
     prestigeResetLabel: "сбрасывается...",
     goldSharesLabel: "Золотые акции",
-    boostActivated4h: "Буст активирован! Прибыль банка удвоена на 4 часа.",
     branchLabel: "Филиал",
     autoText: "Авто",
     boostEventEarningsHint: (amount) => ` — ~💰${amount} по текущему EPS`

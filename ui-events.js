@@ -326,23 +326,45 @@ var AdService = {
         if (AdService._isShowing) return;
         AdService._isShowing = true;
 
-        // Safety timeout to force _isShowing = false after max 15 seconds if overlay is missing
-        setTimeout(() => {
-            if (AdService._isShowing && !document.querySelector('.ad-playing-overlay')) {
-                AdService._isShowing = false;
+        let interval = null;
+        let settled = false;
+
+        const removeOverlay = () => {
+            const el = document.querySelector('.ad-playing-overlay');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        };
+
+        // Single exit point: idempotent (guarded by `settled`), always resets
+        // _isShowing and clears the overlay so this choke point can never get
+        // stuck open. grantReward=false is only used for manual cancel.
+        const complete = (grantReward) => {
+            if (settled) return;
+            settled = true;
+            if (interval) clearInterval(interval);
+            AdService._isShowing = false;
+            removeOverlay();
+            if (grantReward) {
+                AdService.lastWatchedAt = Date.now();
+                boostOfferEndTime = 0;
+                window._boostOfferEndTime = 0;
+                if (callback) callback();
             }
-        }, 15000);
+        };
+
+        // Safety net: guarantees the flow always resolves within 15s, even if
+        // the countdown interval stalls or the overlay gets stuck in the DOM.
+        setTimeout(() => complete(true), 15000);
 
         try {
             const overlay = document.createElement('div');
             overlay.className = 'ad-playing-overlay';
-            
+
             const lang = (window.game && window.game.state && window.game.state.language) || 'en';
             const tObj = translations[lang] || translations['he'];
             const titleText = tObj.adTitle || 'Watching Sponsored Ad...';
             const subtitleText = tObj.adSubtitle || 'Reward unlocks in:';
             const closeText = tObj.adCloseBtn || 'Close ❌ (No Reward)';
-            
+
             overlay.innerHTML = `
                 <div class="ad-playing-box" style="position: relative;">
                     <button class="ad-close-btn" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.4); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; z-index: 10;">${closeText}</button>
@@ -356,39 +378,25 @@ var AdService = {
                 </div>
             `;
             document.body.appendChild(overlay);
-            
+
             let timeLeft = 5;
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 timeLeft--;
                 const countdownEl = overlay.querySelector('.ad-countdown');
                 if (countdownEl) countdownEl.innerText = timeLeft;
-                
+
                 if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    AdService._isShowing = false;
-                    AdService.lastWatchedAt = Date.now();
-                    boostOfferEndTime = 0;
-                    window._boostOfferEndTime = 0;
-                    if (overlay.parentNode) {
-                        document.body.removeChild(overlay);
-                    }
-                    if (callback) callback();
+                    complete(true);
                 }
             }, 1000);
 
             const closeBtn = overlay.querySelector('.ad-close-btn');
             if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    clearInterval(interval);
-                    AdService._isShowing = false;
-                    if (overlay.parentNode) {
-                        document.body.removeChild(overlay);
-                    }
-                });
+                closeBtn.addEventListener('click', () => complete(false));
             }
         } catch (err) {
             console.error("AdService failed to display:", err);
-            AdService._isShowing = false;
+            complete(true);
         }
     }
 };
@@ -1489,7 +1497,7 @@ function triggerRandomEvent() {
     if (AdService.isInCooldown()) {
         container.querySelectorAll('.ad-option').forEach(btn => btn.remove());
         
-        const adDependentEvents = ['crowd', 'security', 'rescue', 'rush_hours', 'investor', 'celebrity_visit'];
+        const adDependentEvents = ['rescue', 'investor'];
         if (adDependentEvents.includes(eventType) && container.children.length <= 1) {
             return;
         }
@@ -1834,16 +1842,21 @@ function openWeeklyRewardModal() {
     const closeBtn = document.getElementById('weekly-close-btn');
 
     if (adBtn) {
-        adBtn.onclick = () => {
-            initSound();
-            modal.classList.remove('active');
-            playAd(() => {
-                game.addBoost2x(8);
-                game.state.lastWeeklyReward = Date.now();
-                draw();
-                spawnFloating(tObj.boost8hMsg || '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
-            });
-        };
+        if (AdService.isInCooldown()) {
+            adBtn.style.display = 'none';
+        } else {
+            adBtn.style.display = '';
+            adBtn.onclick = () => {
+                initSound();
+                modal.classList.remove('active');
+                playAd(() => {
+                    game.addBoost2x(8);
+                    game.state.lastWeeklyReward = Date.now();
+                    draw();
+                    spawnFloating(tObj.boost8hMsg || '⚡ 8h Boost!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
+                });
+            };
+        }
     }
     if (closeBtn) {
         closeBtn.onclick = () => {
@@ -1890,8 +1903,6 @@ function tick(timestamp) {
         const cappedDt = Math.min(1.0, dt);
 
         game.update(cappedDt);
-        updateActiveCoins(cappedDt);
-        if (typeof updateFloatingText === 'function') updateFloatingText(cappedDt);
 
         // Contextual ad offer
         if (game._contextualAdPending) {
@@ -1959,8 +1970,10 @@ function tick(timestamp) {
         drawTimer += cappedDt;
         const isMobile = window.innerWidth <= 768;
         const targetFpsInterval = isMobile ? (1.0 / 15.0) : 0; // 15 fps on mobile, unlimited on desktop
-        
+
         if (drawTimer >= targetFpsInterval) {
+            updateActiveCoins(drawTimer);
+            if (typeof updateFloatingText === 'function') updateFloatingText(drawTimer);
             drawTimer = 0;
             draw();
         }
@@ -2588,22 +2601,6 @@ function initUIEvents() {
             localStorage.setItem('gdpr_consent', '1');
             const banner = document.getElementById('gdpr-banner');
             if (banner) banner.style.display = 'none';
-        });
-    }
-
-    if (DOM_CACHE.btnWatchAd) {
-        DOM_CACHE.btnWatchAd.addEventListener('click', () => {
-            initSound();
-            playAd(() => {
-                game.state.boost2xTimeLeft = 4 * 3600; // 4 hours in seconds
-                game.recalculateEps();
-                game.saveGame();
-                draw();
-                if (typeof window.showToast === 'function') {
-                    const _bT = translations[(game.state && game.state.language) || 'en'] || translations.en;
-                    window.showToast(_bT.boostActivated4h || 'Boost activated! Bank profits doubled for 4 hours.', 'success');
-                }
-            });
         });
     }
 

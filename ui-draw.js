@@ -569,27 +569,6 @@ function draw() {
         DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + 'x';
     }
 
-    // Ad Boost UI logic
-    if (DOM_CACHE.btnWatchAd && DOM_CACHE.adBoostTimer) {
-        if (game.state.boost2xTimeLeft > 0) {
-            DOM_CACHE.btnWatchAd.classList.add('hidden');
-            DOM_CACHE.adBoostTimer.classList.remove('hidden');
-            
-            const hours = Math.floor(game.state.boost2xTimeLeft / 3600);
-            const minutes = Math.floor((game.state.boost2xTimeLeft % 3600) / 60);
-            const seconds = Math.floor(game.state.boost2xTimeLeft % 60);
-            
-            const hStr = hours < 10 ? '0' + hours : hours;
-            const mStr = minutes < 10 ? '0' + minutes : minutes;
-            const sStr = seconds < 10 ? '0' + seconds : seconds;
-            
-            DOM_CACHE.adBoostTimer.innerText = `${tObj.timeLeftLabel || 'Remaining'}: ${hStr}:${mStr}:${sStr}`;
-        } else {
-            DOM_CACHE.btnWatchAd.classList.remove('hidden');
-            DOM_CACHE.adBoostTimer.classList.add('hidden');
-        }
-    }
-    
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
         lastBranch = game.state.currentBranch;
         DOM_CACHE.branchName.innerText = (tObj.bankPrefix || '') + tObj.branches.names[game.state.currentBranch];
