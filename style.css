@@ -7450,7 +7450,7 @@ header {
 
 @keyframes wheel-rotate {
     from { transform: rotate(0deg); }
-    to   { transform: rotate(1800deg); }
+    to   { transform: rotate(var(--stop-angle, 1800deg)); }
 }
 
 .wheel-segments {

@@ -3009,19 +3009,36 @@ function initUIEvents() {
                 spinBtn.disabled = true;
                 spinBtn.textContent = tObj.fortuneWheelSpinning || 'מסתובב...';
 
+                const prizePool = adSpinGranted
+                    ? GAME_CONFIG.WHEEL_PRIZES.filter(p => p.type !== 'cash')
+                    : GAME_CONFIG.WHEEL_PRIZES;
+                const prize = _wheelWeightedRandom(prizePool);
+
+                let currentAngle = 0;
+                let targetAngle = 0;
+                for (let i = 0; i < GAME_CONFIG.WHEEL_PRIZES.length; i++) {
+                    const p = GAME_CONFIG.WHEEL_PRIZES[i];
+                    const sliceAngle = (p.weight / 100) * 360;
+                    if (p === prize) {
+                        const minAngle = currentAngle + (sliceAngle * 0.1);
+                        const maxAngle = currentAngle + (sliceAngle * 0.9);
+                        const landedAngle = minAngle + Math.random() * (maxAngle - minAngle);
+                        targetAngle = 360 - landedAngle;
+                        break;
+                    }
+                    currentAngle += sliceAngle;
+                }
+
                 const wheelEl = document.getElementById('fortune-wheel-graphic');
                 if (wheelEl) {
                     wheelEl.classList.remove('wheel-spin');
+                    const totalRotation = 1800 + targetAngle;
+                    wheelEl.style.setProperty('--stop-angle', `${totalRotation}deg`);
                     void wheelEl.offsetWidth;
                     wheelEl.classList.add('wheel-spin');
                 }
 
                 setTimeout(() => {
-                    // Ad spin guarantees non-cash prize (minimum gold_1 value)
-                    const prizePool = adSpinGranted
-                        ? GAME_CONFIG.WHEEL_PRIZES.filter(p => p.type !== 'cash')
-                        : GAME_CONFIG.WHEEL_PRIZES;
-                    const prize = _wheelWeightedRandom(prizePool);
                     let prizeText = '';
                     const lang2 = (game.state && game.state.language) || 'en';
                     const tObj2 = translations[lang2] || translations.en;
