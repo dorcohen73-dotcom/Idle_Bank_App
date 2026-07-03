@@ -7410,10 +7410,10 @@ header {
 
 .fortune-wheel-graphic {
     position: relative;
-    width: 280px;
-    height: 280px;
-    max-width: 80vw;
-    max-height: 80vw;
+    width: 320px;
+    height: 320px;
+    max-width: 85vw;
+    max-height: 85vw;
     flex-shrink: 0;
     margin: 1.5rem auto;
     border-radius: 50%;
@@ -7425,23 +7425,34 @@ header {
         #ef4444 240deg 300deg,
         #06b6d4 300deg 360deg
     );
-    border: 4px solid #fff;
-    box-shadow: 0 0 25px rgba(223, 171, 41, 0.6), inset 0 0 15px rgba(0,0,0,0.5);
+    border: 6px solid #eab308;
+    box-shadow: 0 0 35px rgba(223, 171, 41, 0.8), inset 0 0 25px rgba(0,0,0,0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease;
 }
 
+.fortune-wheel-graphic::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 6px dotted rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    z-index: 15;
+}
+
 .fortune-wheel-graphic::after {
     content: '';
     position: absolute;
-    width: 30px;
-    height: 30px;
-    background: radial-gradient(circle, #fff 0%, #dfab29 100%);
+    width: 45px;
+    height: 45px;
+    background: radial-gradient(circle, #fef08a 0%, #ca8a04 100%);
+    border: 3px solid #fef08a;
     border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 20;
+    box-shadow: 0 0 15px rgba(0,0,0,0.7), inset 0 0 8px rgba(255,255,255,0.8);
 }
 
 .fortune-wheel-graphic.wheel-spin {
@@ -7492,14 +7503,14 @@ header {
 
 .fortune-result {
     display: none;
-    background: linear-gradient(135deg, rgba(223, 171, 41, 0.15) 0%, rgba(223, 171, 41, 0.05) 100%);
-    border: 1px solid rgba(223, 171, 41, 0.5);
-    border-radius: 12px;
-    padding: 1rem;
-    margin: 1rem 0;
+    background: linear-gradient(135deg, rgba(20, 24, 38, 0.95), rgba(15, 18, 28, 0.98));
+    border: 2px solid rgba(223, 171, 41, 0.6);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin: 1.5rem auto;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    backdrop-filter: blur(5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6), inset 0 0 20px rgba(223, 171, 41, 0.1);
+    max-width: 90%;
     animation: result-pop 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
 }
 
@@ -7509,18 +7520,34 @@ header {
 }
 
 .wheel-result-title {
-    font-size: 0.85rem;
-    color: #e5e7eb;
-    margin-bottom: 0.4rem;
+    font-size: 1rem;
+    color: #fcd34d;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
+.wheel-result-prize-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.laurel {
+    font-size: 2rem;
+    color: #eab308;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.laurel-left {
+    transform: scaleX(-1);
+}
+
 .wheel-result-prize {
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     font-weight: 800;
-    color: var(--primary-gold);
-    text-shadow: 0 0 10px rgba(223, 171, 41, 0.4);
+    color: #fef08a;
+    text-shadow: 0 0 15px rgba(223, 171, 41, 0.8), 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .fortune-prize-list {
@@ -7579,7 +7606,6 @@ header {
     border-radius: 6px;
     border: 1px solid rgba(223, 171, 41, 0.3);
 }
-
 
 
 .fortune-cooldown {
@@ -9995,4 +10021,45 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
     height: auto !important;
     overflow-y: visible !important;
   }
+}
+
+.wheel-separator-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+.wheel-separator-line::before, .wheel-separator-line::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(223, 171, 41, 0.5), transparent);
+}
+.wheel-separator-line .diamond {
+    color: #eab308;
+    font-size: 0.8rem;
+    margin: 0 10px;
+    text-shadow: 0 0 5px rgba(234, 179, 8, 0.8);
+}
+
+.wheel-benefits-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0 0.5rem;
+    color: #fcd34d;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.wheel-benefits-title::before, .wheel-benefits-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(223, 171, 41, 0.3), transparent);
+    margin: 0 10px;
+}
+.wheel-benefits-title .diamond {
+    color: #eab308;
+    font-size: 0.7rem;
+    margin: 0 4px;
 }

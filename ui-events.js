@@ -3064,6 +3064,7 @@ function initUIEvents() {
                         game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 100000);
                         const sharesLabel = `+${sharesAmount}`;
                         prizeText = `${prizeLabel}: ${sharesLabel} מניות זהב`;
+
                         const icon = prize.type === 'gold' ? '🥇' : '📈';
                         spawnFloating(`${icon} ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
                     }
@@ -3083,7 +3084,14 @@ function initUIEvents() {
 
                     if (resultEl) {
                         const titleText = (tObj2.fortuneWheelPrizeTitle || 'זכית ב') + ':';
-                        resultEl.innerHTML = `<div class="wheel-result-title">${titleText}</div><div class="wheel-result-prize">${prizeText}</div>`;
+                    resultEl.innerHTML = `
+                        <div class="wheel-result-title">👑 ${titleText}</div>
+                        <div class="wheel-result-prize-container">
+                            <div class="laurel laurel-left">🌿</div>
+                            <div class="wheel-result-prize">${prizeText}</div>
+                            <div class="laurel laurel-right">🌿</div>
+                        </div>
+                    `;
                         resultEl.style.display = 'block';
                     }
 
