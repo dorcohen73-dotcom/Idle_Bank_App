@@ -2940,7 +2940,7 @@ function initUIEvents() {
 GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
             if (index >= 6) return;
 
-            const sliceAngle = 360 / 6;
+            const sliceAngle = (p.weight / 100) * 360;
             const startAngle = currentAngle;
             const endAngle = currentAngle + sliceAngle;
 
@@ -2973,10 +2973,15 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                 text = `+${formatShortAmount(sharesAmount)}`;
             }
 
+            const isNarrow = p.weight <= 5;
+            const textSize = isNarrow ? '0.9rem' : '1.15rem';
+            const iconSize = isNarrow ? '1.2rem' : '1.6rem';
+            const gapSize = isNarrow ? '4px' : '6px';
+            
             seg.innerHTML = `
-                <div style="display:flex; flex-direction:row; align-items:center; gap:6px; transform: rotate(90deg); text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">
-                    <span style="font-size:1.6rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));">${icon}</span>
-                    <span dir="ltr" style="font-size:1.15rem; font-weight:900;">${text}</span>
+                <div style="display:flex; flex-direction:row; align-items:center; gap:${gapSize}; transform: rotate(90deg); text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">
+                    <span style="font-size:${iconSize}; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));">${icon}</span>
+                    <span dir="ltr" style="font-size:${textSize}; font-weight:900;">${text}</span>
                 </div>
             `;
             segmentsContainer.appendChild(seg);
