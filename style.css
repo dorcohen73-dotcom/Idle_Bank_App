@@ -7425,20 +7425,20 @@ header {
         #ef4444 240deg 300deg,
         #06b6d4 300deg 360deg
     );
-    border: 6px solid #eab308;
-    box-shadow: 0 0 35px rgba(223, 171, 41, 0.8), inset 0 0 25px rgba(0,0,0,0.6);
+    border: 8px solid #fbbf24;
+    box-shadow: 0 0 50px rgba(234, 179, 8, 0.5), inset 0 0 40px rgba(0,0,0,0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.1, 0.8, 0.1, 1);
 }
 
 .fortune-wheel-graphic::before {
     content: '';
     position: absolute;
-    inset: -6px;
+    inset: -8px;
     border-radius: 50%;
-    border: 6px dotted rgba(255, 255, 255, 0.7);
+    border: 8px dotted rgba(255, 255, 255, 0.4);
     pointer-events: none;
     z-index: 15;
 }
@@ -7446,13 +7446,13 @@ header {
 .fortune-wheel-graphic::after {
     content: '';
     position: absolute;
-    width: 45px;
-    height: 45px;
-    background: radial-gradient(circle, #fef08a 0%, #ca8a04 100%);
+    width: 65px;
+    height: 65px;
+    background: radial-gradient(circle at 35% 35%, #fef08a 0%, #eab308 45%, #713f12 100%);
     border: 3px solid #fef08a;
     border-radius: 50%;
     z-index: 20;
-    box-shadow: 0 0 15px rgba(0,0,0,0.7), inset 0 0 8px rgba(255,255,255,0.8);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.9), inset 0 -4px 8px rgba(0,0,0,0.5), inset 0 4px 6px rgba(255,255,255,0.6);
 }
 
 .fortune-wheel-graphic.wheel-spin {
@@ -7471,6 +7471,17 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.wheel-segments::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 40%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+    z-index: 5;
 }
 
 .wheel-seg {
@@ -7486,14 +7497,16 @@ header {
 
 .wheel-pointer {
     position: absolute;
-    top: -25px;
+    top: -35px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 2.5rem;
-    color: #fff;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-    z-index: 20;
+    z-index: 25;
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,0.8));
     animation: pointer-bob 1.5s infinite ease-in-out;
+}
+.wheel-pointer svg {
+    width: 50px;
+    height: 55px;
 }
 
 @keyframes pointer-bob {
@@ -7656,21 +7669,24 @@ header {
     display: none;
     margin-top: 0.6rem;
     width: 100%;
-    padding: 0.7rem;
-    font-size: 0.95rem;
+    padding: 0.75rem;
+    font-size: 1rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.8) 0%, rgba(79, 70, 229, 0.9) 100%);
+    backdrop-filter: blur(8px);
     color: #fff;
-    border: none;
+    border: 1px solid rgba(223, 171, 41, 0.5);
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(124, 58, 237, 0.5);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .fortune-ad-spin-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(99, 102, 241, 0.95) 100%);
+    border-color: rgba(223, 171, 41, 0.8);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(124, 58, 237, 0.7);
 }
 
 .fortune-ad-spin-btn:disabled {
