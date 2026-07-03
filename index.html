@@ -642,7 +642,27 @@
                     <div class="wheel-segments" id="wheel-segments-container">
                     </div>
                 </div>
-                <div class="wheel-pointer" aria-hidden="true">▼</div>
+                <div class="wheel-pointer" aria-hidden="true">
+                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="pointerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fef08a" />
+                                <stop offset="50%" stop-color="#eab308" />
+                                <stop offset="100%" stop-color="#854d0e" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <polygon points="10,10 90,10 50,110" fill="url(#pointerGrad)" stroke="#fef08a" stroke-width="4" stroke-linejoin="round"/>
+                        <polygon points="50,20 70,25 50,80 30,25" fill="#ffffff" filter="url(#glow)"/>
+                        <circle cx="50" cy="15" r="5" fill="#ffffff" filter="url(#glow)"/>
+                    </svg>
+                </div>
             </div>
 
             <p class="fortune-spin-hint" id="fortune-spin-hint">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>

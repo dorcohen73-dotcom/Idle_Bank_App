@@ -2937,47 +2937,51 @@ function initUIEvents() {
             const colors = ['#dfab29', '#10b981', '#3b82f6', '#a855f7', '#ef4444', '#06b6d4'];
             let gradientString = 'conic-gradient(';
 
-            GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
-                if (index >= 6) return;
-                
-                const sliceAngle = (p.weight / 100) * 360;
-                const startAngle = currentAngle;
-                const endAngle = currentAngle + sliceAngle;
-                
-                gradientString += `${colors[index]} ${startAngle}deg ${endAngle}deg${index === 5 ? '' : ', '}`;
+GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
+            if (index >= 6) return;
 
-                const seg = document.createElement('div');
-                seg.className = `wheel-seg seg-${index + 1}`;
-                
-                const middleAngle = startAngle + (sliceAngle / 2);
-                seg.style.transform = `rotate(${middleAngle}deg) translateY(-95px)`;
+            const sliceAngle = 360 / 6;
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + sliceAngle;
 
-                let icon = '🎁';
-                let text = '';
+            gradientString += `${colors[index]} ${startAngle}deg ${endAngle}deg${index === 5 ? '' : ', '}`;
 
-                if (p.type === 'cash') {
-                    icon = p.label === 'cash_small' ? '💰' : (p.label === 'cash_medium' ? '💵' : '💸');
-                    const eps = game.getEarningsPerSecond();
-                    const timeAmount = 3600 * eps * p.value;
-                    const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
-                    const pctAmount = Math.round(game.state.cash * pct);
-                    text = `<span dir="ltr">+${formatShortAmount(Math.max(timeAmount, pctAmount))}</span>`;
-                } else if (p.type === 'boost') {
-                    icon = '⚡';
-                    text = `<span dir="ltr">+${p.value}h</span>`;
-                } else if (p.type === 'shares') {
-                    icon = '📈';
-                    const isSmall = (p.label === 'shares_1');
-                    let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
-                    sharesAmount = Math.min(10000, sharesAmount);
-                    text = sharesAmount >= 1000 ? `<span dir="ltr">+${Math.floor(sharesAmount/1000)}K</span>` : `<span dir="ltr">+${sharesAmount}</span>`;
-                }
+            const seg = document.createElement('div');
+            seg.className = `wheel-seg seg-${index + 1}`;
 
-                seg.innerHTML = `<span style="display:block;font-size:1.8rem;margin-bottom:2px" aria-hidden="true">${icon}</span><span style="font-size:0.85rem;font-weight:900;letter-spacing:0.5px">${text}</span>`;
-                segmentsContainer.appendChild(seg);
-                
-                currentAngle = endAngle;
-            });
+            const middleAngle = startAngle + (sliceAngle / 2);
+            seg.style.transform = `rotate(${middleAngle}deg) translateY(-115px)`;
+
+            let icon = '🎁';
+            let text = '';
+
+            if (p.type === 'cash') {
+                icon = p.label === 'cash_small' ? '💰' : (p.label === 'cash_medium' ? '💵' : '💸');
+                const eps = game.getEarningsPerSecond();
+                const timeAmount = 3600 * eps * p.value;
+                const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
+                const pctAmount = Math.round(game.state.cash * pct);
+                text = `+${formatShortAmount(Math.max(timeAmount, pctAmount))}`;
+            } else if (p.type === 'boost') {
+                icon = '⚡';
+                text = `+${p.value}h`;
+            } else if (p.type === 'shares') {
+                icon = '📈';
+                const isSmall = (p.label === 'shares_1');
+                let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
+                sharesAmount = Math.min(10000, sharesAmount);
+                text = `+${formatShortAmount(sharesAmount)}`;
+            }
+
+            seg.innerHTML = `
+                <div style="display:flex; flex-direction:row; align-items:center; gap:6px; transform: rotate(90deg); text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">
+                    <span style="font-size:1.6rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));">${icon}</span>
+                    <span dir="ltr" style="font-size:1.15rem; font-weight:900;">${text}</span>
+                </div>
+            `;
+            segmentsContainer.appendChild(seg);
+            currentAngle = endAngle;
+        });
             
             gradientString += ')';
             wheelGraphic.style.background = gradientString;
