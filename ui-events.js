@@ -2933,23 +2933,16 @@ function initUIEvents() {
 
                 if (p.type === 'cash') {
                     icon = p.label === 'cash_small' ? '💰' : (p.label === 'cash_medium' ? '💵' : '💸');
-                    const eps = game.getEarningsPerSecond();
-                    const timeAmount = 3600 * eps * p.value;
-                    const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
-                    const pctAmount = Math.round(game.state.cash * pct);
-                    text = `<span dir="ltr">+${formatMoney(Math.max(timeAmount, pctAmount), true)}</span>`;
+                    text = p.label === 'cash_small' ? 'כסף' : (p.label === 'cash_medium' ? 'כסף x2' : 'כסף גדול');
                 } else if (p.type === 'boost') {
                     icon = '⚡';
                     text = `<span dir="ltr">+${p.value}h</span>`;
                 } else if (p.type === 'shares') {
                     icon = '📈';
-                    const isSmall = (p.label === 'shares_1');
-                    let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
-                    sharesAmount = Math.min(10000, sharesAmount);
-                    text = `<span dir="ltr">+${sharesAmount}</span>`;
+                    text = p.label === 'shares_1' ? 'מניות' : 'מניות פלוס';
                 }
 
-                seg.innerHTML = `<span style="display:block;font-size:1.6rem" aria-hidden="true">${icon}</span><span style="font-size:0.75rem;font-weight:900;letter-spacing:1px">${text}</span>`;
+                seg.innerHTML = `<span style="display:block;font-size:1.8rem;margin-bottom:2px" aria-hidden="true">${icon}</span><span style="font-size:0.85rem;font-weight:900;letter-spacing:0.5px">${text}</span>`;
                 segmentsContainer.appendChild(seg);
             });
         }
