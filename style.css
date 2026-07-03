@@ -7471,12 +7471,7 @@ header {
     transform-origin: 50% 50%;
 }
 
-.wheel-seg:nth-child(1) { transform: rotate(0deg) translateY(-95px); }
-.wheel-seg:nth-child(2) { transform: rotate(60deg) translateY(-95px); }
-.wheel-seg:nth-child(3) { transform: rotate(120deg) translateY(-95px); }
-.wheel-seg:nth-child(4) { transform: rotate(180deg) translateY(-95px); }
-.wheel-seg:nth-child(5) { transform: rotate(240deg) translateY(-95px); }
-.wheel-seg:nth-child(6) { transform: rotate(300deg) translateY(-95px); }
+
 
 .wheel-pointer {
     position: absolute;

@@ -2920,31 +2920,67 @@ function initUIEvents() {
             });
         }
 
+        function formatShortAmount(num) {
+            if (num < 1000) return '$' + Math.ceil(num);
+            const i = Math.floor(Math.log10(num) / 3);
+            const suffixes = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd'];
+            const suffix = suffixes[i] || '?';
+            const rawVal = num / Math.pow(10, i * 3);
+            return '$' + Math.ceil(rawVal) + suffix;
+        }
+
         const segmentsContainer = document.getElementById('wheel-segments-container');
-        if (segmentsContainer) {
+        const wheelGraphic = document.querySelector('.fortune-wheel-graphic');
+        if (segmentsContainer && wheelGraphic) {
             segmentsContainer.innerHTML = '';
+            let currentAngle = 0;
+            const colors = ['#dfab29', '#10b981', '#3b82f6', '#a855f7', '#ef4444', '#06b6d4'];
+            let gradientString = 'conic-gradient(';
+
             GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
-                if (index >= 7) return;
+                if (index >= 6) return;
+                
+                const sliceAngle = (p.weight / 100) * 360;
+                const startAngle = currentAngle;
+                const endAngle = currentAngle + sliceAngle;
+                
+                gradientString += `${colors[index]} ${startAngle}deg ${endAngle}deg${index === 5 ? '' : ', '}`;
+
                 const seg = document.createElement('div');
                 seg.className = `wheel-seg seg-${index + 1}`;
+                
+                const middleAngle = startAngle + (sliceAngle / 2);
+                seg.style.transform = `rotate(${middleAngle}deg) translateY(-95px)`;
 
                 let icon = '🎁';
                 let text = '';
 
                 if (p.type === 'cash') {
                     icon = p.label === 'cash_small' ? '💰' : (p.label === 'cash_medium' ? '💵' : '💸');
-                    text = p.label === 'cash_small' ? 'כסף' : (p.label === 'cash_medium' ? 'כסף x2' : 'כסף גדול');
+                    const eps = game.getEarningsPerSecond();
+                    const timeAmount = 3600 * eps * p.value;
+                    const pct = p.label === 'cash_big' ? 0.30 : (p.label === 'cash_medium' ? 0.20 : 0.10);
+                    const pctAmount = Math.round(game.state.cash * pct);
+                    text = `<span dir="ltr">+${formatShortAmount(Math.max(timeAmount, pctAmount))}</span>`;
                 } else if (p.type === 'boost') {
                     icon = '⚡';
                     text = `<span dir="ltr">+${p.value}h</span>`;
                 } else if (p.type === 'shares') {
                     icon = '📈';
-                    text = p.label === 'shares_1' ? 'מניות' : 'מניות פלוס';
+                    const isSmall = (p.label === 'shares_1');
+                    let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
+                    sharesAmount = Math.min(10000, sharesAmount);
+                    text = sharesAmount >= 1000 ? `<span dir="ltr">+${Math.floor(sharesAmount/1000)}K</span>` : `<span dir="ltr">+${sharesAmount}</span>`;
                 }
 
                 seg.innerHTML = `<span style="display:block;font-size:1.8rem;margin-bottom:2px" aria-hidden="true">${icon}</span><span style="font-size:0.85rem;font-weight:900;letter-spacing:0.5px">${text}</span>`;
                 segmentsContainer.appendChild(seg);
+                
+                currentAngle = endAngle;
             });
+            
+            gradientString += ')';
+            wheelGraphic.style.background = gradientString;
         }
 
         if (spinBtn) {
