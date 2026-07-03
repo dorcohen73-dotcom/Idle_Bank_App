@@ -7410,8 +7410,10 @@ header {
 
 .fortune-wheel-graphic {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 280px;
+    height: 280px;
+    max-width: 80vw;
+    max-height: 80vw;
     flex-shrink: 0;
     margin: 1.5rem auto;
     border-radius: 50%;
@@ -7470,13 +7472,13 @@ header {
     transform-origin: 50% 50%;
 }
 
-.wheel-seg:nth-child(1) { transform: rotate(0deg) translateY(-65px); }
-.wheel-seg:nth-child(2) { transform: rotate(51.4deg) translateY(-65px); }
-.wheel-seg:nth-child(3) { transform: rotate(102.8deg) translateY(-65px); }
-.wheel-seg:nth-child(4) { transform: rotate(154.2deg) translateY(-65px); }
-.wheel-seg:nth-child(5) { transform: rotate(205.6deg) translateY(-65px); }
-.wheel-seg:nth-child(6) { transform: rotate(257deg) translateY(-65px); }
-.wheel-seg:nth-child(7) { transform: rotate(308.4deg) translateY(-65px); }
+.wheel-seg:nth-child(1) { transform: rotate(0deg) translateY(-95px); }
+.wheel-seg:nth-child(2) { transform: rotate(51.4deg) translateY(-95px); }
+.wheel-seg:nth-child(3) { transform: rotate(102.8deg) translateY(-95px); }
+.wheel-seg:nth-child(4) { transform: rotate(154.2deg) translateY(-95px); }
+.wheel-seg:nth-child(5) { transform: rotate(205.6deg) translateY(-95px); }
+.wheel-seg:nth-child(6) { transform: rotate(257deg) translateY(-95px); }
+.wheel-seg:nth-child(7) { transform: rotate(308.4deg) translateY(-95px); }
 
 .wheel-pointer {
     position: absolute;

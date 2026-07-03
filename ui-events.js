@@ -2896,16 +2896,22 @@ function initUIEvents() {
                 const li = document.createElement('div');
                 li.className = 'wheel-prize-item';
                 const label = (tObj.wheelPrizes && tObj.wheelPrizes[p.label]) || p.label;
-                
+
                 let valDesc = '';
                 const l = (game.state && game.state.language) || 'en';
                 if (p.type === 'cash') {
-                    const mins = Math.floor(p.value / 60);
-                    valDesc = l === 'he' ? `💵 +${mins} דקות רווח` : l === 'es' ? `💵 +${mins}m Efectivo` : l === 'ru' ? `💵 +${mins}m Прибыль` : `💵 +${mins}m EPS`;
+                    const eps = game.getEarningsPerSecond();
+                    const timeAmount = 3600 * eps * p.value;
+                    const pctAmount = Math.round(game.state.cash * (p.label === 'cash_small' ? 0.10 : 0.30));
+                    const finalCash = formatMoney(Math.max(timeAmount, pctAmount));
+                    valDesc = `💵 +<span dir="ltr">${finalCash}</span>`;
                 } else if (p.type === 'boost') {
                     valDesc = l === 'he' ? `⚡ +${p.value} שעות בוסט` : l === 'es' ? `⚡ +${p.value}h Boost` : l === 'ru' ? `⚡ +${p.value}h Буст` : `⚡ +${p.value}h Boost`;
                 } else if (p.type === 'gold' || p.type === 'shares') {
-                    valDesc = l === 'he' ? `🏅 +${p.value} מניות` : l === 'es' ? `🏅 +${p.value} Acciones` : l === 'ru' ? `🏅 +${p.value} Акций` : `🏅 +${p.value} Shares`;
+                    const isSmall = (p.label === 'gold_1' || p.label === 'shares_1');
+                    let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
+                    sharesAmount = Math.min(10000, sharesAmount);
+                    valDesc = l === 'he' ? `🏅 +${sharesAmount} מניות` : l === 'es' ? `🏅 +${sharesAmount} Acciones` : l === 'ru' ? `🏅 +${sharesAmount} Акций` : `🏅 +${sharesAmount} Shares`;
                 }
 
                 li.innerHTML = `<span class="wheel-prize-label">${label}<span style="display:block; font-size:0.75rem; color:#a3e635; font-weight:600; margin-top:0.2rem; letter-spacing:0.5px;">${valDesc}</span></span><span class="wheel-prize-weight">${p.weight}%</span>`;
