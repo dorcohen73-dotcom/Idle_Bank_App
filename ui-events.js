@@ -2924,17 +2924,14 @@ function initUIEvents() {
                 let text = '';
                 
                 if (p.type === 'cash') {
-                    icon = p.value <= 300 ? '💰' : '💸';
-                    text = `+${Math.floor(p.value / 60)}m`;
+                    icon = p.label === 'cash_small' ? '💰' : '💸';
+                    text = p.label === 'cash_small' ? 'כסף' : 'כסף גדול';
                 } else if (p.type === 'boost') {
                     icon = '⚡';
-                    text = `+${p.value}h`;
-                } else if (p.type === 'gold') {
-                    icon = '🏅';
-                    text = `+${p.value}`;
-                } else if (p.type === 'shares') {
-                    icon = '📈';
-                    text = `+${p.value}`;
+                    text = `בוסט ${p.value}h`;
+                } else if (p.type === 'gold' || p.type === 'shares') {
+                    icon = p.type === 'gold' ? '🏅' : '📈';
+                    text = 'מניות זהב';
                 }
 
                 seg.innerHTML = `<span style="display:block;font-size:1.8rem" aria-hidden="true">${icon}</span><span style="font-size:0.65rem;font-weight:900">${text}</span>`;
@@ -2987,7 +2984,10 @@ function initUIEvents() {
                     const prizeLabel = (tObj2.wheelPrizes && tObj2.wheelPrizes[prize.label]) || prize.label;
 
                     if (prize.type === 'cash') {
-                        const amount = Math.max(prize.minValue || 0, Math.round(game.getEarningsPerSecond() * prize.value));
+                        const eps = game.getEarningsPerSecond();
+                        const timeAmount = 3600 * eps * prize.value; // value is now 1 or 4 hours
+                        const pctAmount = Math.round(game.state.cash * (prize.label === 'cash_small' ? 0.10 : 0.30));
+                        const amount = Math.max(timeAmount, pctAmount);
                         game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
                         game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
                         prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
@@ -2996,16 +2996,15 @@ function initUIEvents() {
                         game.addBoost2x(prize.value);
                         prizeText = `${prizeLabel}: +${prize.value}h BOOST`;
                         spawnFloating(`⚡ +${prize.value}h`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
-                    } else if (prize.type === 'gold') {
-                        game.state.shares = Math.min((game.state.shares || 0) + prize.value, 100000);
-                        const goldLabel = tObj2.dailyRewardGold ? tObj2.dailyRewardGold(prize.value) : `+${prize.value}`;
-                        prizeText = `${prizeLabel}: ${goldLabel}`;
-                        spawnFloating(`🥇 ${goldLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
-                    } else if (prize.type === 'shares') {
-                        game.state.shares = Math.min((game.state.shares || 0) + prize.value, 100000);
-                        const sharesLabel = tObj2.dailyRewardShares ? tObj2.dailyRewardShares(prize.value) : `+${prize.value}`;
-                        prizeText = `${prizeLabel}: ${sharesLabel}`;
-                        spawnFloating(`📈 ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
+                    } else if (prize.type === 'gold' || prize.type === 'shares') {
+                        const isSmall = (prize.label === 'gold_1' || prize.label === 'shares_1');
+                        let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
+                        sharesAmount = Math.min(10000, sharesAmount); // Max 10,000 per spin
+                        game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 100000);
+                        const sharesLabel = `+${sharesAmount}`;
+                        prizeText = `${prizeLabel}: ${sharesLabel} מניות זהב`;
+                        const icon = prize.type === 'gold' ? '🥇' : '📈';
+                        spawnFloating(`${icon} ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');
                     }
 
                     const wasAdSpin = adSpinGranted;

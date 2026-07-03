@@ -1659,10 +1659,10 @@ Object.assign(translations.he, {
         cash_small: "כסף",
         cash_big: "כסף גדול",
         boost_2x: "בוסט x2",
-        gold_1: "זהב x1",
-        gold_2: "זהב x2",
-        shares_1: "מניה x1",
-        shares_3: "מניות x3"
+        gold_1: "קופת מניות",
+        gold_2: "קופת מניות ענקית",
+        shares_1: "מניות זהב",
+        shares_3: "מניות זהב רבות"
     },
     // VIP Visitor
     vipBannerTitle: "לקוח VIP פנימה!",

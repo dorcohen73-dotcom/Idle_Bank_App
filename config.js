@@ -115,13 +115,13 @@ const GAME_CONFIG = {
     },
 
     WHEEL_PRIZES: [
-        { type: 'cash',   label: 'cash_small',  weight: 35, value: 120, minValue: 120 },
-        { type: 'cash',   label: 'cash_big',    weight: 20, value: 600, minValue: 300 },
-        { type: 'boost',  label: 'boost_2x',    weight: 20, value: 2   },
-        { type: 'gold',   label: 'gold_1',      weight: 12, value: 1   },
-        { type: 'gold',   label: 'gold_2',      weight: 6,  value: 2   },
-        { type: 'shares', label: 'shares_1',    weight: 5,  value: 1   },
-        { type: 'shares', label: 'shares_3',    weight: 2,  value: 3   }
+        { type: 'cash',   label: 'cash_small',  weight: 35, value: 1 },
+        { type: 'cash',   label: 'cash_big',    weight: 20, value: 4 },
+        { type: 'boost',  label: 'boost_2x',    weight: 20, value: 4 },
+        { type: 'gold',   label: 'gold_1',      weight: 12, value: 5 },
+        { type: 'gold',   label: 'gold_2',      weight: 6,  value: 15 },
+        { type: 'shares', label: 'shares_1',    weight: 5,  value: 5 },
+        { type: 'shares', label: 'shares_3',    weight: 2,  value: 15 }
     ],
 
     // AdMob configuration IDs
