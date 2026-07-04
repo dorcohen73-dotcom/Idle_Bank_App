@@ -8,24 +8,28 @@
 
     const queue = [];
     let activeId = null;
+    let quietUntil = 0; // timestamp before which no new pop-up may be shown, even if one is requested
     let pollTimer = null;
 
     function isAnyModalOpen() {
         return !!document.querySelector('.modal-overlay.active');
     }
 
-    function schedulePoll() {
+    function schedulePoll(delay) {
         if (pollTimer) return;
         pollTimer = setTimeout(() => {
             pollTimer = null;
             tryProcessNext();
-        }, POLL_MS);
+        }, delay || POLL_MS);
     }
 
     function tryProcessNext() {
         if (activeId) return;
         if (queue.length === 0) return;
-        if (isAnyModalOpen()) { schedulePoll(); return; }
+
+        const remainingQuiet = quietUntil - Date.now();
+        if (remainingQuiet > 0) { schedulePoll(remainingQuiet); return; }
+        if (isAnyModalOpen()) { schedulePoll(POLL_MS); return; }
 
         queue.sort((a, b) => a.priority - b.priority);
         const next = queue.shift();
@@ -41,7 +45,7 @@
         opts = opts || {};
         if (activeId === id) return false;
         if (queue.some(q => q.id === id)) return false;
-        if (opts.dropIfBusy && (activeId !== null || queue.length > 0 || isAnyModalOpen())) return false;
+        if (opts.dropIfBusy && (activeId !== null || queue.length > 0 || isAnyModalOpen() || Date.now() < quietUntil)) return false;
 
         queue.push({ id, priority, showFn });
         tryProcessNext();
@@ -51,10 +55,13 @@
     // Called whenever a tracked modal-overlay loses its 'active' class, so the
     // queue can move on to the next item. Wired generically via MutationObserver
     // in ui-events.js — no need to call this manually from individual close handlers.
+    // Sets a quiet window that applies to ANY subsequent request (even ones that
+    // arrive fresh during the window), not just whatever was already queued.
     function notifyClosed(id) {
         if (activeId !== id) return;
         activeId = null;
-        setTimeout(tryProcessNext, BREATHE_MS);
+        quietUntil = Date.now() + BREATHE_MS;
+        schedulePoll(BREATHE_MS);
     }
 
     window.NotificationQueue = { PRIORITY, request, notifyClosed };
