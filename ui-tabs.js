@@ -1473,7 +1473,7 @@ function renderMissionsTab() {
                 const rectBtn = btn.getBoundingClientRect();
                 if (collected.type === 'cash') {
                     const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
-                    animateCoins(rectBtn, rectCashBox, 10, 'cash');
+                    animateCoins(rectBtn, rectCashBox, 10, 'cash_silent');
                     spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem');
                 } else {
                     // shares / gold reward

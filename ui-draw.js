@@ -412,7 +412,7 @@ function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
 
         coinObj.active = true;
         const coin = coinObj.element;
-        coin.innerText = type === 'cash' ? '💵' : '🪙';
+        coin.innerText = (type === 'cash' || type === 'cash_silent') ? '💵' : '🪙';
         coin.style.display = 'none';
         coin.style.opacity = '0';
 
