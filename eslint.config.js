@@ -5,7 +5,7 @@ const globals = require('globals');
 // <script> tags (not ES modules), `window.X` assignments become real global
 // identifiers usable bare in any other file loaded after it.
 const sharedGameGlobals = [
-    'AudioEngine', 'DOM_CACHE', 'DailyChallengeController', 'EconomyManager',
+    'AdService', 'AudioEngine', 'DOM_CACHE', 'DailyChallengeController', 'EconomyManager',
     'GAME_CONFIG', 'IdleBankGame', 'MissionController', 'SaveManager',
     '_boostOfferEndTime', '_footerFlavorInterval', '_vipBannerRetryTimeout',
     'activeCoins', 'animateCoins', 'applyLanguage', 'applyTheme',
@@ -84,7 +84,7 @@ module.exports = [
     },
     {
         // Node.js tooling scripts (CommonJS)
-        files: ['tools/**/*.js', 'test-guards.js', 'test-ui.js', 'patch-test.js'],
+        files: ['tools/**/*.js'],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'commonjs',
