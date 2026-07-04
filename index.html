@@ -353,16 +353,11 @@
                     </button>
                     <button class="tab-btn" data-tab="daily" id="tab-btn-daily" role="tab" aria-selected="false" aria-controls="tab-daily">
                         <img src="תמונות/nav_calendar.png" class="nav-3d-icon-small" alt="" />
-                        <span class="tab-label">יומי</span>
+                        <span class="tab-label">הישגים</span>
                     </button>
                     <button class="tab-btn" data-tab="branches" id="tab-btn-branches" role="tab" aria-selected="false" aria-controls="tab-branches">
                         <img src="תמונות/nav_globe.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">סניפים</span>
-                    </button>
-                    <button class="tab-btn" data-tab="achievements" id="tab-btn-achievements" role="tab" aria-selected="false" aria-controls="tab-achievements">
-                        <!-- TODO: replace with a dedicated nav_achievement.png matching the other 3D nav icons -->
-                        <span class="nav-3d-icon-small nav-icon-emoji-fallback" aria-hidden="true">🎖️</span>
-                        <span class="tab-label">הישגים</span>
                     </button>
                 </nav>
 
@@ -399,27 +394,28 @@
                         <!-- Dynamic Missions rendered here -->
                     </div>
 
-                    <!-- Daily Challenges Tab Pane -->
+                    <!-- Daily Challenges Tab Pane (merged with Achievements below, separated by a light divider) -->
                     <div class="tab-pane" id="tab-daily" role="tabpanel" aria-labelledby="tab-btn-daily">
                         <div class="daily-challenges-wrapper">
                             <div class="daily-challenges-header">
                                 <span class="daily-challenges-icon" aria-hidden="true">📅</span>
-                                <h3 class="daily-challenges-title" id="daily-challenges-title">אתגרי היום</h3>
+                                <h3 class="daily-challenges-title" id="daily-challenges-title">הישגים</h3>
                             </div>
                             <div id="daily-challenges-content">
                                 <!-- Dynamic daily challenges inserted here -->
                             </div>
+                        </div>
+
+                        <div class="daily-achievements-divider" aria-hidden="true"></div>
+
+                        <div id="tab-achievements">
+                            <!-- Dynamic Achievements rendered here -->
                         </div>
                     </div>
 
                     <!-- Branches & Prestige Tab Pane -->
                     <div class="tab-pane" id="tab-branches" role="tabpanel" aria-labelledby="tab-btn-branches">
                         <!-- Dynamic Branches rendered here -->
-                    </div>
-
-                    <!-- Achievements Tab Pane -->
-                    <div class="tab-pane" id="tab-achievements" role="tabpanel" aria-labelledby="tab-btn-achievements">
-                        <!-- Dynamic Achievements rendered here -->
                     </div>
                 </div>
             </section>
@@ -633,11 +629,11 @@
             <span class="bnav-label" data-i18n="tab_missions">משימות</span>
             <div class="active-star">✨</div>
         </button>
-        <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily" aria-label="אתגרים יומיים — טאב יומי">
+        <button class="bottom-nav-btn" data-tab="daily" id="bnav-daily" aria-label="הישגים ואתגרים יומיים — טאב הישגים">
             <div class="nav-icon-wrapper">
                 <img src="תמונות/nav_calendar.png" class="nav-3d-icon" alt="" />
             </div>
-            <span class="bnav-label" data-i18n="tab_daily">יומי</span>
+            <span class="bnav-label" data-i18n="tab_daily">הישגים</span>
             <div class="active-star">✨</div>
         </button>
         <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches" aria-label="סניפים — טאב סניפים">
@@ -645,14 +641,6 @@
                 <img src="תמונות/nav_globe.png" class="nav-3d-icon" alt="" />
             </div>
             <span class="bnav-label" data-i18n="tab_branches">סניפים</span>
-            <div class="active-star">✨</div>
-        </button>
-        <button class="bottom-nav-btn" data-tab="achievements" id="bnav-achievements" aria-label="הישגים — טאב הישגים">
-            <div class="nav-icon-wrapper">
-                <!-- TODO: replace with a dedicated nav_achievement.png matching the other 3D nav icons -->
-                <span class="nav-3d-icon nav-icon-emoji-fallback" aria-hidden="true">🎖️</span>
-            </div>
-            <span class="bnav-label" data-i18n="tab_achievements">הישגים</span>
             <div class="active-star">✨</div>
         </button>
     </nav>

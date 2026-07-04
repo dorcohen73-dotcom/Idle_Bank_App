@@ -210,7 +210,10 @@ function applyLanguage(lang) {
     else if (activeTab === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
     else if (activeTab === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
     else if (activeTab === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
-    else if (activeTab === 'achievements' && typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
+    else if (activeTab === 'daily') {
+        if (typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
+        if (typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
+    }
 
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
     if (DOM_CACHE.securityPath) {
@@ -1966,7 +1969,7 @@ function tick(timestamp) {
                 });
                 game.saveGame();
             }
-            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'achievements' && typeof window.renderAchievementsTab === 'function') {
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'daily' && typeof window.renderAchievementsTab === 'function') {
                 window.renderAchievementsTab();
             }
 
@@ -2497,9 +2500,11 @@ function initUIEvents() {
             else if (tabId === 'managers' && typeof window.renderManagersTab === 'function') window.renderManagersTab();
             else if (tabId === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
             else if (tabId === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
-            else if (tabId === 'daily' && typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
+            else if (tabId === 'daily') {
+                if (typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
+                if (typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
+            }
             else if (tabId === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
-            else if (tabId === 'achievements' && typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
 
             // סנכרון Bottom Nav
             syncBottomNav(tabId);

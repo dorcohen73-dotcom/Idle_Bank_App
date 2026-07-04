@@ -1659,7 +1659,10 @@ function refreshAllTabs() {
     else if (activeTab === 'departments') renderDepartmentsTab();
     else if (activeTab === 'missions') renderMissionsTab();
     else if (activeTab === 'branches') renderBranchesTab();
-    else if (activeTab === 'achievements') renderAchievementsTab();
+    else if (activeTab === 'daily') {
+        if (typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
+        renderAchievementsTab();
+    }
     rebuildTellersDOM();
 }
 

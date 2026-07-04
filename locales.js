@@ -1796,7 +1796,7 @@ Object.assign(translations.he, {
     vipRewardCash: (amt) => `קיבלת +${amt} ממזומן`,
     vipRewardGold: "קיבלת 3 מניות זהב!",
     // Daily Challenges
-    dailyTabBtn: "אתגרי יום",
+    dailyTabBtn: "הישגים",
     dailyChallengesTitle: "אתגרי היום",
     dailyChallengesSubtitle: "3 אתגרים קשים שמתאפסים בחצות",
     dailyClaimBtn: "קבל פרס",

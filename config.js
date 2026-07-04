@@ -141,19 +141,19 @@ const GAME_CONFIG = {
     // that the player claims manually via the tab.
     // id is persisted in save data — never rename/reuse an id once shipped.
     ACHIEVEMENTS: [
-        { id: 'cash_1', category: 'cash', statPath: 'lifetimeCash', threshold: 50000, bonusPercent: 0.005, rewardShares: 5, icon: '💵', i18nKey: 'cash_1' },
-        { id: 'cash_2', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000, bonusPercent: 0.01, rewardShares: 15, icon: '💰', i18nKey: 'cash_2' },
-        { id: 'cash_3', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000000, bonusPercent: 0.015, rewardShares: 50, icon: '🏦', i18nKey: 'cash_3' },
-        { id: 'missions_1', category: 'missions', statPath: 'missionsCompleted', threshold: 20, bonusPercent: 0.005, rewardShares: 5, icon: '📋', i18nKey: 'missions_1' },
-        { id: 'missions_2', category: 'missions', statPath: 'missionsCompleted', threshold: 300, bonusPercent: 0.01, rewardShares: 15, icon: '🏅', i18nKey: 'missions_2' },
-        { id: 'manager_first_max', category: 'managers', statPath: 'managerFirstMax', threshold: 1, bonusPercent: 0.0075, rewardShares: 5, icon: '👔', i18nKey: 'manager_first_max' },
-        { id: 'manager_all_max', category: 'managers', statPath: 'managerAllMax', threshold: 7, bonusPercent: 0.015, rewardShares: 50, icon: '👑', i18nKey: 'manager_all_max' },
-        { id: 'vip_1', category: 'vip', statPath: 'vipServedTotal', threshold: 100, bonusPercent: 0.005, rewardShares: 5, icon: '💎', i18nKey: 'vip_1' },
-        { id: 'vip_2', category: 'vip', statPath: 'vipServedTotal', threshold: 1500, bonusPercent: 0.01, rewardShares: 15, icon: '💎', i18nKey: 'vip_2' },
-        { id: 'guard_1', category: 'guard', statPath: 'guardTripsTotal', threshold: 50000, bonusPercent: 0.005, rewardShares: 15, icon: '🚚', i18nKey: 'guard_1' },
-        { id: 'login_streak_7', category: 'login', statPath: 'loginStreak', threshold: 7, bonusPercent: 0.005, rewardShares: 15, icon: '📅', i18nKey: 'login_streak_7' },
-        { id: 'branches_all', category: 'branches', statPath: 'visitedBranchesAll', threshold: 5, bonusPercent: 0.01, rewardShares: 50, icon: '🌍', i18nKey: 'branches_all' },
-        { id: 'prestige_1', category: 'prestige', statPath: 'shares', threshold: 400, bonusPercent: 0.005, rewardShares: 15, icon: '🪙', i18nKey: 'prestige_1' }
+        { id: 'cash_1', category: 'cash', statPath: 'lifetimeCash', threshold: 50000, bonusPercent: 0.005, rewardShares: 5, icon: '<img src="תמונות/gold-chest.png" class="achievement-img" alt="Cash" />', i18nKey: 'cash_1' },
+        { id: 'cash_2', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000, bonusPercent: 0.01, rewardShares: 15, icon: '<img src="תמונות/gold-bars.png" class="achievement-img" alt="Cash" />', i18nKey: 'cash_2' },
+        { id: 'cash_3', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000000, bonusPercent: 0.015, rewardShares: 50, icon: '<img src="תמונות/vault.png" class="achievement-img" alt="Cash" />', i18nKey: 'cash_3' },
+        { id: 'missions_1', category: 'missions', statPath: 'missionsCompleted', threshold: 20, bonusPercent: 0.005, rewardShares: 5, icon: '<img src="תמונות/nav_trophy.png" class="achievement-img" alt="Missions" />', i18nKey: 'missions_1' },
+        { id: 'missions_2', category: 'missions', statPath: 'missionsCompleted', threshold: 300, bonusPercent: 0.01, rewardShares: 15, icon: '<img src="תמונות/eps_circle.png" class="achievement-img" alt="Missions" />', i18nKey: 'missions_2' },
+        { id: 'manager_first_max', category: 'managers', statPath: 'managerFirstMax', threshold: 1, bonusPercent: 0.0075, rewardShares: 5, icon: '<img src="תמונות/nav_suit.png" class="achievement-img" alt="Manager" />', i18nKey: 'manager_first_max' },
+        { id: 'manager_all_max', category: 'managers', statPath: 'managerAllMax', threshold: 7, bonusPercent: 0.015, rewardShares: 50, icon: '<img src="תמונות/manager_circle.png" class="achievement-img" alt="Manager" />', i18nKey: 'manager_all_max' },
+        { id: 'vip_1', category: 'vip', statPath: 'vipServedTotal', threshold: 100, bonusPercent: 0.005, rewardShares: 5, icon: '<img src="תמונות/gold-vip.png" class="achievement-img" alt="VIP" />', i18nKey: 'vip_1' },
+        { id: 'vip_2', category: 'vip', statPath: 'vipServedTotal', threshold: 1500, bonusPercent: 0.01, rewardShares: 15, icon: '<img src="תמונות/gold-vip.png" class="achievement-img" alt="VIP" />', i18nKey: 'vip_2' },
+        { id: 'guard_1', category: 'guard', statPath: 'guardTripsTotal', threshold: 50000, bonusPercent: 0.005, rewardShares: 15, icon: '<img src="תמונות/guard_circle.png" class="achievement-img" alt="Guard" />', i18nKey: 'guard_1' },
+        { id: 'login_streak_7', category: 'login', statPath: 'loginStreak', threshold: 7, bonusPercent: 0.005, rewardShares: 15, icon: '<img src="תמונות/nav_calendar.png" class="achievement-img" alt="Login" />', i18nKey: 'login_streak_7' },
+        { id: 'branches_all', category: 'branches', statPath: 'visitedBranchesAll', threshold: 5, bonusPercent: 0.01, rewardShares: 50, icon: '<img src="תמונות/nav_globe.png" class="achievement-img" alt="Branches" />', i18nKey: 'branches_all' },
+        { id: 'prestige_1', category: 'prestige', statPath: 'shares', threshold: 400, bonusPercent: 0.005, rewardShares: 15, icon: '<img src="תמונות/boost_run_circle.png" class="achievement-img" alt="Prestige" />', i18nKey: 'prestige_1' }
     ]
 };
 
