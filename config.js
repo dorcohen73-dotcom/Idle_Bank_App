@@ -133,7 +133,28 @@ const GAME_CONFIG = {
     // Centers for a 4-column equal-grid (1fr each): (i + 0.5) / 4 in RTL visual order.
     // DOM-computed values override these at runtime via _recalcGuardAnchors().
     GUARD_TELLER_ANCHORS: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
-    GUARD_VAULT_ANCHOR: 0.05
+    GUARD_VAULT_ANCHOR: 0.05,
+
+    // Achievements — static catalog. Each unlocks a small permanent GLOBAL income multiplier bonus
+    // (never resets on prestige — reads lifetime stats that already don't reset either) the instant
+    // its condition is met, PLUS a one-time gold-shares reward (rewardShares, scaled to difficulty)
+    // that the player claims manually via the tab.
+    // id is persisted in save data — never rename/reuse an id once shipped.
+    ACHIEVEMENTS: [
+        { id: 'cash_1', category: 'cash', statPath: 'lifetimeCash', threshold: 50000, bonusPercent: 0.005, rewardShares: 5, icon: '💵', i18nKey: 'cash_1' },
+        { id: 'cash_2', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000, bonusPercent: 0.01, rewardShares: 15, icon: '💰', i18nKey: 'cash_2' },
+        { id: 'cash_3', category: 'cash', statPath: 'lifetimeCash', threshold: 50000000000, bonusPercent: 0.015, rewardShares: 50, icon: '🏦', i18nKey: 'cash_3' },
+        { id: 'missions_1', category: 'missions', statPath: 'missionsCompleted', threshold: 20, bonusPercent: 0.005, rewardShares: 5, icon: '📋', i18nKey: 'missions_1' },
+        { id: 'missions_2', category: 'missions', statPath: 'missionsCompleted', threshold: 300, bonusPercent: 0.01, rewardShares: 15, icon: '🏅', i18nKey: 'missions_2' },
+        { id: 'manager_first_max', category: 'managers', statPath: 'managerFirstMax', threshold: 1, bonusPercent: 0.0075, rewardShares: 5, icon: '👔', i18nKey: 'manager_first_max' },
+        { id: 'manager_all_max', category: 'managers', statPath: 'managerAllMax', threshold: 7, bonusPercent: 0.015, rewardShares: 50, icon: '👑', i18nKey: 'manager_all_max' },
+        { id: 'vip_1', category: 'vip', statPath: 'vipServedTotal', threshold: 100, bonusPercent: 0.005, rewardShares: 5, icon: '💎', i18nKey: 'vip_1' },
+        { id: 'vip_2', category: 'vip', statPath: 'vipServedTotal', threshold: 1500, bonusPercent: 0.01, rewardShares: 15, icon: '💎', i18nKey: 'vip_2' },
+        { id: 'guard_1', category: 'guard', statPath: 'guardTripsTotal', threshold: 50000, bonusPercent: 0.005, rewardShares: 15, icon: '🚚', i18nKey: 'guard_1' },
+        { id: 'login_streak_7', category: 'login', statPath: 'loginStreak', threshold: 7, bonusPercent: 0.005, rewardShares: 15, icon: '📅', i18nKey: 'login_streak_7' },
+        { id: 'branches_all', category: 'branches', statPath: 'visitedBranchesAll', threshold: 5, bonusPercent: 0.01, rewardShares: 50, icon: '🌍', i18nKey: 'branches_all' },
+        { id: 'prestige_1', category: 'prestige', statPath: 'shares', threshold: 400, bonusPercent: 0.005, rewardShares: 15, icon: '🪙', i18nKey: 'prestige_1' }
+    ]
 };
 
 Object.freeze(GAME_CONFIG.BRANCHES);
@@ -152,4 +173,6 @@ Object.keys(GAME_CONFIG.MANAGER_COEFFICIENTS).forEach(k => Object.freeze(GAME_CO
 GAME_CONFIG.WHEEL_PRIZES.forEach(p => Object.freeze(p));
 Object.freeze(GAME_CONFIG.WHEEL_PRIZES);
 Object.freeze(GAME_CONFIG.GUARD_TELLER_ANCHORS);
+GAME_CONFIG.ACHIEVEMENTS.forEach(a => Object.freeze(a));
+Object.freeze(GAME_CONFIG.ACHIEVEMENTS);
 Object.freeze(GAME_CONFIG);

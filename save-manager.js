@@ -598,6 +598,43 @@ class SaveManager {
             });
             state.missions = state.missions.filter(m => m !== null);
         }
+
+        // achievements — sparse unlocked/claimed maps; bonusPercent is always recomputed from the
+        // unlocked map (self-healing, never trusted as persisted) so it can never drift out of sync.
+        if (!state.achievements || typeof state.achievements !== 'object') {
+            state.achievements = { unlocked: {}, claimed: {}, bonusPercent: 0 };
+        }
+        if (!state.achievements.unlocked || typeof state.achievements.unlocked !== 'object') {
+            state.achievements.unlocked = {};
+        }
+        if (!state.achievements.claimed || typeof state.achievements.claimed !== 'object') {
+            state.achievements.claimed = {};
+        }
+        {
+            const validIds = GAME_CONFIG.ACHIEVEMENTS.map(a => a.id);
+            Object.keys(state.achievements.unlocked).forEach(id => {
+                if (!validIds.includes(id)) delete state.achievements.unlocked[id];
+            });
+            Object.keys(state.achievements.claimed).forEach(id => {
+                if (!validIds.includes(id) || !state.achievements.unlocked[id]) delete state.achievements.claimed[id];
+            });
+        }
+        state.achievements.bonusPercent = GAME_CONFIG.ACHIEVEMENTS
+            .filter(a => state.achievements.unlocked[a.id])
+            .reduce((sum, a) => sum + a.bonusPercent, 0);
+
+        // One-time retroactive backfill: existing saves already have lifetime stats (lifetimeCash,
+        // missionsCompleted, etc.) that predate this feature — grant any achievement already qualified
+        // for instead of forcing players to "re-earn" progress they already made. Runs last since it
+        // depends on every stat field above (and managerUpgrades/visitedBranches healed earlier in this
+        // function) already being validated. New games are a safe no-op (defaults don't meet any threshold).
+        if (!state.migrations) state.migrations = {};
+        if (!state.migrations.achievementsBackfill) {
+            if (this.game.achievementController) {
+                this.game.achievementController.checkAchievements();
+            }
+            state.migrations.achievementsBackfill = true;
+        }
     }
 
     loadGame() {

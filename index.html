@@ -359,6 +359,11 @@
                         <img src="תמונות/nav_globe.png" class="nav-3d-icon-small" alt="" />
                         <span class="tab-label">סניפים</span>
                     </button>
+                    <button class="tab-btn" data-tab="achievements" id="tab-btn-achievements" role="tab" aria-selected="false" aria-controls="tab-achievements">
+                        <!-- TODO: replace with a dedicated nav_achievement.png matching the other 3D nav icons -->
+                        <span class="nav-3d-icon-small nav-icon-emoji-fallback" aria-hidden="true">🎖️</span>
+                        <span class="tab-label">הישגים</span>
+                    </button>
                 </nav>
 
                 <!-- Bulk Upgrade Selector -->
@@ -410,6 +415,11 @@
                     <!-- Branches & Prestige Tab Pane -->
                     <div class="tab-pane" id="tab-branches" role="tabpanel" aria-labelledby="tab-btn-branches">
                         <!-- Dynamic Branches rendered here -->
+                    </div>
+
+                    <!-- Achievements Tab Pane -->
+                    <div class="tab-pane" id="tab-achievements" role="tabpanel" aria-labelledby="tab-btn-achievements">
+                        <!-- Dynamic Achievements rendered here -->
                     </div>
                 </div>
             </section>
@@ -637,6 +647,14 @@
             <span class="bnav-label" data-i18n="tab_branches">סניפים</span>
             <div class="active-star">✨</div>
         </button>
+        <button class="bottom-nav-btn" data-tab="achievements" id="bnav-achievements" aria-label="הישגים — טאב הישגים">
+            <div class="nav-icon-wrapper">
+                <!-- TODO: replace with a dedicated nav_achievement.png matching the other 3D nav icons -->
+                <span class="nav-3d-icon nav-icon-emoji-fallback" aria-hidden="true">🎖️</span>
+            </div>
+            <span class="bnav-label" data-i18n="tab_achievements">הישגים</span>
+            <div class="active-star">✨</div>
+        </button>
     </nav>
 
     <!-- Fortune Wheel Modal -->
@@ -733,6 +751,7 @@
     <script src="economy-manager.js?v=20260702_37" defer></script>
     <script src="save-manager.js?v=20260702_37" defer></script>
     <script src="mission-controller.js?v=20260702_37" defer></script>
+    <script src="achievement-controller.js?v=20260704_1" defer></script>
     <script src="game.js?v=20260702_37" defer></script>
     <script src="ui-draw.js?v=20260702_37"></script>
     <script src="ui-tabs.js?v=20260702_37"></script>

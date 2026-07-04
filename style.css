@@ -156,13 +156,14 @@ body {
 }
 
 /* Juiciness - Button Squish Animation */
-.buy-btn, .claim-reward-btn, .tab-btn, .collect-vault-btn, .upg-v2-buy-btn {
+.buy-btn, .claim-reward-btn, .claim-achievement-btn, .tab-btn, .collect-vault-btn, .upg-v2-buy-btn {
     transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease-out, filter 0.15s ease-out, background 0.2s ease, border-color 0.2s ease !important;
 }
 
-.buy-btn:not(:disabled):active, 
-.claim-reward-btn:active, 
-.tab-btn:not(.active):active, 
+.buy-btn:not(:disabled):active,
+.claim-reward-btn:active,
+.claim-achievement-btn:active,
+.tab-btn:not(.active):active,
 .collect-vault-btn:active,
 .upg-v2-buy-btn:not(:disabled):active {
     transform: scale(0.92) !important;
@@ -3028,6 +3029,277 @@ footer {
     color: #ffffff; /* Platinum white */
     text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
     font-family: 'Outfit', sans-serif;
+}
+
+/* ===== Achievements Tab — reuses the same dark/gold card language as Missions ===== */
+#tab-achievements .missions-summary-header {
+    background: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px), linear-gradient(135deg, #0b101e 0%, #1e293b 50%, #050811 100%);
+    background-size: 10px 10px, 100% 100%;
+    border: 1px solid rgba(223, 171, 41, 0.6);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(223, 171, 41, 0.3), inset 0 2px 15px rgba(0, 0, 0, 0.6);
+    color: #f8fafc;
+    position: relative;
+}
+
+#tab-achievements .missions-summary-header .summary-badge {
+    font-size: 1.7rem;
+    font-weight: 900;
+    background: linear-gradient(180deg, #fef08a 0%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+#tab-achievements .missions-summary-header .summary-desc {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.4;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+}
+
+#tab-achievements .mission-card {
+    background: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px), linear-gradient(135deg, #0d152e 0%, #050814 100%);
+    background-size: 10px 10px, 100% 100%;
+    border: 1px solid rgba(223, 171, 41, 0.35);
+    border-radius: 24px;
+    padding: 1.5rem 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.8rem;
+    align-items: center;
+    position: relative;
+    min-height: 120px;
+    overflow: visible;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(255,255,255,0.1), inset 0 2px 15px rgba(0, 0, 0, 0.6);
+    direction: ltr;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Unlocked state: static gold tint only — no glow/pulse animation by design */
+#tab-achievements .mission-card.unlocked {
+    border-color: #dfab29;
+    background: linear-gradient(135deg, rgba(223, 171, 41, 0.10) 0%, rgba(15, 23, 42, 0.98) 100%);
+}
+
+#tab-achievements .achievement-icon-box {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tab-achievements .achievement-icon {
+    font-size: 2.6rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+
+#tab-achievements .mission-content-middle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: right;
+    min-width: 0;
+}
+
+#tab-achievements .mission-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: right;
+}
+
+#tab-achievements .mission-card .mission-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.85);
+    line-height: 1.2;
+}
+
+#tab-achievements .mission-card .mission-desc {
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    word-wrap: break-word;
+}
+
+#tab-achievements .mission-progress-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#tab-achievements .mission-progress-outer {
+    flex-grow: 1;
+    height: 16px;
+    background: #000000;
+    border: 1px solid rgba(223, 171, 41, 0.4);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+#tab-achievements .mission-progress-bar {
+    height: 100%;
+    background: linear-gradient(180deg, #fef08a 0%, #facc15 50%, #ca8a04 100%);
+    border-radius: 20px;
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6), inset 0 1px 2px rgba(255,255,255,0.7);
+}
+
+#tab-achievements .progress-text-overlay {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.68rem;
+    letter-spacing: 0.5px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 0px 0px 4px #000;
+    pointer-events: none;
+    font-family: 'Outfit', sans-serif;
+    white-space: nowrap;
+    z-index: 5;
+}
+
+#tab-achievements .achievement-unlocked-badge {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #fbbf24;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+
+#tab-achievements .mission-circle-progress {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tab-achievements .mission-circle-progress svg {
+    transform: rotate(-90deg);
+}
+
+#tab-achievements .mission-circle-progress .circle-bg,
+#tab-achievements .mission-circle-progress .circle-value {
+    stroke-width: 4px;
+}
+
+#tab-achievements .mission-circle-progress .circle-bg {
+    stroke: #0a1128;
+}
+
+#tab-achievements .mission-circle-progress .circle-value {
+    stroke: #dfab29;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 4px rgba(223, 171, 41, 0.6));
+}
+
+#tab-achievements .mission-circle-progress .circle-text {
+    position: absolute;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Already-claimed achievements sink to the bottom of the list — muted, out of the way */
+#tab-achievements .mission-card.claimed {
+    opacity: 0.55;
+}
+
+#tab-achievements .mission-reward-badge {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    background: linear-gradient(135deg, #0b101e 0%, #000000 100%);
+    border-bottom: 1.5px solid #D4AF37;
+    border-left: 1.5px solid #D4AF37;
+    color: #fbbf24;
+    font-size: 0.85rem;
+    font-weight: 900;
+    padding: 0.3rem 1.4rem;
+    border-radius: 0 24px 0 16px;
+    box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(212, 175, 55, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    z-index: 10;
+}
+
+#tab-achievements .mission-action-zone {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Claim button — same static shape/colors as the Missions claim button, deliberately without
+   the pulse-claim glow animation used there, per this feature's no-glow/no-pulse design choice. */
+#tab-achievements .claim-achievement-btn {
+    width: 100%;
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid #D4AF37;
+    background: linear-gradient(to bottom, #195431, #0a2614);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s ease;
+    box-shadow: 0 4px 15px rgba(25, 84, 49, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+#tab-achievements .claim-achievement-btn:hover {
+    background: linear-gradient(to bottom, #216a3e, #0c2f19);
+    transform: scale(1.03);
+}
+
+#tab-achievements .claim-achievement-btn:active {
+    transform: scale(0.96);
+}
+
+#tab-achievements .claim-reward-amount {
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.9;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Temporary emoji stand-in for the nav icon until a dedicated 3D-rendered PNG is supplied */
+.nav-icon-emoji-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    line-height: 1;
 }
 
 /* Action Zone (Left side) */

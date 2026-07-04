@@ -73,6 +73,12 @@ class EconomyManager {
             const svcLvl = this.game.state.managerUpgrades.service.level;
             mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.epsBoost * svcLvl);
         }
+
+        // Achievements: small permanent global bonus, sum of all unlocked achievements' bonusPercent
+        if (this.game.state.achievements && this.game.state.achievements.bonusPercent) {
+            mult *= (1 + this.game.state.achievements.bonusPercent);
+        }
+
         this.cachedTotalMult = mult;
         return mult;
     }

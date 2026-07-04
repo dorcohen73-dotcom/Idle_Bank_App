@@ -210,6 +210,7 @@ function applyLanguage(lang) {
     else if (activeTab === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
     else if (activeTab === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
     else if (activeTab === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+    else if (activeTab === 'achievements' && typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
 
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
     if (DOM_CACHE.securityPath) {
@@ -1955,6 +1956,20 @@ function tick(timestamp) {
                 game.checkMissions();
                 if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
             }
+
+            // Achievements: checked unconditionally (the income bonus must apply globally and
+            // promptly regardless of which tab is open), rendered only when its tab is active.
+            const _newlyUnlockedAchievements = game.checkAchievements();
+            if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0) {
+                _newlyUnlockedAchievements.forEach(a => {
+                    if (typeof window.playAchievementUnlockFeedback === 'function') window.playAchievementUnlockFeedback(a);
+                });
+                game.saveGame();
+            }
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'achievements' && typeof window.renderAchievementsTab === 'function') {
+                window.renderAchievementsTab();
+            }
+
             updateButtonAffordability();
 
             // Near-miss prestige glow: light up prestige buttons when >= 70% of threshold
@@ -2484,6 +2499,7 @@ function initUIEvents() {
             else if (tabId === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
             else if (tabId === 'daily' && typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
             else if (tabId === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+            else if (tabId === 'achievements' && typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
 
             // סנכרון Bottom Nav
             syncBottomNav(tabId);

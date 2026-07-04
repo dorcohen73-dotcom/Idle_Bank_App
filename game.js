@@ -29,7 +29,8 @@ class IdleBankGame {
         this.saveManager = new SaveManager(this);
         this.economyManager = new EconomyManager(this);
         this.missionController = new MissionController(this);
-        
+        this.achievementController = new AchievementController(this);
+
         // Load state
         this.loadGame();
     }
@@ -113,6 +114,7 @@ class IdleBankGame {
 
             missions: [],
             missionsCompleted: 0,
+            achievements: { unlocked: {}, claimed: {}, bonusPercent: 0 },
             stats: {
                 clientsServed: 0,
                 tellerUpgrades: 0,
@@ -298,6 +300,19 @@ class IdleBankGame {
 
     claimMissionReward(id) {
         return this.missionController.claimMissionReward(id);
+    }
+
+    // --- ACHIEVEMENT DELEGATES ---
+    checkAchievements() {
+        return this.achievementController ? this.achievementController.checkAchievements() : [];
+    }
+
+    getAchievementProgress(id) {
+        return this.achievementController ? this.achievementController.getProgress(id) : { current: 0, target: 1, percent: 0 };
+    }
+
+    claimAchievementReward(id) {
+        return this.achievementController ? this.achievementController.claimReward(id) : { type: 'none', amount: 0 };
     }
 
     // --- STATE MANAGEMENT ---
