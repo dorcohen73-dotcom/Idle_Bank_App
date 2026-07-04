@@ -84,7 +84,7 @@ module.exports = [
     },
     {
         // Node.js tooling scripts (CommonJS)
-        files: ['tools/**/*.js', 'test-guards.js', 'test-ui.js', 'patch-test.js'],
+        files: ['tools/**/*.js'],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'commonjs',

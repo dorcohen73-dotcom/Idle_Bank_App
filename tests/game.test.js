@@ -19,9 +19,21 @@ global.window = {
     }
 };
 
-// Evaluate the game.js code in global context
-const gameCode = fs.readFileSync(path.resolve(__dirname, '../game.js'), 'utf8');
-new Function('window', gameCode)(global.window);
+// mission-controller.js calls document.querySelector directly (not via window),
+// so the bare `document` global needs a minimal stub too.
+global.document = {
+    querySelector: () => null
+};
+
+// Evaluate the game's core scripts together in one scope, mirroring how the
+// browser loads them as separate <script> tags sharing the same top-level
+// lexical scope. Order matches index.html (game.js depends on GAME_CONFIG,
+// EconomyManager, SaveManager and MissionController from the earlier scripts).
+const scriptOrder = ['config.js', 'locales.js', 'economy-manager.js', 'save-manager.js', 'mission-controller.js', 'game.js'];
+const combinedCode = scriptOrder
+    .map(file => fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'))
+    .join('\n');
+new Function('window', combinedCode)(global.window);
 
 const IdleBankGame = global.window.IdleBankGame;
 
