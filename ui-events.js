@@ -1496,14 +1496,23 @@ function triggerRandomEvent() {
 
     if (AdService.isInCooldown()) {
         container.querySelectorAll('.ad-option').forEach(btn => btn.remove());
-        
+
         const adDependentEvents = ['rescue', 'investor'];
         if (adDependentEvents.includes(eventType) && container.children.length <= 1) {
             return;
         }
     }
 
-    eventModal.classList.add('active');
+    if (window.NotificationQueue) {
+        // Casual priority + dropIfBusy: an event whose content (cash amounts, etc.)
+        // was built now would go stale if delayed and shown minutes later — skip
+        // this cycle instead, the same as before the queue existed.
+        window.NotificationQueue.request('event-modal', window.NotificationQueue.PRIORITY.CASUAL, () => {
+            eventModal.classList.add('active');
+        }, { dropIfBusy: true });
+    } else {
+        eventModal.classList.add('active');
+    }
 }
 
 function updateAdvDisplay(budget) {
@@ -1876,25 +1885,21 @@ function openWeeklyRewardModal() {
         }
     };
 
-    modal.classList.add('active');
+    if (window.NotificationQueue) {
+        window.NotificationQueue.request('weekly-modal', window.NotificationQueue.PRIORITY.IMPORTANT, () => {
+            modal.classList.add('active');
+        });
+    } else {
+        modal.classList.add('active');
+    }
 }
 
 function checkWeeklyReward() {
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
     const last = (game.state && game.state.lastWeeklyReward) || 0;
     if (Date.now() - last >= ONE_WEEK_MS) {
-        let weeklyRetries = 0;
-        const MAX_WEEKLY_RETRIES = 10;
-        const tryShow = () => {
-            if (weeklyRetries >= MAX_WEEKLY_RETRIES) return;
-            if (!document.querySelector('.modal-overlay.active')) {
-                openWeeklyRewardModal();
-            } else {
-                weeklyRetries++;
-                setTimeout(tryShow, 1500);
-            }
-        };
-        setTimeout(tryShow, 4000);
+        // NotificationQueue waits for any other automatic pop-up to close first.
+        setTimeout(openWeeklyRewardModal, 4000);
     }
 }
 
@@ -2072,6 +2077,26 @@ function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour, va
     }
 }
 
+// Single entry point for showing the offline-earnings modal. Both the initial
+// (unverified-clock) check and the later server-time-verified check funnel through
+// here, so the popup only ever queues/shows once instead of racing/stacking.
+function showOfflineEarningsModal() {
+    if (!window.game || !window.game.offlineEarningsReport || window.game.offlineEarningsReport <= 0) return;
+
+    const displayFn = () => {
+        if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
+        if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
+        if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
+    };
+
+    if (window.NotificationQueue) {
+        window.NotificationQueue.request('offline-modal', window.NotificationQueue.PRIORITY.IMPORTANT, displayFn);
+    } else {
+        displayFn();
+    }
+}
+window.showOfflineEarningsModal = showOfflineEarningsModal;
+
 function showLoginRewardModal() {
     if (!window.game || !window.game.state || !window.game.state.pendingLoginReward) return;
     const modal = document.getElementById('login-reward-modal');
@@ -2132,7 +2157,13 @@ function showLoginRewardModal() {
         }
     };
 
-    modal.classList.add('active');
+    if (window.NotificationQueue) {
+        window.NotificationQueue.request('login-reward-modal', window.NotificationQueue.PRIORITY.IMPORTANT, () => {
+            modal.classList.add('active');
+        });
+    } else {
+        modal.classList.add('active');
+    }
 }
 
 function _applyLoginReward(reward) {
@@ -2235,6 +2266,7 @@ function initFocusTrapObserver() {
                 trapFocus(modal);
             } else {
                 releaseFocus(modal);
+                if (window.NotificationQueue) window.NotificationQueue.notifyClosed(modal.id);
             }
         });
         obs.observe(modal, { attributes: true, attributeFilter: ['class'] });
@@ -3627,17 +3659,15 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                     !window.game.state.shares &&
                     !(window.game.state.missionsCompleted > 0);
         if (isNew) setTimeout(function() {
-            // Wait for language modal to be dismissed before showing first tip
-            var langModal = document.getElementById('lang-modal');
-            if (langModal && langModal.classList.contains('active')) {
-                var onLangClose = function() {
-                    langModal.removeEventListener('transitionend', onLangClose);
-                    setTimeout(function() { showDiscoveryTip('start'); }, 800);
-                };
-                langModal.addEventListener('transitionend', onLangClose);
-            } else {
+            // Wait for the language/offline/login-reward modal cascade to clear before showing the first tip
+            var tryShow = function() {
+                if (document.querySelector('.modal-overlay.active')) {
+                    setTimeout(tryShow, 1000);
+                    return;
+                }
                 showDiscoveryTip('start');
-            }
+            };
+            tryShow();
         }, 2500);
     }
 
