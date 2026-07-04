@@ -1,0 +1,10 @@
+# Local Netlify folder
+.netlify
+node_modules/
+scratch/
+.agents/
+.claude/
+*.mp4
+תמונות_גיבוי/
+test_screenshot.png
+*גל*.md

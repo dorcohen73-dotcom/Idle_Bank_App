@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bank Empire</string>
+    <string name="title_activity_main">Bank Empire</string>
+    <string name="package_name">com.dorcohen73.idlebank</string>
+    <string name="custom_url_scheme">com.dorcohen73.idlebank</string>
+</resources>
