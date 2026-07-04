@@ -56,13 +56,8 @@ class SaveManager {
         this.checkDailyLogin();
 
         // Trigger offline earnings modal if there is a pending report
-        if (this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0) {
-            const elModal = document.getElementById('offline-modal');
-            const elModalAmount = document.getElementById('modal-amount');
-            if (elModal && elModalAmount) {
-                elModalAmount.innerText = formatMoney(this.game.offlineEarningsReport);
-                elModal.classList.add('active');
-            }
+        if (typeof window.showOfflineEarningsModal === 'function') {
+            window.showOfflineEarningsModal();
         }
 
         // Re-check missions after offline progress is loaded
@@ -73,21 +68,16 @@ class SaveManager {
             window.refreshAllTabs();
         }
 
-        // Show daily login reward modal if pending — wait until no other modal is open
+        // Show daily login reward modal if pending — NotificationQueue handles waiting
+        // for the language/offline modals to close first.
         if (this.game.state.pendingLoginReward) {
             const hasOffline = this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0;
             const initialDelay = hasOffline ? 2000 : 1500;
-            const tryShow = (retriesLeft) => {
-                if (!retriesLeft) return;
-                if (document.querySelector('.modal-overlay.active')) {
-                    setTimeout(() => tryShow(retriesLeft - 1), 1500);
-                    return;
-                }
+            setTimeout(() => {
                 if (typeof window.showLoginRewardModal === 'function') {
                     window.showLoginRewardModal();
                 }
-            };
-            setTimeout(() => tryShow(8), initialDelay);
+            }, initialDelay);
         }
     }
 

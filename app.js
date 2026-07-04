@@ -236,7 +236,12 @@
             window.game.setLanguage('en');
             applyLanguage('en');
             if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'none'; // Force choice first time
-            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active');
+            const showLangModal = () => { if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active'); };
+            if (window.NotificationQueue) {
+                window.NotificationQueue.request('lang-modal', window.NotificationQueue.PRIORITY.CRITICAL, showLangModal);
+            } else {
+                showLangModal();
+            }
         } else {
             applyLanguage(chosenLang);
         }
@@ -263,10 +268,8 @@
                 window.game.recalculateEps();
                 window.game.calculateOfflineEarnings();
                 
-                if (window.game.offlineEarningsReport && window.game.offlineEarningsReport > 0) {
-                    if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
-                    if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
-                    if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
+                if (typeof window.showOfflineEarningsModal === 'function') {
+                    window.showOfflineEarningsModal();
                 }
 
                 window.lastTime = performance.now();
@@ -278,10 +281,8 @@
         });
 
         // Display offline earnings modal if pending
-        if (window.game.offlineEarningsReport && window.game.offlineEarningsReport > 0) {
-            if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
-            if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
-            if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
+        if (typeof window.showOfflineEarningsModal === 'function') {
+            window.showOfflineEarningsModal();
         }
 
         // Ensure vault-door image is present in vault-graphic (JS fallback)
