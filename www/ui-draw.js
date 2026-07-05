@@ -156,7 +156,7 @@ function getClientSVG(type, seed) {
     
     const resultHtml = `
         <div style="position: absolute; inset: 0; border-radius: 50%; overflow: hidden; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d;">
-            <img src="תמונות/client-${imgNum}.png" alt="Client" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+            <img src="images/client-${imgNum}.png" alt="Client" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
         </div>
     `;
     
@@ -458,7 +458,7 @@ function rebuildTellersDOM() {
         if (t.unlocked) {
             div.innerHTML = `
                 <div class="glass-showcase">
-                    <img class="teller-bg-img" src="תמונות/teller-${(t.id % 8) + 1}.png?v=20260626" alt="" />
+                    <img class="teller-bg-img" src="images/teller-${(t.id % 8) + 1}.png?v=20260626" alt="" />
                     <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
                 </div>
                 <div class="gold-plaque">
@@ -744,7 +744,7 @@ function draw() {
                         const _t = tData.customerType || 'normal';
                         const _s = (tData.customerSeed === undefined || tData.customerSeed === null || isNaN(tData.customerSeed)) ? 0 : tData.customerSeed;
                         const _n = (_t === 'rich') ? 9 : (_t === 'vip') ? 10 : ((_s % 8) + 1);
-                        clientSlot.style.setProperty('background-image', `url('תמונות/client-${_n}.png')`, 'important');
+                        clientSlot.style.setProperty('background-image', `url('images/client-${_n}.png')`, 'important');
                         clientSlot.style.setProperty('background-size', 'cover', 'important');
                         clientSlot.style.setProperty('background-position', 'center top', 'important');
                         clientSlot.innerHTML = '';

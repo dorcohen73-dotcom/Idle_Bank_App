@@ -291,7 +291,7 @@
             if (!vaultGraphicEl.querySelector('.vault-door-img')) {
                 const vaultImg = document.createElement('img');
                 vaultImg.className = 'vault-door-img';
-                vaultImg.src = 'תמונות/vault-door.png';
+                vaultImg.src = 'images/vault-door.png';
                 vaultImg.alt = '';
                 vaultGraphicEl.insertBefore(vaultImg, vaultGraphicEl.firstChild);
             }

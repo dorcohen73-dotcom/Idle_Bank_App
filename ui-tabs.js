@@ -39,7 +39,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
             avatarImg = '';
-            avatarBgUrl = `תמונות/teller-${(id % 8) + 1}.png`;
+            avatarBgUrl = `images/teller-${(id % 8) + 1}.png`;
             avatarBgPos = 'center';
             avatarBgSize = 'cover';
             title = tObj.tellerTitle(id + 1, entity.level);
@@ -52,7 +52,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             nextCapacity = game.getGuardCapacity(nextLevel);
             nextSpeed = game.getGuardSpeed(nextLevel).toFixed(1);
             avatarImg = '';
-            avatarBgUrl = 'תמונות/guard.png';
+            avatarBgUrl = 'images/guard.png';
             avatarBgPos = 'center 8%';
             avatarBgSize = '220%';
             title = tObj.guardTitle(id + 1, entity.level);
@@ -140,7 +140,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         let cost, avatarBgUrl2 = '', avatarBgPos2 = 'center 25%', avatarBgSize2 = 'cover', title, desc, unlockAction, unlockText;
         if (type === 'teller') {
             cost = game.tellerUnlockCosts[id];
-            avatarBgUrl2 = `תמונות/teller-${(id % 8) + 1}.png`;
+            avatarBgUrl2 = `images/teller-${(id % 8) + 1}.png`;
             avatarBgPos2 = 'center';
             avatarBgSize2 = 'cover';
             title = tObj.tellerLocked(id + 1);
@@ -149,7 +149,7 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             unlockText = translations[lang].unlockLabel;
         } else {
             cost = game.guardUnlockCosts[id];
-            avatarBgUrl2 = 'תמונות/guard.png';
+            avatarBgUrl2 = 'images/guard.png';
             avatarBgPos2 = 'center 8%';
             avatarBgSize2 = '220%';
             title = tObj.guardLocked(id + 1);
@@ -240,7 +240,7 @@ function renderUpgradesTab() {
     vaultCard.innerHTML = `
         <div class="upg-v2-info">
             <div class="upg-v2-avatar-wrap">
-                <div class="upg-v2-avatar" style="background-image: url('תמונות/vault-door.png');"></div>
+                <div class="upg-v2-avatar" style="background-image: url('images/vault-door.png');"></div>
             </div>
             <div class="upg-v2-details">
                 <div class="upg-v2-title">${tObj.vaultTitle(vault.level)} <span class="upg-v2-level-up">${vLevelsToBuy > 1 ? '(+'+vLevelsToBuy+')' : ''}</span></div>
@@ -306,7 +306,7 @@ function renderUpgradesTab() {
         queueCard.innerHTML = `
             <div class="upg-v2-info">
                 <div class="upg-v2-avatar-wrap">
-                    <div class="upg-v2-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
                 </div>
                 <div class="upg-v2-details">
                     <div class="upg-v2-title">${tObj.queueMaxTitle}</div>
@@ -329,7 +329,7 @@ function renderUpgradesTab() {
         queueCard.innerHTML = `
             <div class="upg-v2-info">
                 <div class="upg-v2-avatar-wrap">
-                    <div class="upg-v2-avatar" style="background-image: url('תמונות/client-1.png');"></div>
+                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
                 </div>
                 <div class="upg-v2-details">
                     <div class="upg-v2-title">${tObj.queueTitle(queueLvl)} <span class="upg-v2-level-up">${qLevelsToBuy > 1 ? '(+'+qLevelsToBuy+')' : ''}</span></div>
@@ -606,7 +606,7 @@ function renderManagersTab() {
                 <div class="mgr-card-bg"></div>
                 <div class="mgr-layout-wrapper">
                     <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
-                        <img src="תמונות/${config.img}" class="mgr-portrait-img">
+                        <img src="images/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-content-col">
@@ -703,7 +703,7 @@ function renderManagersTab() {
                 <div class="mgr-card-bg"></div>
                 <div class="mgr-layout-wrapper">
                     <div class="mgr-portrait-col">
-                        <img src="תמונות/${config.img}" class="mgr-portrait-img">
+                        <img src="images/${config.img}" class="mgr-portrait-img">
                         <div class="mgr-gem-badge">${config.gem}</div>
                     </div>
                     <div class="mgr-content-col">
@@ -1159,15 +1159,15 @@ function renderBranchesTab() {
     let goldCardsHtml = '';
     
     const iconMapping = {
-        startingCash: 'תמונות/gold-chest.png',
-        guardSpeed: 'תמונות/gold-truck.png',
-        premiumYield: 'תמונות/gold-vip.png',
-        shareEfficiency: 'תמונות/gold-bars.png',
-        offlineEarnings: 'תמונות/vault.png',
-        tellerCapacityBoost: 'תמונות/manager-4.png',
-        vaultCapacityBoost: 'תמונות/vault-door.png',
-        eventBonus: 'תמונות/client-9.png',
-        managerDiscount: 'תמונות/manager-1.png'
+        startingCash: 'images/gold-chest.png',
+        guardSpeed: 'images/gold-truck.png',
+        premiumYield: 'images/gold-vip.png',
+        shareEfficiency: 'images/gold-bars.png',
+        offlineEarnings: 'images/vault.png',
+        tellerCapacityBoost: 'images/manager-4.png',
+        vaultCapacityBoost: 'images/vault-door.png',
+        eventBonus: 'images/client-9.png',
+        managerDiscount: 'images/manager-1.png'
     };
     
     goldUpgradesKeys.forEach(key => {
@@ -1355,30 +1355,30 @@ function renderMissionsTab() {
 
         // 3D Illustration Mapping
         const imgMap = {
-            'clients': './תמונות/client-10.png',
-            'accumulate_cash': './תמונות/gold-chest.png',
-            'upgrade_teller': './תמונות/teller-7.png',
-            'upgrade_guard': './תמונות/guard_circle.png',
-            'upgrade_vault': './תמונות/vault.png',
-            'unlock_departments': './תמונות/gold-truck.png',
-            'hire_managers': './תמונות/manager_circle.png',
-            'earn_eps': './תמונות/eps_circle.png',
-            'earn_cash': './תמונות/gold-bars.png',
-            'serve_rich_vip': './תמונות/client-6.png',
-            'vip_marathon': './תמונות/gold-vip.png',
-            'vip_collector': './תמונות/gold-vip.png',
-            'department_unlock': './תמונות/gold-truck.png',
-            'upgrade_managers': './תמונות/manager_circle.png',
-            'manager_hire': './תמונות/manager_circle.png',
-            'break_the_wall': './תמונות/manager-7.png',
-            'upgrade_arrows': './תמונות/upgrade-arrows.png',
-            'guard_trips': './תמונות/guard_circle.png',
-            'all_managers': './תמונות/manager_circle.png',
-            'department_grind': './תמונות/manager-1.png',
-            'missions_veteran': './תמונות/gold-chest.png',
-            'boost_run': './תמונות/boost_run_circle.png'
+            'clients': './images/client-10.png',
+            'accumulate_cash': './images/gold-chest.png',
+            'upgrade_teller': './images/teller-7.png',
+            'upgrade_guard': './images/guard_circle.png',
+            'upgrade_vault': './images/vault.png',
+            'unlock_departments': './images/gold-truck.png',
+            'hire_managers': './images/manager_circle.png',
+            'earn_eps': './images/eps_circle.png',
+            'earn_cash': './images/gold-bars.png',
+            'serve_rich_vip': './images/client-6.png',
+            'vip_marathon': './images/gold-vip.png',
+            'vip_collector': './images/gold-vip.png',
+            'department_unlock': './images/gold-truck.png',
+            'upgrade_managers': './images/manager_circle.png',
+            'manager_hire': './images/manager_circle.png',
+            'break_the_wall': './images/manager-7.png',
+            'upgrade_arrows': './images/upgrade-arrows.png',
+            'guard_trips': './images/guard_circle.png',
+            'all_managers': './images/manager_circle.png',
+            'department_grind': './images/manager-1.png',
+            'missions_veteran': './images/gold-chest.png',
+            'boost_run': './images/boost_run_circle.png'
         };
-        const imgSrc = imgMap[m.type] || './תמונות/icon.png';
+        const imgSrc = imgMap[m.type] || './images/icon.png';
 
         let rewardAmtHtml = '';
         if (m.reward && typeof m.reward === 'object' && m.reward.type) {

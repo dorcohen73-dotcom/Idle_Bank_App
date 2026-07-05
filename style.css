@@ -1183,7 +1183,7 @@ header {
 .guard-runner-avatar {
     width: 44px;
     height: 44px;
-    background-image: url('תמונות/guard.png');
+    background-image: url('images/guard.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -2306,11 +2306,11 @@ header {
 }
 
 /* Dynamic branch background rules on pseudo-element */
-.branch-card.bg-branch-0::before { background-image: url('תמונות/local_branch_bg.png'); }
-.branch-card.bg-branch-1::before { background-image: url('תמונות/london_branch_bg.png'); }
-.branch-card.bg-branch-2::before { background-image: url('תמונות/frankfurt_branch_bg.png'); }
-.branch-card.bg-branch-3::before { background-image: url('תמונות/wallstreet_branch_bg.png'); }
-.branch-card.bg-branch-4::before { background-image: url('תמונות/goldman_branch_bg.png'); }
+.branch-card.bg-branch-0::before { background-image: url('images/local_branch_bg.png'); }
+.branch-card.bg-branch-1::before { background-image: url('images/london_branch_bg.png'); }
+.branch-card.bg-branch-2::before { background-image: url('images/frankfurt_branch_bg.png'); }
+.branch-card.bg-branch-3::before { background-image: url('images/wallstreet_branch_bg.png'); }
+.branch-card.bg-branch-4::before { background-image: url('images/goldman_branch_bg.png'); }
 
 .branch-card-right {
     display: flex;

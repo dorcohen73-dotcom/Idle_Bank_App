@@ -4,8 +4,8 @@ const SHELL_URLS = [
   './',
   './index.html',
   './manifest.json',
-  './תמונות/icon.png',
-  './תמונות/icon-192.png',
+  './images/icon.png',
+  './images/icon-192.png',
 ];
 
 self.addEventListener('install', (e) => {
