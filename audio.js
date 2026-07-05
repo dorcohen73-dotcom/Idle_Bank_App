@@ -4,7 +4,7 @@ class AudioEngine {
         this.ctx = null;
         try {
             this.isMuted = window.localStorage.getItem('idle_bank_muted') === 'true';
-        } catch (e) {
+        } catch {
             this.isMuted = false;
         }
         this.volume = 0.15; // Safe comfortable level

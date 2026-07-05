@@ -823,10 +823,13 @@ class IdleBankGame {
             }
         }
 
-        // Rebase daily_earn_cash startProgress so progress earned before prestige survives
+        // Rebase daily_earn_cash so progress earned before prestige survives.
+        // Accumulated progress is banked in baseProgress (always >= 0) instead of encoding it
+        // as a negative startProgress, which validateAndHealState() would clamp back to 0.
         this.state.dailyChallenges.forEach(c => {
             if (c.completed || c.claimed || c.type !== 'daily_earn_cash') return;
-            c.startProgress = this.state.lifetimeCash - (c.progress || 0);
+            c.baseProgress = (c.baseProgress || 0) + (c.progress || 0);
+            c.startProgress = this.state.lifetimeCash;
         });
 
         this.isResetting = false;
@@ -1395,7 +1398,8 @@ class IdleBankGame {
     }
 
     addShares(amount) {
-        this.state.shares += amount;
+        // Same 100K wallet cap enforced by prestige()
+        this.state.shares = Math.min(100000, (this.state.shares || 0) + amount);
         this.saveGame();
     }
 

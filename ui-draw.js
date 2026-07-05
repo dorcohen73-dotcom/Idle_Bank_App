@@ -5,10 +5,10 @@
 var svgCache = new Map();
 var activeCoins = [];
 var TELLER_DOM_CACHE = {};
-var prevQueueLength = -1;
-var prevLastCustomerId = null;
+var _prevQueueLength = -1;
+var _prevLastCustomerId = null;
 var lastVaultPercent = -1;
-var prevQueueLabelHtml = '';
+var _prevQueueLabelHtml = '';
 var prevTellerCashHtml = {};
 var prevVaultStatsHtml = '';
 var prevTellerClientStates = {};
@@ -879,9 +879,7 @@ function draw() {
                 runner.classList.add('moving-right');
             }
 
-            // Update avatar text (empty since we use background image)
-            const avatarEl = runner.querySelector('.guard-runner-avatar');
-            // Removed innerText clearing to preserve emoji fallback
+            // Avatar text intentionally not cleared to preserve emoji fallback
 
             // Update load label bubble above
             const loadEl = runner.querySelector('.guard-runner-load');

@@ -5,7 +5,8 @@ const globals = require('globals');
 // <script> tags (not ES modules), `window.X` assignments become real global
 // identifiers usable bare in any other file loaded after it.
 const sharedGameGlobals = [
-    'AdService', 'AudioEngine', 'DOM_CACHE', 'DailyChallengeController', 'EconomyManager',
+    'AchievementController', 'AdService', 'AudioEngine', 'DOM_CACHE', 'DailyChallengeController', 'EconomyManager',
+    'NotificationQueue',
     'GAME_CONFIG', 'IdleBankGame', 'MissionController', 'SaveManager',
     '_boostOfferEndTime', '_footerFlavorInterval', '_vipBannerRetryTimeout',
     'activeCoins', 'animateCoins', 'applyLanguage', 'applyTheme',
@@ -36,6 +37,8 @@ module.exports = [
     {
         ignores: [
             'node_modules/**',
+            'android/**',
+            'www/**',
             'dist/**',
             'scratch/**',
             'marketing/**',
@@ -48,8 +51,10 @@ module.exports = [
     {
         // Browser game scripts, loaded via plain <script> tags (non-module, shared global scope)
         files: [
+            'achievement-controller.js',
             'app.js',
             'audio.js',
+            'notification-queue.js',
             'config.js',
             'economy-manager.js',
             'game.js',

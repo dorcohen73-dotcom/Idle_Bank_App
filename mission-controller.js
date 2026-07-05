@@ -7,9 +7,6 @@ class MissionController {
         const branchIndex = this.game.state.currentBranch || 0;
         const scale = Math.pow(6, branchIndex); // Scale up targets/rewards by branch multiplier
         
-        const tellerLvl = this.game.state.tellers[0] ? this.game.state.tellers[0].level : 1;
-        const guardLvl = this.game.state.guards[0] ? this.game.state.guards[0].level : 1;
-        const vaultLvl = this.game.state.vault ? this.game.state.vault.level : 1;
         const referenceCash = Math.max(this.game.state.cash, this.game.getEarningsPerSecond() * 60, 150);
 
         const pool = [
@@ -610,14 +607,14 @@ class DailyChallengeController {
     }
 
     checkAndReset() {
-        const sm = this.game.saveManager;
-        const now = (sm && sm.isServerTimeVerified) ? (Date.now() + sm.serverTimeOffset) : Date.now();
+        // Daily reset is calendar-day based, so use LOCAL time consistently — mixing
+        // server-adjusted timestamps with local midnight caused off-by-one resets.
         const todayMidnight = new Date();
         todayMidnight.setHours(0, 0, 0, 0);
 
         if (!this.game.state.lastDailyReset || this.game.state.lastDailyReset < todayMidnight.getTime()) {
             this.game.state.dailyChallenges = this._generate3Challenges();
-            this.game.state.lastDailyReset = now;
+            this.game.state.lastDailyReset = Date.now();
         }
 
         // עדכון progress
@@ -629,7 +626,8 @@ class DailyChallengeController {
 
             switch (c.type) {
                 case 'daily_earn_cash':
-                    currentProgress = (s.lifetimeCash || 0) - (c.startProgress || 0);
+                    // baseProgress banks progress earned before a prestige reset (see game.js prestige())
+                    currentProgress = ((s.lifetimeCash || 0) - (c.startProgress || 0)) + (c.baseProgress || 0);
                     break;
                 case 'daily_clients':
                     currentProgress = ((s.stats && s.stats.clientsServed) || 0) - (c.startProgress || 0);

@@ -31,14 +31,13 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const nextLevel = entity.level + levelsToBuy;
         const cost = details.cost;
         
-        let capacity, speed, nextCapacity, nextSpeed, avatarImg, title, desc, speedLabel, capLabel;
+        let capacity, speed, nextCapacity, nextSpeed, title, desc, speedLabel, capLabel;
         let avatarBgUrl = '', avatarBgPos = 'center 25%', avatarBgSize = 'cover';
         if (type === 'teller') {
             capacity = game.getTellerCapacity(entity.level);
             speed = game.getTellerSpeed(entity.level).toFixed(1);
             nextCapacity = game.getTellerCapacity(nextLevel);
             nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
-            avatarImg = '';
             avatarBgUrl = `images/teller-${(id % 8) + 1}.png`;
             avatarBgPos = 'center';
             avatarBgSize = 'cover';
@@ -51,7 +50,6 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             speed = game.getGuardSpeed(entity.level).toFixed(1);
             nextCapacity = game.getGuardCapacity(nextLevel);
             nextSpeed = game.getGuardSpeed(nextLevel).toFixed(1);
-            avatarImg = '';
             avatarBgUrl = 'images/guard.png';
             avatarBgPos = 'center 8%';
             avatarBgSize = '220%';
@@ -65,7 +63,6 @@ function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 
         card.className = 'upgrade-card premium-upg-card';
         const eps = capacity / speed;
-        const nextEps = nextCapacity / nextSpeed;
         
         card.innerHTML = `
             <div class="upg-v2-info">
@@ -554,7 +551,7 @@ function renderManagersTab() {
             managerUpgrades: game.state.managerUpgrades,
             cash: Math.floor(game.state.cash / 1000)
         });
-    } catch (e) { /* render unconditionally on serialization error */ }
+    } catch { /* render unconditionally on serialization error */ }
     if (hash && hash === _lastManagersHash) return;
     _lastManagersHash = hash;
     _buyBtnCache = null;
@@ -1019,7 +1016,7 @@ function renderBranchesTab() {
             shares: game.state.shares,
             cash: Math.floor(game.state.cash / 1000)
         });
-    } catch (e) { /* render unconditionally on serialization error */ }
+    } catch { /* render unconditionally on serialization error */ }
     if (hash && hash === _lastBranchesHash) return;
     _lastBranchesHash = hash;
     _buyBtnCache = null;
@@ -1066,7 +1063,6 @@ function renderBranchesTab() {
     game.branches.forEach((b, idx) => {
         const isCurrent = game.state.currentBranch === idx;
         const isSold = idx < game.state.currentBranch;
-        const isNext = idx === game.state.currentBranch + 1;
         
         const card = document.createElement('div');
         card.className = `branch-card bg-branch-${idx} ${isCurrent ? 'current' : ''}`;

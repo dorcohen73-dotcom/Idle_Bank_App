@@ -8,6 +8,11 @@ class SaveManager {
         this.saveDelay = 3000; // Throttle saves to at most once per 3 seconds
         this.serverTimeOffset = 0;
         this.isServerTimeVerified = false;
+        // Snapshot of lastSaveTime taken synchronously at load, consumed once by
+        // calculateOfflineEarnings(). Prevents a race where a save executed while
+        // fetchServerTime() is in flight overwrites state.lastSaveTime and wipes
+        // the player's offline earnings.
+        this._offlineAnchor = null;
     }
 
     async fetchServerTime() {
@@ -19,22 +24,44 @@ class SaveManager {
             return null;
         }
 
+        // On Capacitor (native app) window.location.origin is the internal local server —
+        // its Date header is meaningless, so skip straight to the external time API.
+        const isNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+
+        if (!isNative) {
+            try {
+                // HEAD request with cache-busting query parameter to force fetching real Date header from server
+                const response = await fetch(window.location.origin + window.location.pathname + '?cb=' + Date.now(), {
+                    method: 'HEAD',
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
+                const dateStr = response.headers.get('Date');
+                if (dateStr) {
+                    const parsedDate = new Date(dateStr);
+                    if (parsedDate && !isNaN(parsedDate.getTime())) {
+                        return parsedDate.getTime();
+                    }
+                }
+            } catch {
+                // same-origin time fetch failed — fall through to external time API
+            }
+        }
+
+        // External CORS-enabled time API fallback (primary source on the native app)
         try {
-            // HEAD request with cache-busting query parameter to force fetching real Date header from server
-            const response = await fetch(window.location.origin + window.location.pathname + '?cb=' + Date.now(), { 
-                method: 'HEAD',
-                cache: 'no-store',
-                headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-            });
-            const dateStr = response.headers.get('Date');
-            if (dateStr) {
-                const parsedDate = new Date(dateStr);
-                if (parsedDate && !isNaN(parsedDate.getTime())) {
-                    return parsedDate.getTime();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-store', signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && typeof data.unixtime === 'number' && isFinite(data.unixtime)) {
+                    return data.unixtime * 1000;
                 }
             }
-        } catch (e) {
-            // server time fetch failed — will use unverified local time
+        } catch {
+            // external time fetch failed — will use unverified local time
         }
         return null;
     }
@@ -275,6 +302,7 @@ class SaveManager {
                 if (!isBool(c.completed)) c.completed = false;
                 if (!isBool(c.claimed)) c.claimed = false;
                 if (!isNum(c.startProgress) || c.startProgress < 0) c.startProgress = 0;
+                if (!isNum(c.baseProgress) || c.baseProgress < 0) c.baseProgress = 0;
                 if (!c.reward || typeof c.reward !== 'object') c.reward = { type: 'gold', amount: 1 };
                 if (!isNum(c.reward.amount) || c.reward.amount < 1) c.reward.amount = 1;
             });
@@ -313,7 +341,7 @@ class SaveManager {
         }
 
         // C-14: backup save before any migration, to allow recovery if migration fails
-        try { localStorage.setItem('idle_bank_save_backup', localStorage.getItem('idle_bank_save')); } catch(e) {}
+        try { localStorage.setItem('idle_bank_save_backup', localStorage.getItem('idle_bank_save')); } catch { /* backup best-effort */ }
 
         // C-15: Deutsche Bank was inserted at index 2, shifting old branches 2→3 and 3→4.
         // Detect old saves by checking the migrations.deutsche flag (previously stored as a string sentinel inside visitedBranches).
@@ -696,17 +724,17 @@ class SaveManager {
             // Heal and validate state
             this.validateAndHealState(this.game.state);
 
-            // Dynamically heal maxBranchUnlocked based on lifetimeCash and currentBranch
-            let maxBranch = this.game.state.maxBranchUnlocked !== undefined ? this.game.state.maxBranchUnlocked : (this.game.state.currentBranch || 0);
-            const lc = this.game.state.lifetimeCash || 0;
-            if (lc >= 1000000000) maxBranch = Math.max(maxBranch, 3);
-            else if (lc >= 50000000) maxBranch = Math.max(maxBranch, 2);
-            else if (lc >= 1000000) maxBranch = Math.max(maxBranch, 1);
-            this.game.state.maxBranchUnlocked = maxBranch;
+            // Capture the offline-earnings anchor NOW, synchronously — before the async
+            // server-time fetch resolves and before any early saveGame() can overwrite it.
+            this._offlineAnchor = this.game.state.lastSaveTime;
 
-            if (this.game.state.currentBranch < this.game.state.maxBranchUnlocked) {
-                this.game.state.currentBranch = this.game.state.maxBranchUnlocked;
-            }
+            // Heal maxBranchUnlocked: never lower than currentBranch (legacy saves may lack the field).
+            // NOTE: the old lifetimeCash-threshold heal was removed — its thresholds predated the
+            // Deutsche Bank branch insertion and, combined with the forced currentBranch bump below it,
+            // teleported players to a higher branch on reload without a prestige reset.
+            let maxBranch = this.game.state.maxBranchUnlocked !== undefined ? this.game.state.maxBranchUnlocked : (this.game.state.currentBranch || 0);
+            maxBranch = Math.max(maxBranch, this.game.state.currentBranch || 0);
+            this.game.state.maxBranchUnlocked = maxBranch;
 
             this.game.recalculateEps();
             this.game.ensureTellersCount();
@@ -728,7 +756,12 @@ class SaveManager {
 
         // Anti-Cheat: calculate delta using verified server time if available
         const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
-        const lastSaveTime = this.game.state.lastSaveTime;
+        // Prefer the load-time snapshot (consumed once) over live state, which may have
+        // been overwritten by an early save while server-time verification was pending.
+        const lastSaveTime = (this._offlineAnchor !== null && this._offlineAnchor !== undefined)
+            ? this._offlineAnchor
+            : this.game.state.lastSaveTime;
+        this._offlineAnchor = null;
 
         // Guard: if lastSaveTime is 0 (new game / corrupted), skip offline earnings and anchor timestamp
         if (!lastSaveTime || lastSaveTime === 0) {
@@ -771,10 +804,16 @@ class SaveManager {
         limitHours = Math.min(12, limitHours);
         
         let maxAllowedSec = limitHours * 3600;
-        
-        // Anti-Cheat Time-Travel prevention: limit offline earnings to 1 hour max if clock is unverified
+
+        // Anti-Cheat Time-Travel prevention: limit offline earnings to 1 hour max if clock is unverified.
+        // Exception: when the device has no network at all, time can't be verified by definition —
+        // trust local time so legitimate offline players keep their full earning window
+        // (the negative-delta clock-rollback check above still applies).
         if (!this.isServerTimeVerified) {
-            maxAllowedSec = Math.min(maxAllowedSec, 3600);
+            const deviceOffline = (typeof navigator !== 'undefined' && navigator.onLine === false);
+            if (!deviceOffline) {
+                maxAllowedSec = Math.min(maxAllowedSec, 3600);
+            }
         }
 
         const elapsedSec = Math.min(timePassedSec, maxAllowedSec);
@@ -875,9 +914,18 @@ class SaveManager {
     }
 
     checkDailyLogin() {
-        const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
+        // Calendar-day comparison (local time): logging in at 23:00 and again at 08:00
+        // the next morning now counts as a new day — the old 24h-window math missed it.
+        const now = Date.now();
         const lastLogin = this.game.state.lastLoginDate || 0;
-        const daysSince = Math.floor((now - lastLogin) / 86400000);
+        const startOfDay = (t) => {
+            const d = new Date(t);
+            d.setHours(0, 0, 0, 0);
+            return d.getTime();
+        };
+        const daysSince = lastLogin > 0
+            ? Math.round((startOfDay(now) - startOfDay(lastLogin)) / 86400000)
+            : 1;
 
         if (daysSince >= 1) {
             this.game.state.loginStreak = (daysSince === 1) ? ((this.game.state.loginStreak || 0) + 1) : 1;

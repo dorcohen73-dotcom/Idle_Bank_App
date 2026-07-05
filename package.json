@@ -1,6 +1,6 @@
 {
   "name": "idle-bank-empire",
-  "version": "1.0.0",
+  "version": "1.0.104",
   "description": "Premium Idle Bank Simulator Game",
   "main": "app.js",
   "scripts": {
