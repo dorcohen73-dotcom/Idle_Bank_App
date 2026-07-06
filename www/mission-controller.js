@@ -89,9 +89,9 @@ class MissionController {
             reward: (t) => Math.round(referenceCash * 0.30 + t * 0.15)
         });
 
-        // Serve VIP / Rich clients — suppressed once VIP dept (index 3) is unlocked; vip_collector takes over
-        const vipDeptAlreadyUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === 3)?.unlocked);
-        if (!vipDeptAlreadyUnlocked) {
+        // Serve VIP / Rich clients — only from the 2nd branch onward (branchIndex 0 = first branch has no VIP/rich clients yet); suppressed once VIP dept is unlocked, vip_collector takes over
+        const vipDeptAlreadyUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP)?.unlocked);
+        if (branchIndex >= 1 && !vipDeptAlreadyUnlocked) {
             pool.push({
                 type: 'serve_rich_vip',
                 target: () => {
@@ -129,8 +129,8 @@ class MissionController {
 
 
 
-        // 1. vip_collector — only if VIP dept (index 3) is unlocked
-        const vipDeptUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === 3)?.unlocked);
+        // 1. vip_collector — only if VIP dept is unlocked
+        const vipDeptUnlocked = !!(this.game.state.departments && this.game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP)?.unlocked);
         if (vipDeptUnlocked) {
             pool.push({
                 type: 'vip_collector',
