@@ -440,7 +440,7 @@ const statLabels = {
         counter_cap: "קיבולת עמדות",
         base_income: "רווח בסיסי",
         dept_yields: "הכנסות מחלקות",
-        gold_shares: "מניות זהב בפרסטיז'",
+        gold_shares: "מניות זהב בפרסטיג'",
         ad_bonus: "בונוס פרסום",
         offline_time: "שעות אופליין מקסימליות",
         offline_income: "הכנסות אופליין",

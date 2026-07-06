@@ -95,7 +95,7 @@ const translations = {
         servingClientLabel: "לקוח בטיפול",
         collectShortLabel: "איסוף",
         guardStates: {
-            idle: "שומר ממתין בכספת...",
+            idle: "בלדר ממתין בכספת...",
             moving_to_tellers: "בלדר נוסע לאסוף דלפקים...",
             collecting: "מעמיס שקים...",
             moving_to_vault: "חוזר לכספת עם משלוח...",
@@ -175,7 +175,7 @@ const translations = {
             descs: [
                 "הבנק המקומי הראשון שלך. כאן הכל מתחיל.",
                 "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה.",
-                "לב הפיננסים האירופאי. עסקות נדל\"ן ו-corporate banking בינלאומי.",
+                "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking בינלאומי.",
                 "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים.",
                 "האימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות."
             ],
@@ -1793,10 +1793,10 @@ Object.assign(translations.he, {
     vipServeBtn: "שרת (פרס כסף)",
     vipPremiumBtn: (amt) => `VIP Premium (פרסומת + ${amt} מניות זהב)`,
     vipPremiumCashBtn: (amt) => `VIP Premium (פרסומת + ${amt} במזומן)`,
-    vipRewardCash: (amt) => `קיבלת +${amt} ממזומן`,
+    vipRewardCash: (amt) => `קיבלת +${amt} במזומן`,
     vipRewardGold: "קיבלת 3 מניות זהב!",
     // Daily Challenges
-    dailyTabBtn: "הישגים",
+    dailyTabBtn: "אתגרי יום",
     dailyChallengesTitle: "אתגרי היום",
     dailyChallengesSubtitle: "3 אתגרים קשים שמתאפסים בחצות",
     dailyClaimBtn: "קבל פרס",
@@ -2002,9 +2002,9 @@ Object.assign(translations.he, {
             title: "זוכה הגרלה הפקיד מיליונים",
             desc: "לקוח שרגיל להפקיד 500 שקל הגיע עם שקית ובה 4 מיליון. הכספר שלך לא הגיב על הפנים. מקצוען.",
             optA: (cost) => `הצע חבילת השקעות (${cost})`,
-            optADesc: "הלקוח מושקע בבנק. כל 10 דקות מקבלים תשואה כפי 30 EPS לשעה.",
+            optADesc: "הלקוח מושקע בבנק. כל 10 דקות מקבלים תשואה פי 30 מה-EPS לשעה.",
             optB: "טיפול סטנדרטי (חינם)",
-            optBDesc: "הפקדה רגילה. מקבלים תשלום חד-פעמי שווה ל-60 פעמי EPS.",
+            optBDesc: "הפקדה רגילה. מקבלים תשלום חד-פעמי בגובה פי 60 מה-EPS.",
             optC: "🎬 טיפול VIP מהיר (פרסומת)",
             optCDesc: "גם תשואה שוטפת וגם תשלום חד-פעמי. הכי טוב מכל העולמות."
         },
@@ -2653,7 +2653,7 @@ Object.assign(translations.he, {
     boostMilestoneMsg: "🎉 יעד כסף הושג! הפעל בוסט x2?",
     boostActivatedMsg: "⚡ בוסט x2 הופעל!",
     weeklyTitle: "🏆 שבוע מצוין!",
-    weeklyText: "עברת שבוע מלא של ניהול אימפריה. הצוות שלך ממתין לדרבן!",
+    weeklyText: "עברת שבוע מלא של ניהול אימפריה. הצוות שלך מחכה לדחיפה הבאה שלך!",
     weeklyStats: (eps, served, shares) => `💰 רווח לשנייה: <strong>${eps}</strong><br>👥 לקוחות שטופלו: <strong>${served}</strong><br>⭐ מניות זהב: <strong>${shares}</strong>`,
     boost8hMsg: "⚡ בוסט 8 שעות!",
     errorTitle: "אופס! משהו השתבש",
