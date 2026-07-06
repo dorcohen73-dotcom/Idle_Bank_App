@@ -3173,7 +3173,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                         sharesAmount = Math.min(10000, sharesAmount); // Max 10,000 per spin
                         game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 100000);
                         const sharesLabel = `+${sharesAmount}`;
-                        prizeText = `${prizeLabel}: ${sharesLabel} מניות זהב`;
+                        prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || 'Gold Shares'}`;
 
                         const icon = prize.type === 'gold' ? '🥇' : '📈';
                         spawnFloating(`${icon} ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'gold');

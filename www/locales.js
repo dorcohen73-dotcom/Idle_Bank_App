@@ -1826,12 +1826,11 @@ Object.assign(translations.en, {
     fortuneWheelSpinHint: "👇 Press the button below to spin the wheel",
     wheelPrizes: {
         cash_small: "Cash",
+        cash_medium: "Medium Cash",
         cash_big: "Big Cash",
         boost_2x: "Boost x2",
-        gold_1: "Gold x1",
-        gold_2: "Gold x2",
         shares_1: "Share x1",
-        shares_3: "Shares x3"
+        shares_2: "Shares Vault"
     },
     vipBannerTitle: "VIP Client Inside!",
     vipBannerTimer: (s) => `${s} seconds`,
@@ -1870,12 +1869,11 @@ Object.assign(translations.es, {
     fortuneWheelSpinHint: "👇 Presiona el botón de abajo para girar la ruleta",
     wheelPrizes: {
         cash_small: "Efectivo",
+        cash_medium: "Efectivo Mediano",
         cash_big: "Gran Efectivo",
         boost_2x: "Boost x2",
-        gold_1: "Oro x1",
-        gold_2: "Oro x2",
         shares_1: "Acción x1",
-        shares_3: "Acciones x3"
+        shares_2: "Bóveda de Acciones"
     },
     vipBannerTitle: "¡Cliente VIP adentro!",
     vipBannerTimer: (s) => `${s} segundos`,
@@ -1914,12 +1912,11 @@ Object.assign(translations.ru, {
     fortuneWheelSpinHint: "👇 Нажмите кнопку ниже, чтобы крутить колесо",
     wheelPrizes: {
         cash_small: "Наличные",
+        cash_medium: "Средние наличные",
         cash_big: "Большие наличные",
         boost_2x: "Буст x2",
-        gold_1: "Золото x1",
-        gold_2: "Золото x2",
         shares_1: "Акция x1",
-        shares_3: "Акции x3"
+        shares_2: "Хранилище акций"
     },
     vipBannerTitle: "VIP-клиент внутри!",
     vipBannerTimer: (s) => `${s} секунд`,
