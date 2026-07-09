@@ -14,6 +14,20 @@
         };
     }
 
+    // Reports fatal errors to Firebase Crashlytics on native platforms (no-op on web / if plugin isn't synced yet)
+    function reportCrash(message, stack) {
+        try {
+            const isNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+            const crashlytics = isNative && window.Capacitor.Plugins && window.Capacitor.Plugins.FirebaseCrashlytics;
+            if (crashlytics) {
+                const fullMessage = stack ? `${message}\n${stack}` : String(message);
+                crashlytics.recordException({ message: fullMessage.slice(0, 2000) });
+            }
+        } catch {
+            // Crashlytics unavailable — never let crash reporting itself throw
+        }
+    }
+
     // Explicitly expose required global variables on window object
     window.game = undefined;
     window.currentUpgradeMode = 'x1';
@@ -344,8 +358,15 @@
         cancelAnimationFrame(window.rafId);
         window.rafId = requestAnimationFrame(tick);
 
-        // Register PWA Service Worker (with file:// protocol protection)
-        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+        // Register PWA Service Worker (with file:// protocol protection and Capacitor guard)
+        if (window.Capacitor && 'serviceWorker' in navigator) {
+            // Disable and unregister Service Worker in native apps to prevent infinite reload loops
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for(let reg of registrations) {
+                    reg.unregister();
+                }
+            });
+        } else if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
                 .then(reg => {
                     reg.update();
@@ -376,6 +397,7 @@
     // Global exception and promise rejection handlers to capture runtime crashes and save state
     window.onerror = function(message, source, lineno, colno, error) {
         console.error("Global crash intercepted:", message, "at", source, ":", lineno);
+        reportCrash(`${message} at ${source}:${lineno}:${colno}`, error && error.stack);
         const activeGame = window.game;
         if (activeGame) {
             try {
@@ -389,6 +411,8 @@
 
     window.addEventListener('unhandledrejection', function(event) {
         console.error("Unhandled promise rejection intercepted:", event.reason);
+        const reason = event.reason;
+        reportCrash(reason && reason.message ? reason.message : String(reason), reason && reason.stack);
         const activeGame = window.game;
         if (activeGame) {
             try {

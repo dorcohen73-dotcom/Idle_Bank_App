@@ -1,6 +1,6 @@
 {
   "name": "idle-bank-empire",
-  "version": "1.0.104",
+  "version": "1.0.108",
   "description": "Premium Idle Bank Simulator Game",
   "main": "app.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "license": "ISC",
   "dependencies": {
     "@capacitor-community/admob": "^8.0.0",
+    "@capacitor-firebase/crashlytics": "^8.3.0",
     "@capacitor/android": "^8.4.1",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1"

@@ -754,6 +754,9 @@ class IdleBankGame {
         const savedDailyChallenges = this.state.dailyChallenges;
         const savedLastDailyReset = this.state.lastDailyReset;
         const savedMigrations = this.state.migrations ? Object.assign({}, this.state.migrations) : {};
+        const savedTutorialCompleted = this.state.tutorialCompleted || false;
+        const savedTutorialStep = this.state.tutorialStep || 0;
+        const savedDiscoveredTips = this.state.discoveredTips ? Object.assign({}, this.state.discoveredTips) : {};
 
         if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
         this.initDefaultState();
@@ -775,6 +778,9 @@ class IdleBankGame {
         this.state.dailyChallenges = savedDailyChallenges;
         this.state.lastDailyReset = savedLastDailyReset;
         this.state.migrations = savedMigrations;
+        this.state.tutorialCompleted = savedTutorialCompleted;
+        this.state.tutorialStep = savedTutorialStep;
+        this.state.discoveredTips = savedDiscoveredTips;
 
         // Restore visitedBranches and add targetBranch if new
         if (!savedVisitedBranches.includes(targetBranchIndex)) {

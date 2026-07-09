@@ -1123,14 +1123,27 @@ function renderBranchesTab() {
         });
     });
 
-    // Bind Main Prestige Button (restating current branch)
+    // Bind Main Prestige Button
     const mainPresBtn = container.querySelector('#main-prestige-btn');
     if (mainPresBtn) {
         mainPresBtn.addEventListener('click', () => {
             const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
             if (!currentCanPrestige) return;
             initSound();
-            openPrestigeModal(game.state.currentBranch);
+            
+            // By default, progress to the next branch if available
+            let targetBranch = game.state.currentBranch;
+            if (game.state.currentBranch < game.branches.length - 1) {
+                targetBranch = game.state.currentBranch + 1;
+            }
+            // If they are playing an old branch but already unlocked higher ones, take them to the max unlocked + 1 (if within bounds)
+            if (game.state.maxBranchUnlocked > game.state.currentBranch && game.state.maxBranchUnlocked < game.branches.length - 1) {
+                targetBranch = game.state.maxBranchUnlocked + 1;
+            } else if (game.state.maxBranchUnlocked === game.branches.length - 1) {
+                targetBranch = game.state.maxBranchUnlocked; // max possible
+            }
+            
+            openPrestigeModal(targetBranch);
         });
     }
 

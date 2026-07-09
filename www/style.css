@@ -10693,3 +10693,8 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
         font-size: 26px !important;
     }
 }
+
+/* Fix for Android navigation bar overlap on modals */
+.modal-box {
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 48px)) !important;
+}

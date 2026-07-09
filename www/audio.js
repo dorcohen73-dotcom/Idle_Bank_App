@@ -38,6 +38,7 @@ class AudioEngine {
     ensureRunning(callback) {
         if (!this.ctx) this.init();
         if (this.isMuted || !this.ctx) return;
+        if (typeof document !== 'undefined' && document.hidden) return;
 
         if (this.ctx.state === 'suspended') {
             this.ctx.resume()
@@ -252,7 +253,7 @@ class AudioEngine {
             ];
             
             this.musicInterval = setInterval(() => {
-                if (!this.ctx || this.isMuted) return;
+                if (!this.ctx || this.isMuted || (typeof document !== 'undefined' && document.hidden) || this.ctx.state === 'suspended') return;
                 
                 const chordIdx = Math.floor(beat / 4) % 4;
                 const chord = chords[chordIdx];

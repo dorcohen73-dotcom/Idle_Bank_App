@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.dorcohen73.idlebank"
+    namespace = "com.bankempire.game"
     compileSdk = rootProject.ext.compileSdkVersion
 
     signingConfigs {
@@ -14,11 +14,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.dorcohen73.idlebank"
+        applicationId "com.bankempire.game"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 104
-        versionName "1.0.104"
+        versionCode 108
+        versionName "1.0.108"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -59,7 +59,8 @@ try {
     def servicesJSON = file('google-services.json')
     if (servicesJSON.text) {
         apply plugin: 'com.google.gms.google-services'
+        apply plugin: 'com.google.firebase.crashlytics'
     }
 } catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+    logger.info("google-services.json not found, google-services/crashlytics plugins not applied. Push Notifications and Crashlytics won't work")
 }
