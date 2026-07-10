@@ -1096,10 +1096,12 @@ function renderBranchesTab() {
                     <div class="branch-name">${tObj.names[idx]}</div>
                 </div>
                 <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
+                ${idx > 0 ? `
                 <div class="branch-req-row">
                     <span class="crown-icon">👑</span>
                     <span class="branch-req-text">${requirementText}</span>
                 </div>
+                ` : ''}
                 ${statusPillHtml}
             </div>
             <div class="branch-card-left">
