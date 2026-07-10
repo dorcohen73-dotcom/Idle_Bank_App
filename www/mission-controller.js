@@ -5,9 +5,15 @@ class MissionController {
 
     generateMission() {
         const branchIndex = this.game.state.currentBranch || 0;
-        const scale = Math.pow(6, branchIndex); // Scale up targets/rewards by branch multiplier
+        const scale = Math.pow(6, branchIndex); // Used strictly for targets now, not cash rewards
         
-        const referenceCash = Math.max(this.game.state.cash, this.game.getEarningsPerSecond() * 60, 150);
+        // --- REWARD DIMINISHING RETURNS ---
+        // As the player progresses through branches or completes many missions, rewards become less effective.
+        // Base is 300 seconds (5 minutes) of EPS.
+        // Branch 0: 300s. Branch 1: 240s. Branch 3: 150s. Branch 5+: 60s.
+        const diminishingFactor = Math.max(0.2, 1 - (branchIndex * 0.15));
+        const currentEps = Math.max(this.game.getEarningsPerSecond(), 1);
+        const referenceReward = Math.max(currentEps * 300 * diminishingFactor, 150);
 
         const pool = [
             {
@@ -18,7 +24,7 @@ class MissionController {
                     const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
                     return Math.round(base * branchMult * (1 + 0.5 * epsFactor));
                 },
-                reward: (t) => Math.round(t * 15 * scale + referenceCash * 0.20)
+                reward: (t) => Math.round(referenceReward * 1.0)
             },
             {
                 type: 'upgrade_teller',
@@ -27,7 +33,7 @@ class MissionController {
                     const teller = this.game.state.tellers[tId] || { level: 1 };
                     return teller.level + 2 + Math.floor(Math.random() * 5);
                 },
-                reward: (t) => Math.round(t * 300 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 1.2)
             },
             {
                 type: 'upgrade_guard',
@@ -36,7 +42,7 @@ class MissionController {
                     const guard = this.game.state.guards[gId] || { level: 1 };
                     return guard.level + 2 + Math.floor(Math.random() * 4);
                 },
-                reward: (t) => Math.round(t * 350 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 1.2)
             },
             {
                 type: 'upgrade_vault',
@@ -44,7 +50,7 @@ class MissionController {
                     const currentLvl = this.game.state.vault ? this.game.state.vault.level : 1;
                     return currentLvl + 1 + Math.floor(Math.random() * 3);
                 },
-                reward: (t) => Math.round(t * 400 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 1.25)
             }
         ];
 
@@ -54,7 +60,7 @@ class MissionController {
             pool.push({
                 type: 'unlock_departments',
                 target: () => Math.min(5, unlockedDeptsCount + 1),
-                reward: (t) => Math.round(1500 * scale + referenceCash * 0.30)
+                reward: (t) => Math.round(referenceReward * 2.5)
             });
         }
 
@@ -64,7 +70,7 @@ class MissionController {
             pool.push({
                 type: 'hire_managers',
                 target: () => Math.min(7, hiredMgrsCount + 1),
-                reward: (t) => Math.round(1000 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 1.5)
             });
         }
 
@@ -75,7 +81,7 @@ class MissionController {
                 const currentEps = Math.max(this.game.getEarningsPerSecond(), 10);
                 return Math.round(currentEps * 1.5 + 50 * scale);
             },
-            reward: (t) => Math.round(t * 10 + referenceCash * 0.30)
+            reward: (t) => Math.round(referenceReward * 1.5)
         });
 
         // Earn Cash (Accumulating cash over time)
@@ -86,7 +92,8 @@ class MissionController {
                 const durationSeconds = 180 + Math.floor(Math.random() * 241); // 3 to 7 minutes of earnings
                 return Math.max(500, Math.round(eps * durationSeconds));
             },
-            reward: (t) => Math.round(referenceCash * 0.30 + t * 0.15)
+            // Reward is directly related to how long it takes to earn the cash, capped by diminishing factor
+            reward: (t) => Math.round((t * 0.15) * diminishingFactor + referenceReward * 0.5)
         });
 
         // Serve VIP / Rich clients — only from the 2nd branch onward (branchIndex 0 = first branch has no VIP/rich clients yet); suppressed once VIP dept is unlocked, vip_collector takes over
@@ -100,7 +107,7 @@ class MissionController {
                     const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
                     return Math.round(base * branchMult * (1 + 0.4 * epsFactor));
                 },
-                reward: (t) => Math.round(t * 80 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 1.2)
             });
         }
 
@@ -112,7 +119,7 @@ class MissionController {
                 const durationSeconds = 180 + Math.floor(Math.random() * 301); // 3 to 8 minutes of earnings
                 return Math.max(500, Math.round(eps * durationSeconds));
             },
-            reward: (t) => Math.round(referenceCash * 0.30 + t * 0.15)
+            reward: (t) => Math.round((t * 0.15) * diminishingFactor + referenceReward * 0.5)
         });
 
         // Upgrade managers (only if total level is under 30)
@@ -121,7 +128,7 @@ class MissionController {
             pool.push({
                 type: 'upgrade_managers',
                 target: () => Math.min(30 - currentTotalManagerLevels, 2 + Math.floor(Math.random() * 4)),
-                reward: (t) => Math.round(t * 30000 * scale + referenceCash * 0.25)
+                reward: (t) => Math.round(referenceReward * 2.0)
             });
         }
 
@@ -216,7 +223,7 @@ class MissionController {
             pool.push({
                 type: 'break_the_wall',
                 target: () => 150 + Math.floor(Math.random() * 50),
-                reward: () => Math.round(this.game.getEarningsPerSecond() * 1800 + 8000 * scale) // 30 mins worth of cash + base
+                reward: () => Math.round(this.game.getEarningsPerSecond() * 1800 + referenceReward * 3) // 30 mins worth of cash + base
             });
         }
 
@@ -248,7 +255,7 @@ class MissionController {
                 type: 'department_grind',
                 _deptMgrType: chosen.mgrType,
                 target: () => 1 + Math.floor(Math.random() * 2),
-                reward: (t) => Math.round(t * 80000 * scale + referenceCash * 0.35)
+                reward: (t) => Math.round(referenceReward * 4.0)
             });
         }
 
