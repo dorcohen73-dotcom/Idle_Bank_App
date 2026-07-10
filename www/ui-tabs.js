@@ -1050,7 +1050,7 @@ function renderBranchesTab() {
             <div class="showcase-value">${tObj.prestigeRewardValue(sharesGained)}</div>
         </div>
 
-        <button class="prestige-beveled-btn main-prestige-btn ${canPrestige ? '' : 'disabled'}" id="main-prestige-btn" ${canPrestige ? '' : 'disabled="true"'}>
+        <button class="prestige-beveled-btn main-prestige-btn ${canPrestige ? '' : 'disabled'}" id="main-prestige-btn">
             ${tObj.sellAndBuild}
         </button>
         <div class="prestige-btn-subtext">

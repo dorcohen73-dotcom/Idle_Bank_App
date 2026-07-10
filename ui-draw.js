@@ -216,6 +216,7 @@ function spawnFloating(text, x, y, type = 'gold', fontSize = null) {
     else if (type === 'red' || type === 'danger') colorStr = 'var(--danger-red)';
     else if (type === 'green' || type === 'money') colorStr = 'var(--green-light)';
 
+    div.style.cssText = `position:absolute;left:0;top:0;display:block;color:${colorStr};font-size:${fontSize || '1.2rem'};will-change:transform,opacity;`;
     div.innerText = text;
 
     activeFloatingText.push({
@@ -243,10 +244,11 @@ function updateFloatingText(dt) {
         if (t < 0.15) opacity = t / 0.15;
         else if (t > 0.7) opacity = 1 - ((t - 0.7) / 0.3);
         
-        f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};font-size:${f.fontSize || '1.2rem'};will-change:transform,opacity;position:absolute;left:0;top:0;`;
+        f.element.style.transform = `translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2})`;
+        f.element.style.opacity = opacity;
         
         if (t >= 1.0) {
-            f.element.style.cssText = 'display:none;opacity:0;position:absolute;left:0;top:0;';
+            f.element.style.display = 'none';
             f.poolObj.active = false;
             activeFloatingText.splice(i, 1);
         }
