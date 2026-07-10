@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "122909329872",
+    "project_id": "bankempire-717b3",
+    "storage_bucket": "bankempire-717b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122909329872:android:a9e54b6a877ac71ee591d5",
+        "android_client_info": {
+          "package_name": "com.bankempire.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3os7PFtLSHs3ZNi6EcK2jPPJ8w4kCcNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
