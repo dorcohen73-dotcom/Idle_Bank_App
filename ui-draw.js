@@ -181,7 +181,7 @@ function initFloatingPool() {
     for (let i = 0; i < FLOATING_POOL_SIZE; i++) {
         const div = document.createElement('div');
         div.className = 'floating-cash';
-        div.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;position:absolute;left:0;top:0;';
+        div.style.cssText = 'display:none;opacity:0;position:absolute;left:0;top:0;';
         floatContainer.appendChild(div);
         floatingTextPool.push({
             element: div,
@@ -246,7 +246,7 @@ function updateFloatingText(dt) {
         f.element.style.cssText = `transform:translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1-easeT)*0.2});opacity:${opacity};display:block;color:${f.colorStr};font-size:${f.fontSize || '1.2rem'};will-change:transform,opacity;position:absolute;left:0;top:0;`;
         
         if (t >= 1.0) {
-            f.element.style.display = 'none';
+            f.element.style.cssText = 'display:none;opacity:0;position:absolute;left:0;top:0;';
             f.poolObj.active = false;
             activeFloatingText.splice(i, 1);
         }
@@ -264,7 +264,7 @@ function initCoinPool() {
     for (let i = 0; i < COIN_POOL_SIZE; i++) {
         const coin = document.createElement('div');
         coin.className = 'flying-coin';
-        coin.style.cssText = 'display:none;opacity:0;will-change:transform,opacity;';
+        coin.style.cssText = 'display:none;opacity:0;';
         floatContainer.appendChild(coin);
         coinPool.push({
             element: coin,
