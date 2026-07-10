@@ -7008,7 +7008,11 @@ header, .control-panel, .bank-floor {
 }
 
 .app-container, header, main, section, .stat-box, .tab-btn, .upgrade-card, .teller-counter {
-    transition: background var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
+    /* transform intentionally excluded: transitioning transform on large scroll
+       containers (.app-container, main, section) and frequently-repeated list
+       items (.tab-btn, .upgrade-card) fights mobile hardware-accelerated
+       scrolling and causes visible jumps mid-scroll. */
+    transition: background var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 /* 1. Neon glowing borders & styles */
@@ -9198,7 +9202,10 @@ header {
 
 /* 1. Button Click Ripple & Scale */
 .buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+    /* Shortened from 0.15s: a touch that turns into a scroll still fires :active
+       briefly, and the longer this transition runs the more that reads as a
+       visible jump instead of an imperceptible flicker. */
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.08s ease;
 }
 
 .buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {
@@ -9221,7 +9228,10 @@ header {
 
 /* 1. Button Click Ripple & Scale */
 .buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+    /* Shortened from 0.15s: a touch that turns into a scroll still fires :active
+       briefly, and the longer this transition runs the more that reads as a
+       visible jump instead of an imperceptible flicker. */
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.08s ease;
 }
 
 .buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {

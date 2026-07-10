@@ -1702,23 +1702,31 @@ function updateButtonAffordability() {
                     if (btn.classList.contains('upg-v2-buy-btn')) {
                         const amtEl = btn.querySelector('.upg-v2-btn-amount');
                         const costEl = btn.querySelector('.upg-v2-btn-cost');
-                        if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
-                        if (costEl) costEl.innerText = formatMoney(details.cost);
-                        
+                        const newAmt = details.levels > 1 ? '+' + details.levels : '';
+                        if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                        const newCost = formatMoney(details.cost);
+                        if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+
                         const card = btn.closest('.premium-upg-card');
                         if (card) {
                             const titleAmtEl = card.querySelector('.upg-v2-level-up');
-                            if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
-                            
+                            const newTitleAmt = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                            if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+
                             const statVals = card.querySelectorAll('.upg-v2-stat-val');
                             if (statVals.length >= 2) {
                                 const capacity = game.getTellerCapacity(t.level);
                                 const speed = game.getTellerSpeed(t.level).toFixed(1);
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                                 const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
-                                statVals[0].innerHTML = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
-                                statVals[1].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
-                                if (statVals[2]) statVals[2].innerHTML = formatMoney(capacity / speed);
+                                const newStat0 = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
+                                const newStat1 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+                                if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                                if (statVals[2]) {
+                                    const newStat2 = formatMoney(capacity / speed);
+                                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                                }
                             }
                         }
                     }
@@ -1738,23 +1746,31 @@ function updateButtonAffordability() {
                     if (btn.classList.contains('upg-v2-buy-btn')) {
                         const amtEl = btn.querySelector('.upg-v2-btn-amount');
                         const costEl = btn.querySelector('.upg-v2-btn-cost');
-                        if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
-                        if (costEl) costEl.innerText = formatMoney(details.cost);
-                        
+                        const newAmt = details.levels > 1 ? '+' + details.levels : '';
+                        if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                        const newCost = formatMoney(details.cost);
+                        if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+
                         const card = btn.closest('.premium-upg-card');
                         if (card) {
                             const titleAmtEl = card.querySelector('.upg-v2-level-up');
-                            if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
-                            
+                            const newTitleAmt = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                            if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+
                             const statVals = card.querySelectorAll('.upg-v2-stat-val');
                             if (statVals.length >= 2) {
                                 const capacity = game.getGuardCapacity(g.level);
                                 const speed = game.getGuardSpeed(g.level).toFixed(1);
                                 const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                                 const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
-                                statVals[0].innerHTML = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
-                                statVals[1].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
-                                if (statVals[2]) statVals[2].innerHTML = formatMoney(capacity / speed);
+                                const newStat0 = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
+                                const newStat1 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+                                if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                                if (statVals[2]) {
+                                    const newStat2 = formatMoney(capacity / speed);
+                                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                                }
                             }
                         }
                     }
@@ -1771,19 +1787,23 @@ function updateButtonAffordability() {
                 if (btn.classList.contains('upg-v2-buy-btn')) {
                     const amtEl = btn.querySelector('.upg-v2-btn-amount');
                     const costEl = btn.querySelector('.upg-v2-btn-cost');
-                    if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
-                    if (costEl) costEl.innerText = formatMoney(details.cost);
-                    
+                    const newAmt = details.levels > 1 ? '+' + details.levels : '';
+                    if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                    const newCost = formatMoney(details.cost);
+                    if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+
                     const card = btn.closest('.premium-upg-card');
                     if (card) {
                         const titleAmtEl = card.querySelector('.upg-v2-level-up');
-                        if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
-                        
+                        const newTitleAmt = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                        if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+
                         const statVals = card.querySelectorAll('.upg-v2-stat-val');
                         if (statVals.length >= 1) {
                             const capacity = game.getVaultCapacity(game.state.vault.level);
                             const nextCapacity = game.getVaultCapacity(game.state.vault.level + details.levels);
-                            statVals[0].innerHTML = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                            const newStat0 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                            if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
                         }
                     }
                 }
@@ -1794,19 +1814,23 @@ function updateButtonAffordability() {
                 if (btn.classList.contains('upg-v2-buy-btn')) {
                     const amtEl = btn.querySelector('.upg-v2-btn-amount');
                     const costEl = btn.querySelector('.upg-v2-btn-cost');
-                    if (amtEl) amtEl.innerText = details.levels > 1 ? '+' + details.levels : '';
-                    if (costEl) costEl.innerText = formatMoney(details.cost);
-                    
+                    const newAmt = details.levels > 1 ? '+' + details.levels : '';
+                    if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                    const newCost = formatMoney(details.cost);
+                    if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+
                     const card = btn.closest('.premium-upg-card');
                     if (card) {
                         const titleAmtEl = card.querySelector('.upg-v2-level-up');
-                        if (titleAmtEl) titleAmtEl.innerText = details.levels > 1 ? '(+' + details.levels + ')' : '';
-                        
+                        const newTitleAmt = details.levels > 1 ? '(+' + details.levels + ')' : '';
+                        if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+
                         const statVals = card.querySelectorAll('.upg-v2-stat-val');
                         if (statVals.length >= 1) {
                             const capacity = game.getQueueCapacity(game.state.queueUpgradeLevel || 1);
                             const nextCapacity = game.getQueueCapacity((game.state.queueUpgradeLevel || 1) + details.levels);
-                            statVals[0].innerHTML = capacity + ' <span class="arrow">➔</span> ' + nextCapacity;
+                            const newStat0 = capacity + ' <span class="arrow">➔</span> ' + nextCapacity;
+                            if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
                         }
                     }
                 }
