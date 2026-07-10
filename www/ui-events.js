@@ -489,7 +489,15 @@ function openPrestigeModal(target) {
     const elCancelBtn = document.getElementById('prestige-cancel-btn');
     const elRewardLabel = document.getElementById('prestige-reward-label');
     
-    if (elTitle) elTitle.innerText = tObj.branches.names[target];
+    if (elTitle) {
+          if (tObj.branches && tObj.branches.names && tObj.branches.names[target]) {
+              elTitle.innerText = tObj.branches.names[target];
+          } else if (game.branches && game.branches[target] && game.branches[target].name) {
+              elTitle.innerText = game.branches[target].name;
+          } else {
+              elTitle.innerText = (tObj.branchLabel || 'Branch') + ' ' + (parseInt(target) + 1);
+          }
+      }
     if (elGained) elGained.innerText = `+${sharesGained.toLocaleString('en-US')}`;
     if (elDoubled) elDoubled.innerText = `${(sharesGained * 3).toLocaleString('en-US')}`;
     if (elAdBtn) elAdBtn.innerText = tObj.prestigeAdBtn((sharesGained * 3).toLocaleString('en-US'));
