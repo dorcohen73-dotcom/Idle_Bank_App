@@ -9131,11 +9131,17 @@ header {
 /* Mobile Responsive Splash */
 @media (max-width: 768px) {
     .splash-logo-container {
-        height: 40vh;
-        margin-top: 10vh;
+        height: 35vh; /* Reduced height to leave room for text */
+        margin-top: 5vh;
+        width: 100%;
+        max-width: 90vw;
+        mix-blend-mode: screen; /* Keep screen blend to hide black background of the logo */
     }
     .splash-logo-img {
-        max-height: 280px;
+        height: auto; /* Let it scale properly */
+        max-height: 35vh;
+        max-width: 100%;
+        object-fit: contain;
     }
     .splash-halo {
         width: 220px;
