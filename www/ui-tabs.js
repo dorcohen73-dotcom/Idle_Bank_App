@@ -1068,10 +1068,13 @@ function renderBranchesTab() {
         card.className = `branch-card bg-branch-${idx} ${isCurrent ? 'current' : ''}`;
         
         let actionBtnHtml = '';
-        if (!isSold) {
-            const btnClass = isCurrent ? 'branch-action-btn solid-gold' : 'branch-action-btn ghost-gold';
+        if (!isSold && !isCurrent) {
+            // The card you're already on has nothing to "sell & rebuild" into (it IS
+            // the current branch) — that action belongs to #main-prestige-btn, which
+            // targets currentBranch+1. Showing a self-targeting button here just
+            // confused taps meant for the next branch's card right below it.
             actionBtnHtml = `
-                <button class="${btnClass} ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled="true"'}>
+                <button class="branch-action-btn ghost-gold ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled="true"'}>
                     ${translations[lang].branches.sellAndBuild.replace('!', '')}
                 </button>
             `;
