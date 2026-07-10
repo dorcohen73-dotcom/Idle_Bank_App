@@ -335,14 +335,35 @@
             window.renderBranchesTab();
         }
 
-        // Hide Splash Screen
+        // Hide Splash Screen with luxury animation
         const splashScreen = document.getElementById('splash-screen');
         if (splashScreen) {
-            setTimeout(() => {
-                splashScreen.style.opacity = '0';
-                splashScreen.style.visibility = 'hidden';
-                setTimeout(() => splashScreen.remove(), 800);
-            }, 800);
+            const fill = document.getElementById('splash-progress-fill');
+            const pText = document.getElementById('splash-progress-text');
+            if (fill && pText) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.floor(Math.random() * 15) + 8;
+                    if (progress >= 100) progress = 100;
+                    fill.style.width = progress + '%';
+                    pText.innerText = progress + '%';
+                    
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            splashScreen.style.opacity = '0';
+                            splashScreen.style.visibility = 'hidden';
+                            setTimeout(() => splashScreen.remove(), 800);
+                        }, 500);
+                    }
+                }, 120);
+            } else {
+                setTimeout(() => {
+                    splashScreen.style.opacity = '0';
+                    splashScreen.style.visibility = 'hidden';
+                    setTimeout(() => splashScreen.remove(), 800);
+                }, 800);
+            }
         }
 
         // Show GDPR consent banner on first visit

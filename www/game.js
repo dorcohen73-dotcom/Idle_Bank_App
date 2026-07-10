@@ -788,6 +788,14 @@ class IdleBankGame {
         }
         this.state.visitedBranches = savedVisitedBranches;
 
+        // Auto-discover all basic tutorial tips to prevent them from showing after prestige
+        this.state.discoveredTips.start = true;
+        this.state.discoveredTips.vault = true;
+        this.state.discoveredTips.guard = true;
+        this.state.discoveredTips.dept = true;
+        this.state.discoveredTips.manager = true;
+        this.state.discoveredTips.prestige = true;
+
         // Reset cash based on starting cash options in GAME_CONFIG
         this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
         this.state.lifetimeCash = this.state.cash;

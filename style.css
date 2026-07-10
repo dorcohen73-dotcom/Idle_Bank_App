@@ -8813,67 +8813,319 @@ header {
     min-width: 100px;
 }
 
-/* 4. Splash Screen */
-#splash-screen {
+/* 4. Luxury Splash Screen */
+.luxury-splash {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+    background: url('images/splash_bg.png') no-repeat center center;
+    background-size: cover;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-bottom: 5vh;
     transition: opacity 0.8s ease, visibility 0.8s ease;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden;
 }
 
-.splash-logo {
-    font-size: 5rem;
-    margin-bottom: 20px;
-    animation: bounceLogo 2s infinite ease-in-out;
-    filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.5));
+.luxury-splash::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at top center, rgba(10, 20, 50, 0) 0%, rgba(2, 6, 23, 0.9) 100%);
+    z-index: 1;
 }
 
-@keyframes bounceLogo {
+/* Animated Particles / Grid / Financial Background */
+.splash-grid-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* Combine grid with an SVG line chart pattern for the financial look */
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"><path d="M0,150 L50,120 L100,140 L150,80 L200,90 L250,30 L300,50 L350,10 L400,20" fill="none" stroke="%23dfab29" stroke-width="1" opacity="0.3"/><circle cx="50" cy="120" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="100" cy="140" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="150" cy="80" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="200" cy="90" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="250" cy="30" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="300" cy="50" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="350" cy="10" r="3" fill="%23dfab29" opacity="0.5"/></svg>'),
+        linear-gradient(rgba(223, 171, 41, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(223, 171, 41, 0.05) 1px, transparent 1px);
+    background-size: 400px 200px, 40px 40px, 40px 40px;
+    z-index: 1;
+    opacity: 0.15;
+    animation: gridScroll 30s linear infinite;
+}
+
+.splash-particles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+    /* Soft golden floating orbs */
+    background-image: 
+        radial-gradient(circle, rgba(255,215,0,0.8) 1px, transparent 2px),
+        radial-gradient(circle, rgba(255,255,255,0.9) 1.5px, transparent 3px);
+    background-size: 150px 150px, 200px 200px;
+    background-position: 0 0, 50px 50px;
+    opacity: 0.4;
+    animation: particlesDrift 15s linear infinite;
+}
+
+@keyframes gridScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(30px); }
+}
+
+@keyframes particlesDrift {
+    0% { background-position: 0px 0px; }
+    100% { background-position: 100px 100px; }
+}
+
+.splash-content {
+    position: relative;
+    /* Removed z-index to prevent stacking context isolation */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Halo behind logo */
+.splash-halo {
+    position: absolute;
+    top: 15vh;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.4) 0%, transparent 60%);
+    border-radius: 50%;
+    z-index: 1;
+    animation: haloPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes haloPulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+
+.splash-logo-container {
+    margin-bottom: 0vh; /* Brought closer to title */
+    margin-top: 5vh;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    animation: floatLogo 4s ease-in-out infinite;
+    position: relative;
+    filter: drop-shadow(0 0 25px rgba(223, 171, 41, 0.4));
+    mix-blend-mode: screen; /* Apply blending to the container because transform creates a stacking context! */
+}
+
+@keyframes floatLogo {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-15px); }
 }
 
-.splash-title {
-    color: var(--color-gold);
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+.splash-logo-img {
+    height: 100%;
+    max-height: 480px; /* Increased size significantly */
+    object-fit: contain;
+    /* Blending moved to parent container */
 }
 
-.splash-subtitle {
-    color: #94a3b8;
-    font-size: 1rem;
-    margin-bottom: 40px;
-}
-
-.splash-loader {
-    width: 200px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-}
-
-.splash-loader::after {
-    content: '';
+.splash-door-light {
     position: absolute;
-    top: 0; left: 0; height: 100%; width: 50%;
-    background: var(--color-gold);
-    animation: loadingBar 2s infinite ease-in-out;
-    border-radius: 4px;
+    bottom: -10px;
+    width: 60px;
+    height: 120px;
+    background: radial-gradient(ellipse at bottom, rgba(255, 255, 200, 0.7) 0%, rgba(223, 171, 41, 0.2) 50%, transparent 80%);
+    z-index: 3;
+    animation: doorLightFlicker 3s infinite alternate;
 }
 
-@keyframes loadingBar {
-    0% { left: -50%; }
-    100% { left: 100%; }
+@keyframes doorLightFlicker {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.1); opacity: 1; }
+}
+
+.splash-podium {
+    position: absolute;
+    bottom: -20px;
+    width: 250px;
+    height: 50px;
+    background: radial-gradient(ellipse at center, rgba(10, 10, 10, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+    box-shadow: 
+        0 15px 30px rgba(0,0,0,0.9),
+        inset 0 2px 10px rgba(255,215,0,0.2);
+    border-top: 1px solid rgba(255,215,0,0.1);
+}
+
+.splash-title-container {
+    text-align: center;
+    margin-bottom: 4vh;
+    position: relative;
+    z-index: 2;
+}
+
+.splash-welcome-text {
+    color: #dfab29;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    font-family: 'Heebo', sans-serif;
+    animation: textPulse 3s ease-in-out infinite alternate;
+}
+
+.splash-title-main {
+    color: #fff;
+    font-size: 3.8rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    background: linear-gradient(to bottom, #fffdf2 0%, #ffdf80 40%, #cca329 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
+    animation: textPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes textPulse {
+    0% { filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)); }
+    100% { filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.5)); }
+}
+
+.splash-title-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.diamond-icon {
+    color: #dfab29;
+    font-size: 0.8rem;
+}
+
+.splash-subtitle-en {
+    color: #ffd700;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.splash-loading-area {
+    width: 85%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 6vh;
+    position: relative;
+    z-index: 2;
+}
+
+.splash-progress-wrapper {
+    width: 100%;
+    position: relative;
+    height: 32px;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.splash-progress-track {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #8c6b16;
+    border-radius: 16px;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.8), 0 0 15px rgba(223, 171, 41, 0.3);
+}
+
+.splash-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #b8860b 0%, #ffdf80 50%, #cca329 100%);
+    border-radius: 12px;
+    position: relative;
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 10px rgba(255, 223, 128, 0.8);
+    overflow: hidden;
+}
+
+.splash-progress-shine {
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    animation: barShine 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes barShine {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+.splash-progress-glow {
+    position: absolute;
+    right: -10px;
+    top: -50%;
+    height: 200%;
+    width: 20px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.8) 0%, rgba(223, 171, 41, 0) 70%);
+}
+
+.splash-progress-text {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-family: 'Heebo', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    z-index: 3;
+}
+
+.splash-status-text {
+    color: #a0aec0;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 600;
+}
+
+.splash-loading-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.splash-loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dfab29;
+    animation: splashDotPulse 1.4s infinite ease-in-out both;
+}
+
+.splash-loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.splash-loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes splashDotPulse {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
 }
 /* ==========================================================
    PREMIUM ANIMATIONS (Mobile Optimized)

@@ -1809,6 +1809,14 @@ function updateButtonAffordability() {
                 }
             }
         });
+
+        // Ensure main prestige button updates its state dynamically
+        const mainPresBtn = container.querySelector('#main-prestige-btn');
+        if (mainPresBtn && game.branches[game.state.currentBranch]) {
+            const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+            mainPresBtn.classList.toggle('disabled', !currentCanPrestige);
+            mainPresBtn.disabled = !currentCanPrestige;
+        }
     } else if (activeTab === 'managers') {
         const container = document.getElementById('tab-managers');
         if (!container) return;

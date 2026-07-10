@@ -48,12 +48,48 @@
 <body>
     <a href="#main-content" class="skip-link" id="skip-link">דלג לתוכן</a>
 
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-        <div class="splash-logo" aria-hidden="true">🏦</div>
-        <p class="splash-title">Idle Bank Empire</p>
-        <p class="splash-subtitle" id="splash-subtitle">טוען את חווית ה-VIP...</p>
-        <div class="splash-loader" role="status" aria-label="טוען..."></div>
+    <!-- Luxury Splash Screen -->
+    <div id="splash-screen" class="luxury-splash">
+        <!-- Animated Background Elements -->
+        <div class="splash-particles" id="splash-particles"></div>
+        <div class="splash-grid-overlay"></div>
+        
+        <div class="splash-content">
+            <!-- Glowing Halo behind logo -->
+            <div class="splash-halo"></div>
+            
+            <div class="splash-logo-container">
+                <img src="images/splash_logo.png" alt="Bank Logo" class="splash-logo-img">
+                <div class="splash-door-light"></div>
+                <div class="splash-podium"></div>
+            </div>
+            
+            <div class="splash-title-container">
+                <div class="splash-welcome-text">WELCOME TO</div>
+                <h1 class="splash-title-main">BANK EMPIRE</h1>
+                <div class="splash-title-divider">
+                    <span class="diamond-icon">♦</span>
+                    <span class="splash-subtitle-en">BUILD YOUR FINANCIAL EMPIRE</span>
+                    <span class="diamond-icon">♦</span>
+                </div>
+            </div>
+            
+            <div class="splash-loading-area">
+                <div class="splash-progress-wrapper">
+                    <div class="splash-progress-track">
+                        <div class="splash-progress-fill" id="splash-progress-fill">
+                            <div class="splash-progress-glow"></div>
+                            <div class="splash-progress-shine"></div>
+                        </div>
+                    </div>
+                    <span class="splash-progress-text" id="splash-progress-text">0%</span>
+                </div>
+                <p class="splash-status-text" id="splash-subtitle">PREPARING GLOBAL BANKING NETWORK...</p>
+                <div class="splash-loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="app-container">
@@ -256,7 +292,6 @@
                     <!-- Security Guard Transit Path -->
                     <div class="security-path" id="security-path" role="button" tabindex="0" aria-label="שלח בלדר ידנית — לחץ לפעולה ידנית" title="לחץ כדי לשלוח את הבלדר ידנית">
                         <span class="guard-status-text" id="guard-status-text">מאבטח ממתין בכספת...</span>
-                        <span class="click-hint" id="label-guard-click-hint">(שלח בלדר 👆)</span>
                         <div class="guard-avatar" id="guard-avatar"></div>
                         <div class="guard-load" id="guard-load"></div>
                     </div>

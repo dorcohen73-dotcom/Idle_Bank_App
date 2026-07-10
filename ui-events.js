@@ -94,7 +94,6 @@ function applyLanguage(lang) {
     if (DOM_CACHE.labelPanelBadge) DOM_CACHE.labelPanelBadge.innerText = tObj.activeFlow;
     if (DOM_CACHE.labelAdvTitle) DOM_CACHE.labelAdvTitle.innerText = tObj.advTitle;
     if (DOM_CACHE.labelAdvLimitOff) DOM_CACHE.labelAdvLimitOff.innerText = tObj.advValueOff;
-    if (DOM_CACHE.labelGuardClickHint) DOM_CACHE.labelGuardClickHint.innerText = tObj.guardClickHint;
     if (DOM_CACHE.labelVaultTitle) DOM_CACHE.labelVaultTitle.innerText = tObj.vaultTitle;
     if (DOM_CACHE.labelVaultLoading) DOM_CACHE.labelVaultLoading.innerText = tObj.vaultLoading;
     if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.innerText = tObj.collectVault;
@@ -227,7 +226,7 @@ function applyLanguage(lang) {
     if (DOM_CACHE.vaultGraphicLabel) DOM_CACHE.vaultGraphicLabel.innerText = tObj.vaultBankLabel || 'BANK';
     if (DOM_CACHE.vaultMiniLabel) DOM_CACHE.vaultMiniLabel.innerText = tObj.vaultMiniLabel || 'Vault';
     if (DOM_CACHE.cashLiveBadge) DOM_CACHE.cashLiveBadge.innerText = tObj.cashLiveBadge || '● LIVE';
-    if (DOM_CACHE.splashSubtitle) DOM_CACHE.splashSubtitle.innerText = tObj.splashSubtitle || 'Loading VIP experience...';
+    // splashSubtitle override removed to keep splash screen in English
     if (DOM_CACHE.skipLink) DOM_CACHE.skipLink.innerText = tObj.skipLinkText || 'Skip to content';
     if (DOM_CACHE.analyticsBtn) {
         DOM_CACHE.analyticsBtn.title = tObj.analyticsBtnTitle || 'Metrics & Analytics';
