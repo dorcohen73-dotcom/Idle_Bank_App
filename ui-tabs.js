@@ -1115,38 +1115,62 @@ function renderBranchesTab() {
     });
 
     // Bind Prestige Button
+    // Wrapped defensively: two independent user reports (two separate screen
+    // recordings) show taps on this button producing zero visible reaction on
+    // real devices, despite the same code working correctly in every browser
+    // simulation run so far. If something throws here, surface it visibly
+    // instead of failing silently — that turns the next report into a
+    // diagnosable error message instead of another "nothing happens".
     const presBtns = container.querySelectorAll('[data-prestige-branch]');
     presBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
-            if (!currentCanPrestige) return;
-            initSound();
-            const target = parseInt(btn.getAttribute('data-prestige-branch'));
-            openPrestigeModal(target);
+            try {
+                const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+                if (!currentCanPrestige) {
+                    if (typeof showToast === 'function') showToast('עדיין אין מספיק כסף כדי לעבור סניף', 'danger');
+                    return;
+                }
+                initSound();
+                const target = parseInt(btn.getAttribute('data-prestige-branch'));
+                openPrestigeModal(target);
+            } catch (err) {
+                console.error('[Prestige branch button] click failed:', err);
+                if (typeof showToast === 'function') showToast('שגיאה בפתיחת המסך: ' + err.message, 'danger');
+                if (typeof reportCrash === 'function') reportCrash('branch prestige btn click: ' + err.message, err.stack);
+            }
         });
     });
 
-    // Bind Main Prestige Button
+    // Bind Main Prestige Button (same defensive wrapping — see comment above)
     const mainPresBtn = container.querySelector('#main-prestige-btn');
     if (mainPresBtn) {
         mainPresBtn.addEventListener('click', () => {
-            const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
-            if (!currentCanPrestige) return;
-            initSound();
-            
-            // By default, progress to the next branch if available
-            let targetBranch = game.state.currentBranch;
-            if (game.state.currentBranch < game.branches.length - 1) {
-                targetBranch = game.state.currentBranch + 1;
+            try {
+                const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+                if (!currentCanPrestige) {
+                    if (typeof showToast === 'function') showToast('עדיין אין מספיק כסף כדי לעבור סניף', 'danger');
+                    return;
+                }
+                initSound();
+
+                // By default, progress to the next branch if available
+                let targetBranch = game.state.currentBranch;
+                if (game.state.currentBranch < game.branches.length - 1) {
+                    targetBranch = game.state.currentBranch + 1;
+                }
+                // If they are playing an old branch but already unlocked higher ones, take them to the max unlocked + 1 (if within bounds)
+                if (game.state.maxBranchUnlocked > game.state.currentBranch && game.state.maxBranchUnlocked < game.branches.length - 1) {
+                    targetBranch = game.state.maxBranchUnlocked + 1;
+                } else if (game.state.maxBranchUnlocked === game.branches.length - 1) {
+                    targetBranch = game.state.maxBranchUnlocked; // max possible
+                }
+
+                openPrestigeModal(targetBranch);
+            } catch (err) {
+                console.error('[Main prestige button] click failed:', err);
+                if (typeof showToast === 'function') showToast('שגיאה בפתיחת המסך: ' + err.message, 'danger');
+                if (typeof reportCrash === 'function') reportCrash('main prestige btn click: ' + err.message, err.stack);
             }
-            // If they are playing an old branch but already unlocked higher ones, take them to the max unlocked + 1 (if within bounds)
-            if (game.state.maxBranchUnlocked > game.state.currentBranch && game.state.maxBranchUnlocked < game.branches.length - 1) {
-                targetBranch = game.state.maxBranchUnlocked + 1;
-            } else if (game.state.maxBranchUnlocked === game.branches.length - 1) {
-                targetBranch = game.state.maxBranchUnlocked; // max possible
-            }
-            
-            openPrestigeModal(targetBranch);
         });
     }
 
