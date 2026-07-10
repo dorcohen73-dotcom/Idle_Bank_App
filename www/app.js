@@ -28,6 +28,8 @@
         }
     }
 
+    window.reportCrash = reportCrash;
+
     // Explicitly expose required global variables on window object
     window.game = undefined;
     window.currentUpgradeMode = 'x1';
