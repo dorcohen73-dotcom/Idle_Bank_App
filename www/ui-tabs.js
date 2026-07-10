@@ -1071,7 +1071,7 @@ function renderBranchesTab() {
         if (!isSold) {
             const btnClass = isCurrent ? 'branch-action-btn solid-gold' : 'branch-action-btn ghost-gold';
             actionBtnHtml = `
-                <button class="${btnClass}">
+                <button class="${btnClass} ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled="true"'}>
                     ${translations[lang].branches.sellAndBuild.replace('!', '')}
                 </button>
             `;
