@@ -2460,6 +2460,7 @@ header {
 
 .branch-action-btn {
     width: 110px;
+    min-height: 46px; /* real touch targets under ~44-48px are easy to miss on a phone — this one measured 35px */
     border-radius: 8px;
     padding: 0.5rem 0;
     cursor: pointer;
@@ -2467,6 +2468,10 @@ header {
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, filter 0.2s ease;
     text-align: center;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
 }
 
 .branch-action-btn.solid-gold {
