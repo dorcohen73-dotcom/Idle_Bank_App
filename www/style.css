@@ -8825,9 +8825,10 @@ header {
     align-items: center;
     justify-content: flex-end;
     padding-bottom: 5vh;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
+    transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
     font-family: 'Times New Roman', Times, serif;
     overflow: hidden;
+    will-change: opacity, transform, visibility;
 }
 
 .luxury-splash::before {

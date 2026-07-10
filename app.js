@@ -312,52 +312,78 @@
         }
         window.DOM_CACHE.vaultDoorImg = document.querySelector('.vault-door-img');
 
-        // Initial Layout Rendering with defensive guards
-        if (typeof window.rebuildTellersDOM === 'function') {
-            window.rebuildTellersDOM();
-        }
-        if (typeof initCoinPool === 'function') {
-            initCoinPool();
-        }
-        if (typeof window.renderUpgradesTab === 'function') {
-            window.renderUpgradesTab();
-        }
-        if (typeof window.renderManagersTab === 'function') {
-            window.renderManagersTab();
-        }
-        if (typeof window.renderDepartmentsTab === 'function') {
-            window.renderDepartmentsTab();
-        }
-        if (typeof window.renderMissionsTab === 'function') {
-            window.renderMissionsTab();
-        }
-        if (typeof window.renderBranchesTab === 'function') {
-            window.renderBranchesTab();
-        }
-
-        // Hide Splash Screen with luxury animation
+        // Progressive Layout Rendering & Splash Screen
         const splashScreen = document.getElementById('splash-screen');
         if (splashScreen) {
             const fill = document.getElementById('splash-progress-fill');
             const pText = document.getElementById('splash-progress-text');
             if (fill && pText) {
                 let progress = 0;
+                let step = 0;
+                
                 const interval = setInterval(() => {
-                    progress += Math.floor(Math.random() * 15) + 8;
+                    progress += Math.floor(Math.random() * 12) + 8;
                     if (progress >= 100) progress = 100;
                     fill.style.width = progress + '%';
                     pText.innerText = progress + '%';
                     
+                    // Progressive rendering based on progress
+                    if (progress > 20 && step === 0) {
+                        step = 1;
+                        if (typeof window.rebuildTellersDOM === 'function') window.rebuildTellersDOM();
+                        if (typeof initCoinPool === 'function') initCoinPool();
+                    }
+                    if (progress > 50 && step === 1) {
+                        step = 2;
+                        if (typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
+                        if (typeof window.renderManagersTab === 'function') window.renderManagersTab();
+                        // Hide native splash screen safely now that some DOM is ready
+                        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+                            window.Capacitor.Plugins.SplashScreen.hide();
+                        }
+                    }
+                    if (progress > 80 && step === 2) {
+                        step = 3;
+                        if (typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
+                        if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+                        if (typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+                    }
+
                     if (progress === 100) {
                         clearInterval(interval);
+                        
+                        // Fallback if step 3 was missed
+                        if (step < 3) {
+                            if (typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
+                            if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+                            if (typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+                            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+                                window.Capacitor.Plugins.SplashScreen.hide();
+                            }
+                        }
+
                         setTimeout(() => {
                             splashScreen.style.opacity = '0';
+                            splashScreen.style.transform = 'scale(1.05)';
                             splashScreen.style.visibility = 'hidden';
                             setTimeout(() => splashScreen.remove(), 800);
                         }, 500);
                     }
-                }, 120);
+                }, 80); // Faster interval (80ms) for smoother visual loading
             } else {
+                // Fallback rendering
+                if (typeof window.rebuildTellersDOM === 'function') window.rebuildTellersDOM();
+                if (typeof initCoinPool === 'function') initCoinPool();
+                if (typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
+                if (typeof window.renderManagersTab === 'function') window.renderManagersTab();
+                if (typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
+                if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+                if (typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+                
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+                    window.Capacitor.Plugins.SplashScreen.hide();
+                }
+
                 setTimeout(() => {
                     splashScreen.style.opacity = '0';
                     splashScreen.style.visibility = 'hidden';
