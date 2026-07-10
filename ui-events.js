@@ -2052,10 +2052,9 @@ function tick(timestamp) {
             updateFortuneWheelBtnState();
         }
 
-        // Mobile Performance Throttling
+        // Performance Throttling
         drawTimer += cappedDt;
-        const isMobile = window.innerWidth <= 768;
-        const targetFpsInterval = isMobile ? (1.0 / 15.0) : 0; // 15 fps on mobile, unlimited on desktop
+        const targetFpsInterval = 0; // Run at native 60fps on all platforms to prevent stuttering/freezes
 
         if (drawTimer >= targetFpsInterval) {
             updateActiveCoins(drawTimer);
