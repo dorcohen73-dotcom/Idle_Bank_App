@@ -399,6 +399,11 @@
         console.error('[IDLE BANK BOOT ERROR]', bootErr);
         const splashScreen = document.getElementById('splash-screen');
         if (splashScreen) { splashScreen.style.opacity = '0'; splashScreen.style.visibility = 'hidden'; setTimeout(() => splashScreen.remove(), 800); }
+        // Any boot failure must still release the native splash — otherwise the
+        // app is stuck on the logo forever with no way for the user to recover.
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+            window.Capacitor.Plugins.SplashScreen.hide();
+        }
     }
     });
 
