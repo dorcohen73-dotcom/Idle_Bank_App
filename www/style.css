@@ -9127,6 +9127,52 @@ header {
     0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
     40% { transform: scale(1); opacity: 1; }
 }
+
+/* Mobile Responsive Splash */
+@media (max-width: 768px) {
+    .splash-logo-container {
+        height: 40vh;
+        margin-top: 10vh;
+    }
+    .splash-logo-img {
+        max-height: 280px;
+    }
+    .splash-halo {
+        width: 220px;
+        height: 220px;
+        top: 20vh;
+    }
+    .splash-podium {
+        width: 180px;
+        height: 35px;
+        bottom: -15px;
+    }
+    .splash-door-light {
+        width: 40px;
+        height: 80px;
+        bottom: -5px;
+    }
+    .splash-title-main {
+        font-size: 2.4rem;
+        letter-spacing: 2px;
+    }
+    .splash-welcome-text {
+        font-size: 0.9rem;
+        letter-spacing: 4px;
+    }
+    .splash-subtitle-en {
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+    }
+    .splash-status-text {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+    }
+    .splash-loading-area {
+        width: 90%;
+        margin-bottom: 8vh;
+    }
+}
 /* ==========================================================
    PREMIUM ANIMATIONS (Mobile Optimized)
    ========================================================== */
