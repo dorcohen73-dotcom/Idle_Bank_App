@@ -9179,6 +9179,13 @@ header {
         width: 90%;
         margin-bottom: 8vh;
     }
+    /* background-position animations force a full repaint every frame (unlike
+       transform/opacity, which are compositor-only) — disable on mobile where
+       weaker GPUs/CPUs turned this into visible flicker during the splash. */
+    .splash-particles {
+        animation: none;
+        background-position: 0 0, 50px 50px;
+    }
 }
 /* ==========================================================
    PREMIUM ANIMATIONS (Mobile Optimized)

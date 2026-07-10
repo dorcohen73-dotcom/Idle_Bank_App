@@ -14,6 +14,11 @@ if (-Not (Test-Path "$extractPath\jdk-21.0.2")) {
 $env:JAVA_HOME = "$extractPath\jdk-21.0.2"
 Write-Host "Set JAVA_HOME to $env:JAVA_HOME"
 
+cd C:\Users\dorco\Desktop\AntiGravity\IdleBank
+Write-Host "Syncing web assets into the Android project..."
+npm run cap-sync
+if ($LASTEXITCODE -ne 0) { throw "cap-sync failed" }
+
 cd C:\Users\dorco\Desktop\AntiGravity\IdleBank\android
 Write-Host "Building Release App Bundle (AAB)..."
 .\gradlew bundleRelease
