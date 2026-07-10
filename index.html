@@ -63,7 +63,10 @@
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <!-- font-display:optional (not swap) — a native app shouldn't have its layout
+         reflow later because a webfont swapped in after the fact; if Heebo isn't
+         ready basically instantly it just stays on the fallback for this load. -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=optional" rel="stylesheet">
     <!-- Preload critical assets -->
     <link rel="preload" href="images/icon.png" as="image">
     <link rel="preload" href="images/nav_bank.png" as="image">
