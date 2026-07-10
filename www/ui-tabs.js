@@ -1074,13 +1074,14 @@ function renderBranchesTab() {
             // targets currentBranch+1. Showing a self-targeting button here just
             // confused taps meant for the next branch's card right below it.
             actionBtnHtml = `
-                <button class="branch-action-btn ghost-gold ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}" ${canPrestige ? '' : 'disabled="true"'}>
+                <button class="branch-action-btn ghost-gold ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}">
                     ${translations[lang].branches.sellAndBuild.replace('!', '')}
                 </button>
             `;
         }
 
-        const requirementText = isSold ? translations[lang].branches.sold : `${translations[lang].branches.minCash(formatMoney(b.minCashToPrestige))}`;
+        const costToEnter = idx > 0 ? game.branches[idx - 1].minCashToPrestige : 0;
+        const requirementText = isSold ? translations[lang].branches.sold : (idx === 0 ? translations[lang].branches.active.replace(' 🏛', '') : `${translations[lang].branches.minCash(formatMoney(costToEnter))}`);
         const statusPillHtml = isCurrent ? `
             <div class="branch-status-pill">
                 <span class="pulse-dot"></span>
@@ -1867,6 +1868,12 @@ function updateButtonAffordability() {
             const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
             mainPresBtn.classList.toggle('disabled', !currentCanPrestige);
             mainPresBtn.disabled = !currentCanPrestige;
+            
+            const actionBtns = container.querySelectorAll('.branch-action-btn');
+            actionBtns.forEach(btn => {
+                btn.classList.toggle('disabled', !currentCanPrestige);
+                btn.disabled = !currentCanPrestige;
+            });
         }
     } else if (activeTab === 'managers') {
         const container = document.getElementById('tab-managers');
