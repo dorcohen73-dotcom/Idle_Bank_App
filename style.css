@@ -8665,6 +8665,8 @@ header {
     bottom: 20px;
     opacity: 1;
     pointer-events: auto;
+    max-height: 75vh;
+    overflow-y: auto;
 }
 
 @media (max-width: 950px), (max-height: 500px) {

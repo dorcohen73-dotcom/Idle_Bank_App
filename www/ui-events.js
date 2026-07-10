@@ -2025,7 +2025,7 @@ function tick(timestamp) {
             const _activeTabEl = document.querySelector('.tab-btn.active');
             if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'missions') {
                 game.checkMissions();
-                if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+                if (typeof window.updateMissionsTabProgress === 'function') window.updateMissionsTabProgress();
             }
 
             // Achievements: checked unconditionally (the income bonus must apply globally and
@@ -2037,8 +2037,12 @@ function tick(timestamp) {
                 });
                 game.saveGame();
             }
-            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'daily' && typeof window.renderAchievementsTab === 'function') {
-                window.renderAchievementsTab();
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'daily') {
+                if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0 && typeof window.renderAchievementsTab === 'function') {
+                    window.renderAchievementsTab();
+                } else if (typeof window.updateAchievementsTabProgress === 'function') {
+                    window.updateAchievementsTabProgress();
+                }
             }
 
             updateButtonAffordability();

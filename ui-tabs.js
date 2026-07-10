@@ -2017,3 +2017,76 @@ function updateButtonAffordability() {
 
 
 
+
+window.updateMissionsTabProgress = function() {
+    const container = document.getElementById('tab-missions');
+    if (!container) return;
+    if (game.state.missions) {
+        game.state.missions.forEach(m => {
+            const card = container.querySelector('.mission-card[data-mission-id="' + m.id + '"]');
+            if (!card) return;
+            const targetVal = m.target || 1;
+            const progressVal = m.progress || 0;
+            const percent = Math.min(100, (progressVal / targetVal) * 100);
+            const bar = card.querySelector('.mission-progress-bar');
+            if (bar) bar.style.width = percent + '%';
+            const textOverlay = card.querySelector('.progress-text-overlay');
+            if (textOverlay) {
+                const isCashType = ['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type);
+                const pStr = isCashType ? formatMoney(progressVal) : progressVal;
+                const tStr = isCashType ? formatMoney(targetVal) : targetVal;
+                const newText = pStr + ' / ' + tStr;
+                if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
+            }
+            const circleRadius = 24;
+            const circleCircumference = 2 * Math.PI * circleRadius;
+            const strokeDashoffset = circleCircumference - (percent / 100) * circleCircumference;
+            const circleValue = card.querySelector('.circle-value');
+            if (circleValue) circleValue.setAttribute('stroke-dashoffset', strokeDashoffset);
+            const circleText = card.querySelector('.circle-text');
+            if (circleText) {
+                const newPct = Math.round(percent) + '%';
+                if (circleText.innerText !== newPct) circleText.innerText = newPct;
+            }
+            if (m.completed && !card.classList.contains('completed')) {
+                if (typeof window.renderMissionsTab === 'function') {
+                    window.renderMissionsTab();
+                }
+            }
+        });
+    }
+};
+
+
+window.updateAchievementsTabProgress = function() {
+    const container = document.getElementById('tab-achievements');
+    if (!container) return;
+    const cashCategories = ['cash'];
+    const unlocked = (game.state.achievements && game.state.achievements.unlocked) || {};
+    GAME_CONFIG.ACHIEVEMENTS.forEach(a => {
+        const card = container.querySelector('.achievement-card[data-achievement-id="' + a.id + '"]');
+        if (!card) return;
+        const progress = game.getAchievementProgress(a.id);
+        const targetDisplay = cashCategories.includes(a.category) ? formatMoney(a.threshold) : a.threshold;
+        const progressCurrentDisplay = cashCategories.includes(a.category) ? formatMoney(progress.current) : progress.current;
+        const bar = card.querySelector('.mission-progress-bar');
+        if (bar) bar.style.width = progress.percent + '%';
+        const textOverlay = card.querySelector('.progress-text-overlay');
+        if (textOverlay) {
+            const newText = progressCurrentDisplay + ' / ' + targetDisplay;
+            if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
+        }
+        const circleRadius = 24;
+        const circleCircumference = 2 * Math.PI * circleRadius;
+        const strokeDashoffset = circleCircumference - (progress.percent / 100) * circleCircumference;
+        const circleValue = card.querySelector('.circle-value');
+        const isUnlocked = !!unlocked[a.id];
+        if (circleValue) circleValue.setAttribute('stroke-dashoffset', isUnlocked ? 0 : strokeDashoffset);
+        const circleText = card.querySelector('.circle-text');
+        if (circleText) {
+            const newPct = Math.round(progress.percent) + '%';
+            if (circleText.innerText !== newPct) circleText.innerText = newPct;
+        }
+    });
+};
+
