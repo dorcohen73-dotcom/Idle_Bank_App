@@ -11037,3 +11037,11 @@ button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
 .modal-box {
     padding-bottom: calc(2rem + env(safe-area-inset-bottom, 48px)) !important;
 }
+
+.header-glow {
+    animation: header-pulse-glow 1.5s infinite alternate !important;
+}
+@keyframes header-pulse-glow {
+    0% { box-shadow: 0 0 5px rgba(255,215,0,0.4); border-color: rgba(255,215,0,0.5); }
+    100% { box-shadow: 0 0 20px rgba(255,215,0,0.9), 0 0 10px rgba(255,215,0,0.6) inset; border-color: rgba(255,215,0,1); }
+}

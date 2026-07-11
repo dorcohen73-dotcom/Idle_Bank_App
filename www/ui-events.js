@@ -2824,7 +2824,7 @@ function initUIEvents() {
                 const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
                 const elStatCash = document.getElementById('stat-cash');
                 const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
-                animateCoins(rectBtn, rectCashBox, 8, 'cash');
+                animateCoins(rectBtn, rectCashBox, 2, 'cash');
                 spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green');
                 // Gold coins rain effect on vault collect
                 spawnVaultCoins(collected, rectBtn);
@@ -3635,18 +3635,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
     // ==========================================
 
     function spawnVaultCoins(amount, btnRect) {
-        if (!btnRect) return;
-        const count = Math.min(8, Math.max(2, Math.floor(Math.log10(amount + 1))));
-        const cx = btnRect.left + btnRect.width / 2;
-        const cy = btnRect.top;
-        for (var i = 0; i < count; i++) {
-            (function(idx) {
-                setTimeout(function() {
-                    const drift = (Math.random() - 0.5) * 80;
-                    spawnFloating('💰', cx + drift, cy - 10 - Math.random() * 20, 'gold');
-                }, idx * 80);
-            })(i);
-        }
+        return; // Disabled for performance
     }
 
     // ==========================================

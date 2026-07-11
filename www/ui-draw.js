@@ -395,8 +395,8 @@ function spawnParticles(x, y, count = 10, type = 'gold') {
     }
 }
 
-function animateCoins(fromRect, toRect, count = 6, type = 'coin') {
-    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById('floating-container');
+function animateCoins(fromRect, toRect, count = 2, type = 'coin') {
+    return; // Completely disable flying coins to improve performance
     if (!floatContainer) return;
 
     if (coinPool.length === 0) {
@@ -1220,6 +1220,27 @@ function updateNotifications() {
     if (hasUpgrades !== _lastNotifUpgrades) {
         _lastNotifUpgrades = hasUpgrades;
         updateTabDot('upgrades', hasUpgrades);
+    }
+
+    let hasClaimableAchievements = false;
+    if (game.state.achievements && game.state.achievements.unlocked) {
+        const keys = Object.keys(game.state.achievements.unlocked);
+        for (let i = 0; i < keys.length; i++) {
+            if (game.state.achievements.unlocked[keys[i]] && (!game.state.achievements.claimed || !game.state.achievements.claimed[keys[i]])) {
+                hasClaimableAchievements = true;
+                break;
+            }
+        }
+    }
+
+    updateTabDot('daily', hasClaimableAchievements);
+    const headerBtn = document.getElementById('header-daily-btn');
+    if (headerBtn) {
+        if (hasClaimableAchievements) {
+            headerBtn.classList.add('header-glow');
+        } else {
+            headerBtn.classList.remove('header-glow');
+        }
     }
 }
 
