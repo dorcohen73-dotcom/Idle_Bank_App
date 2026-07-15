@@ -1,0 +1,585 @@
+/* ==========================================================
+   UI/UX OVERHAUL (Juice, Visual Queue, Feature Cards, Splash)
+   ========================================================== */
+
+/* 1. Floating Text Animation (Juice) */
+.floating-text {
+    position: absolute;
+    pointer-events: none;
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
+    z-index: 1000;
+    animation: floatUpFade 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes floatUpFade {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    20% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+    80% { transform: translateY(-30px) scale(1); opacity: 0.8; }
+    100% { transform: translateY(-40px) scale(0.9); opacity: 0; }
+}
+
+/* Glowing Affordable Buttons */
+.upgrade-btn.affordable, .plaque-collect-btn.affordable {
+    animation: pulse-glow-btn 2s infinite alternate;
+}
+
+@keyframes pulse-glow-btn {
+    0% { box-shadow: 0 0 5px rgba(223, 171, 41, 0.2); }
+    100% { box-shadow: 0 0 15px rgba(223, 171, 41, 0.6), inset 0 0 5px rgba(223, 171, 41, 0.3); }
+}
+
+/* 2. Visual Queue */
+.queue-zone {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 2px;
+    height: 30px;
+    padding: 0 10px;
+}
+
+.visual-client-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    animation: slideInClient 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transform-origin: bottom center;
+}
+
+@keyframes slideInClient {
+    0% { transform: translateX(20px) scale(0.5); opacity: 0; }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+/* 3. Feature Cards (Managers & Departments) */
+.feature-card {
+    background: radial-gradient(circle at top left, rgba(28, 38, 57, 0.8) 0%, rgba(10, 14, 23, 0.95) 100%);
+    border: 1px solid rgba(223, 171, 41, 0.15);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.feature-card:hover {
+    border-color: rgba(223, 171, 41, 0.4);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.6), 0 0 15px rgba(223, 171, 41, 0.1);
+    transform: translateY(-2px);
+}
+
+.feature-card-icon {
+    font-size: 2.5rem;
+    min-width: 60px;
+    text-align: center;
+    filter: drop-shadow(0 0 10px rgba(223, 171, 41, 0.3));
+}
+
+.feature-card-content {
+    flex: 1;
+}
+
+.feature-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 4px;
+}
+
+.feature-card-desc {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    line-height: 1.4;
+}
+
+.feature-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+/* 4. Luxury Splash Screen */
+.luxury-splash {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('images/splash_bg.png') no-repeat center center;
+    background-size: cover;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 5vh;
+    transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden;
+    will-change: opacity, transform, visibility;
+}
+
+.luxury-splash::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at top center, rgba(10, 20, 50, 0) 0%, rgba(2, 6, 23, 0.9) 100%);
+    z-index: 1;
+}
+
+/* Animated Particles / Grid / Financial Background */
+.splash-grid-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* Combine grid with an SVG line chart pattern for the financial look */
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"><path d="M0,150 L50,120 L100,140 L150,80 L200,90 L250,30 L300,50 L350,10 L400,20" fill="none" stroke="%23dfab29" stroke-width="1" opacity="0.3"/><circle cx="50" cy="120" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="100" cy="140" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="150" cy="80" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="200" cy="90" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="250" cy="30" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="300" cy="50" r="3" fill="%23dfab29" opacity="0.5"/><circle cx="350" cy="10" r="3" fill="%23dfab29" opacity="0.5"/></svg>'),
+        linear-gradient(rgba(223, 171, 41, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(223, 171, 41, 0.05) 1px, transparent 1px);
+    background-size: 400px 200px, 40px 40px, 40px 40px;
+    z-index: 1;
+    opacity: 0.15;
+    animation: gridScroll 30s linear infinite;
+}
+
+.splash-particles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+    /* Soft golden floating orbs */
+    background-image: 
+        radial-gradient(circle, rgba(255,215,0,0.8) 1px, transparent 2px),
+        radial-gradient(circle, rgba(255,255,255,0.9) 1.5px, transparent 3px);
+    background-size: 150px 150px, 200px 200px;
+    background-position: 0 0, 50px 50px;
+    opacity: 0.4;
+    animation: particlesDrift 15s linear infinite;
+}
+
+@keyframes gridScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(30px); }
+}
+
+@keyframes particlesDrift {
+    0% { background-position: 0px 0px; }
+    100% { background-position: 100px 100px; }
+}
+
+.splash-content {
+    position: relative;
+    /* Removed z-index to prevent stacking context isolation */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Halo behind logo */
+.splash-halo {
+    position: absolute;
+    top: 15vh;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.4) 0%, transparent 60%);
+    border-radius: 50%;
+    z-index: 1;
+    animation: haloPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes haloPulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+
+.splash-logo-container {
+    margin-bottom: 0vh; /* Brought closer to title */
+    margin-top: 5vh;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    animation: floatLogo 4s ease-in-out infinite;
+    position: relative;
+    filter: drop-shadow(0 0 25px rgba(223, 171, 41, 0.4));
+    mix-blend-mode: screen; /* Apply blending to the container because transform creates a stacking context! */
+}
+
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.splash-logo-img {
+    height: 100%;
+    max-height: 480px; /* Increased size significantly */
+    object-fit: contain;
+    /* Blending moved to parent container */
+}
+
+.splash-door-light {
+    position: absolute;
+    bottom: -10px;
+    width: 60px;
+    height: 120px;
+    background: radial-gradient(ellipse at bottom, rgba(255, 255, 200, 0.7) 0%, rgba(223, 171, 41, 0.2) 50%, transparent 80%);
+    z-index: 3;
+    animation: doorLightFlicker 3s infinite alternate;
+}
+
+@keyframes doorLightFlicker {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.1); opacity: 1; }
+}
+
+.splash-podium {
+    position: absolute;
+    bottom: -20px;
+    width: 250px;
+    height: 50px;
+    background: radial-gradient(ellipse at center, rgba(10, 10, 10, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+    box-shadow: 
+        0 15px 30px rgba(0,0,0,0.9),
+        inset 0 2px 10px rgba(255,215,0,0.2);
+    border-top: 1px solid rgba(255,215,0,0.1);
+}
+
+.splash-title-container {
+    text-align: center;
+    margin-bottom: 4vh;
+    position: relative;
+    z-index: 2;
+}
+
+.splash-welcome-text {
+    color: #dfab29;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    font-family: 'Heebo', sans-serif;
+    animation: textPulse 3s ease-in-out infinite alternate;
+}
+
+.splash-title-main {
+    color: #fff;
+    font-size: 3.8rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    background: linear-gradient(to bottom, #fffdf2 0%, #ffdf80 40%, #cca329 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
+    animation: textPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes textPulse {
+    0% { filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)); }
+    100% { filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.5)); }
+}
+
+.splash-title-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.diamond-icon {
+    color: #dfab29;
+    font-size: 0.8rem;
+}
+
+.splash-subtitle-en {
+    color: #ffd700;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.splash-loading-area {
+    width: 85%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 6vh;
+    position: relative;
+    z-index: 2;
+}
+
+.splash-progress-wrapper {
+    width: 100%;
+    position: relative;
+    height: 32px;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.splash-progress-track {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #8c6b16;
+    border-radius: 16px;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.8), 0 0 15px rgba(223, 171, 41, 0.3);
+}
+
+.splash-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #b8860b 0%, #ffdf80 50%, #cca329 100%);
+    border-radius: 12px;
+    position: relative;
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 10px rgba(255, 223, 128, 0.8);
+    overflow: hidden;
+}
+
+.splash-progress-shine {
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    animation: barShine 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes barShine {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+.splash-progress-glow {
+    position: absolute;
+    right: -10px;
+    top: -50%;
+    height: 200%;
+    width: 20px;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.8) 0%, rgba(223, 171, 41, 0) 70%);
+}
+
+.splash-progress-text {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-family: 'Heebo', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    z-index: 3;
+}
+
+.splash-status-text {
+    color: #a0aec0;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 600;
+}
+
+.splash-loading-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.splash-loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dfab29;
+    animation: splashDotPulse 1.4s infinite ease-in-out both;
+}
+
+.splash-loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.splash-loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes splashDotPulse {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile Responsive Splash */
+@media (max-width: 768px) {
+    .splash-logo-container {
+        height: 35vh; /* Reduced height to leave room for text */
+        margin-top: 5vh;
+        width: 100%;
+        max-width: 90vw;
+        mix-blend-mode: screen; /* Keep screen blend to hide black background of the logo */
+    }
+    .splash-logo-img {
+        height: auto; /* Let it scale properly */
+        max-height: 35vh;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    .splash-halo {
+        width: 220px;
+        height: 220px;
+        top: 20vh;
+    }
+    .splash-podium {
+        width: 180px;
+        height: 35px;
+        bottom: -15px;
+    }
+    .splash-door-light {
+        width: 40px;
+        height: 80px;
+        bottom: -5px;
+    }
+    .splash-title-main {
+        font-size: 2.4rem;
+        letter-spacing: 2px;
+    }
+    .splash-welcome-text {
+        font-size: 0.9rem;
+        letter-spacing: 4px;
+    }
+    .splash-subtitle-en {
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+    }
+    .splash-status-text {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+    }
+    .splash-loading-area {
+        width: 90%;
+        margin-bottom: 8vh;
+    }
+    /* background-position animations force a full repaint every frame (unlike
+       transform/opacity, which are compositor-only) — disable on mobile where
+       weaker GPUs/CPUs turned this into visible flicker during the splash. */
+    .splash-particles {
+        animation: none;
+        background-position: 0 0, 50px 50px;
+    }
+}
+/* ==========================================================
+   PREMIUM ANIMATIONS (Mobile Optimized)
+   ========================================================== */
+
+/* 1. Button Click Ripple & Scale */
+.buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
+    /* Shortened from 0.15s: a touch that turns into a scroll still fires :active
+       briefly, and the longer this transition runs the more that reads as a
+       visible jump instead of an imperceptible flicker. */
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.08s ease;
+}
+
+.buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {
+    transform: scale(0.92);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* 2. Premium Card Hover (3D Effect) */
+#tutorial-skip:hover { color: #d1d5db; }
+
+.tutorial-highlight-pulse {
+    outline: 3px solid #3b82f6 !important;
+    outline-offset: 4px !important;
+    border-radius: 6px;
+}
+
+/* ==========================================================
+   PREMIUM ANIMATIONS (Mobile Optimized)
+   ========================================================== */
+
+/* 1. Button Click Ripple & Scale */
+.buy-btn, .upgrade-btn, .plaque-collect-btn, .tab-btn {
+    /* Shortened from 0.15s: a touch that turns into a scroll still fires :active
+       briefly, and the longer this transition runs the more that reads as a
+       visible jump instead of an imperceptible flicker. */
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.08s ease;
+}
+
+.buy-btn:active, .upgrade-btn:active, .plaque-collect-btn:active, .tab-btn:active {
+    transform: scale(0.92);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+/* 2. Premium Card Hover (3D Effect) */
+.upgrade-card.feature-card, .manager-card, .department-card {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.upgrade-card.feature-card:hover, .manager-card:hover, .department-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 20px rgba(223, 171, 41, 0.15);
+    border-color: rgba(223, 171, 41, 0.5);
+    z-index: 10;
+}
+
+/* 3. Vault Animation (Pulse & Open glow) */
+.vault-graphic {
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.vault-graphic.vault-full {
+    animation: vaultPulse 1.5s infinite alternate;
+}
+@keyframes vaultPulse {
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(223, 171, 41, 0.3); }
+    100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(223, 171, 41, 0.8); }
+}
+.vault-graphic:active {
+    transform: scale(0.9);
+}
+
+/* 4. Premium Toast Achievement Sweep */
+.custom-toast {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--primary-gold);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(223, 171, 41, 0.3);
+    animation: toastPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.custom-toast::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -150%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-25deg);
+    animation: shinySweep 2.5s infinite;
+}
+
+@keyframes toastPop {
+    0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes shinySweep {
+    0% { left: -150%; }
+    100% { left: 150%; }
+}
+
+.weekly-stats-box { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.75rem 1rem; margin: 0.75rem 0; text-align: right; font-size: 0.88rem; line-height: 1.8; }
+.weekly-prestige-options { margin-top: 1rem; }

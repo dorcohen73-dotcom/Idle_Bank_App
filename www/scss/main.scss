@@ -1,0 +1,27 @@
+// Idle Bank Empire — main stylesheet entry point.
+// Compiles (via tools/build-css.js / `npm run css`) into the single ../style.css
+// that index.html links. Partials are imported in the exact same order the
+// original style.css + premium_depts.css + premium_managers.css cascaded in,
+// so specificity-equal overrides keep resolving exactly as before.
+
+@import 'variables';
+@import 'base';
+@import 'layout';
+@import 'bank-floor';
+@import 'security-vault';
+@import 'control-panel';
+@import 'animations-modals';
+@import 'missions-achievements';
+@import 'responsive';
+@import 'managers-tab';
+@import 'upgrade-shop';
+@import 'dashboard-glass';
+@import 'theme-header-v2';
+@import 'onboarding';
+@import 'juice-splash';
+@import 'department-cards-v2';
+@import 'upgrade-cards-v3';
+@import 'settings-a11y';
+@import 'modals-final';
+@import 'premium-departments';
+@import 'premium-managers';

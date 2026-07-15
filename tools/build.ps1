@@ -1,13 +1,14 @@
 # PowerShell implementation of the Service Worker cache name build automation.
 # This serves as a native alternative to build.js for Windows environments that do not have Node.js installed.
 # NOTE: this script only recomputes the SW cache-busting hash — it does NOT regenerate
-# app.bundle.js (that requires esbuild, i.e. Node.js). If ui/tabs/*.js, ui-events.js or
-# app.js changed, run `npm run bundle` first, or the shipped bundle will be stale.
+# app.bundle.js or style.css (that requires esbuild/sass, i.e. Node.js). If ui/tabs/*.js,
+# ui-events.js, app.js or scss/*.scss changed, run `npm run bundle` / `npm run css` first,
+# or the shipped bundle/stylesheet will be stale.
 
 $projectRoot = Join-Path $PSScriptRoot ".."
 $excludedDirs = @('node_modules', 'android', 'www', '.git', '.netlify', 'tests', 'agents-library', 'tools', 'marketing', '.claude', '.vscode')
-$excludedFiles = @('build.js', 'capacitor.config.json', 'eslint.config.js', 'package.json', 'package-lock.json', 'sw.js', 'test.js', 'test2.js', 'test3.js', '__static-server.js', '__verify_marketing.js', '__verify_marketing2.js', 'app.bundle.js', 'app.bundle.js.map')
-$includedExtensions = @('.js', '.css', '.html')
+$excludedFiles = @('build.js', 'capacitor.config.json', 'eslint.config.js', 'package.json', 'package-lock.json', 'sw.js', 'test.js', 'test2.js', 'test3.js', '__static-server.js', '__verify_marketing.js', '__verify_marketing2.js', 'app.bundle.js', 'app.bundle.js.map', 'style.css', 'style.css.map')
+$includedExtensions = @('.js', '.css', '.scss', '.html')
 
 # Recursively collects every source file that actually ships with the game, so new
 # files (e.g. under ui/tabs/) automatically participate in cache-busting instead of
