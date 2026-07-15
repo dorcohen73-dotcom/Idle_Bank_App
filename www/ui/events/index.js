@@ -647,7 +647,7 @@ export {
 };
 
 // Dual-exposed on window for classic <script> consumers (game.js, save-manager.js,
-// mission-controller.js, ui-draw.js, ui/tabs/*.js) that still call these as bare/window globals.
+// mission-controller.js) and other ui/* modules that still call these as bare/window globals.
 window.applyLanguage = applyLanguage;
 window.applyTheme = applyTheme;
 window.playAd = playAd;

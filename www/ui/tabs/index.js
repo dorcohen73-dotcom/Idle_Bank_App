@@ -328,8 +328,8 @@ export {
     invalidateTabHashes,
 };
 
-// Dual-exposed on window for classic <script> consumers (ui-draw.js, save-manager.js,
-// mission-controller.js) that still call these as bare/window globals.
+// Dual-exposed on window for classic <script> consumers (save-manager.js,
+// mission-controller.js) and other ui/* modules that still call these as bare/window globals.
 window.renderUpgradesTab = renderUpgradesTab;
 window.renderManagersTab = renderManagersTab;
 window.renderDepartmentsTab = renderDepartmentsTab;

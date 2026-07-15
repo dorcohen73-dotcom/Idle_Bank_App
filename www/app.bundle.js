@@ -1,4 +1,1064 @@
 (() => {
+  // ui/draw/format.js
+  var svgCache = /* @__PURE__ */ new Map();
+  var cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF"];
+  var cachedFallback = " \u05DE\u05E4\u05DC\u05E6\u05EA\u05D9";
+  var cachedLang = "he";
+  function updateCachedSuffixes2(lang) {
+    cachedLang = lang || "en";
+    if (cachedLang === "en") {
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedFallback = " monstrous";
+    } else if (cachedLang === "es") {
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedFallback = " monstruoso";
+    } else if (cachedLang === "ru") {
+      cachedSuffixes = ["", " \u0442\u044B\u0441.", " \u043C\u043B\u043D", " \u043C\u043B\u0440\u0434", " \u0442\u0440\u043B\u043D", " \u043A\u0432\u0434\u0440\u043B\u043D"];
+      cachedFallback = " \u043E\u0433\u0440\u043E\u043C\u043D\u043E\u0435";
+    } else {
+      cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF"];
+      cachedFallback = " \u05DE\u05E4\u05DC\u05E6\u05EA\u05D9";
+    }
+  }
+  function fastFormat(num, lang) {
+    const separator = lang === "ru" ? " " : ",";
+    const parts = num.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    return parts.join(".");
+  }
+  function formatMoney2(num, noDecimals = false) {
+    if (num === null || num === void 0 || isNaN(num)) return "$0";
+    if (num < 1e3) {
+      return "$" + fastFormat(Math.floor(num), cachedLang);
+    }
+    const i = Math.floor(Math.log10(num) / 3);
+    const suffix = cachedSuffixes[i] !== void 0 ? cachedSuffixes[i] : cachedFallback;
+    const rawVal = num / Math.pow(10, i * 3);
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return "$" + fastFormat(val, cachedLang) + suffix;
+  }
+  function getClientSVG(type, seed) {
+    if (seed === void 0 || seed === null || isNaN(seed)) {
+      seed = 0;
+    }
+    if (!type) {
+      type = "normal";
+    }
+    const cleanType = type.replace(/[^a-zA-Z0-9]/g, "");
+    const cacheKey = `${cleanType}_${seed}`;
+    if (svgCache.has(cacheKey)) {
+      const cached = svgCache.get(cacheKey);
+      svgCache.delete(cacheKey);
+      svgCache.set(cacheKey, cached);
+      return cached;
+    }
+    let imgNum = 1;
+    if (type === "rich") {
+      imgNum = 9;
+    } else if (type === "vip") {
+      imgNum = 10;
+    } else {
+      imgNum = seed % 8 + 1;
+    }
+    let borderColor = "rgba(255, 255, 255, 0.15)";
+    let borderWidth = "1.5px";
+    let glow = "";
+    if (type === "rich") {
+      borderColor = "rgba(251, 191, 36, 0.85)";
+      borderWidth = "2px";
+      glow = "box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);";
+    } else if (type === "vip") {
+      borderColor = "rgba(192, 132, 252, 0.85)";
+      borderWidth = "2px";
+      glow = "box-shadow: 0 0 8px rgba(192, 132, 252, 0.4);";
+    }
+    const resultHtml = `
+        <div style="position: absolute; inset: 0; border-radius: 50%; overflow: hidden; border: ${borderWidth} solid ${borderColor}; ${glow} background: #0c0f1d;">
+            <img src="images/client-${imgNum}.png" alt="Client" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+        </div>
+    `;
+    if (svgCache.size >= GAME_CONFIG.SVG_CACHE_MAX_SIZE) {
+      svgCache.delete(svgCache.keys().next().value);
+    }
+    svgCache.set(cacheKey, resultHtml);
+    return resultHtml;
+  }
+
+  // ui/draw/toast.js
+  function showToast2(message, type = "info") {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "toast-container";
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = `custom-toast toast-${type}`;
+    toast.innerText = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add("show");
+    }, 10);
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 3e3);
+  }
+
+  // ui/draw/animations.js
+  var activeCoins = [];
+  function getVaultTargetRect() {
+    let targetEl = DOM_CACHE.vaultGraphic;
+    if (window.innerWidth <= 768) {
+      const miniIcon = document.querySelector(".vault-mini-icon");
+      if (miniIcon && window.getComputedStyle(miniIcon).display !== "none") {
+        targetEl = miniIcon;
+      }
+    }
+    return targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
+  }
+  var floatingTextPool = [];
+  var FLOATING_POOL_SIZE = 40;
+  var activeFloatingText = [];
+  function initFloatingPool() {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById("floating-container");
+    if (!floatContainer) return;
+    for (let i = 0; i < FLOATING_POOL_SIZE; i++) {
+      const div = document.createElement("div");
+      div.className = "floating-cash";
+      div.style.cssText = "display:none;opacity:0;position:absolute;left:0;top:0;";
+      floatContainer.appendChild(div);
+      floatingTextPool.push({
+        element: div,
+        active: false
+      });
+    }
+  }
+  function getFloatingFromPool() {
+    if (floatingTextPool.length === 0) initFloatingPool();
+    for (let i = 0; i < floatingTextPool.length; i++) {
+      if (!floatingTextPool[i].active) return floatingTextPool[i];
+    }
+    if (activeFloatingText.length > 0) {
+      const oldest = activeFloatingText[0];
+      activeFloatingText.shift();
+      oldest.poolObj.active = false;
+      oldest.element.style.display = "none";
+      return oldest.poolObj;
+    }
+    return floatingTextPool[0];
+  }
+  function spawnFloating2(text, x, y, type = "gold", fontSize = null) {
+    const floatObj = getFloatingFromPool();
+    if (!floatObj) return;
+    floatObj.active = true;
+    const div = floatObj.element;
+    let colorStr = type;
+    if (type === "gold") colorStr = "var(--primary-gold)";
+    else if (type === "red" || type === "danger") colorStr = "var(--danger-red)";
+    else if (type === "green" || type === "money") colorStr = "var(--green-light)";
+    div.style.cssText = `position:absolute;left:0;top:0;display:block;color:${colorStr};font-size:${fontSize || "1.2rem"};will-change:transform,opacity;`;
+    div.innerText = text;
+    activeFloatingText.push({
+      poolObj: floatObj,
+      element: div,
+      startX: x,
+      startY: y,
+      colorStr,
+      fontSize: fontSize || "1.2rem",
+      progress: 0,
+      duration: 1.2
+    });
+  }
+  function updateFloatingText2(dt) {
+    for (let i = activeFloatingText.length - 1; i >= 0; i--) {
+      const f = activeFloatingText[i];
+      f.progress += dt;
+      const t = Math.min(1, f.progress / f.duration);
+      const easeT = 1 - Math.pow(1 - t, 3);
+      const currentY = f.startY - easeT * 50;
+      let opacity = 1;
+      if (t < 0.15) opacity = t / 0.15;
+      else if (t > 0.7) opacity = 1 - (t - 0.7) / 0.3;
+      f.element.style.transform = `translate3d(${f.startX}px,${currentY}px,0) scale(${1 + (1 - easeT) * 0.2})`;
+      f.element.style.opacity = opacity;
+      if (t >= 1) {
+        f.element.style.display = "none";
+        f.poolObj.active = false;
+        activeFloatingText.splice(i, 1);
+      }
+    }
+  }
+  var coinPool = [];
+  var COIN_POOL_SIZE = 120;
+  function initCoinPool2() {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById("floating-container");
+    if (!floatContainer) return;
+    for (let i = 0; i < COIN_POOL_SIZE; i++) {
+      const coin = document.createElement("div");
+      coin.className = "flying-coin";
+      coin.style.cssText = "display:none;opacity:0;";
+      floatContainer.appendChild(coin);
+      coinPool.push({
+        element: coin,
+        active: false
+      });
+    }
+  }
+  function getCoinFromPool() {
+    if (coinPool.length === 0) {
+      initCoinPool2();
+    }
+    for (let i = 0; i < coinPool.length; i++) {
+      if (!coinPool[i].active) {
+        return coinPool[i];
+      }
+    }
+    if (activeCoins.length > 0) {
+      const oldestCoin = activeCoins[0];
+      activeCoins.shift();
+      oldestCoin.poolObj.active = false;
+      oldestCoin.element.style.display = "none";
+      return oldestCoin.poolObj;
+    }
+    return coinPool[0];
+  }
+  function clearActiveCoins() {
+    activeCoins.forEach((c) => {
+      c.element.style.display = "none";
+      c.element.style.opacity = "0";
+      if (c.poolObj) {
+        c.poolObj.active = false;
+      }
+    });
+    activeCoins.length = 0;
+  }
+  function updateActiveCoins2(dt) {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById("floating-container");
+    if (!floatContainer) return;
+    for (let i = activeCoins.length - 1; i >= 0; i--) {
+      const c = activeCoins[i];
+      if (c.delay > 0) {
+        c.delay -= dt;
+        if (c.delay <= 0) {
+          c.element.style.cssText = `transform:translate3d(${c.startX}px,${c.startY}px,0);opacity:1;display:block;position:absolute;left:0;top:0;`;
+        }
+        continue;
+      }
+      c.progress += dt;
+      const t = Math.min(1, c.progress / c.duration);
+      const easeT = t * (2 - t);
+      const currentX = c.startX + (c.endX - c.startX) * easeT;
+      const arcY = -c.arcHeight * Math.sin(t * Math.PI);
+      const currentY = c.startY + (c.endY - c.startY) * easeT + arcY;
+      let transformStr = "";
+      let opacity = 1 - t * 0.65;
+      if (c.type === "particle") {
+        const spin = c.randomPhase * 40 + t * 360;
+        const scale = 1 - t * 0.8;
+        transformStr = `scale(${scale}) rotate(${spin}deg)`;
+        opacity = 1 - Math.pow(t, 2);
+      } else if (c.type === "cash") {
+        const wiggle = Math.sin(t * Math.PI * 4.5 + c.randomPhase) * 22;
+        transformStr = `scale(${1.2 - t * 0.25}) rotate(${wiggle}deg)`;
+      } else {
+        const spin = c.randomPhase * 40 + t * 480;
+        transformStr = `scale(${1.1 - t * 0.25}) rotate(${spin}deg)`;
+      }
+      c.element.style.cssText = `transform:translate3d(${currentX}px,${currentY}px,0) ${transformStr};opacity:${opacity};display:block;position:absolute;left:0;top:0;will-change:transform,opacity;`;
+      if (t >= 1) {
+        c.element.style.cssText = "display:none;opacity:0;";
+        c.poolObj.active = false;
+        if (c.isLast && !c.playedSound) {
+          c.playedSound = true;
+          if (c.type === "cash") {
+            window.gameAudio.playChaChing();
+          }
+        }
+        activeCoins.splice(i, 1);
+      }
+    }
+  }
+  function spawnParticles2(x, y, count = 10, type = "gold") {
+    const floatContainer = DOM_CACHE.floatingContainer || document.getElementById("floating-container");
+    if (!floatContainer) return;
+    if (coinPool.length === 0) initCoinPool2();
+    for (let i = 0; i < count; i++) {
+      const coinObj = getCoinFromPool();
+      if (!coinObj) continue;
+      coinObj.active = true;
+      const coin = coinObj.element;
+      coin.innerText = type === "star" ? "\u2728" : type === "sparkle" ? "\u{1F31F}" : "\u{1F4B0}";
+      coin.style.display = "none";
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 40 + Math.random() * 80;
+      activeCoins.push({
+        poolObj: coinObj,
+        element: coin,
+        startX: x,
+        startY: y,
+        endX: x + Math.cos(angle) * distance,
+        endY: y + Math.sin(angle) * distance,
+        duration: 0.6 + Math.random() * 0.4,
+        progress: 0,
+        delay: 0,
+        type: "particle",
+        isLast: false,
+        playedSound: true,
+        arcHeight: -20 + Math.random() * 40,
+        randomPhase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+  function animateCoins2() {
+  }
+
+  // ui/draw/bank-floor.js
+  var TELLER_DOM_CACHE = {};
+  var prevTellerCashHtml = {};
+  var prevTellerClientStates2 = {};
+  function rebuildTellersDOM2() {
+    const lang = game.state.language || "en";
+    DOM_CACHE.tellersZone.innerHTML = "";
+    DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
+    for (let id = 0; id < 4; id++) {
+      delete TELLER_DOM_CACHE[id];
+    }
+    game.state.tellers.forEach((t) => {
+      const div = document.createElement("div");
+      div.id = `teller-node-${t.id}`;
+      div.className = `teller-counter ${t.unlocked ? "active" : "locked"}`;
+      div.setAttribute("data-id", t.id);
+      if (t.unlocked) {
+        div.innerHTML = `
+                <div class="glass-showcase">
+                    <img class="teller-bg-img" src="images/teller-${t.id % 8 + 1}.png?v=20260626" alt="" />
+                    <div class="client-slot-3d" id="teller-client-${t.id}" title="${translations[lang].servingClientLabel}"></div>
+                </div>
+                <div class="gold-plaque">
+                    <div class="plaque-header">
+                        <span class="plaque-title">${translations[lang].tellerLabel} ${t.id + 1}</span>
+                        <span class="plaque-level${t.level >= 10 ? " milestone-active" : ""}" id="teller-lvl-lbl-${t.id}">${translations[lang].levelLabel} ${t.level}</span>
+                    </div>
+                    <div class="plaque-body">
+                        <div class="plaque-cash" id="teller-cash-${t.id}">$0</div>
+                        <button class="plaque-collect-btn" id="teller-collect-${t.id}">${translations[lang].collectShortLabel}</button>
+                    </div>
+                    <div class="plaque-progress-container">
+                        <div class="plaque-progress-fill" id="teller-progress-${t.id}"></div>
+                    </div>
+                </div>
+            `;
+        TELLER_DOM_CACHE[t.id] = {
+          node: div,
+          progress: div.querySelector(`#teller-progress-${t.id}`),
+          cash: div.querySelector(`#teller-cash-${t.id}`),
+          lvl: div.querySelector(`#teller-lvl-lbl-${t.id}`),
+          collect: div.querySelector(`#teller-collect-${t.id}`),
+          client: div.querySelector(`#teller-client-${t.id}`),
+          lastPercent: -1,
+          lastLevel: -1,
+          lastCollectDisabled: null,
+          lastVaultFullAlert: null
+        };
+        div.addEventListener("click", (e) => {
+          if (e.target.className !== "collect-btn") {
+            initSound();
+            game.clickTeller(t.id);
+          }
+        });
+        const collectBtn = div.querySelector(`#teller-collect-${t.id}`);
+        collectBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          initSound();
+          const collected = game.collectTellerCash(t.id);
+          if (collected > 0) {
+            const rectBtn = collectBtn.getBoundingClientRect();
+            const rectVault = getVaultTargetRect();
+            animateCoins2(rectBtn, rectVault, 6, "coin");
+            spawnFloating2("+" + formatMoney2(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
+          }
+        });
+      } else {
+        const cost = game.tellerUnlockCosts[t.id];
+        div.innerHTML = `
+                <div class="lock-info">
+                    <div class="lock-icon">\u{1F512}</div>
+                    <div style="font-size:0.8rem; margin-bottom: 0.15rem;">${translations[lang].unlockLabel}</div>
+                    <div class="lock-cost">${formatMoney2(cost)}</div>
+                </div>
+            `;
+        div.addEventListener("click", () => {
+          initSound();
+          if (game.unlockTeller(t.id)) {
+            rebuildTellersDOM2();
+            renderUpgradesTab();
+          }
+        });
+      }
+      DOM_CACHE.tellersZone.appendChild(div);
+    });
+  }
+  function updateTellersDisplay(tObj, vaultData) {
+    game.state.tellers.forEach((t) => {
+      if (!t.unlocked) return;
+      const tCache = TELLER_DOM_CACHE[t.id];
+      if (!tCache) return;
+      const tNode = tCache.node;
+      const progressFill = tCache.progress;
+      const cashLabel = tCache.cash;
+      const lvlLabel = tCache.lvl;
+      const collectBtn = tCache.collect;
+      if (tNode) {
+        const tData = game.getTellerRenderData(t.id);
+        if (lvlLabel && tData.level !== tCache.lastLevel) {
+          if (tData.level >= 10) {
+            lvlLabel.classList.add("milestone-active");
+          } else {
+            lvlLabel.classList.remove("milestone-active");
+          }
+          tCache.lastLevel = tData.level;
+        }
+        if (tData.isProcessing) {
+          tNode.classList.add("processing");
+          if (tData.progressPercent !== tCache.lastPercent) {
+            tCache.lastPercent = tData.progressPercent;
+            if (progressFill) progressFill.style.transform = `scaleX(${tData.progressPercent / 100})`;
+          }
+        } else {
+          tNode.classList.remove("processing");
+          if (tCache.lastPercent !== 0) {
+            tCache.lastPercent = 0;
+            if (progressFill) progressFill.style.transform = "scaleX(0)";
+          }
+        }
+        if (cashLabel) {
+          let cashIcons = "";
+          if (tData.cashStored > 0) {
+            if (tData.fillPercent >= 80) {
+              cashIcons = "\u{1F4B5}\u{1F4B5}\u{1F4B5} ";
+            } else if (tData.fillPercent >= 40) {
+              cashIcons = "\u{1F4B5}\u{1F4B5} ";
+            } else {
+              cashIcons = "\u{1F4B5} ";
+            }
+          }
+          const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${formatMoney2(tData.cashStored)}`;
+          if (prevTellerCashHtml[tData.id] !== newCashHtml) {
+            cashLabel.innerHTML = newCashHtml;
+            prevTellerCashHtml[tData.id] = newCashHtml;
+          }
+        }
+        const clientSlot = tCache.client;
+        if (clientSlot) {
+          const cacheKey = `${tData.id}:${tData.isProcessing}:${tData.customerType}:${tData.customerSeed}`;
+          if (prevTellerClientStates2[tData.id] !== cacheKey) {
+            if (tData.isProcessing) {
+              clientSlot.classList.add("active");
+              const _t = tData.customerType || "normal";
+              const _s = tData.customerSeed === void 0 || tData.customerSeed === null || isNaN(tData.customerSeed) ? 0 : tData.customerSeed;
+              const _n = _t === "rich" ? 9 : _t === "vip" ? 10 : _s % 8 + 1;
+              clientSlot.style.setProperty("background-image", `url('images/client-${_n}.png')`, "important");
+              clientSlot.style.setProperty("background-size", "cover", "important");
+              clientSlot.style.setProperty("background-position", "center top", "important");
+              clientSlot.innerHTML = "";
+              tNode.classList.remove("vip-serving-glow", "rich-serving-glow");
+              if (tData.customerType === "vip") {
+                tNode.classList.add("vip-serving-glow");
+                const rect = tNode.getBoundingClientRect();
+                spawnFloating2("\u2605 VIP \u2605", rect.left + rect.width / 2, rect.top + 20, "rgba(192, 132, 252, 1)");
+              } else if (tData.customerType === "rich") {
+                tNode.classList.add("rich-serving-glow");
+                const rect = tNode.getBoundingClientRect();
+                spawnFloating2("$$ RICH $$", rect.left + rect.width / 2, rect.top + 20, "rgba(251, 191, 36, 1)");
+              }
+            } else {
+              clientSlot.classList.remove("active");
+              clientSlot.innerHTML = '<div class="idle-zzz">Zzz</div>';
+              clientSlot.style.removeProperty("background-image");
+              clientSlot.style.removeProperty("background-size");
+              clientSlot.style.removeProperty("background-position");
+              tNode.classList.remove("vip-serving-glow", "rich-serving-glow");
+            }
+            prevTellerClientStates2[tData.id] = cacheKey;
+          }
+        }
+        const isFull = tData.fillPercent >= 100;
+        if (isFull !== tCache.lastVaultFullAlert) {
+          if (isFull) {
+            tNode.classList.add("vault-full-alert");
+          } else {
+            tNode.classList.remove("vault-full-alert");
+          }
+          tCache.lastVaultFullAlert = isFull;
+        }
+        if (collectBtn) {
+          const vaultSpace = vaultData.capacity - vaultData.cashStored;
+          const isDisabled = tData.cashStored <= 0 || vaultSpace <= 0;
+          if (isDisabled !== tCache.lastCollectDisabled) {
+            if (isDisabled) {
+              collectBtn.classList.add("disabled");
+            } else {
+              collectBtn.classList.remove("disabled");
+            }
+            tCache.lastCollectDisabled = isDisabled;
+          }
+        }
+      }
+    });
+  }
+
+  // ui/draw/security.js
+  var _guardAnimTriggers = [];
+  var prevGuardStates = {};
+  var lastGuardStatusText = "";
+  function updateGuardsDisplay(lang) {
+    const unlockedGuards = game.state.guards.filter((g) => g.unlocked);
+    if (unlockedGuards.length > 0) {
+      DOM_CACHE.securityPath.style.display = "flex";
+      if (DOM_CACHE.guardAvatar) DOM_CACHE.guardAvatar.style.display = "none";
+      if (DOM_CACHE.guardLoad) DOM_CACHE.guardLoad.style.display = "none";
+      const currentGuardIds = unlockedGuards.map((g) => g.id.toString());
+      const existingRunners = Array.from(DOM_CACHE.securityPath.querySelectorAll(".guard-runner"));
+      existingRunners.forEach((node) => {
+        const gid = node.getAttribute("data-guard-id");
+        if (!currentGuardIds.includes(gid)) {
+          DOM_CACHE.securityPath.removeChild(node);
+        }
+      });
+      unlockedGuards.forEach((g) => {
+        const gData = game.getGuardRenderData(g.id);
+        if (!gData) return;
+        let runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
+        if (!runner) {
+          runner = document.createElement("div");
+          runner.className = "guard-runner";
+          runner.setAttribute("data-guard-id", gData.id);
+          runner.style.willChange = "transform";
+          const avatarEl = document.createElement("div");
+          avatarEl.className = "guard-runner-avatar";
+          runner.appendChild(avatarEl);
+          const loadEl2 = document.createElement("div");
+          loadEl2.className = "guard-runner-load";
+          runner.appendChild(loadEl2);
+          DOM_CACHE.securityPath.appendChild(runner);
+        }
+        let visualPosition = gData.position;
+        const isMovingToTeller = gData.state.startsWith("moving_to_teller_");
+        const isCollecting = gData.state.startsWith("collecting_from_teller_");
+        if (isMovingToTeller) {
+          visualPosition = Math.max(0, gData.position - gData.id * 0.07);
+        } else if (gData.state === "moving_to_vault") {
+          visualPosition = Math.min(1, gData.position + gData.id * 0.07);
+        } else if (gData.state === "idle" || gData.state === "depositing") {
+          visualPosition = gData.position + gData.id * 0.04;
+        } else if (isCollecting) {
+          visualPosition = gData.position - gData.id * 0.04;
+        }
+        const percentRight = 10 + visualPosition * 75;
+        const isLtr = document.documentElement.dir === "ltr";
+        if (isLtr) {
+          runner.style.right = "";
+          runner.style.left = `${percentRight}%`;
+        } else {
+          runner.style.left = "";
+          runner.style.right = `${percentRight}%`;
+        }
+        runner.style.top = `calc(50% + ${(gData.id - 1) * 12}px)`;
+        runner.className = "guard-runner";
+        runner.classList.add(`state-${gData.state}`);
+        if (isMovingToTeller) runner.classList.add("state-moving_to_tellers");
+        if (isCollecting) runner.classList.add("state-collecting");
+        if (isMovingToTeller) {
+          runner.classList.add("moving-left");
+        } else if (gData.state === "moving_to_vault") {
+          runner.classList.add("moving-right");
+        }
+        const loadEl = runner.querySelector(".guard-runner-load");
+        const loadText = gData.loadedCash > 0 ? formatMoney2(gData.loadedCash) : "";
+        if (loadEl.innerText !== loadText) {
+          loadEl.innerText = loadText;
+          loadEl.style.display = gData.loadedCash > 0 ? "block" : "none";
+        }
+      });
+      const firstMoving = unlockedGuards.find((g) => {
+        const gData = game.getGuardRenderData(g.id);
+        return gData && gData.state !== "idle";
+      });
+      const activeGuard = firstMoving || unlockedGuards[0];
+      const activeData = activeGuard ? game.getGuardRenderData(activeGuard.id) : null;
+      const tObjGuard = translations[lang].guardStates;
+      if (DOM_CACHE.guardStatus && activeData) {
+        const unlockedCount = unlockedGuards.length;
+        const totalCount = game.state.guards.length;
+        const tObjLang = translations[lang];
+        const courierLabel = unlockedCount > 1 ? tObjLang.guardsLabel || "Couriers" : tObjLang.guardLabel || "Courier";
+        let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
+        if (lang === "he") {
+          stateText = stateText.replace(/^(בלדר|שומר)\s+/, "");
+        } else if (lang === "en") {
+          stateText = stateText.replace(/^Guard\s+/, "");
+        } else if (lang === "es") {
+          stateText = stateText.replace(/^Guardia\s+/, "");
+        } else if (lang === "ru") {
+          stateText = stateText.replace(/^(Охранник|Инкассатор)\s+/, "");
+        }
+        if (lang === "en" || lang === "es") {
+          stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
+        }
+        const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
+        if (lastGuardStatusText !== newGuardStatusText) {
+          DOM_CACHE.guardStatus.innerText = newGuardStatusText;
+          lastGuardStatusText = newGuardStatusText;
+        }
+      }
+    } else {
+      DOM_CACHE.securityPath.style.display = "none";
+    }
+    _guardAnimTriggers.length = 0;
+    game.state.guards.forEach((g, idx) => {
+      if (!g.unlocked) return;
+      const gData = game.getGuardRenderData(g.id);
+      if (!gData) return;
+      const prevState = prevGuardStates[idx];
+      if (prevState !== gData.state) {
+        _guardAnimTriggers.push({
+          g,
+          gData,
+          idx,
+          prevState
+        });
+      }
+    });
+    if (_guardAnimTriggers.length > 0) {
+      const reads = [];
+      _guardAnimTriggers.forEach((item) => {
+        const { g, gData, prevState } = item;
+        const prevIsMoving = prevState && prevState.startsWith("moving_to_teller_");
+        const currIsCollecting = gData.state.startsWith("collecting_from_teller_");
+        if (prevIsMoving && currIsCollecting) {
+          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
+          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
+          const tellerRects = [];
+          game.state.tellers.forEach((t) => {
+            const tData = game.getTellerRenderData(t.id);
+            if (tData && tData.unlocked && tData.cashStored > 0) {
+              const tCache = TELLER_DOM_CACHE[t.id];
+              const tNode = tCache ? tCache.node : null;
+              if (tNode) {
+                tellerRects.push({
+                  node: tNode
+                });
+              }
+            }
+          });
+          reads.push({
+            type: "collecting",
+            g,
+            rectGuard,
+            tellers: tellerRects.map((tInfo) => ({
+              rect: tInfo.node.getBoundingClientRect()
+            }))
+          });
+        } else if (prevState === "moving_to_vault" && gData.state === "depositing") {
+          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
+          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
+          const rectVault = getVaultTargetRect();
+          reads.push({
+            type: "depositing",
+            g,
+            rectGuard,
+            rectVault
+          });
+        }
+      });
+      reads.forEach((read) => {
+        if (read.type === "collecting") {
+          if (read.rectGuard) {
+            read.tellers.forEach((tInfo) => {
+              animateCoins2(tInfo.rect, read.rectGuard, 4, "coin");
+            });
+          }
+        } else if (read.type === "depositing") {
+          if (read.rectGuard && read.rectVault) {
+            animateCoins2(read.rectGuard, read.rectVault, 6, "coin");
+          }
+        }
+      });
+      _guardAnimTriggers.forEach((item) => {
+        prevGuardStates[item.idx] = item.gData.state;
+      });
+    }
+  }
+
+  // ui/draw/vault.js
+  var lastVaultPercent = -1;
+  var prevVaultStatsHtml = "";
+  var vaultFullToastShown = false;
+  var _prestigePreviewTexts = {
+    he: (val) => `\u05D0\u05DD \u05EA\u05E2\u05E9\u05D4 Prestige \u05E2\u05DB\u05E9\u05D9\u05D5: +${val} \u05DE\u05E0\u05D9\u05D5\u05EA \u{1F3C5}`,
+    en: (val) => `Prestige now: +${val} shares \u{1F3C5}`,
+    es: (val) => `Prestigio ahora: +${val} acciones \u{1F3C5}`,
+    ru: (val) => `\u041F\u0440\u0435\u0441\u0442\u0438\u0436 \u0441\u0435\u0439\u0447\u0430\u0441: +${val} \u0430\u043A\u0446\u0438\u0439 \u{1F3C5}`
+  };
+  function updateVaultDisplay(tObj, vaultData) {
+    const vPercent = vaultData.fillPercent;
+    const vCap = vaultData.capacity;
+    if (vPercent !== lastVaultPercent) {
+      lastVaultPercent = vPercent;
+      if (DOM_CACHE.vaultFill) {
+        DOM_CACHE.vaultFill.style.width = `${vPercent}%`;
+        DOM_CACHE.vaultFill.setAttribute("aria-valuenow", Math.round(vPercent));
+      }
+      if (typeof window.updateVaultMiniBar === "function") {
+        window.updateVaultMiniBar(vPercent, vaultData.cashStored > 0, vaultData.cashStored, vaultData.capacity, vaultData.yieldPerHour);
+      }
+    }
+    if (vPercent >= 95) {
+      if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.classList.add("vault-full");
+      if (!vaultFullToastShown) {
+        showToast2(tObj.vaultFullMsg || "Vault is full \u2014 empty it", "danger");
+        vaultFullToastShown = true;
+      }
+    } else {
+      if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.classList.remove("vault-full");
+      vaultFullToastShown = false;
+    }
+    if (vaultData.cashStored >= vCap) {
+      if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.classList.add("full");
+      if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.classList.add("full");
+    } else {
+      if (DOM_CACHE.vaultFill) DOM_CACHE.vaultFill.classList.remove("full");
+      if (DOM_CACHE.vaultGraphic) DOM_CACHE.vaultGraphic.classList.remove("full");
+    }
+    const newVaultStatsHtml = `
+        <div>
+            <span class="vault-current-value">${formatMoney2(vaultData.cashStored)}</span> / <span class="vault-limit-label">${formatMoney2(vCap)}</span>
+        </div>
+    `;
+    if (prevVaultStatsHtml !== newVaultStatsHtml) {
+      if (DOM_CACHE.vaultStats) DOM_CACHE.vaultStats.innerHTML = newVaultStatsHtml;
+      prevVaultStatsHtml = newVaultStatsHtml;
+    }
+    const elVaultCapValue = DOM_CACHE.vaultCapValue;
+    if (elVaultCapValue) {
+      const newCapText = formatMoney2(vCap);
+      if (elVaultCapValue.innerText !== newCapText) {
+        elVaultCapValue.innerText = newCapText;
+      }
+    }
+    const elVaultYieldValue = DOM_CACHE.vaultYieldValue;
+    if (elVaultYieldValue) {
+      const newYieldText = `+${formatMoney2(vaultData.yieldPerHour)}`;
+      if (elVaultYieldValue.innerText !== newYieldText) {
+        elVaultYieldValue.innerText = newYieldText;
+      }
+    }
+    const elVaultProgressLabel = DOM_CACHE.vaultProgressLabel;
+    if (elVaultProgressLabel) {
+      const progressLabelFn = tObj.vaultProgressLabel;
+      const newProgressText = typeof progressLabelFn === "function" ? progressLabelFn(vPercent) : `${vPercent}%`;
+      if (elVaultProgressLabel.innerText !== newProgressText) {
+        elVaultProgressLabel.innerText = newProgressText;
+      }
+    }
+    if (DOM_CACHE.vaultEmptyBtn) {
+      if (vaultData.cashStored <= 0) {
+        DOM_CACHE.vaultEmptyBtn.classList.add("disabled");
+      } else {
+        DOM_CACHE.vaultEmptyBtn.classList.remove("disabled");
+      }
+    }
+    const branchTab = DOM_CACHE.tabBranches;
+    if (branchTab && branchTab.classList.contains("active")) {
+      const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+      const prestigeBtns = branchTab.querySelectorAll(".prestige-btn");
+      const prestigeReq = game.branches[game.state.currentBranch].minCashToPrestige;
+      prestigeBtns.forEach((btn) => {
+        if (currentCanPrestige) {
+          btn.classList.remove("disabled");
+          btn.removeAttribute("disabled");
+          btn.innerText = tObj.branches.sellAndBuild;
+        } else {
+          btn.classList.add("disabled");
+          btn.setAttribute("disabled", "true");
+          btn.innerText = tObj.branches.minCash(formatMoney2(prestigeReq));
+        }
+      });
+    }
+    const pendingShares = game.calculatePrestigeShares();
+    const previewEl = DOM_CACHE.prestigePreviewLabel;
+    if (previewEl) {
+      const textFn = _prestigePreviewTexts[cachedLang] || _prestigePreviewTexts.he;
+      previewEl.innerText = textFn(pendingShares);
+    }
+    const vaultImg = DOM_CACHE.vaultDoorImg;
+    if (vaultImg) {
+      if (vaultData.level >= 50) {
+        vaultImg.style.filter = "drop-shadow(0 0 20px gold) hue-rotate(45deg) brightness(1.2)";
+        vaultImg.style.transform = "scale(1.05)";
+      } else if (vaultData.level >= 25) {
+        vaultImg.style.filter = "drop-shadow(0 0 10px silver) brightness(1.1)";
+        vaultImg.style.transform = "scale(1.02)";
+      } else {
+        vaultImg.style.filter = "none";
+        vaultImg.style.transform = "scale(1)";
+      }
+    }
+  }
+
+  // ui/draw/header-stats.js
+  var lastCash = -1;
+  var lastEps = -1;
+  var lastShares = -1;
+  var lastMultiplier = -1;
+  var lastBranch = -1;
+  var lastLang = "";
+  function updateHeaderStats(lang, tObj) {
+    if (game.state.cash !== lastCash || lang !== lastLang) {
+      lastCash = game.state.cash;
+      DOM_CACHE.cash.innerText = formatMoney2(game.state.cash);
+      if (typeof window.checkPrestigeTip === "function") window.checkPrestigeTip();
+    }
+    const currentEps = game.getEarningsPerSecond();
+    if (currentEps !== lastEps || lang !== lastLang) {
+      lastEps = currentEps;
+      DOM_CACHE.eps.innerText = formatMoney2(currentEps);
+    }
+    if (game.state.shares !== lastShares || lang !== lastLang) {
+      lastShares = game.state.shares;
+      DOM_CACHE.shares.innerText = game.state.shares.toLocaleString();
+    }
+    const mult = game.getTotalMultiplier();
+    if (mult !== lastMultiplier || lang !== lastLang) {
+      lastMultiplier = mult;
+      DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + "x";
+    }
+    if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
+      lastBranch = game.state.currentBranch;
+      DOM_CACHE.branchName.innerText = (tObj.bankPrefix || "") + tObj.branches.names[game.state.currentBranch];
+    }
+    lastLang = lang;
+  }
+  function updateAdCampaignDisplay() {
+    if (DOM_CACHE.advSlider) {
+      const maxBudget = game.getAdMaxBudget();
+      const budget = game.state.advBudget || 0;
+      if (budget === 0) {
+        DOM_CACHE.advSlider.value = 0;
+      } else {
+        DOM_CACHE.advSlider.value = Math.round(1e3 * (budget / maxBudget));
+      }
+      const maxLabelEl = DOM_CACHE.advLimitMax;
+      if (maxLabelEl) {
+        maxLabelEl.innerText = formatMoney2(maxBudget);
+      }
+    }
+    updateAdvDisplay(game.state.advBudget || 0);
+  }
+  function updateBoostButtonDisplay(tObj) {
+    if (DOM_CACHE.boostBtn) {
+      if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
+        DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
+        DOM_CACHE.boostBtn.setAttribute("data-time", formatTime(game.state.boost2xTimeLeft));
+        DOM_CACHE.boostBtn.classList.add("active");
+        DOM_CACHE.boostBtn.classList.remove("offer");
+      } else {
+        DOM_CACHE.boostBtn.removeAttribute("data-time");
+        const nowMs = Date.now();
+        const offerEnd = window._boostOfferEndTime || 0;
+        if (offerEnd > nowMs) {
+          const offerSec = Math.ceil((offerEnd - nowMs) / 1e3);
+          const boostOfferFn = tObj.boostOfferText;
+          DOM_CACHE.boostBtn.innerText = typeof boostOfferFn === "function" ? boostOfferFn(formatTime(offerSec)) : `\u26A1 OFFER! ${formatTime(offerSec)}`;
+          DOM_CACHE.boostBtn.classList.add("offer");
+          DOM_CACHE.boostBtn.classList.remove("active");
+        } else {
+          DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "\u26A1 BOOST x2";
+          DOM_CACHE.boostBtn.classList.remove("active", "offer");
+        }
+      }
+    }
+  }
+  function updateQueueDisplay(tObj) {
+    const capLabel = DOM_CACHE.queueCapLabel;
+    const fillBar = DOM_CACHE.queueFillBar;
+    const statText = DOM_CACHE.queueStatText;
+    const statIcon = DOM_CACHE.queueStatIcon;
+    const elQueueZone = DOM_CACHE.queueZone;
+    if (capLabel) {
+      const queueData = game.getQueueRenderData();
+      const maxCap = queueData.capacity;
+      const currentLen = queueData.currentLen;
+      capLabel.textContent = `${currentLen}/${maxCap}`;
+      if (fillBar) {
+        const pct = Math.min(100, Math.max(0, currentLen / maxCap * 100));
+        fillBar.style.width = `${pct}%`;
+        fillBar.setAttribute("aria-valuenow", Math.round(pct));
+      }
+      const isTooLow = currentLen <= 1;
+      const isTooHigh = currentLen >= maxCap - 1 || currentLen / maxCap >= 0.8;
+      if (isTooLow) {
+        if (elQueueZone) {
+          elQueueZone.classList.remove("status-ok");
+          elQueueZone.classList.add("status-alert");
+        }
+        if (statText) statText.textContent = tObj.alertQueueEmpty;
+        if (statIcon) {
+          statIcon.textContent = "\u2755";
+          statIcon.style.color = "var(--danger-red)";
+        }
+      } else if (isTooHigh) {
+        if (elQueueZone) {
+          elQueueZone.classList.remove("status-ok");
+          elQueueZone.classList.add("status-alert");
+        }
+        const spotsLeft = maxCap - currentLen;
+        if (statText) statText.textContent = tObj.alertQueueAlmostFull ? tObj.alertQueueAlmostFull(spotsLeft) : spotsLeft + " left";
+        if (statIcon) {
+          statIcon.textContent = "\u2755";
+          statIcon.style.color = "var(--danger-red)";
+        }
+      } else {
+        if (elQueueZone) {
+          elQueueZone.classList.remove("status-alert");
+          elQueueZone.classList.add("status-ok");
+        }
+        if (statText) statText.textContent = tObj.alertQueueOk;
+        if (statIcon) {
+          statIcon.textContent = "\u2714";
+          statIcon.style.color = "var(--money-green)";
+        }
+      }
+    }
+  }
+
+  // ui/draw/notifications.js
+  var _lastNotifMissions = null;
+  var _lastNotifUpgrades = null;
+  function updateTabDot(tabId, show) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (!btn) return;
+    let dot = btn.querySelector(".notification-dot");
+    if (show) {
+      if (!dot) {
+        dot = document.createElement("div");
+        dot.className = "notification-dot";
+        btn.style.position = "relative";
+        btn.appendChild(dot);
+      }
+    } else {
+      if (dot) dot.remove();
+    }
+    const bottomBtn = document.querySelector(`.bottom-nav-btn[data-tab="${tabId}"]`);
+    if (bottomBtn) {
+      let bottomDot = bottomBtn.querySelector(".notification-dot");
+      if (show) {
+        if (!bottomDot) {
+          bottomDot = document.createElement("div");
+          bottomDot.className = "notification-dot";
+          bottomBtn.style.position = "relative";
+          bottomBtn.appendChild(bottomDot);
+        }
+      } else {
+        if (bottomDot) bottomDot.remove();
+      }
+    }
+  }
+  function updateNotifications() {
+    let hasMissions = false;
+    if (game.state.missions) {
+      for (let i = 0; i < game.state.missions.length; i++) {
+        if (game.state.missions[i].status === "completed") {
+          hasMissions = true;
+          break;
+        }
+      }
+    }
+    let hasUpgrades = false;
+    if (game.state.cash > 0) {
+      if (game.state.cash >= game.getVaultUpgradeCost()) hasUpgrades = true;
+      else if (game.state.cash >= game.getQueueUpgradeCost()) hasUpgrades = true;
+      else {
+        for (let i = 0; i < game.state.tellers.length; i++) {
+          if (game.state.tellers[i].unlocked && game.state.cash >= game.getTellerUpgradeCost(game.state.tellers[i].id)) {
+            hasUpgrades = true;
+            break;
+          }
+        }
+        if (!hasUpgrades) {
+          for (let i = 0; i < game.state.guards.length; i++) {
+            if (game.state.guards[i].unlocked && game.state.cash >= game.getGuardUpgradeCost(game.state.guards[i].id)) {
+              hasUpgrades = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (hasMissions !== _lastNotifMissions) {
+      _lastNotifMissions = hasMissions;
+      updateTabDot("missions", hasMissions);
+    }
+    if (hasUpgrades !== _lastNotifUpgrades) {
+      _lastNotifUpgrades = hasUpgrades;
+      updateTabDot("upgrades", hasUpgrades);
+    }
+    let hasClaimableAchievements = false;
+    if (game.state.achievements && game.state.achievements.unlocked) {
+      const keys = Object.keys(game.state.achievements.unlocked);
+      for (let i = 0; i < keys.length; i++) {
+        if (game.state.achievements.unlocked[keys[i]] && (!game.state.achievements.claimed || !game.state.achievements.claimed[keys[i]])) {
+          hasClaimableAchievements = true;
+          break;
+        }
+      }
+    }
+    updateTabDot("daily", hasClaimableAchievements);
+    const headerBtn = document.getElementById("header-daily-btn");
+    if (headerBtn) {
+      if (hasClaimableAchievements) {
+        headerBtn.classList.add("header-glow");
+      } else {
+        headerBtn.classList.remove("header-glow");
+      }
+    }
+  }
+
+  // ui/draw/index.js
+  function draw2() {
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    const vaultData = game.getVaultRenderData();
+    if (game.cheatWarning) {
+      game.cheatWarning = false;
+      showToast2(tObj.cheatDetectedMsg || "\u26A0\uFE0F Save editing detected!", "danger");
+    }
+    updateHeaderStats(lang, tObj);
+    updateAdCampaignDisplay();
+    updateBoostButtonDisplay(tObj);
+    updateQueueDisplay(tObj);
+    updateTellersDisplay(tObj, vaultData);
+    updateGuardsDisplay(lang);
+    updateVaultDisplay(tObj, vaultData);
+    updateNotifications();
+  }
+  window.updateCachedSuffixes = updateCachedSuffixes2;
+  window.showToast = showToast2;
+  window.fastFormat = fastFormat;
+  window.formatMoney = formatMoney2;
+  window.getClientSVG = getClientSVG;
+  window.spawnFloating = spawnFloating2;
+  window.updateFloatingText = updateFloatingText2;
+  window.updateActiveCoins = updateActiveCoins2;
+  window.animateCoins = animateCoins2;
+  window.spawnParticles = spawnParticles2;
+  window.initCoinPool = initCoinPool2;
+  window.rebuildTellersDOM = rebuildTellersDOM2;
+  window.draw = draw2;
+  window.clearActiveCoins = clearActiveCoins;
+  window.activeCoins = activeCoins;
+
   // ui/events/focus-trap.js
   var _focusTrapHandlers = /* @__PURE__ */ new Map();
   function _getFocusableElements(container) {
@@ -2234,13 +3294,13 @@
   function playAd(callback) {
     AdService2.show(callback);
   }
-  function formatTime(sec) {
+  function formatTime2(sec) {
     const hours = Math.floor(sec / 3600);
     const mins = Math.floor(sec % 3600 / 60);
     const secs = Math.floor(sec % 60);
     return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
-  function updateAdvDisplay(budget) {
+  function updateAdvDisplay2(budget) {
     if (!DOM_CACHE.advDisplay) return;
     const lang = game.state.language || "en";
     const tObj = translations[lang];
@@ -2945,7 +4005,7 @@
           budget = Math.max(1, Math.round(budget));
         }
         game.setAdvBudget(budget);
-        updateAdvDisplay(budget);
+        updateAdvDisplay2(budget);
       });
     }
     const tabButtons = document.querySelectorAll(".tab-btn");
@@ -3329,7 +4389,7 @@
   window.applyLanguage = applyLanguage;
   window.applyTheme = applyTheme;
   window.playAd = playAd;
-  window.formatTime = formatTime;
+  window.formatTime = formatTime2;
   window.openPrestigeModal = openPrestigeModal2;
   window.openBoostModal = openBoostModal;
   window.openAnalyticsModal = openAnalyticsModal;
@@ -3339,7 +4399,7 @@
   window.handleRushHoursEvent = handleRushHoursEvent;
   window.handleInvestorEvent = handleInvestorEvent;
   window.triggerRandomEvent = triggerRandomEvent;
-  window.updateAdvDisplay = updateAdvDisplay;
+  window.updateAdvDisplay = updateAdvDisplay2;
   window.updateMuteButton = updateMuteButton;
   window.initSound = initSound2;
   window.handlePurchaseFeedback = handlePurchaseFeedback2;

@@ -64,7 +64,6 @@ module.exports = [
             'mission-controller.js',
             'save-manager.js',
             'sw.js',
-            'ui-draw.js',
         ],
         languageOptions: {
             ecmaVersion: 2022,
@@ -89,9 +88,9 @@ module.exports = [
     },
     {
         // Entry-point and UI scripts, loaded via <script type="module"> and native
-        // import/export between them, but still reading game/config/locale/ui-draw
+        // import/export between them, but still reading game/config/locale
         // globals set up by the classic scripts above (see build plan).
-        files: ['app.js', 'ui/tabs/**/*.js', 'ui/events/**/*.js'],
+        files: ['app.js', 'ui/tabs/**/*.js', 'ui/events/**/*.js', 'ui/draw/**/*.js'],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'module',
