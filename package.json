@@ -5,6 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "bundle": "node tools/bundle.js",
     "css": "node tools/build-css.js",
     "build": "npm run bundle && npm run css && node tools/build.js",
@@ -14,6 +16,7 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
+    "@playwright/test": "^1.61.1",
     "esbuild": "^0.28.1",
     "eslint": "^10.6.0",
     "globals": "^17.7.0",
