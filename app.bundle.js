@@ -1,0 +1,5645 @@
+(() => {
+  // ui/tabs/tab-shared.js
+  var _buyBtnCache = null;
+  var _lastManagersHash = null;
+  var _lastBranchesHash = null;
+  function invalidateTabHashes() {
+    _lastManagersHash = null;
+    _lastBranchesHash = null;
+    _buyBtnCache = null;
+  }
+  function resetBuyBtnCache() {
+    _buyBtnCache = null;
+  }
+  function getBuyBtnCache(container) {
+    if (!_buyBtnCache) _buyBtnCache = container.querySelectorAll(".buy-btn");
+    return _buyBtnCache;
+  }
+  function checkManagersHashUnchanged(hash) {
+    if (hash && hash === _lastManagersHash) return true;
+    _lastManagersHash = hash;
+    _buyBtnCache = null;
+    return false;
+  }
+  function checkBranchesHashUnchanged(hash) {
+    if (hash && hash === _lastBranchesHash) return true;
+    _lastBranchesHash = hash;
+    _buyBtnCache = null;
+    return false;
+  }
+  var statLabels = {
+    he: {
+      satisfaction: "\u05E9\u05D1\u05D9\u05E2\u05D5\u05EA \u05E8\u05E6\u05D5\u05DF",
+      client_speed: "\u05DE\u05D4\u05D9\u05E8\u05D5\u05EA \u05DC\u05E7\u05D5\u05D7\u05D5\u05EA",
+      auto_vault: "\u05E8\u05D9\u05E7\u05D5\u05DF \u05DB\u05E1\u05E4\u05EA \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9",
+      bank_yield: "\u05D4\u05DB\u05E0\u05E1\u05D5\u05EA \u05D4\u05D1\u05E0\u05E7",
+      courier_speed: "\u05DE\u05D4\u05D9\u05E8\u05D5\u05EA \u05D1\u05DC\u05D3\u05E8\u05D9\u05DD",
+      teller_speed: "\u05DE\u05D4\u05D9\u05E8\u05D5\u05EA \u05DB\u05E1\u05E4\u05E8\u05D9\u05DD",
+      counter_cap: "\u05E7\u05D9\u05D1\u05D5\u05DC\u05EA \u05E2\u05DE\u05D3\u05D5\u05EA",
+      base_income: "\u05E8\u05D5\u05D5\u05D7 \u05D1\u05E1\u05D9\u05E1\u05D9",
+      dept_yields: "\u05D4\u05DB\u05E0\u05E1\u05D5\u05EA \u05DE\u05D7\u05DC\u05E7\u05D5\u05EA",
+      gold_shares: "\u05DE\u05E0\u05D9\u05D5\u05EA \u05D6\u05D4\u05D1 \u05D1\u05E4\u05E8\u05E1\u05D8\u05D9\u05D2'",
+      ad_bonus: "\u05D1\u05D5\u05E0\u05D5\u05E1 \u05E4\u05E8\u05E1\u05D5\u05DD",
+      offline_time: "\u05E9\u05E2\u05D5\u05EA \u05D0\u05D5\u05E4\u05DC\u05D9\u05D9\u05DF \u05DE\u05E7\u05E1\u05D9\u05DE\u05DC\u05D9\u05D5\u05EA",
+      offline_income: "\u05D4\u05DB\u05E0\u05E1\u05D5\u05EA \u05D0\u05D5\u05E4\u05DC\u05D9\u05D9\u05DF",
+      hourlyProfit: "\u05E8\u05D5\u05D5\u05D7 \u05E0\u05D5\u05E1\u05E3:",
+      perHour: "\u05DC\u05E9\u05E2\u05D4",
+      lockedLabel: "\u05E0\u05E2\u05D5\u05DC",
+      hireBtn: "\u05D2\u05D9\u05D5\u05E1",
+      upgradeBtn: "\u05E9\u05D3\u05E8\u05D2",
+      activeLabel: "\u05E4\u05E2\u05D9\u05DC",
+      totalYield: "\u05EA\u05D2\u05DE\u05D5\u05DC \u05DB\u05D5\u05DC\u05DC",
+      totalUpgrade: '\u05E1\u05D4"\u05DB \u05E9\u05D3\u05E8\u05D5\u05D2',
+      unlockCost: "\u05E2\u05DC\u05D5\u05EA \u05E4\u05EA\u05D9\u05D7\u05D4",
+      autoText: "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9",
+      maxLabel: "\u05DE\u05E7\u05E1\u05D9\u05DE\u05DC\u05D9",
+      bestValue: "\u{1F525} \u05D4\u05DB\u05D9 \u05DE\u05E9\u05EA\u05DC\u05DD"
+    },
+    en: {
+      satisfaction: "Satisfaction",
+      client_speed: "Client Speed",
+      auto_vault: "Auto Vault Collect",
+      bank_yield: "Bank Yield",
+      courier_speed: "Courier Speed",
+      teller_speed: "Teller Speed",
+      counter_cap: "Desk Capacity",
+      base_income: "Base Yield",
+      dept_yields: "Dept Yields",
+      gold_shares: "Prestige Gold Shares",
+      ad_bonus: "Ad Campaign Boost",
+      offline_time: "Max Offline Hours",
+      offline_income: "Offline Income",
+      hourlyProfit: "Extra Yield:",
+      perHour: "/ hr",
+      lockedLabel: "Locked",
+      hireBtn: "Hire",
+      upgradeBtn: "Upgrade",
+      activeLabel: "Active",
+      totalYield: "Total Yield",
+      totalUpgrade: "Total Upgrade",
+      unlockCost: "Unlock Cost",
+      autoText: "Auto",
+      maxLabel: "Maximum",
+      bestValue: "\u{1F525} Best Value"
+    },
+    es: {
+      satisfaction: "Satisfacci\xF3n",
+      client_speed: "Vel. de Clientes",
+      auto_vault: "Recogida de Caja Auto",
+      bank_yield: "Rendimiento del Banco",
+      courier_speed: "Vel. de Courier",
+      teller_speed: "Vel. de Cajeros",
+      counter_cap: "Capacidad de Desk",
+      base_income: "Rendimiento Base",
+      dept_yields: "Ingresos de Depts",
+      gold_shares: "Acciones de Oro",
+      ad_bonus: "Bono de Publicidad",
+      offline_time: "Horas Offline M\xE1x",
+      offline_income: "Ingresos Offline",
+      hourlyProfit: "Rendimiento Extra:",
+      perHour: "/ h",
+      lockedLabel: "Bloqueado",
+      hireBtn: "Contratar",
+      upgradeBtn: "Mejorar",
+      activeLabel: "Activo",
+      totalYield: "Rendimiento Total",
+      totalUpgrade: "Total Mejora",
+      unlockCost: "Costo de Apertura",
+      autoText: "Auto",
+      maxLabel: "M\xE1ximo",
+      bestValue: "\u{1F525} Mejor Oferta"
+    },
+    ru: {
+      satisfaction: "\u0423\u0434\u043E\u0432\u043B\u0435\u0442\u0432\u043E\u0440\u0435\u043D\u0438\u0435",
+      client_speed: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432",
+      auto_vault: "\u0410\u0432\u0442\u043E-\u0441\u0431\u043E\u0440 \u0441\u0435\u0439\u0444\u0430",
+      bank_yield: "\u0414\u043E\u0445\u043E\u0434 \u0431\u0430\u043D\u043A\u0430",
+      courier_speed: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043A\u0443\u0440\u044C\u0435\u0440\u043E\u0432",
+      teller_speed: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043A\u0430\u0441\u0441\u0438\u0440\u043E\u0432",
+      counter_cap: "\u041B\u0438\u043C\u0438\u0442 \u043A\u0430\u0441\u0441",
+      base_income: "\u0411\u0430\u0437\u043E\u0432\u044B\u0439 \u0434\u043E\u0445\u043E\u0434",
+      dept_yields: "\u0414\u043E\u0445\u043E\u0434 \u043E\u0442\u0434\u0435\u043B\u043E\u0432",
+      gold_shares: "\u0417\u043E\u043B\u043E\u0442\u044B\u0435 \u0430\u043A\u0446\u0438\u0438",
+      ad_bonus: "\u0411\u043E\u043D\u0443\u0441 \u0440\u0435\u043A\u043B\u0430\u043C\u044B",
+      offline_time: "\u041C\u0430\u043A\u0441. \u0447\u0430\u0441\u043E\u0432 \u043E\u0444\u0444\u043B\u0430\u0439\u043D",
+      offline_income: "\u041E\u0444\u0444\u043B\u0430\u0439\u043D \u0434\u043E\u0445\u043E\u0434",
+      hourlyProfit: "\u0414\u043E\u043F. \u0434\u043E\u0445\u043E\u0434:",
+      perHour: "/ \u0447",
+      lockedLabel: "\u0417\u0430\u043A\u0440\u044B\u0442\u043E",
+      hireBtn: "\u041D\u0430\u043D\u044F\u0442\u044C",
+      upgradeBtn: "\u0423\u043B\u0443\u0447\u0448\u0438\u0442\u044C",
+      activeLabel: "\u0410\u043A\u0442\u0438\u0432\u043D\u043E",
+      totalYield: "\u041E\u0431\u0449\u0438\u0439 \u0434\u043E\u0445\u043E\u0434",
+      totalUpgrade: "\u0418\u0442\u043E\u0433\u043E \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0439",
+      unlockCost: "\u0421\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F",
+      autoText: "\u0410\u0432\u0442\u043E",
+      maxLabel: "\u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C",
+      bestValue: "\u{1F525} \u041B\u0443\u0447\u0448\u0430\u044F \u0446\u0435\u043D\u0430"
+    }
+  };
+  function createSeparator(container) {
+    const hr = document.createElement("hr");
+    hr.style.border = "0";
+    hr.style.borderTop = "1px solid var(--border-color)";
+    container.appendChild(hr);
+  }
+  function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode2) {
+    const card = document.createElement("div");
+    card.className = "upgrade-card";
+    const id = entity.id;
+    if (entity.unlocked) {
+      const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode2, entity.level, game.state.cash);
+      const levelsToBuy = details.levels;
+      const nextLevel = entity.level + levelsToBuy;
+      const cost = details.cost;
+      let capacity, speed, nextCapacity, nextSpeed, title, desc, speedLabel, capLabel;
+      let avatarBgUrl = "", avatarBgPos = "center 25%", avatarBgSize = "cover";
+      if (type === "teller") {
+        capacity = game.getTellerCapacity(entity.level);
+        speed = game.getTellerSpeed(entity.level).toFixed(1);
+        nextCapacity = game.getTellerCapacity(nextLevel);
+        nextSpeed = game.getTellerSpeed(nextLevel).toFixed(1);
+        avatarBgUrl = `images/teller-${id % 8 + 1}.png`;
+        avatarBgPos = "center";
+        avatarBgSize = "cover";
+        title = tObj.tellerTitle(id + 1, entity.level);
+        desc = tObj.tellerDesc;
+        speedLabel = tObj.tellerSpeed;
+        capLabel = tObj.tellerCap;
+      } else {
+        capacity = game.getGuardCapacity(entity.level);
+        speed = game.getGuardSpeed(entity.level).toFixed(1);
+        nextCapacity = game.getGuardCapacity(nextLevel);
+        nextSpeed = game.getGuardSpeed(nextLevel).toFixed(1);
+        avatarBgUrl = "images/guard.png";
+        avatarBgPos = "center 8%";
+        avatarBgSize = "220%";
+        title = tObj.guardTitle(id + 1, entity.level);
+        desc = tObj.guardDesc;
+        speedLabel = tObj.guardSpeed;
+        capLabel = tObj.guardCap;
+      }
+      const canBuy = details.canAfford;
+      card.className = "upgrade-card premium-upg-card";
+      const eps = capacity / speed;
+      card.innerHTML = `
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${title} <span class="upg-v2-level-up">${levelsToBuy > 1 ? "(+" + levelsToBuy + ")" : ""}</span></div>
+                    <div class="upg-v2-desc">${desc}</div>
+                    
+                    <div class="upg-v2-divider"></div>
+                    
+                    <div class="upg-v2-stats">
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${speedLabel}</div>
+                                <div class="upg-v2-stat-val">${speed} <span class="arrow">\u2794</span> ${nextSpeed}</div>
+                            </div>
+                        </div>
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${capLabel}</div>
+                                <div class="upg-v2-stat-val">${formatMoney(capacity)} <span class="arrow">\u2794</span> ${formatMoney(nextCapacity)}</div>
+                            </div>
+                        </div>
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
+                                <div class="upg-v2-stat-val">${formatMoney(eps)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? "" : "disabled"}" data-type="${type}" data-id="${id}" ${canBuy ? "" : "disabled"} aria-label="${translations[lang].upgradeLabel} ${title} \u2014 ${formatMoney(cost)}">
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
+                        <span class="upg-v2-btn-amount">+${levelsToBuy}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
+                    </div>
+                </div>
+                <div class="upg-v2-btn-sparkles">\u2728</div>
+            </button>
+        `;
+      if (avatarBgUrl) {
+        const avEl = card.querySelector(".card-avatar");
+        if (avEl) {
+          avEl.style.backgroundImage = `url('${avatarBgUrl}')`;
+          avEl.style.backgroundPosition = avatarBgPos;
+          avEl.style.backgroundSize = avatarBgSize;
+        }
+      }
+    } else {
+      let cost, avatarBgUrl2 = "", avatarBgPos2 = "center 25%", avatarBgSize2 = "cover", title, desc, unlockAction, unlockText;
+      if (type === "teller") {
+        cost = game.tellerUnlockCosts[id];
+        avatarBgUrl2 = `images/teller-${id % 8 + 1}.png`;
+        avatarBgPos2 = "center";
+        avatarBgSize2 = "cover";
+        title = tObj.tellerLocked(id + 1);
+        desc = tObj.tellerLockedDesc;
+        unlockAction = "unlock-teller";
+        unlockText = translations[lang].unlockLabel;
+      } else {
+        cost = game.guardUnlockCosts[id];
+        avatarBgUrl2 = "images/guard.png";
+        avatarBgPos2 = "center 8%";
+        avatarBgSize2 = "220%";
+        title = tObj.guardLocked(id + 1);
+        desc = tObj.guardLockedDesc;
+        unlockAction = "unlock-guard";
+        unlockText = tObj.guardUnlockBtn;
+      }
+      const canBuy = game.state.cash >= cost;
+      card.className = "upgrade-card premium-upg-card locked-card";
+      card.innerHTML = `
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap locked">
+                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
+                    <div class="lock-overlay">\u{1F512}</div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${title}</div>
+                    <div class="upg-v2-desc">${desc}</div>
+                </div>
+            </div>
+            <button class="upg-v2-buy-btn buy-btn ${canBuy ? "" : "disabled"}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? "" : "disabled"} aria-label="${translations[lang].unlockLabel} ${id + 1} \u2014 ${formatMoney(cost)}">
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${unlockText}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).unlockCost}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
+                    </div>
+                </div>
+            </button>
+        `;
+      if (avatarBgUrl2) {
+        const avEl2 = card.querySelector(".card-avatar");
+        if (avEl2) {
+          avEl2.style.backgroundImage = `url('${avatarBgUrl2}')`;
+          avEl2.style.backgroundPosition = avatarBgPos2;
+          avEl2.style.backgroundSize = avatarBgSize2;
+        }
+      }
+    }
+    return card;
+  }
+
+  // ui/tabs/upgrades-tab.js
+  function renderUpgradesTab() {
+    const container = document.getElementById("tab-upgrades");
+    if (!container) return;
+    resetBuyBtnCache();
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].upgrades;
+    game.state.tellers.forEach((t) => {
+      const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode);
+      container.appendChild(card);
+    });
+    createSeparator(container);
+    game.state.guards.forEach((g) => {
+      const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode);
+      container.appendChild(card);
+    });
+    createSeparator(container);
+    const vault = game.state.vault;
+    const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, vault.level, game.state.cash);
+    const vLevelsToBuy = details.levels;
+    const vCost = details.cost;
+    const vCap = game.getVaultCapacity(vault.level);
+    const nextVCap = game.getVaultCapacity(vault.level + vLevelsToBuy);
+    const vCanBuy = details.canAfford;
+    const vaultCard = document.createElement("div");
+    vaultCard.className = "upgrade-card premium-upg-card";
+    vaultCard.innerHTML = `
+        <div class="upg-v2-info">
+            <div class="upg-v2-avatar-wrap">
+                <div class="upg-v2-avatar" style="background-image: url('images/vault-door.png');"></div>
+            </div>
+            <div class="upg-v2-details">
+                <div class="upg-v2-title">${tObj.vaultTitle(vault.level)} <span class="upg-v2-level-up">${vLevelsToBuy > 1 ? "(+" + vLevelsToBuy + ")" : ""}</span></div>
+                <div class="upg-v2-desc">${tObj.vaultDesc}</div>
+                
+                <div class="upg-v2-divider"></div>
+                
+                <div class="upg-v2-stats">
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                        </div>
+                        <div class="upg-v2-stat-text">
+                            <div class="upg-v2-stat-label">${tObj.vaultCap}</div>
+                            <div class="upg-v2-stat-val">${formatMoney(vCap)} <span class="arrow">\u2794</span> ${formatMoney(nextVCap)}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? "" : "disabled"}" id="upgrade-vault-btn" ${vCanBuy ? "" : "disabled"} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} \u2014 ${formatMoney(vCost)}">
+            <div class="upg-v2-btn-left-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+            </div>
+            <div class="upg-v2-btn-content">
+                <div class="upg-v2-btn-top">
+                    <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
+                    <span class="upg-v2-btn-amount">+${vLevelsToBuy}</span>
+                </div>
+                <div class="upg-v2-btn-divider"></div>
+                <div class="upg-v2-btn-bottom">
+                    <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                    <span class="upg-v2-btn-cost">${formatMoney(vCost)}</span>
+                </div>
+            </div>
+            <div class="upg-v2-btn-sparkles">\u2728</div>
+        </button>
+    `;
+    container.appendChild(vaultCard);
+    createSeparator(container);
+    const queueLvl = game.state.queueUpgradeLevel || 1;
+    const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, queueLvl, game.state.cash);
+    const qLevelsToBuy = qDetails.levels;
+    const qCost = qDetails.cost;
+    const qCap = game.getQueueCapacity(queueLvl);
+    const nextQCap = game.getQueueCapacity(queueLvl + qLevelsToBuy);
+    const qCanBuy = qDetails.canAfford;
+    const queueCard = document.createElement("div");
+    queueCard.className = "upgrade-card";
+    if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
+      queueCard.className = "upgrade-card premium-upg-card";
+      queueCard.innerHTML = `
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${tObj.queueMaxTitle}</div>
+                    <div class="upg-v2-desc">${tObj.queueMaxDesc(qCap)}</div>
+                </div>
+            </div>
+            <button class="upg-v2-buy-btn buy-btn disabled" disabled>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${translations[lang].maxLevel}</span>
+                    </div>
+                </div>
+            </button>
+        `;
+    } else {
+      queueCard.className = "upgrade-card premium-upg-card";
+      queueCard.innerHTML = `
+            <div class="upg-v2-info">
+                <div class="upg-v2-avatar-wrap">
+                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
+                </div>
+                <div class="upg-v2-details">
+                    <div class="upg-v2-title">${tObj.queueTitle(queueLvl)} <span class="upg-v2-level-up">${qLevelsToBuy > 1 ? "(+" + qLevelsToBuy + ")" : ""}</span></div>
+                    <div class="upg-v2-desc">${tObj.queueDesc}</div>
+                    
+                    <div class="upg-v2-divider"></div>
+                    
+                    <div class="upg-v2-stats">
+                        <div class="upg-v2-stat">
+                            <div class="upg-v2-stat-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            <div class="upg-v2-stat-text">
+                                <div class="upg-v2-stat-label">${tObj.queueCap}</div>
+                                <div class="upg-v2-stat-val">${qCap} <span class="arrow">\u2794</span> ${nextQCap}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="upg-v2-buy-btn buy-btn ${qCanBuy ? "" : "disabled"}" id="upgrade-queue-btn" ${qCanBuy ? "" : "disabled"}>
+                <div class="upg-v2-btn-left-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                </div>
+                <div class="upg-v2-btn-content">
+                    <div class="upg-v2-btn-top">
+                        <span class="upg-v2-btn-upgrade-text">${tObj.queueUpgradeBtn}</span>
+                        <span class="upg-v2-btn-amount">+${qLevelsToBuy}</span>
+                    </div>
+                    <div class="upg-v2-btn-divider"></div>
+                    <div class="upg-v2-btn-bottom">
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                        <span class="upg-v2-btn-cost">${formatMoney(qCost)}</span>
+                    </div>
+                </div>
+                <div class="upg-v2-btn-sparkles">\u2728</div>
+            </button>
+        `;
+    }
+    container.appendChild(queueCard);
+    let bestBtnSelector = null;
+    let maxRatio = -1;
+    game.state.tellers.forEach((t) => {
+      if (!t.unlocked) return;
+      const details2 = game.getBulkUpgradeDetails("teller", t.id, currentUpgradeMode, t.level, game.state.cash);
+      if (details2.canAfford && details2.cost > 0) {
+        const nextLvl = t.level + details2.levels;
+        const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));
+        const currentSpeed = Math.max(0.1, game.getTellerSpeed(t.level));
+        const epsIncrease = 1 / nextSpeed - 1 / currentSpeed;
+        let ratio = epsIncrease / details2.cost;
+        if (epsIncrease === 0) {
+          ratio = details2.levels * 1e-7 / details2.cost;
+        }
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          bestBtnSelector = `.buy-btn[data-type="teller"][data-id="${t.id}"]`;
+        }
+      }
+    });
+    if (bestBtnSelector) {
+      const btn = container.querySelector(bestBtnSelector);
+      if (btn) {
+        const card = btn.closest(".upgrade-card");
+        if (card) {
+          card.classList.add("smart-recommendation-glow");
+          card.style.position = "relative";
+          const badge = document.createElement("div");
+          badge.className = "recommended-badge";
+          badge.innerText = (statLabels[lang] || statLabels.en).bestValue;
+          card.appendChild(badge);
+        }
+      }
+    } else {
+      const firstAffordable = container.querySelector(".buy-btn:not(.disabled)");
+      if (firstAffordable) {
+        const card = firstAffordable.closest(".upgrade-card");
+        if (card) {
+          card.classList.add("smart-recommendation-glow");
+          card.style.position = "relative";
+          const badge = document.createElement("div");
+          badge.className = "recommended-badge";
+          badge.innerText = (statLabels[lang] || statLabels.en).bestValue;
+          card.appendChild(badge);
+        }
+      }
+    }
+  }
+
+  // ui/tabs/managers-tab.js
+  function renderManagersTab() {
+    const container = document.getElementById("tab-managers");
+    if (!container) return;
+    let hash = null;
+    try {
+      hash = JSON.stringify({
+        managers: game.state.managers,
+        managerUpgrades: game.state.managerUpgrades,
+        cash: Math.floor(game.state.cash / 1e3)
+      });
+    } catch {
+    }
+    if (checkManagersHashUnchanged(hash)) return;
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].managers;
+    const managersKeys = ["customer", "operations", "finance", "accountant", "service", "vip", "marketing"];
+    const managerConfigs = {
+      customer: { theme: "theme-gold", gem: "\u{1F451}", img: "manager-1.png" },
+      finance: { theme: "theme-blue", gem: "\u{1F48E}", img: "manager-2.png" },
+      accountant: { theme: "theme-teal", gem: "\u23F1\uFE0F", img: "manager-7.png" },
+      operations: { theme: "theme-purple", gem: "\u{1F52E}", img: "manager-3.png" },
+      service: { theme: "theme-amber", gem: "\u{1F538}", img: "manager-4.png" },
+      vip: { theme: "theme-red", gem: "\u{1F4B0}", img: "manager-5.png" },
+      marketing: { theme: "theme-green", gem: "\u{1F539}", img: "manager-6.png" }
+    };
+    const grid = document.createElement("div");
+    grid.className = "managers-grid";
+    container.appendChild(grid);
+    managersKeys.forEach((type) => {
+      const config = managerConfigs[type];
+      const mData = game.getManagerRenderData(type);
+      if (!mData) return;
+      const isUnlocked = mData.isUnlocked;
+      const isHired = mData.isHired;
+      const cost = mData.cost;
+      const canBuy = game.state.cash >= cost;
+      const level = mData.level;
+      const card = document.createElement("div");
+      card.className = `upgrade-card manager-card feature-card ${config.theme} ${isUnlocked ? isHired ? "active" : "" : "locked"}`;
+      let bodyHtml = "";
+      let footerHtml = "";
+      if (!isUnlocked) {
+        const deptName = type === "finance" ? translations[lang].departments.names[1] : type === "service" ? translations[lang].departments.names[2] : type === "vip" ? translations[lang].departments.names[3] : type === "marketing" ? translations[lang].departments.names[4] : "";
+        bodyHtml = `
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
+                        <img src="images/${config.img}" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">${config.gem}</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">${tObj.names[type]}</div>
+                                <div class="mgr-stars"><span class="star gray-star">\u2605</span><span class="star gray-star">\u2605</span><span class="star gray-star">\u2605</span><span class="star gray-star">\u2605</span><span class="star gray-star">\u2605</span></div>
+                                <div class="mgr-lvl-badge">${translations[lang].levelAbbr || "Lv"} 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">\u{1F512}</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    \u{1F512} ${translations[lang].requiresUnlocking || "Requires unlocking:"} <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">${deptName}</span>
+                                </div>
+                            </div>
+                        </div>
+            `;
+        footerHtml = `
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled>
+                                ${statLabels[lang].lockedLabel} \u{1F512}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+      } else {
+        let starsHtml = "";
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += `<span class="star ${i <= level ? "gold-star" : "gray-star"}">\u2605</span>`;
+        }
+        let stat1Lbl = "", stat2Lbl = "";
+        let icon1 = "", icon2 = "";
+        if (type === "customer") {
+          stat1Lbl = statLabels[lang].client_speed;
+          stat2Lbl = statLabels[lang].satisfaction;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+        } else if (type === "finance") {
+          stat1Lbl = statLabels[lang].auto_vault;
+          stat2Lbl = statLabels[lang].bank_yield;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>';
+        } else if (type === "operations") {
+          stat1Lbl = statLabels[lang].courier_speed;
+          stat2Lbl = statLabels[lang].counter_cap;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+        } else if (type === "service") {
+          stat1Lbl = statLabels[lang].counter_cap;
+          stat2Lbl = statLabels[lang].base_income;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
+        } else if (type === "vip") {
+          stat1Lbl = statLabels[lang].dept_yields;
+          stat2Lbl = statLabels[lang].gold_shares;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>';
+        } else if (type === "marketing") {
+          stat1Lbl = statLabels[lang].ad_bonus;
+          stat2Lbl = statLabels[lang].offline_time;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 11 2v20a10 10 0 0 0 11-10z"></path></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+        } else if (type === "accountant") {
+          stat1Lbl = statLabels[lang].offline_time;
+          stat2Lbl = statLabels[lang].offline_income;
+          icon1 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+          icon2 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
+          if (!mData.stat1Val || mData.stat1Val === "") {
+            const c = GAME_CONFIG.MANAGER_COEFFICIENTS["accountant"];
+            if (c) {
+              mData.stat1Val = `+${c.offlineLimitBoost * level}h`;
+              mData.stat2Val = `+${Math.round(c.offlineIncomeBoost * 100 * level)}%`;
+            }
+          }
+        }
+        bodyHtml = `
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col">
+                        <img src="images/${config.img}" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">${config.gem}</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">${tObj.names[type]}</div>
+                                <div class="mgr-stars">${starsHtml}</div>
+                                <div class="mgr-lvl-badge">${translations[lang].levelAbbr || "Lv"} ${level}</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">\u{1F48E}</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">${mData.stat1Val}</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">${stat1Lbl}</span>
+                                    <div class="mgr-stat-icon-circle">${icon1}</div>
+                                </div>
+                            </div>
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">${mData.stat2Val}</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">${stat2Lbl}</span>
+                                    <div class="mgr-stat-icon-circle">${icon2}</div>
+                                </div>
+                            </div>
+                        </div>
+            `;
+        let actionBtnHtml = "";
+        if (!isHired) {
+          actionBtnHtml = `
+                    <button class="buy-btn buy-mgr-btn mgr-buy-btn ${canBuy ? "" : "disabled"}" data-mgr="${type}" ${canBuy ? "" : "disabled"} aria-label="${statLabels[lang].hireBtn} ${tObj.names[type]} \u2014 ${formatMoney(cost)}">
+                        ${statLabels[lang].hireBtn}<br>${formatMoney(cost)}
+                    </button>
+                `;
+        } else if (level < 5) {
+          const details = game.getBulkUpgradeDetails("manager", type, currentUpgradeMode, level, game.state.cash);
+          const costToUpgrade = details.cost;
+          const canUpgrade = details.canAfford;
+          const levelsToBuy = details.levels;
+          actionBtnHtml = `
+                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn ${canUpgrade ? "" : "disabled"}" data-mgr-type="${type}" ${canUpgrade ? "" : "disabled"} aria-label="${statLabels[lang].upgradeBtn} ${tObj.names[type]} \u2014 ${formatMoney(costToUpgrade)}">
+                        ${statLabels[lang].upgradeBtn}${levelsToBuy > 1 ? ` <span class="upgrade-amount-text">+${levelsToBuy}</span>` : ""}<br>${formatMoney(costToUpgrade)}
+                    </button>
+                `;
+        } else {
+          actionBtnHtml = `
+                    <div class="mgr-active-badge">
+                        ${statLabels[lang].activeLabel} <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                `;
+        }
+        footerHtml = `
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">${statLabels[lang].hourlyProfit}</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val">${isHired ? formatMoney(mData.extraHourly) : formatMoney(0)}</span>
+                                    <span class="per-hour-lbl">${statLabels[lang].perHour}</span>
+                                </div>
+                            </div>
+                            ${actionBtnHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+      card.innerHTML = bodyHtml + footerHtml;
+      grid.appendChild(card);
+    });
+    container.querySelectorAll(".buy-mgr-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        initSound();
+        const type = btn.getAttribute("data-mgr");
+        const beforeCash = game.state.cash;
+        const beforeHired = game.state.managers[type];
+        game.hireManager(type);
+        if (!beforeHired && game.state.managers[type] && typeof window.showDiscoveryTip === "function") {
+          window.showDiscoveryTip("manager");
+        }
+        handlePurchaseFeedback(btn, e, beforeCash, beforeHired, "hire-manager", type);
+        renderManagersTab();
+      });
+    });
+    container.querySelectorAll(".upgrade-mgr-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        initSound();
+        const type = btn.getAttribute("data-mgr-type");
+        const beforeCash = game.state.cash;
+        const beforeLevel = game.state.managerUpgrades[type] ? game.state.managerUpgrades[type].level : 1;
+        game.upgradeManagerBulk(type, currentUpgradeMode);
+        handlePurchaseFeedback(btn, e, beforeCash, beforeLevel, "upgrade-manager", type);
+        updateButtonAffordability();
+      });
+    });
+  }
+
+  // ui/tabs/departments-tab.js
+  function getDepartmentIconSvg(id, isUnlocked) {
+    const shadow = isUnlocked ? "filter: drop-shadow(0 0 8px rgba(223, 171, 41, 0.75)) brightness(1.15);" : "filter: grayscale(1) opacity(0.3);";
+    const size = 44;
+    const strokeAttr = isUnlocked ? 'stroke="rgba(255, 223, 128, 0.5)" stroke-width="0.6" stroke-linejoin="round"' : "";
+    switch (id) {
+      case 0:
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#goldGrad-${id})" ${strokeAttr} style="${shadow}">
+                <defs>
+                    <linearGradient id="goldGrad-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d" />
+                        <stop offset="50%" stop-color="#dfab29" />
+                        <stop offset="100%" stop-color="#9a7211" />
+                    </linearGradient>
+                </defs>
+                <path d="M4 17h16v3H4v-3zm2-8h12v7H6v-7zm1-5h10v3H7V5zM9 11h2v2H9v-2zm4 0h2v2h-2v-2zm-4 3h2v2H9v-2zm4 0h2v2h-2v-2z" />
+            </svg>`;
+      case 1:
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#goldGrad-${id})" ${strokeAttr} style="${shadow}">
+                <defs>
+                    <linearGradient id="goldGrad-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d" />
+                        <stop offset="50%" stop-color="#dfab29" />
+                        <stop offset="100%" stop-color="#9a7211" />
+                    </linearGradient>
+                </defs>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v-2zm0-4H8v-2h8v-2zm-3-5V3.5L17.5 8H13z" />
+                <path d="M16 16.5l3.5-3 3.5 3v4.5h-7v-4.5z" />
+            </svg>`;
+      case 2:
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#goldGrad-${id})" ${strokeAttr} style="${shadow}">
+                <defs>
+                    <linearGradient id="goldGrad-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d" />
+                        <stop offset="50%" stop-color="#dfab29" />
+                        <stop offset="100%" stop-color="#9a7211" />
+                    </linearGradient>
+                </defs>
+                <path d="M2 4l4 6 6-7 6 7 4-6-2 13H4L2 4zm2 15h16v2H4v-2z" />
+            </svg>`;
+      case 3:
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#goldGrad-${id})" ${strokeAttr} style="${shadow}">
+                <defs>
+                    <linearGradient id="goldGrad-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d" />
+                        <stop offset="50%" stop-color="#dfab29" />
+                        <stop offset="100%" stop-color="#9a7211" />
+                    </linearGradient>
+                </defs>
+                <path d="M4 16h3v5H4v-5zm5-6h3v11H9V10zm5-4h3v15h-3V6zm5-4h3v19h-3V2z" />
+                <path d="M2 11l6-6 4 3 8-8h-4V1h6v6h-1l-9 9-4-3-7 7z" />
+            </svg>`;
+      case 4:
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#goldGrad-${id})" ${strokeAttr} style="${shadow}">
+                <defs>
+                    <linearGradient id="goldGrad-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d" />
+                        <stop offset="50%" stop-color="#dfab29" />
+                        <stop offset="100%" stop-color="#9a7211" />
+                    </linearGradient>
+                </defs>
+                <path d="M12 2L2 7v2h20V7L12 2zm-8 8v9h2v-9H4zm5 0v9h2v-9H9zm5 0v9h2v-9h-2zm5 0v9h2v-9h-2zM2 20v2h20v-2H2z" />
+            </svg>`;
+      default:
+        return "";
+    }
+  }
+  function renderDepartmentsTab() {
+    const container = document.getElementById("tab-departments");
+    if (!container) return;
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].departments;
+    game.state.departments.forEach((d) => {
+      const isUnlocked = d.unlocked;
+      const canBuy = game.state.cash >= d.cost;
+      const card = document.createElement("div");
+      card.className = `upgrade-card department-card feature-card ${isUnlocked ? "active" : "locked"}`;
+      const reward = game.getDepartmentReward(d.id);
+      const iconSvg = getDepartmentIconSvg(d.id, isUnlocked);
+      const activeBadgeHtml = isUnlocked ? `
+            <span class="dept-active-badge">
+                <span class="badge-dot"></span>
+                <span>${translations[lang].activeLabel || "Active"}</span>
+            </span>
+        ` : "";
+      const baseProfitHtml = `
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">${translations[lang].departments.descLabel}:</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(d.baseReward)}</span>
+                </div>
+            </div>
+        `;
+      const adjustedProfitHtml = isUnlocked ? `
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">${translations[lang].departments.statsLabel}:</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(reward)}</span>
+                </div>
+            </div>
+        ` : "";
+      let actionBtnHtml = "";
+      if (!isUnlocked) {
+        actionBtnHtml = `
+                <button class="dept-action-btn buy-btn ${canBuy ? "" : "disabled"}" data-dept-idx="${d.id}" ${canBuy ? "" : "disabled"}>
+                    <span class="btn-arrow">\u25B2</span>
+                    <span class="btn-lbl">${tObj.unlock}</span>
+                    <span class="btn-cost">${formatMoney(d.cost)}</span>
+                </button>
+            `;
+      } else {
+        actionBtnHtml = `
+                <div class="max-jewel-container">
+                    <div class="max-jewel">
+                        <div class="jewel-content">
+                            <div class="jewel-check">\u2713</div>
+                            <div class="jewel-text">MAX</div>
+                        </div>
+                    </div>
+                    <div class="max-jewel-label">${(statLabels[lang] || statLabels.en).maxLabel}</div>
+                </div>
+            `;
+      }
+      const titleShieldHtml = isUnlocked ? `<span class="dept-title-shield"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 13.5 10.5 16 11 14 13 14.5 15.5 12 14.5 9.5 15.5 10 13 8 11 10.5 10.5 12 8" fill="currentColor" stroke="none"/></svg></span>` : "";
+      card.innerHTML = `
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        ${iconSvg}
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        ${titleShieldHtml}
+                        <span class="dept-title-text">${tObj.names[d.id]}</span>
+                        ${activeBadgeHtml}
+                    </div>
+                    <div class="dept-stats-row">
+                        ${baseProfitHtml}
+                        ${adjustedProfitHtml}
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                ${actionBtnHtml}
+            </div>
+        `;
+      container.appendChild(card);
+    });
+    container.querySelectorAll(".dept-action-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        if (btn.classList.contains("disabled") || btn.disabled) return;
+        initSound();
+        const idx = parseInt(btn.getAttribute("data-dept-idx"));
+        const beforeCash = game.state.cash;
+        const dept = game.state.departments.find((d) => d.id === idx);
+        const beforeUnlocked = dept ? dept.unlocked : false;
+        game.unlockDepartment(idx);
+        if (!beforeUnlocked && typeof window.showDiscoveryTip === "function") {
+          window.showDiscoveryTip("dept");
+        }
+        handlePurchaseFeedback(btn, e, beforeCash, beforeUnlocked, "unlock-dept", idx);
+        renderDepartmentsTab();
+      });
+    });
+  }
+
+  // ui/tabs/branches-tab.js
+  function renderBranchesTab() {
+    const container = document.getElementById("tab-branches");
+    if (!container) return;
+    let hash = null;
+    try {
+      hash = JSON.stringify({
+        currentBranch: game.state.currentBranch,
+        shares: game.state.shares,
+        cash: Math.floor(game.state.cash / 1e3)
+      });
+    } catch {
+    }
+    if (checkBranchesHashUnchanged(hash)) return;
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].branches;
+    const sharesGained = game.calculatePrestigeShares();
+    const canPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+    const currentReq = game.branches[game.state.currentBranch].minCashToPrestige;
+    const percent = Math.round((0.05 + (game.state.goldUpgrades.shareEfficiency || 0) * 0.01) * 100);
+    const dynamicBoostText = tObj.prestigeBoost.replace("5%", `${percent}%`).replace("+5%", `+${percent}%`);
+    const prestigeCard = document.createElement("div");
+    prestigeCard.className = "prestige-panel";
+    prestigeCard.innerHTML = `
+        <div class="prestige-title">${tObj.prestigeTitle}</div>
+        <div class="prestige-description">
+            ${tObj.prestigeDesc}
+            <br>
+            <span style="color: var(--primary-gold)">${dynamicBoostText}</span>
+        </div>
+        
+        <div class="prestige-showcase-box">
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="showcase-label">${tObj.prestigeRewardLabel}</div>
+            <div class="showcase-value">${tObj.prestigeRewardValue(sharesGained)}</div>
+        </div>
+
+        <button class="prestige-beveled-btn main-prestige-btn ${canPrestige ? "" : "disabled"}" id="main-prestige-btn">
+            ${tObj.sellAndBuild}
+        </button>
+        <div class="prestige-btn-subtext">
+            ${typeof tObj.prestigeMinLabel === "function" ? tObj.prestigeMinLabel(formatMoney(currentReq)) : formatMoney(currentReq)}
+        </div>
+    `;
+    container.appendChild(prestigeCard);
+    game.branches.forEach((b, idx) => {
+      const isCurrent = game.state.currentBranch === idx;
+      const isSold = idx < game.state.currentBranch;
+      const card = document.createElement("div");
+      card.className = `branch-card bg-branch-${idx} ${isCurrent ? "current" : ""}`;
+      let actionBtnHtml = "";
+      if (!isSold && !isCurrent) {
+        actionBtnHtml = `
+                <button class="branch-action-btn ghost-gold ${canPrestige ? "" : "disabled"}" data-prestige-branch="${idx}">
+                    ${translations[lang].branches.sellAndBuild.replace("!", "")}
+                </button>
+            `;
+      }
+      const costToEnter = idx > 0 ? game.branches[idx - 1].minCashToPrestige : 0;
+      const requirementText = isSold ? translations[lang].branches.sold : idx === 0 ? translations[lang].branches.active.replace(" \u{1F3DB}", "") : `${translations[lang].branches.minCash(formatMoney(costToEnter))}`;
+      const statusPillHtml = isCurrent ? `
+            <div class="branch-status-pill">
+                <span class="pulse-dot"></span>
+                <span>${translations[lang].branches.active.replace(" \u{1F3DB}", "")}</span>
+            </div>
+        ` : "";
+      card.innerHTML = `
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-nav-arrow-icon" dir="ltr"><i class="fas fa-chevron-right"></i></div>
+                    <div class="branch-name">${tObj.names[idx]}</div>
+                </div>
+                <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
+                ${idx > 0 ? `
+                <div class="branch-req-row">
+                    <span class="crown-icon">\u{1F451}</span>
+                    <span class="branch-req-text">${requirementText}</span>
+                </div>
+                ` : ""}
+                ${statusPillHtml}
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-glass-badge">
+                    <div class="mult-val">${b.baseMultiplier}x</div>
+                    <div class="mult-lbl">${translations[lang].multiplier}</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    ${actionBtnHtml}
+                </div>
+            </div>
+        `;
+      container.appendChild(card);
+    });
+    const presBtns = container.querySelectorAll("[data-prestige-branch]");
+    presBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        try {
+          const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+          if (!currentCanPrestige) {
+            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            return;
+          }
+          initSound();
+          const target = parseInt(btn.getAttribute("data-prestige-branch"));
+          openPrestigeModal(target);
+        } catch (err) {
+          console.error("[Prestige branch button] click failed:", err);
+          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof reportCrash === "function") reportCrash("branch prestige btn click: " + err.message, err.stack);
+        }
+      });
+    });
+    const mainPresBtn = container.querySelector("#main-prestige-btn");
+    if (mainPresBtn) {
+      mainPresBtn.addEventListener("click", () => {
+        try {
+          const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+          if (!currentCanPrestige) {
+            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            return;
+          }
+          initSound();
+          let targetBranch = game.state.currentBranch;
+          if (game.state.currentBranch < game.branches.length - 1) {
+            targetBranch = game.state.currentBranch + 1;
+          }
+          if (game.state.maxBranchUnlocked > game.state.currentBranch && game.state.maxBranchUnlocked < game.branches.length - 1) {
+            targetBranch = game.state.maxBranchUnlocked + 1;
+          } else if (game.state.maxBranchUnlocked === game.branches.length - 1) {
+            targetBranch = game.state.maxBranchUnlocked;
+          }
+          openPrestigeModal(targetBranch);
+        } catch (err) {
+          console.error("[Main prestige button] click failed:", err);
+          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof reportCrash === "function") reportCrash("main prestige btn click: " + err.message, err.stack);
+        }
+      });
+    }
+    const goBtns = container.querySelectorAll("[data-go-branch]");
+    goBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        initSound();
+        const target = parseInt(btn.getAttribute("data-go-branch"));
+        prevCustomerQueueString = "";
+        prevTellerClientStates = {};
+        game.travelToBranch(target);
+        refreshAllTabs();
+      });
+    });
+    const goldShopSection = document.createElement("div");
+    goldShopSection.className = "gold-shop-panel";
+    const goldUpgradesKeys = ["startingCash", "guardSpeed", "premiumYield", "shareEfficiency", "offlineEarnings", "tellerCapacityBoost", "vaultCapacityBoost", "eventBonus", "managerDiscount"];
+    let goldCardsHtml = "";
+    const iconMapping = {
+      startingCash: "images/gold-chest.png",
+      guardSpeed: "images/gold-truck.png",
+      premiumYield: "images/gold-vip.png",
+      shareEfficiency: "images/gold-bars.png",
+      offlineEarnings: "images/vault.png",
+      tellerCapacityBoost: "images/manager-4.png",
+      vaultCapacityBoost: "images/vault-door.png",
+      eventBonus: "images/client-9.png",
+      managerDiscount: "images/manager-1.png"
+    };
+    goldUpgradesKeys.forEach((key) => {
+      const currentLvl = game.state.goldUpgrades && game.state.goldUpgrades[key] ? game.state.goldUpgrades[key] : 0;
+      const upgradeData = translations[lang].goldUpgrades[key];
+      let maxLvl = 5;
+      const cost = game.getGoldUpgradeCost(key);
+      let desc = "";
+      if (key === "startingCash") {
+        maxLvl = 4;
+        const startingCashOptions2 = GAME_CONFIG.STARTING_CASH_OPTIONS;
+        const nextVal = startingCashOptions2[currentLvl + 1] || startingCashOptions2[startingCashOptions2.length - 1];
+        desc = upgradeData.desc(currentLvl, nextVal);
+      } else if (key === "guardSpeed" || key === "premiumYield" || key === "offlineEarnings" || key === "tellerCapacityBoost" || key === "vaultCapacityBoost" || key === "eventBonus") {
+        maxLvl = 5;
+        desc = upgradeData.desc(currentLvl);
+      } else if (key === "shareEfficiency" || key === "managerDiscount") {
+        maxLvl = 4;
+        desc = upgradeData.desc(currentLvl);
+      }
+      const isMax = currentLvl >= maxLvl;
+      const canAfford = game.state.shares >= cost;
+      const iconSrc = iconMapping[key];
+      goldCardsHtml += `
+            <div class="gold-upgrade-card">
+                ${isMax ? `<div class="gold-max-badge">MAX</div>` : ""}
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="${iconSrc}" alt="${upgradeData.title}">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">${upgradeData.title}</div>
+                    <div class="gold-upgrade-desc">${desc}</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill ${isMax ? "max" : ""}">
+                            ${currentLvl}/${maxLvl}
+                            ${isMax ? `<span class="gold-checkmark">\u2714</span>` : ""}
+                        </span>
+                        ${isMax ? `
+                            <span style="background: rgba(223,171,41,0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
+                        ` : `
+                            <button class="buy-btn ${canAfford ? "" : "disabled"} buy-gold-btn" data-gold-up="${key}" ${canAfford ? "" : "disabled"}>
+                                ${cost} \u{1FA99}
+                            </button>
+                        `}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    const startingCashLvl = game.state.goldUpgrades && game.state.goldUpgrades.startingCash ? game.state.goldUpgrades.startingCash : 0;
+    const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
+    const startingCashVal = startingCashOptions[startingCashLvl] || startingCashOptions[0];
+    const premiumYieldLvl = game.state.goldUpgrades && game.state.goldUpgrades.premiumYield ? game.state.goldUpgrades.premiumYield : 0;
+    const branchProfitsPct = premiumYieldLvl * 10;
+    const guardSpeedLvl = game.state.goldUpgrades && game.state.goldUpgrades.guardSpeed ? game.state.goldUpgrades.guardSpeed : 0;
+    const courierSpeedPct = guardSpeedLvl * 10;
+    const prestigeBonusPct = Math.round((game.getPrestigeMultiplier() - 1) * 100);
+    const tTotalEffect = translations[lang].goldTotalEffect || translations.en.goldTotalEffect;
+    const tBranchProfits = translations[lang].goldBranchProfits || translations.en.goldBranchProfits;
+    const tCourierSpeed = translations[lang].goldCourierSpeed || translations.en.goldCourierSpeed;
+    const tStartingCapital = translations[lang].goldStartingCapital || translations.en.goldStartingCapital;
+    let grandBonusHtml = "";
+    if (typeof translations[lang].goldGrandBonus === "function") {
+      grandBonusHtml = translations[lang].goldGrandBonus(prestigeBonusPct);
+    } else {
+      grandBonusHtml = translations.en.goldGrandBonus(prestigeBonusPct);
+    }
+    const summaryPanelHtml = `
+        <div class="gold-summary-box">
+            <div class="gold-summary-title">\u{1F4C8} ${tTotalEffect}</div>
+            <div class="gold-summary-grid">
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">+${branchProfitsPct}%</span>
+                    <span class="gold-stat-desc">${tBranchProfits}</span>
+                </div>
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">+${courierSpeedPct}%</span>
+                    <span class="gold-stat-desc">${tCourierSpeed}</span>
+                </div>
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">${formatMoney(startingCashVal)}</span>
+                    <span class="gold-stat-desc">${tStartingCapital}</span>
+                </div>
+            </div>
+            <div class="gold-grand-bonus-row">
+                ${grandBonusHtml}
+            </div>
+        </div>
+    `;
+    goldShopSection.innerHTML = `
+        <div class="prestige-title" style="margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.5rem;">${translations[lang].goldShopTitle}</div>
+        <p class="prestige-description" style="margin-bottom: 1rem;">${translations[lang].goldShopDesc}</p>
+        <div class="gold-upgrades-grid">
+            ${goldCardsHtml}
+        </div>
+        ${summaryPanelHtml}
+    `;
+    container.appendChild(goldShopSection);
+    container.querySelectorAll(".buy-gold-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        initSound();
+        const key = btn.getAttribute("data-gold-up");
+        game.buyGoldUpgrade(key);
+        renderBranchesTab();
+      });
+    });
+  }
+
+  // ui/tabs/missions-tab.js
+  function renderMissionsTab() {
+    const container = document.getElementById("tab-missions");
+    if (!container) return;
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].missions;
+    const rootT = translations[lang];
+    const completedCount = game.state.missionsCompleted || 0;
+    const summaryHeader = document.createElement("div");
+    summaryHeader.className = "missions-summary-header";
+    summaryHeader.innerHTML = `
+        <div class="summary-badge">
+            <span class="trophy-icon">\u{1F3C6}</span>
+            <span>${translations[lang].missionCompletedTitle}: ${completedCount}</span>
+        </div>
+        <p class="summary-desc">${translations[lang].missionCompletedDesc}</p>
+    `;
+    container.appendChild(summaryHeader);
+    const sortedMissions = [...game.state.missions].sort((a, b) => {
+      const aReady = a.completed && !a.claimed;
+      const bReady = b.completed && !b.claimed;
+      if (aReady && !bReady) return -1;
+      if (!aReady && bReady) return 1;
+      return 0;
+    });
+    sortedMissions.forEach((m) => {
+      const card = document.createElement("div");
+      card.className = `mission-card ${m.completed ? "completed" : ""}`;
+      const targetVal = m.target || 1;
+      const progressVal = m.progress || 0;
+      const percent = Math.min(100, progressVal / targetVal * 100);
+      let titleKey = m.type;
+      if (m.type === "upgrade_teller") titleKey = "teller";
+      else if (m.type === "upgrade_guard") titleKey = "guard";
+      else if (m.type === "upgrade_vault") titleKey = "vault";
+      else if (m.type === "accumulate_cash") titleKey = "cash";
+      const title = tObj[titleKey + "Title"] || tObj.defaultTitle;
+      let progressDesc = "";
+      const descFn = tObj[titleKey + "Desc"] || tObj.defaultDesc;
+      if (typeof descFn === "function") {
+        if (m.type === "earn_eps" || m.type === "accumulate_cash" || m.type === "earn_cash" || m.type === "boost_run") {
+          progressDesc = descFn(formatMoney(m.target));
+        } else if (m.type === "upgrade_teller" || m.type === "upgrade_guard") {
+          progressDesc = descFn(m.target, m.targetId !== void 0 ? m.targetId + 1 : 1);
+        } else if (m.type === "department_grind") {
+          progressDesc = descFn(m.target, m.targetId);
+        } else {
+          progressDesc = descFn(m.target);
+        }
+      } else {
+        progressDesc = descFn;
+      }
+      const imgMap = {
+        "clients": "./images/client-10.png",
+        "accumulate_cash": "./images/gold-chest.png",
+        "upgrade_teller": "./images/teller-7.png",
+        "upgrade_guard": "./images/guard_circle.png",
+        "upgrade_vault": "./images/vault.png",
+        "unlock_departments": "./images/gold-truck.png",
+        "hire_managers": "./images/manager_circle.png",
+        "earn_eps": "./images/eps_circle.png",
+        "earn_cash": "./images/gold-bars.png",
+        "serve_rich_vip": "./images/client-6.png",
+        "vip_marathon": "./images/gold-vip.png",
+        "vip_collector": "./images/gold-vip.png",
+        "department_unlock": "./images/gold-truck.png",
+        "upgrade_managers": "./images/manager_circle.png",
+        "manager_hire": "./images/manager_circle.png",
+        "break_the_wall": "./images/manager-7.png",
+        "upgrade_arrows": "./images/upgrade-arrows.png",
+        "guard_trips": "./images/guard_circle.png",
+        "all_managers": "./images/manager_circle.png",
+        "department_grind": "./images/manager-1.png",
+        "missions_veteran": "./images/gold-chest.png",
+        "boost_run": "./images/boost_run_circle.png"
+      };
+      const imgSrc = imgMap[m.type] || "./images/icon.png";
+      let rewardAmtHtml = "";
+      if (m.reward && typeof m.reward === "object" && m.reward.type) {
+        const shareLbl = rootT.sharesLabel || "Gold Shares";
+        rewardAmtHtml = `<span class="claim-reward-amount">+${m.reward.amount} ${shareLbl} \u{1FA99}</span>`;
+      } else {
+        rewardAmtHtml = `<span class="claim-reward-amount">+${formatMoney(m.reward)} \u{1F4B0}</span>`;
+      }
+      let actionZoneHtml = "";
+      if (m.completed && !m.claimed) {
+        actionZoneHtml = `
+            <div class="mission-action-zone">
+                <button class="claim-reward-btn" data-mission-id="${m.id}">
+                    ${rootT.claimReward || "Claim!"}
+                    ${rewardAmtHtml}
+                </button>
+            </div>
+            `;
+      }
+      let rewardBadgeHtml = "";
+      if (m.reward && typeof m.reward === "object" && m.reward.type) {
+        const shareLbl = rootT.sharesLabel || "Gold Shares";
+        rewardBadgeHtml = `<span>${rootT.rewardLabel || "Reward:"} +${m.reward.amount} ${shareLbl} \u{1FA99}</span>`;
+      } else {
+        rewardBadgeHtml = `<span>${rootT.profitLabel || "Profit:"} +${formatMoney(m.reward)} \u{1F4B0}</span>`;
+      }
+      const circleRadius = 24;
+      const circleCircumference = 2 * Math.PI * circleRadius;
+      const strokeDashoffset = circleCircumference - percent / 100 * circleCircumference;
+      card.innerHTML = `
+            <div class="mission-reward-badge">
+                ${rewardBadgeHtml}
+            </div>
+            ${actionZoneHtml}
+            <div class="mission-image-box">
+                <div class="mission-image-glow"></div>
+                <img class="mission-illustration" src="${imgSrc}" alt="" />
+            </div>
+            <div class="mission-content-middle">
+                <div class="mission-details">
+                    <div class="mission-title">${title}</div>
+                    <div class="mission-desc">${progressDesc}</div>
+                </div>
+                <div class="mission-progress-row">
+                    <div class="mission-progress-outer">
+                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                        <div class="progress-text-overlay">
+                            ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                            /
+                            ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mission-circle-progress">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                </svg>
+                <div class="circle-text">${Math.round(percent)}%</div>
+            </div>
+        `;
+      card.addEventListener("click", (e) => {
+        if (e.target.closest(".claim-reward-btn")) {
+          return;
+        }
+        handleMissionRedirect(m.type, m.targetId);
+      });
+      container.appendChild(card);
+    });
+    container.querySelectorAll(".claim-reward-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window._isClaimingMission) return;
+        window._isClaimingMission = true;
+        setTimeout(() => {
+          window._isClaimingMission = false;
+        }, 500);
+        initSound();
+        const missionId = btn.getAttribute("data-mission-id");
+        const collected = game.claimMissionReward(missionId);
+        if (collected && collected.type !== "none" && collected.amount > 0) {
+          btn.disabled = true;
+          const rectBtn = btn.getBoundingClientRect();
+          if (collected.type === "cash") {
+            const rectCashBox = document.getElementById("stat-cash").getBoundingClientRect();
+            animateCoins(rectBtn, rectCashBox, 10, "cash_silent");
+            spawnFloating("+" + formatMoney(collected.amount), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", "2.2rem");
+          } else {
+            const rectSharesBox = document.getElementById("stat-shares");
+            if (rectSharesBox) {
+              const rectShares = rectSharesBox.getBoundingClientRect();
+              animateCoins(rectBtn, rectShares, collected.amount, "gold");
+            }
+            const lang2 = game.state && game.state.language || "en";
+            const shareLbl = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
+            spawnFloating("+" + collected.amount + " " + shareLbl + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
+          }
+          if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
+            window.gameAudio.playUnlock();
+          }
+          renderMissionsTab();
+        }
+      });
+    });
+  }
+  function updateMissionsTabProgress() {
+    const container = document.getElementById("tab-missions");
+    if (!container) return;
+    if (game.state.missions) {
+      game.state.missions.forEach((m) => {
+        const card = container.querySelector('.mission-card[data-mission-id="' + m.id + '"]');
+        if (!card) return;
+        const targetVal = m.target || 1;
+        const progressVal = m.progress || 0;
+        const percent = Math.min(100, progressVal / targetVal * 100);
+        const bar = card.querySelector(".mission-progress-bar");
+        if (bar) bar.style.width = percent + "%";
+        const textOverlay = card.querySelector(".progress-text-overlay");
+        if (textOverlay) {
+          const isCashType = ["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type);
+          const pStr = isCashType ? formatMoney(progressVal) : progressVal;
+          const tStr = isCashType ? formatMoney(targetVal) : targetVal;
+          const newText = pStr + " / " + tStr;
+          if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
+        }
+        const circleRadius = 24;
+        const circleCircumference = 2 * Math.PI * circleRadius;
+        const strokeDashoffset = circleCircumference - percent / 100 * circleCircumference;
+        const circleValue = card.querySelector(".circle-value");
+        if (circleValue) circleValue.setAttribute("stroke-dashoffset", strokeDashoffset);
+        const circleText = card.querySelector(".circle-text");
+        if (circleText) {
+          const newPct = Math.round(percent) + "%";
+          if (circleText.innerText !== newPct) circleText.innerText = newPct;
+        }
+        if (m.completed && !card.classList.contains("completed")) {
+          if (typeof window.renderMissionsTab === "function") {
+            window.renderMissionsTab();
+          }
+        }
+      });
+    }
+  }
+  window.updateMissionsTabProgress = updateMissionsTabProgress;
+
+  // ui/tabs/achievements-tab.js
+  function playAchievementUnlockFeedback(achievement) {
+    const targetEl = document.getElementById("eps-value-container") || document.getElementById("stat-cash");
+    const toRect = targetEl ? targetEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
+    const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
+    const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
+    animateCoins(fromRect, toRect, 8, "gold");
+    spawnFloating("\u{1F3C6} +" + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "") + "%", fromRect.left + fromRect.width / 2, fromRect.top, "gold", "2.2rem");
+    if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
+      window.gameAudio.playUnlock();
+    }
+  }
+  function renderAchievementsTab() {
+    const container = document.getElementById("tab-achievements");
+    if (!container) return;
+    container.innerHTML = "";
+    const lang = game.state.language || "en";
+    const tObj = translations[lang].achievements || {};
+    const rootT = translations[lang];
+    const unlocked = game.state.achievements && game.state.achievements.unlocked || {};
+    const claimed = game.state.achievements && game.state.achievements.claimed || {};
+    const bonusPercent = game.state.achievements && game.state.achievements.bonusPercent || 0;
+    const unlockedCount = GAME_CONFIG.ACHIEVEMENTS.filter((a) => unlocked[a.id]).length;
+    const totalCount = GAME_CONFIG.ACHIEVEMENTS.length;
+    const summaryHeader = document.createElement("div");
+    summaryHeader.className = "missions-summary-header achievements-summary-header";
+    summaryHeader.innerHTML = `
+        <div class="summary-badge">
+            <span class="trophy-icon">\u{1F3C6}</span>
+            <span>${rootT.achievementsCompletedTitle || "Achievements"}: ${unlockedCount}/${totalCount}</span>
+        </div>
+        <p class="summary-desc">${rootT.achievementsCompletedDesc || ""} (+${(bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "")}%)</p>
+    `;
+    container.appendChild(summaryHeader);
+    const sortPriority = (a) => {
+      if (unlocked[a.id] && !claimed[a.id]) return 0;
+      if (!unlocked[a.id]) return 1;
+      return 2;
+    };
+    const sortedAchievements = [...GAME_CONFIG.ACHIEVEMENTS].sort((a, b) => sortPriority(a) - sortPriority(b));
+    const cashCategories = ["cash"];
+    sortedAchievements.forEach((a) => {
+      const isUnlocked = !!unlocked[a.id];
+      const isClaimed = !!claimed[a.id];
+      const progress = game.getAchievementProgress(a.id);
+      const card = document.createElement("div");
+      card.className = `achievement-card mission-card ${isUnlocked ? "unlocked" : ""} ${isClaimed ? "claimed" : ""}`;
+      card.setAttribute("data-achievement-id", a.id);
+      const title = tObj[a.i18nKey + "Title"] || a.id;
+      const descFn = tObj[a.i18nKey + "Desc"];
+      const targetDisplay = cashCategories.includes(a.category) ? formatMoney(a.threshold) : a.threshold;
+      const desc = typeof descFn === "function" ? descFn(targetDisplay) : descFn || "";
+      const circleRadius = 24;
+      const circleCircumference = 2 * Math.PI * circleRadius;
+      const strokeDashoffset = circleCircumference - progress.percent / 100 * circleCircumference;
+      const progressCurrentDisplay = cashCategories.includes(a.category) ? formatMoney(progress.current) : progress.current;
+      const shareLbl = rootT.sharesLabel || "Gold Shares";
+      let statusHtml;
+      if (isUnlocked && !isClaimed) {
+        statusHtml = `
+                <div class="mission-action-zone">
+                    <button class="claim-achievement-btn" data-achievement-id="${a.id}">
+                        ${rootT.claimReward || "Claim!"}
+                        <span class="claim-reward-amount">+${a.rewardShares} ${shareLbl} \u{1FA99}</span>
+                    </button>
+                </div>`;
+      } else if (isUnlocked && isClaimed) {
+        statusHtml = `<div class="achievement-unlocked-badge">\u2713 +${(a.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "")}%</div>`;
+      } else {
+        statusHtml = `<div class="mission-progress-row">
+                   <div class="mission-progress-outer">
+                       <div class="mission-progress-bar" style="width: ${progress.percent}%"></div>
+                       <div class="progress-text-overlay">${progressCurrentDisplay} / ${targetDisplay}</div>
+                   </div>
+               </div>`;
+      }
+      const rewardBadgeHtml = isUnlocked && !isClaimed ? `<div class="mission-reward-badge"><span>+${a.rewardShares} ${shareLbl} \u{1FA99}</span></div>` : "";
+      card.innerHTML = `
+            ${rewardBadgeHtml}
+            <div class="mission-image-box achievement-icon-box">
+                <div class="mission-image-glow"></div>
+                <span class="achievement-icon">${a.icon}</span>
+            </div>
+            <div class="mission-content-middle">
+                <div class="mission-details">
+                    <div class="mission-title">${title}</div>
+                    <div class="mission-desc">${desc}</div>
+                </div>
+                ${statusHtml}
+            </div>
+            <div class="mission-circle-progress">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${isUnlocked ? 0 : strokeDashoffset}" />
+                </svg>
+                <div class="circle-text">${isUnlocked ? "\u2713" : Math.round(progress.percent) + "%"}</div>
+            </div>
+        `;
+      container.appendChild(card);
+    });
+    container.querySelectorAll(".claim-achievement-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window._isClaimingAchievement) return;
+        window._isClaimingAchievement = true;
+        setTimeout(() => {
+          window._isClaimingAchievement = false;
+        }, 500);
+        initSound();
+        const achId = btn.getAttribute("data-achievement-id");
+        const collected = game.claimAchievementReward(achId);
+        if (collected && collected.type !== "none" && collected.amount > 0) {
+          btn.disabled = true;
+          const rectBtn = btn.getBoundingClientRect();
+          const rectSharesBox = document.getElementById("stat-shares");
+          if (rectSharesBox) {
+            animateCoins(rectBtn, rectSharesBox.getBoundingClientRect(), collected.amount, "gold");
+          }
+          const lang2 = game.state && game.state.language || "en";
+          const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
+          spawnFloating("+" + collected.amount + " " + shareLbl2 + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
+          if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
+            window.gameAudio.playUnlock();
+          }
+          renderAchievementsTab();
+        }
+      });
+    });
+  }
+  function updateAchievementsTabProgress() {
+    const container = document.getElementById("tab-achievements");
+    if (!container) return;
+    const cashCategories = ["cash"];
+    const unlocked = game.state.achievements && game.state.achievements.unlocked || {};
+    GAME_CONFIG.ACHIEVEMENTS.forEach((a) => {
+      const card = container.querySelector('.achievement-card[data-achievement-id="' + a.id + '"]');
+      if (!card) return;
+      const progress = game.getAchievementProgress(a.id);
+      const targetDisplay = cashCategories.includes(a.category) ? formatMoney(a.threshold) : a.threshold;
+      const progressCurrentDisplay = cashCategories.includes(a.category) ? formatMoney(progress.current) : progress.current;
+      const bar = card.querySelector(".mission-progress-bar");
+      if (bar) bar.style.width = progress.percent + "%";
+      const textOverlay = card.querySelector(".progress-text-overlay");
+      if (textOverlay) {
+        const newText = progressCurrentDisplay + " / " + targetDisplay;
+        if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
+      }
+      const circleRadius = 24;
+      const circleCircumference = 2 * Math.PI * circleRadius;
+      const strokeDashoffset = circleCircumference - progress.percent / 100 * circleCircumference;
+      const circleValue = card.querySelector(".circle-value");
+      const isUnlocked = !!unlocked[a.id];
+      if (circleValue) circleValue.setAttribute("stroke-dashoffset", isUnlocked ? 0 : strokeDashoffset);
+      const circleText = card.querySelector(".circle-text");
+      if (circleText) {
+        const newPct = Math.round(progress.percent) + "%";
+        if (circleText.innerText !== newPct) circleText.innerText = newPct;
+      }
+    });
+  }
+  window.updateAchievementsTabProgress = updateAchievementsTabProgress;
+
+  // ui/tabs/index.js
+  function refreshAllTabs() {
+    invalidateTabHashes();
+    const activeTabEl = document.querySelector(".tab-btn.active");
+    const activeTab = activeTabEl ? activeTabEl.getAttribute("data-tab") : "upgrades";
+    if (activeTab === "upgrades") renderUpgradesTab();
+    else if (activeTab === "managers") renderManagersTab();
+    else if (activeTab === "departments") renderDepartmentsTab();
+    else if (activeTab === "missions") renderMissionsTab();
+    else if (activeTab === "branches") renderBranchesTab();
+    else if (activeTab === "daily") {
+      if (typeof window.renderDailyChallengesSection === "function") window.renderDailyChallengesSection();
+      renderAchievementsTab();
+    }
+    rebuildTellersDOM();
+  }
+  function updateButtonAffordability() {
+    const activeTabEl = document.querySelector(".tab-btn.active");
+    if (!activeTabEl) return;
+    const activeTab = activeTabEl.getAttribute("data-tab");
+    if (activeTab === "upgrades") {
+      const container = document.getElementById("tab-upgrades");
+      if (!container) return;
+      const buttons = getBuyBtnCache(container);
+      buttons.forEach((btn) => {
+        const type = btn.getAttribute("data-type");
+        const id = parseInt(btn.getAttribute("data-id"));
+        if (type === "teller") {
+          const t = game.state.tellers[id];
+          if (t.unlocked) {
+            const details = game.getBulkUpgradeDetails("teller", id, currentUpgradeMode, t.level, game.state.cash);
+            btn.classList.toggle("disabled", !details.canAfford);
+            btn.disabled = !details.canAfford;
+            if (btn.classList.contains("upg-v2-buy-btn")) {
+              const amtEl = btn.querySelector(".upg-v2-btn-amount");
+              const costEl = btn.querySelector(".upg-v2-btn-cost");
+              const newAmt = details.levels > 1 ? "+" + details.levels : "";
+              if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+              const newCost = formatMoney(details.cost);
+              if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+              const card = btn.closest(".premium-upg-card");
+              if (card) {
+                const titleAmtEl = card.querySelector(".upg-v2-level-up");
+                const newTitleAmt = details.levels > 1 ? "(+" + details.levels + ")" : "";
+                if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+                const statVals = card.querySelectorAll(".upg-v2-stat-val");
+                if (statVals.length >= 2) {
+                  const capacity = game.getTellerCapacity(t.level);
+                  const speed = game.getTellerSpeed(t.level).toFixed(1);
+                  const nextCapacity = game.getTellerCapacity(t.level + details.levels);
+                  const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
+                  const newStat0 = speed + ' <span class="arrow">\u2794</span> ' + nextSpeed;
+                  const newStat1 = formatMoney(capacity) + ' <span class="arrow">\u2794</span> ' + formatMoney(nextCapacity);
+                  if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+                  if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                  if (statVals[2]) {
+                    const newStat2 = formatMoney(capacity / speed);
+                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                  }
+                }
+              }
+            }
+          } else {
+            const cost = game.tellerUnlockCosts[id];
+            const canBuy = game.state.cash >= cost;
+            btn.classList.toggle("disabled", !canBuy);
+            btn.disabled = !canBuy;
+          }
+        } else if (type === "guard") {
+          const g = game.state.guards[id];
+          if (g.unlocked) {
+            const details = game.getBulkUpgradeDetails("guard", id, currentUpgradeMode, g.level, game.state.cash);
+            btn.classList.toggle("disabled", !details.canAfford);
+            btn.disabled = !details.canAfford;
+            if (btn.classList.contains("upg-v2-buy-btn")) {
+              const amtEl = btn.querySelector(".upg-v2-btn-amount");
+              const costEl = btn.querySelector(".upg-v2-btn-cost");
+              const newAmt = details.levels > 1 ? "+" + details.levels : "";
+              if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+              const newCost = formatMoney(details.cost);
+              if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+              const card = btn.closest(".premium-upg-card");
+              if (card) {
+                const titleAmtEl = card.querySelector(".upg-v2-level-up");
+                const newTitleAmt = details.levels > 1 ? "(+" + details.levels + ")" : "";
+                if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+                const statVals = card.querySelectorAll(".upg-v2-stat-val");
+                if (statVals.length >= 2) {
+                  const capacity = game.getGuardCapacity(g.level);
+                  const speed = game.getGuardSpeed(g.level).toFixed(1);
+                  const nextCapacity = game.getGuardCapacity(g.level + details.levels);
+                  const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
+                  const newStat0 = speed + ' <span class="arrow">\u2794</span> ' + nextSpeed;
+                  const newStat1 = formatMoney(capacity) + ' <span class="arrow">\u2794</span> ' + formatMoney(nextCapacity);
+                  if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+                  if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                  if (statVals[2]) {
+                    const newStat2 = formatMoney(capacity / speed);
+                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                  }
+                }
+              }
+            }
+          } else {
+            const cost = game.guardUnlockCosts[id];
+            const canBuy = game.state.cash >= cost;
+            btn.classList.toggle("disabled", !canBuy);
+            btn.disabled = !canBuy;
+          }
+        } else if (type === "vault" || btn.id === "upgrade-vault-btn") {
+          const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, game.state.vault.level, game.state.cash);
+          btn.classList.toggle("disabled", !details.canAfford);
+          btn.disabled = !details.canAfford;
+          if (btn.classList.contains("upg-v2-buy-btn")) {
+            const amtEl = btn.querySelector(".upg-v2-btn-amount");
+            const costEl = btn.querySelector(".upg-v2-btn-cost");
+            const newAmt = details.levels > 1 ? "+" + details.levels : "";
+            if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+            const newCost = formatMoney(details.cost);
+            if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+            const card = btn.closest(".premium-upg-card");
+            if (card) {
+              const titleAmtEl = card.querySelector(".upg-v2-level-up");
+              const newTitleAmt = details.levels > 1 ? "(+" + details.levels + ")" : "";
+              if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+              const statVals = card.querySelectorAll(".upg-v2-stat-val");
+              if (statVals.length >= 1) {
+                const capacity = game.getVaultCapacity(game.state.vault.level);
+                const nextCapacity = game.getVaultCapacity(game.state.vault.level + details.levels);
+                const newStat0 = formatMoney(capacity) + ' <span class="arrow">\u2794</span> ' + formatMoney(nextCapacity);
+                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+              }
+            }
+          }
+        } else if (btn.id === "upgrade-queue-btn") {
+          const details = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
+          btn.classList.toggle("disabled", !details.canAfford);
+          btn.disabled = !details.canAfford;
+          if (btn.classList.contains("upg-v2-buy-btn")) {
+            const amtEl = btn.querySelector(".upg-v2-btn-amount");
+            const costEl = btn.querySelector(".upg-v2-btn-cost");
+            const newAmt = details.levels > 1 ? "+" + details.levels : "";
+            if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+            const newCost = formatMoney(details.cost);
+            if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+            const card = btn.closest(".premium-upg-card");
+            if (card) {
+              const titleAmtEl = card.querySelector(".upg-v2-level-up");
+              const newTitleAmt = details.levels > 1 ? "(+" + details.levels + ")" : "";
+              if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
+              const statVals = card.querySelectorAll(".upg-v2-stat-val");
+              if (statVals.length >= 1) {
+                const capacity = game.getQueueCapacity(game.state.queueUpgradeLevel || 1);
+                const nextCapacity = game.getQueueCapacity((game.state.queueUpgradeLevel || 1) + details.levels);
+                const newStat0 = capacity + ' <span class="arrow">\u2794</span> ' + nextCapacity;
+                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
+              }
+            }
+          }
+        }
+      });
+      const mainPresBtn = container.querySelector("#main-prestige-btn");
+      if (mainPresBtn && game.branches[game.state.currentBranch]) {
+        const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
+        mainPresBtn.classList.toggle("disabled", !currentCanPrestige);
+        mainPresBtn.disabled = !currentCanPrestige;
+        const actionBtns = container.querySelectorAll(".branch-action-btn");
+        actionBtns.forEach((btn) => {
+          btn.classList.toggle("disabled", !currentCanPrestige);
+          btn.disabled = !currentCanPrestige;
+        });
+      }
+    } else if (activeTab === "managers") {
+      const container = document.getElementById("tab-managers");
+      if (!container) return;
+      const buttons = container.querySelectorAll(".buy-btn");
+      const lang = game.state.language || "en";
+      for (let i = 0; i < buttons.length; i++) {
+        const btn = buttons[i];
+        const type = btn.getAttribute("data-type") || btn.getAttribute("data-mgr-type");
+        if (type) {
+          const mgr = game.state.managerUpgrades[type];
+          if (mgr) {
+            if (mgr.level >= 5) {
+              renderManagersTab();
+              return;
+            }
+            const isHired = game.state.managers[type];
+            const details = game.getBulkUpgradeDetails("manager", type, currentUpgradeMode, mgr.level, game.state.cash);
+            btn.classList.toggle("disabled", !details.canAfford);
+            btn.disabled = !details.canAfford;
+            const newText = `${translations[lang].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ""}<br>${formatMoney(details.cost)}`;
+            if (btn.innerHTML !== newText) {
+              btn.innerHTML = newText;
+            }
+            const card = btn.closest(".upgrade-card");
+            if (card) {
+              const lvlBadge = card.querySelector(".mgr-lvl-badge");
+              if (lvlBadge) {
+                lvlBadge.innerText = `${translations[lang].levelAbbr || "Lv"} ${mgr.level}${details.levels > 1 ? ` (+${details.levels})` : ""}`;
+              }
+              const starsBox = card.querySelector(".mgr-stars-box");
+              if (starsBox) {
+                let starsHtml = "";
+                for (let j = 1; j <= 5; j++) {
+                  starsHtml += `<span class="star ${j <= mgr.level ? "gold-star" : "gray-star"}">\u2605</span>`;
+                }
+                starsBox.innerHTML = starsHtml;
+              }
+              const statVals = card.querySelectorAll(".mgr-stat-val");
+              if (statVals.length >= 2) {
+                const coefs = GAME_CONFIG.MANAGER_COEFFICIENTS[type];
+                let s1 = "", s2 = "";
+                if (coefs) {
+                  if (type === "customer") {
+                    s1 = `+${Math.round(coefs.spawnIntervalBoost * 100 * mgr.level)}%`;
+                    s2 = `+${Math.round(coefs.incomeBoost * 100 * mgr.level)}%`;
+                  } else if (type === "finance") {
+                    s1 = (statLabels[lang] || statLabels.en).autoText;
+                    s2 = `+${Math.round(coefs.deptIncomeBoost * 100 * mgr.level)}%`;
+                  } else if (type === "operations") {
+                    s1 = `+${Math.round(coefs.guardSpeedBoost * 100 * mgr.level)}%`;
+                    s2 = `+${Math.round(coefs.guardCapBoost * 100 * mgr.level)}%`;
+                  } else if (type === "service") {
+                    s1 = `+${Math.round(coefs.capacityBoost * 100 * mgr.level)}%`;
+                    s2 = `+${Math.round(coefs.epsBoost * 100 * mgr.level)}%`;
+                  } else if (type === "vip") {
+                    s1 = `+${Math.round(coefs.incomeBoost * 100 * mgr.level)}%`;
+                    s2 = `+${Math.round(coefs.prestigeSharesBoost * 100 * mgr.level)}%`;
+                  } else if (type === "marketing") {
+                    s1 = `+${Math.round(coefs.adBoost * 100 * mgr.level)}%`;
+                    s2 = `+${coefs.offlineLimitBoost * mgr.level}`;
+                  } else if (type === "accountant") {
+                    s1 = `+${coefs.offlineLimitBoost * mgr.level}h`;
+                    s2 = `+${Math.round(coefs.offlineIncomeBoost * 100 * mgr.level)}%`;
+                  }
+                }
+                statVals[0].innerText = s1;
+                statVals[1].innerText = s2;
+              }
+              const footerVal = card.querySelector(".mgr-footer-val");
+              if (footerVal) {
+                const eps = game.getEarningsPerSecond();
+                let contribution = 0;
+                const coefsFV = GAME_CONFIG.MANAGER_COEFFICIENTS[type];
+                if (isHired && coefsFV && coefsFV.incomeBoost) {
+                  contribution = coefsFV.incomeBoost * mgr.level;
+                }
+                const extraHourly = eps * 3600 * contribution;
+                const perHourStr = (statLabels[lang] || statLabels.en).perHour;
+                footerVal.innerText = `${isHired ? formatMoney(extraHourly) : formatMoney(0)} ${perHourStr}`;
+              }
+            }
+          }
+        } else {
+          const mgrType = btn.getAttribute("data-mgr");
+          if (mgrType) {
+            const cost = game.managerCosts[mgrType];
+            const canBuy = game.state.cash >= cost;
+            btn.classList.toggle("disabled", !canBuy);
+            btn.disabled = !canBuy;
+          }
+        }
+      }
+    } else if (activeTab === "departments") {
+      const container = document.getElementById("tab-departments");
+      if (!container) return;
+      const buttons = container.querySelectorAll(".buy-btn");
+      buttons.forEach((btn) => {
+        const deptId = parseInt(btn.getAttribute("data-dept-idx"));
+        const dept = game.state.departments.find((d) => d.id === deptId);
+        if (dept && !dept.unlocked) {
+          const cost = dept.cost;
+          const canBuy = window.game.state.cash >= cost;
+          if (canBuy) {
+            btn.classList.remove("disabled");
+            btn.removeAttribute("disabled");
+            btn.disabled = false;
+          } else {
+            btn.classList.add("disabled");
+            btn.setAttribute("disabled", "disabled");
+            btn.disabled = true;
+          }
+        }
+      });
+    }
+  }
+  window.renderUpgradesTab = renderUpgradesTab;
+  window.renderManagersTab = renderManagersTab;
+  window.renderDepartmentsTab = renderDepartmentsTab;
+  window.renderBranchesTab = renderBranchesTab;
+  window.renderMissionsTab = renderMissionsTab;
+  window.renderAchievementsTab = renderAchievementsTab;
+  window.playAchievementUnlockFeedback = playAchievementUnlockFeedback;
+  window.refreshAllTabs = refreshAllTabs;
+  window.updateButtonAffordability = updateButtonAffordability;
+  window.invalidateTabHashes = invalidateTabHashes;
+
+  // ui-events.js
+  var soundInitialized = false;
+  var autoSaveTimer = 0;
+  var eventTimer = 0;
+  var tabRefreshTimer = 0;
+  var fortuneWheelBtnTimer = 0;
+  var contextualOfferTimeout = null;
+  var contextualBannerShown = false;
+  var boostOfferEndTime = 0;
+  var boostOfferNextTime = 0;
+  var drawTimer = 0;
+  var _focusTrapHandlers = /* @__PURE__ */ new Map();
+  function _getFocusableElements(container) {
+    return Array.from(container.querySelectorAll(
+      'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter((el) => !el.closest("[hidden]") && el.offsetParent !== null);
+  }
+  function trapFocus(modal) {
+    if (_focusTrapHandlers.has(modal)) return;
+    const handler = function(e) {
+      if (e.key !== "Tab") return;
+      const focusable2 = _getFocusableElements(modal);
+      if (focusable2.length === 0) return;
+      const first = focusable2[0];
+      const last = focusable2[focusable2.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    _focusTrapHandlers.set(modal, handler);
+    modal.addEventListener("keydown", handler);
+    const focusable = _getFocusableElements(modal);
+    if (focusable.length > 0) focusable[0].focus();
+  }
+  function releaseFocus(modal) {
+    const handler = _focusTrapHandlers.get(modal);
+    if (!handler) return;
+    modal.removeEventListener("keydown", handler);
+    _focusTrapHandlers.delete(modal);
+  }
+  function applyLanguage(lang) {
+    window.gameLanguage = lang;
+    if (typeof updateCachedSuffixes === "function") {
+      updateCachedSuffixes(lang);
+    }
+    document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
+    document.documentElement.lang = lang;
+    const pageTitles = {
+      he: "\u05D0\u05D9\u05DE\u05E4\u05E8\u05D9\u05D9\u05EA \u05D4\u05D1\u05E0\u05E7\u05D9\u05DD - \u05DE\u05E9\u05D7\u05E7 Idle Bank \u05D9\u05D5\u05E7\u05E8\u05EA\u05D9",
+      en: "Bank Empire - Premium Idle Game",
+      es: "Imperio Bancario - Juego Idle Premium",
+      ru: "\u0411\u0430\u043D\u043A\u043E\u0432\u0441\u043A\u0430\u044F \u0418\u043C\u043F\u0435\u0440\u0438\u044F - \u041F\u0440\u0435\u043C\u0438\u0443\u043C Idle \u0418\u0433\u0440\u0430"
+    };
+    document.title = pageTitles[lang] || pageTitles.he;
+    const metaDescriptions = {
+      he: "\u05D4\u05E4\u05D5\u05DA \u05DE\u05D8\u05D9\u05D9\u05E7\u05D5\u05DF \u05DE\u05EA\u05D7\u05D9\u05DC \u05DC\u05DE\u05E0\u05D4\u05DC \u05D0\u05D9\u05DE\u05E4\u05E8\u05D9\u05D9\u05EA \u05D1\u05E0\u05E7\u05D9\u05DD \u05E2\u05D5\u05DC\u05DE\u05D9\u05EA. \u05DE\u05E9\u05D7\u05E7 \u05E7\u05DC\u05D9\u05DC \u05D5\u05DE\u05DE\u05DB\u05E8 \u05E2\u05DD \u05D2\u05E8\u05E4\u05D9\u05E7\u05D4 \u05D9\u05D5\u05E7\u05E8\u05EA\u05D9\u05EA, \u05E9\u05D3\u05E8\u05D5\u05D2\u05D9\u05DD, \u05DE\u05E0\u05D4\u05DC\u05D9\u05DD \u05D5\u05E1\u05E0\u05D9\u05E4\u05D9\u05DD \u05D1\u05E8\u05D7\u05D1\u05D9 \u05D4\u05E2\u05D5\u05DC\u05DD!",
+      en: "Go from a starting tycoon to the manager of a global bank empire. An easy and addictive game with premium graphics, upgrades, managers, and branches worldwide!",
+      es: "Pasa de ser un magnate principiante a dirigir un imperio bancario global. \xA1Un juego f\xE1cil y adictivo con gr\xE1ficos premium, mejoras, gerentes y sucursales en todo el mundo!",
+      ru: "\u041F\u0440\u043E\u0439\u0434\u0438\u0442\u0435 \u043F\u0443\u0442\u044C \u043E\u0442 \u043D\u0430\u0447\u0438\u043D\u0430\u044E\u0449\u0435\u0433\u043E \u043C\u0430\u0433\u043D\u0430\u0442\u0430 \u0434\u043E \u0443\u043F\u0440\u0430\u0432\u043B\u044F\u044E\u0449\u0435\u0433\u043E \u0433\u043B\u043E\u0431\u0430\u043B\u044C\u043D\u043E\u0439 \u0431\u0430\u043D\u043A\u043E\u0432\u0441\u043A\u043E\u0439 \u0438\u043C\u043F\u0435\u0440\u0438\u0435\u0439. \u041B\u0435\u0433\u043A\u0430\u044F \u0438 \u0437\u0430\u0445\u0432\u0430\u0442\u044B\u0432\u0430\u044E\u0449\u0430\u044F \u0438\u0433\u0440\u0430 \u0441 \u043F\u0440\u0435\u043C\u0438\u0430\u043B\u044C\u043D\u043E\u0439 \u0433\u0440\u0430\u0444\u0438\u043A\u043E\u0439, \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F\u043C\u0438, \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u0430\u043C\u0438 \u0438 \u0444\u0438\u043B\u0438\u0430\u043B\u0430\u043C\u0438 \u043F\u043E \u0432\u0441\u0435\u043C\u0443 \u043C\u0438\u0440\u0443!"
+    };
+    const metaDescEl = document.querySelector('meta[name="description"]');
+    if (metaDescEl) {
+      metaDescEl.setAttribute("content", metaDescriptions[lang] || metaDescriptions.he);
+    }
+    const tObj = translations[lang];
+    if (!tObj) return;
+    if (DOM_CACHE.appTitle) DOM_CACHE.appTitle.innerText = tObj.appName;
+    if (DOM_CACHE.labelCash) DOM_CACHE.labelCash.innerText = tObj.cashLabel;
+    if (DOM_CACHE.labelPerSecond) DOM_CACHE.labelPerSecond.innerText = tObj.perSecond;
+    if (DOM_CACHE.labelShares) DOM_CACHE.labelShares.innerText = tObj.sharesLabel;
+    if (DOM_CACHE.labelMultiplier) DOM_CACHE.labelMultiplier.innerText = tObj.multiplier;
+    if (DOM_CACHE.labelSimulatorTitle) DOM_CACHE.labelSimulatorTitle.innerText = tObj.simulatorTitle;
+    if (DOM_CACHE.labelPanelBadge) DOM_CACHE.labelPanelBadge.innerText = tObj.activeFlow;
+    if (DOM_CACHE.labelAdvTitle) DOM_CACHE.labelAdvTitle.innerText = tObj.advTitle;
+    if (DOM_CACHE.labelAdvLimitOff) DOM_CACHE.labelAdvLimitOff.innerText = tObj.advValueOff;
+    if (DOM_CACHE.labelVaultTitle) DOM_CACHE.labelVaultTitle.innerText = tObj.vaultTitle;
+    if (DOM_CACHE.labelVaultLoading) DOM_CACHE.labelVaultLoading.innerText = tObj.vaultLoading;
+    if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.innerText = tObj.collectVault;
+    if (DOM_CACHE.labelVaultSubtitle) DOM_CACHE.labelVaultSubtitle.innerText = tObj.vaultSubtitle;
+    if (DOM_CACHE.labelVaultYieldTitle) DOM_CACHE.labelVaultYieldTitle.innerText = tObj.vaultYieldTitle;
+    if (DOM_CACHE.labelVaultYieldSub) DOM_CACHE.labelVaultYieldSub.innerText = tObj.vaultYieldSub;
+    if (DOM_CACHE.labelVaultCapTitle) DOM_CACHE.labelVaultCapTitle.innerText = tObj.vaultCapLabel || tObj.vaultCap;
+    if (DOM_CACHE.labelVaultVolumeTitle) DOM_CACHE.labelVaultVolumeTitle.innerText = tObj.vaultVolume;
+    if (DOM_CACHE.labelCollectVaultBtn) DOM_CACHE.labelCollectVaultBtn.innerText = tObj.collectVault;
+    const updateTabLabel = (btn, text) => {
+      if (!btn) return;
+      const lbl = btn.querySelector(".tab-label");
+      const cleanText = text.replace(/🏆|📅|📆/g, "").trim();
+      if (lbl) lbl.innerText = cleanText;
+      else btn.innerText = cleanText;
+    };
+    updateTabLabel(DOM_CACHE.tabBtnUpgrades, tObj.tabUpgrades);
+    updateTabLabel(DOM_CACHE.tabBtnManagers, tObj.tabManagers);
+    updateTabLabel(DOM_CACHE.tabBtnDepartments, tObj.tabDepartments);
+    updateTabLabel(DOM_CACHE.tabBtnMissions, tObj.tabMissions);
+    updateTabLabel(DOM_CACHE.tabBtnBranches, tObj.tabBranches);
+    const bnavMap = {
+      "upgrades": tObj.tabUpgrades,
+      "managers": tObj.tabManagers,
+      "departments": tObj.tabDepartments,
+      "missions": tObj.tabMissions,
+      "daily": tObj.dailyTabBtn,
+      "branches": tObj.tabBranches
+    };
+    document.querySelectorAll(".bottom-nav-btn").forEach((btn) => {
+      const lbl = btn.querySelector(".bnav-label");
+      if (lbl && bnavMap[btn.dataset.tab]) {
+        const cleanLbl = bnavMap[btn.dataset.tab].replace(/🏆|📅|📆/g, "").trim();
+        lbl.textContent = cleanLbl;
+        btn.setAttribute("aria-label", cleanLbl);
+      }
+    });
+    if (DOM_CACHE.bottomNav) DOM_CACHE.bottomNav.setAttribute("aria-label", tObj.bottomNavLabel || "Bottom navigation");
+    const tabBtnDaily = document.getElementById("tab-btn-daily");
+    if (tObj.dailyTabBtn) updateTabLabel(tabBtnDaily, tObj.dailyTabBtn);
+    if (DOM_CACHE.labelFooter) {
+      const flavorEl = document.getElementById("footer-flavor");
+      if (flavorEl) {
+        const flavors = tObj.footer_flavors;
+        if (flavors && flavors.length) {
+          if (window._footerFlavorInterval) clearInterval(window._footerFlavorInterval);
+          let fi = 0;
+          flavorEl.textContent = flavors[fi];
+          window._footerFlavorInterval = setInterval(function() {
+            fi = (fi + 1) % flavors.length;
+            flavorEl.textContent = flavors[fi];
+          }, 8e3);
+        } else {
+          flavorEl.textContent = tObj.footerText;
+        }
+      } else {
+        DOM_CACHE.labelFooter.innerText = tObj.footerText;
+      }
+    }
+    if (DOM_CACHE.bulkLabelText) {
+      DOM_CACHE.bulkLabelText.innerText = tObj.bulkLabel;
+    }
+    if (DOM_CACHE.offlineModalTitle) DOM_CACHE.offlineModalTitle.innerText = tObj.offlineModalTitle;
+    if (DOM_CACHE.offlineModalText) DOM_CACHE.offlineModalText.innerText = tObj.offlineModalText;
+    if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.innerText = tObj.offlineDoubleBtn;
+    if (DOM_CACHE.offlineModalClaimBtn) DOM_CACHE.offlineModalClaimBtn.innerText = tObj.offlineClaimBtn;
+    if (DOM_CACHE.langModalTitle) DOM_CACHE.langModalTitle.innerText = tObj.langModalTitle;
+    if (DOM_CACHE.langModalText) DOM_CACHE.langModalText.innerText = tObj.langModalText;
+    if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.innerText = tObj.langModalClose;
+    if (DOM_CACHE.settingsDangerTitle) {
+      const base = (tObj.dangerZoneTitle || "\u05D0\u05D6\u05D5\u05E8 \u05DE\u05E1\u05D5\u05DB\u05DF").replace("\u26A0\uFE0F", "").trim();
+      DOM_CACHE.settingsDangerTitle.innerHTML = `${base} <span aria-hidden="true">\u26A0\uFE0F</span>`;
+    }
+    if (DOM_CACHE.settingsThemeTitle) DOM_CACHE.settingsThemeTitle.innerText = tObj.themeTitle || "\u05D1\u05D7\u05E8 \u05E6\u05D1\u05E2 \u05E8\u05E7\u05E2";
+    if (DOM_CACHE.resetBtn) {
+      const base = (tObj.resetGameBtn || "\u05D0\u05D9\u05E4\u05D5\u05E1 \u05DE\u05E9\u05D7\u05E7 \u05DE\u05D5\u05D7\u05DC\u05D8").replace("\u26A0\uFE0F", "").trim();
+      DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">\u26A0\uFE0F</span> ${base}`;
+    }
+    if (DOM_CACHE.resetConfirmLabel) DOM_CACHE.resetConfirmLabel.innerText = tObj.resetConfirmLabel || "I confirm full reset";
+    const gdprTextEl = document.getElementById("gdpr-text");
+    if (gdprTextEl) gdprTextEl.innerText = tObj.gdprText || "Your data is stored on your device only.";
+    const gdprAcceptEl = document.getElementById("gdpr-accept-btn");
+    if (gdprAcceptEl) gdprAcceptEl.innerText = tObj.gdprAcceptBtn || "Got it \u2713";
+    const gdprPrivacyLinkEl = document.getElementById("gdpr-privacy-link");
+    if (gdprPrivacyLinkEl) gdprPrivacyLinkEl.innerText = tObj.privacyPolicyLink || "\u{1F512} Privacy Policy";
+    const settingsPrivacyLink = document.getElementById("settings-privacy-link");
+    if (settingsPrivacyLink) settingsPrivacyLink.innerText = tObj.privacyPolicyLink || "\u{1F512} Privacy Policy";
+    const elLangOptions = document.querySelectorAll(".lang-option-card");
+    elLangOptions.forEach((opt) => {
+      if (opt.getAttribute("data-lang") === lang) {
+        opt.classList.add("active");
+      } else {
+        opt.classList.remove("active");
+      }
+    });
+    const activeTabEl = document.querySelector(".tab-btn.active");
+    const activeTab = activeTabEl ? activeTabEl.getAttribute("data-tab") : "upgrades";
+    if (typeof window.invalidateTabHashes === "function") window.invalidateTabHashes();
+    if (activeTab === "upgrades" && typeof window.renderUpgradesTab === "function") window.renderUpgradesTab();
+    else if (activeTab === "managers" && typeof window.renderManagersTab === "function") window.renderManagersTab();
+    else if (activeTab === "departments" && typeof window.renderDepartmentsTab === "function") window.renderDepartmentsTab();
+    else if (activeTab === "missions" && typeof window.renderMissionsTab === "function") window.renderMissionsTab();
+    else if (activeTab === "branches" && typeof window.renderBranchesTab === "function") window.renderBranchesTab();
+    else if (activeTab === "daily") {
+      if (typeof window.renderDailyChallengesSection === "function") window.renderDailyChallengesSection();
+      if (typeof window.renderAchievementsTab === "function") window.renderAchievementsTab();
+    }
+    if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
+    if (DOM_CACHE.securityPath) {
+      DOM_CACHE.securityPath.title = tObj.tooltips.guard;
+      DOM_CACHE.securityPath.setAttribute("aria-label", tObj.tooltips.guard);
+    }
+    if (DOM_CACHE.vaultGraphic) {
+      DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
+      DOM_CACHE.vaultGraphic.setAttribute("aria-label", tObj.tooltips.vault);
+    }
+    if (DOM_CACHE.vaultGraphicLabel) DOM_CACHE.vaultGraphicLabel.innerText = tObj.vaultBankLabel || "BANK";
+    if (DOM_CACHE.vaultMiniLabel) DOM_CACHE.vaultMiniLabel.innerText = tObj.vaultMiniLabel || "Vault";
+    if (DOM_CACHE.cashLiveBadge) DOM_CACHE.cashLiveBadge.innerText = tObj.cashLiveBadge || "\u25CF LIVE";
+    if (DOM_CACHE.skipLink) DOM_CACHE.skipLink.innerText = tObj.skipLinkText || "Skip to content";
+    if (DOM_CACHE.analyticsBtn) {
+      DOM_CACHE.analyticsBtn.title = tObj.analyticsBtnTitle || "Metrics & Analytics";
+      DOM_CACHE.analyticsBtn.setAttribute("aria-label", tObj.analyticsBtnTitle || "Metrics & Analytics");
+    }
+    if (DOM_CACHE.boostBtn) {
+      DOM_CACHE.boostBtn.title = tObj.boostBtnTitle || "2x Income Booster";
+      DOM_CACHE.boostBtn.setAttribute("aria-label", tObj.boostBtnTitle || "2x Income Booster");
+    }
+    if (DOM_CACHE.vaultInfoBtn) {
+      DOM_CACHE.vaultInfoBtn.title = tObj.vaultInfoBtnTitle || "Vault interest info";
+      DOM_CACHE.vaultInfoBtn.setAttribute("aria-label", tObj.vaultInfoBtnTitle || "Vault interest info");
+    }
+    if (DOM_CACHE.fortuneWheelBtn) {
+      DOM_CACHE.fortuneWheelBtn.title = tObj.fortuneWheelTitle || "Daily Fortune Wheel";
+      DOM_CACHE.fortuneWheelBtn.setAttribute("aria-label", tObj.fortuneWheelTitle || "Daily Fortune Wheel");
+    }
+    if (DOM_CACHE.langBtn) DOM_CACHE.langBtn.setAttribute("aria-label", tObj.langModalTitle || "Settings & Language");
+    if (DOM_CACHE.vaultMiniBtn) {
+      DOM_CACHE.vaultMiniBtn.innerText = tObj.vaultMiniCollectBtn || "\u{1F4B0} Collect";
+      DOM_CACHE.vaultMiniBtn.setAttribute("aria-label", tObj.tooltips.vault);
+    }
+    if (DOM_CACHE.doubleIncomeLabel) DOM_CACHE.doubleIncomeLabel.innerText = tObj.doubleIncomeLabel || "Double Income";
+    if (DOM_CACHE.analyticsFromSettingsBtn) DOM_CACHE.analyticsFromSettingsBtn.innerText = tObj.analyticsShortcutBtn || "\u{1F4CA} Analytics Summary";
+    if (DOM_CACHE.footerPrivacyLink) DOM_CACHE.footerPrivacyLink.innerText = tObj.footerPrivacyLink || "Privacy Policy";
+    if (DOM_CACHE.controlPanelSection) DOM_CACHE.controlPanelSection.setAttribute("aria-label", tObj.controlPanelLabel || "Control Panel & Upgrades");
+    if (DOM_CACHE.controlPanelSrHeading) DOM_CACHE.controlPanelSrHeading.innerText = tObj.controlPanelLabel || "Control Panel & Upgrades";
+    if (DOM_CACHE.tabsNav) DOM_CACHE.tabsNav.setAttribute("aria-label", tObj.tabsNavLabel || "Internal navigation menu");
+    if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.setAttribute("aria-label", tObj.collectVault);
+    if (DOM_CACHE.cash) DOM_CACHE.cash.setAttribute("aria-label", tObj.cashLabel);
+    if (DOM_CACHE.vaultMiniIcon) DOM_CACHE.vaultMiniIcon.setAttribute("alt", tObj.vaultMiniLabel || "Vault");
+    if (DOM_CACHE.vaultMiniFillEl) DOM_CACHE.vaultMiniFillEl.setAttribute("aria-label", tObj.vaultMiniFillLabel || "Side vault fill");
+    if (DOM_CACHE.bankFloorSection) DOM_CACHE.bankFloorSection.setAttribute("aria-label", tObj.bankFloorLabel || "Bank branch view");
+    if (DOM_CACHE.queueFillBar) DOM_CACHE.queueFillBar.setAttribute("aria-label", tObj.queueAriaLabel || "Customer queue");
+    if (DOM_CACHE.advSlider) DOM_CACHE.advSlider.setAttribute("aria-label", tObj.advSliderLabel || "Ad campaign budget");
+    updateMuteButton();
+    rebuildTellersDOM();
+    draw();
+  }
+  function applyTheme(themeName) {
+    const root = document.documentElement;
+    if (themeName === "white") {
+      root.style.setProperty("--bg-color", "#faf9f6");
+      root.style.setProperty("--surface-color", "rgba(244, 242, 237, 0.92)");
+      root.style.setProperty("--surface-hover", "rgba(255, 255, 255, 0.98)");
+      root.style.setProperty("--border-color", "rgba(184, 134, 11, 0.25)");
+      root.style.setProperty("--border-glow", "rgba(184, 134, 11, 0.08)");
+      root.style.setProperty("--text-main", "#2c2a25");
+      root.style.setProperty("--text-muted", "#7a766a");
+      root.style.setProperty("--glass-blur", "blur(12px)");
+      document.body.style.backgroundImage = "radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(250, 249, 246, 1) 0px, transparent 100%)";
+    } else if (themeName === "blue") {
+      root.style.setProperty("--bg-color", "#080c1d");
+      root.style.setProperty("--surface-color", "rgba(13, 22, 54, 0.78)");
+      root.style.setProperty("--surface-hover", "rgba(20, 32, 75, 0.92)");
+      root.style.setProperty("--border-color", "rgba(223, 171, 41, 0.22)");
+      root.style.setProperty("--border-glow", "rgba(223, 171, 41, 0.12)");
+      root.style.setProperty("--text-main", "#f3f4f6");
+      root.style.setProperty("--text-muted", "#9ca3af");
+      root.style.setProperty("--glass-blur", "blur(16px)");
+      document.body.style.backgroundImage = "radial-gradient(at 0% 0%, rgba(223, 171, 41, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%)";
+    } else {
+      root.style.setProperty("--bg-color", "#06070a");
+      root.style.setProperty("--surface-color", "rgba(13, 15, 23, 0.82)");
+      root.style.setProperty("--surface-hover", "rgba(22, 25, 38, 0.95)");
+      root.style.setProperty("--border-color", "rgba(168, 85, 247, 0.35)");
+      root.style.setProperty("--border-glow", "rgba(223, 171, 41, 0.25)");
+      root.style.setProperty("--text-main", "#f3f4f6");
+      root.style.setProperty("--text-muted", "#9ca3af");
+      root.style.setProperty("--glass-blur", "blur(12px)");
+      document.body.style.backgroundImage = "radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(223, 171, 41, 0.12) 0px, transparent 50%)";
+    }
+    document.querySelectorAll(".theme-option-btn-choice").forEach((btn) => {
+      if (btn.getAttribute("data-theme") === themeName) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+    try {
+      window.localStorage.setItem("idle_bank_theme", themeName);
+    } catch (e) {
+      console.warn("Could not save theme preference:", e);
+    }
+  }
+  var AdService = {
+    _isShowing: false,
+    lastWatchedAt: 0,
+    AD_OFFER_COOLDOWN_MS: 7 * 60 * 1e3,
+    adMobAvailable: false,
+    _currentCallback: null,
+    isInCooldown: function() {
+      return AdService.lastWatchedAt > 0 && Date.now() - AdService.lastWatchedAt < AdService.AD_OFFER_COOLDOWN_MS;
+    },
+    initAdMob: async function() {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob) {
+        try {
+          await window.Capacitor.Plugins.AdMob.initialize({
+            requestTrackingAuthorization: true
+          });
+          AdService.adMobAvailable = true;
+          window.Capacitor.Plugins.AdMob.addListener("rewardedVideoAdReward", () => {
+            if (AdService._currentCallback) {
+              AdService._currentCallback();
+              AdService._currentCallback = null;
+            }
+            AdService.lastWatchedAt = Date.now();
+            boostOfferEndTime = 0;
+            if (window._boostOfferEndTime) window._boostOfferEndTime = 0;
+          });
+          window.Capacitor.Plugins.AdMob.addListener("rewardedVideoAdDismissed", () => {
+            AdService._isShowing = false;
+            AdService._currentCallback = null;
+            AdService.prepareAd();
+          });
+          await AdService.prepareAd();
+        } catch (e) {
+          console.error("AdMob init failed", e);
+        }
+      }
+    },
+    prepareAd: async function() {
+      if (!AdService.adMobAvailable) return;
+      try {
+        await window.Capacitor.Plugins.AdMob.prepareRewardVideoAd({
+          adId: "ca-app-pub-1189054329275307/1609550976",
+          isTesting: false
+        });
+      } catch (e) {
+        console.error("Failed to prepare ad", e);
+      }
+    },
+    show: async function(callback) {
+      if (AdService._isShowing) return;
+      AdService._isShowing = true;
+      if (AdService.adMobAvailable) {
+        try {
+          AdService._currentCallback = callback;
+          await window.Capacitor.Plugins.AdMob.showRewardVideoAd();
+          return;
+        } catch (e) {
+          console.error("AdMob show failed, falling back to mock:", e);
+          AdService._isShowing = false;
+          AdService._currentCallback = null;
+        }
+      }
+      AdService._isShowing = true;
+      let interval = null;
+      let settled = false;
+      const removeOverlay = () => {
+        const el = document.querySelector(".ad-playing-overlay");
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      };
+      const complete = (grantReward) => {
+        if (settled) return;
+        settled = true;
+        if (interval) clearInterval(interval);
+        AdService._isShowing = false;
+        removeOverlay();
+        if (grantReward) {
+          AdService.lastWatchedAt = Date.now();
+          boostOfferEndTime = 0;
+          window._boostOfferEndTime = 0;
+          if (callback) callback();
+        }
+      };
+      setTimeout(() => complete(true), 15e3);
+      try {
+        const overlay = document.createElement("div");
+        overlay.className = "ad-playing-overlay";
+        const lang = window.game && window.game.state && window.game.state.language || "en";
+        const tObj = translations[lang] || translations["he"];
+        const titleText = tObj.adTitle || "Watching Sponsored Ad...";
+        const subtitleText = tObj.adSubtitle || "Reward unlocks in:";
+        const closeText = tObj.adCloseBtn || "Close \u274C (No Reward)";
+        overlay.innerHTML = `
+                <div class="ad-playing-box" style="position: relative;">
+                    <button class="ad-close-btn" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.4); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; z-index: 10;">${closeText}</button>
+                    <div class="ad-spinner-container">
+                        <div class="ad-spinner-outer"></div>
+                        <div class="ad-spinner-inner"></div>
+                        <div class="ad-countdown">5</div>
+                    </div>
+                    <h2 style="font-size:1.3rem; margin-top:1rem;">${titleText}</h2>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">${subtitleText}</p>
+                </div>
+            `;
+        document.body.appendChild(overlay);
+        let timeLeft = 5;
+        interval = setInterval(() => {
+          timeLeft--;
+          const countdownEl = overlay.querySelector(".ad-countdown");
+          if (countdownEl) countdownEl.innerText = timeLeft;
+          if (timeLeft <= 0) {
+            complete(true);
+          }
+        }, 1e3);
+        const closeBtn = overlay.querySelector(".ad-close-btn");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => complete(false));
+        }
+      } catch (err) {
+        console.error("AdService failed to display:", err);
+        complete(true);
+      }
+    }
+  };
+  setTimeout(() => AdService.initAdMob(), 1e3);
+  function playAd(callback) {
+    AdService.show(callback);
+  }
+  function formatTime(sec) {
+    const hours = Math.floor(sec / 3600);
+    const mins = Math.floor(sec % 3600 / 60);
+    const secs = Math.floor(sec % 60);
+    return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
+  function openPrestigeModal2(target) {
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    const sharesGained = game.calculatePrestigeShares();
+    const elTitle = document.getElementById("prestige-modal-title");
+    const elGained = document.getElementById("prestige-shares-gained");
+    const elDoubled = document.getElementById("prestige-shares-doubled");
+    const elAdBtn = document.getElementById("prestige-ad-btn");
+    const elRegularBtn = document.getElementById("prestige-regular-btn");
+    const elCancelBtn = document.getElementById("prestige-cancel-btn");
+    const elRewardLabel = document.getElementById("prestige-reward-label");
+    if (elTitle) {
+      if (tObj.branches && tObj.branches.names && tObj.branches.names[target]) {
+        elTitle.innerText = tObj.branches.names[target];
+      } else if (game.branches && game.branches[target] && game.branches[target].name) {
+        elTitle.innerText = game.branches[target].name;
+      } else {
+        elTitle.innerText = (tObj.branchLabel || "Branch") + " " + (parseInt(target) + 1);
+      }
+    }
+    if (elGained) elGained.innerText = `+${sharesGained.toLocaleString("en-US")}`;
+    if (elDoubled) elDoubled.innerText = `${(sharesGained * 3).toLocaleString("en-US")}`;
+    if (elAdBtn) elAdBtn.innerText = tObj.prestigeAdBtn((sharesGained * 3).toLocaleString("en-US"));
+    if (elRegularBtn) elRegularBtn.innerText = tObj.prestigeRegularBtn;
+    if (elCancelBtn) elCancelBtn.innerText = tObj.prestigeCancelBtn;
+    if (elRewardLabel) elRewardLabel.innerText = tObj.prestigeRewardLabel;
+    const modal = document.getElementById("prestige-modal");
+    if (modal) {
+      modal.setAttribute("data-target-branch", target);
+      modal.classList.add("active");
+    }
+    if (typeof window.showDiscoveryTip === "function") window.showDiscoveryTip("prestige");
+  }
+  function openBoostModal() {
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    const eventModal = document.getElementById("event-modal");
+    const iconEl = document.getElementById("event-icon");
+    const titleEl = document.getElementById("event-title");
+    const textEl = document.getElementById("event-text");
+    const container = document.getElementById("event-options-container");
+    iconEl.innerText = "\u26A1";
+    titleEl.innerText = tObj.boostModalTitle;
+    textEl.innerText = tObj.boostModalText;
+    container.innerHTML = "";
+    const _boostEps = game.getEarningsPerSecond() || 0;
+    const _projectedEarnings = Math.floor(_boostEps * 4 * 3600);
+    const _earningsHint = _projectedEarnings > 0 && typeof tObj.boostEventEarningsHint === "function" ? tObj.boostEventEarningsHint(formatMoney(_projectedEarnings)) : "";
+    const btnAd = document.createElement("button");
+    btnAd.className = "event-option-btn ad-option";
+    btnAd.innerHTML = `
+        <div class="event-option-title">${tObj.boostEventAdTitle || "\u{1F3AC} Watch Ad & Activate"}</div>
+        <div class="event-option-desc">${tObj.boostEventAdDesc || "Adds 4 hours of double earnings (up to 8h)"}${_earningsHint}</div>
+    `;
+    btnAd.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.addBoost2x(4);
+        draw();
+      });
+    });
+    const btnCancel = document.createElement("button");
+    btnCancel.className = "event-option-btn";
+    btnCancel.innerHTML = `
+        <div class="event-option-title">${tObj.cancelLabel || "Cancel"}</div>
+        <div class="event-option-desc">${tObj.backToGameLabel || "Back to game"}</div>
+    `;
+    btnCancel.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+    });
+    container.appendChild(btnAd);
+    container.appendChild(btnCancel);
+    eventModal.classList.add("active");
+  }
+  function openAnalyticsModal() {
+    const modal = document.getElementById("analytics-modal");
+    if (!modal) return;
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    document.getElementById("analytics-modal-title").innerText = tObj.analyticsTitle;
+    document.getElementById("analytics-title-general").innerText = tObj.analyticsGeneralStats || "General Stats";
+    document.getElementById("analytics-label-eps").innerText = tObj.analyticsTotalEps;
+    document.getElementById("analytics-label-vault").innerText = tObj.analyticsVaultUtil;
+    document.getElementById("analytics-title-tellers").innerText = tObj.analyticsTellersTitle;
+    document.getElementById("analytics-title-warnings").innerText = tObj.analyticsBottlenecksTitle;
+    document.getElementById("analytics-close-btn").innerText = tObj.analyticsCloseBtn;
+    document.getElementById("analytics-total-eps").innerText = formatMoney(game.getEarningsPerSecond());
+    const vCap = game.getVaultCapacity(game.state.vault.level);
+    const vaultUtil = Math.round(game.state.vault.cashStored / vCap * 100);
+    document.getElementById("analytics-vault-util").innerText = `${vaultUtil}%`;
+    const tellersListEl = document.getElementById("analytics-tellers-list");
+    tellersListEl.innerHTML = "";
+    const tellersFragment = document.createDocumentFragment();
+    const currentBaseReward = game.getCurrentBaseReward();
+    const totalMultiplier = game.getTotalMultiplier();
+    game.state.tellers.forEach((t) => {
+      if (t.unlocked) {
+        const row = document.createElement("div");
+        row.className = "analytic-teller-row";
+        const speed = game.getTellerSpeed(t.level);
+        const reward = currentBaseReward * totalMultiplier;
+        const tellerEps = reward / speed;
+        row.innerHTML = `
+                <span>${tObj.tellerLabel} ${t.id + 1} (${tObj.levelLabel} ${t.level}):</span>
+                <strong>${formatMoney(tellerEps)}/${tObj.secLabel || "sec"}</strong>
+            `;
+        tellersFragment.appendChild(row);
+      }
+    });
+    tellersListEl.appendChild(tellersFragment);
+    const warningsListEl = document.getElementById("analytics-warnings-list");
+    warningsListEl.innerHTML = "";
+    const warnings = [];
+    if (game.state.vault.cashStored >= vCap) {
+      warnings.push(tObj.analyticsWarningVaultFull);
+    }
+    const qCap = game.getQueueCapacity(game.state.queueUpgradeLevel || 1);
+    if (game.customerQueue.length >= qCap) {
+      warnings.push(tObj.analyticsWarningQueueFull);
+    }
+    const anyTellerFull = game.state.tellers.some((t) => t.unlocked && t.cashStored >= game.getTellerCapacity(t.level) * 0.8);
+    if (anyTellerFull) {
+      warnings.push(tObj.analyticsWarningGuardsSlow);
+    }
+    if (game.customerQueue.length >= 5) {
+      warnings.push(tObj.analyticsWarningTellersSlow);
+    }
+    if (warnings.length === 0) {
+      warningsListEl.innerHTML = `<div class="analytic-no-warning">${tObj.analyticsNoBottlenecks}</div>`;
+    } else {
+      const warningsFragment = document.createDocumentFragment();
+      warnings.forEach((w) => {
+        const item = document.createElement("div");
+        item.className = "analytic-warning-item";
+        item.innerText = w;
+        warningsFragment.appendChild(item);
+      });
+      warningsListEl.appendChild(warningsFragment);
+    }
+    modal.classList.add("active");
+    const closeBtn = document.getElementById("analytics-close-btn");
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        initSound2();
+        modal.classList.remove("active");
+      };
+    }
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        initSound2();
+        modal.classList.remove("active");
+      }
+    };
+  }
+  var EVENT_HANDLERS = {
+    crowd: handleCrowdEvent,
+    security: handleSecurityEvent,
+    rescue: handleRescueEvent,
+    rush_hours: handleRushHoursEvent,
+    investor: handleInvestorEvent,
+    audit: handleAuditEvent,
+    maintenance: handleMaintenanceEvent,
+    power_outage: handlePowerOutageEvent,
+    robbery_attempt: handleRobberyAttemptEvent,
+    celebrity_visit: handleCelebrityVisitEvent,
+    lottery_winner: handleLotteryWinnerEvent,
+    competitor_news: handleCompetitorNewsEvent,
+    economic_boom: handleEconomicBoomEvent,
+    atm_malfunction: handleAtmMalfunctionEvent
+  };
+  function handleCrowdEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(500 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.02));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      game.triggerTempQueueBonus(15, 12e4);
+      game.triggerSpeedBoost(120, 2);
+      eventModal.classList.remove("active");
+      spawnFloating("CROWD MANAGED! +15 slots, 2x SPEED", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      game.shiftQueue(3);
+      eventModal.classList.remove("active");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        const reward = game.getCurrentBaseReward() * game.getTotalMultiplier() * 5;
+        const clientsCount = Math.max(10, game.customerQueue.length);
+        const totalGained = Math.round(reward * clientsCount * game.getEventBonusMultiplier());
+        game.clearQueue();
+        game.addCash(totalGained);
+        spawnFloating(`+$${formatMoney(totalGained)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleSecurityEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1e3 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.02));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      const bounty = Math.round(game.getEarningsPerSecond() * 300 * game.getEventBonusMultiplier());
+      game.addCash(bounty);
+      spawnFloating(`+$${formatMoney(bounty)} Reputation Bounty!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      if (Math.random() < 0.5) {
+        const lost = Math.round(game.state.vault.cashStored * 0.1);
+        game.deductVaultCash(lost);
+        const msg = typeof tObj.securityBreachMsg === "function" ? tObj.securityBreachMsg(formatMoney(lost)) : `Break-in occurred! You lost ${formatMoney(lost)} from the vault.`;
+        if (typeof window.showToast === "function") {
+          window.showToast(msg, "warning");
+        } else {
+          console.warn(msg);
+        }
+      } else {
+        const payout = Math.round(game.state.cash * 0.05 * game.getEventBonusMultiplier());
+        game.addCash(payout);
+        const msg = typeof tObj.securityDefenseMsg === "function" ? tObj.securityDefenseMsg(formatMoney(payout)) : `Security held the line! You received an insurance payout of ${formatMoney(payout)}.`;
+        if (typeof window.showToast === "function") {
+          window.showToast(msg, "success");
+        }
+        spawnFloating(`+$${formatMoney(payout)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      }
+    });
+    const securityGrant = Math.round(Math.max(5e3 * Math.pow(6, game.state.currentBranch), game.getEarningsPerSecond() * 60, game.state.cash * 0.15)) * 3 * game.getEventBonusMultiplier();
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc(formatMoney(securityGrant))}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.addCash(securityGrant);
+        spawnFloating(`+$${formatMoney(securityGrant)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleRescueEvent(container, lang, tObj, eObj, eventModal) {
+    const bailoutAmount = 15e3 * Math.pow(6, game.state.currentBranch) * 3 * game.getEventBonusMultiplier();
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn ad-option";
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(bailoutAmount))}</div>
+        <div class="event-option-desc">${eObj.optADesc(formatMoney(bailoutAmount))}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.addCash(bailoutAmount);
+        spawnFloating(`+$${formatMoney(bailoutAmount)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+  }
+  function handleRushHoursEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1e3 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      game.triggerSpeedBoost(120, 4);
+      eventModal.classList.remove("active");
+      spawnFloating("RUSH SPEED ACTIVATE! 4x SPEED", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(120, 10);
+        spawnFloating("TURBO 10x SPEED!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleInvestorEvent(container, lang, tObj, eObj, eventModal) {
+    const cashVal = Math.round(Math.max(150, Math.round(game.getEarningsPerSecond() * 1200)) * game.getEventBonusMultiplier());
+    let eligibleManagers = [];
+    const newMgrKeys = ["customer", "finance", "operations", "service", "vip", "marketing"];
+    newMgrKeys.forEach((k) => {
+      if (game.state.managers[k] && game.state.managerUpgrades[k] && game.state.managerUpgrades[k].level < 5) {
+        eligibleManagers.push(k);
+      }
+    });
+    let chosenManager = null;
+    if (eligibleManagers.length > 0) {
+      chosenManager = eligibleManagers[Math.floor(Math.random() * eligibleManagers.length)];
+    }
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn ad-option";
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cashVal))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.addCash(cashVal);
+        spawnFloating(`+$${formatMoney(cashVal)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn ad-option";
+    if (chosenManager !== null) {
+      const nextLevel = game.state.managerUpgrades[chosenManager].level + 1;
+      const mName = tObj.managers.names[chosenManager];
+      btnB.innerHTML = `
+            <div class="event-option-title">${eObj.optBUpgrade(mName, nextLevel)}</div>
+            <div class="event-option-desc">${eObj.optBDesc}</div>
+        `;
+      btnB.addEventListener("click", () => {
+        initSound2();
+        eventModal.classList.remove("active");
+        playAd(() => {
+          game.upgradeManagerLevelDirectly(chosenManager, nextLevel);
+          spawnFloating(`${mName} UPGRADED to Lv ${nextLevel}!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+        });
+      });
+    } else {
+      btnB.innerHTML = `
+            <div class="event-option-title">${eObj.optBShares}</div>
+            <div class="event-option-desc">${eObj.optBDesc}</div>
+        `;
+      btnB.addEventListener("click", () => {
+        initSound2();
+        eventModal.classList.remove("active");
+        playAd(() => {
+          game.addShares(5);
+          spawnFloating(`+5 GOLDEN SHARES!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+        });
+      });
+    }
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleAuditEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(800 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      spawnFloating(tObj.auditCleanMsg || "Audit closed clean!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      const penalty = Math.round(game.state.cash * 0.08);
+      game.spendCash(penalty);
+      game.addShares(3);
+      spawnFloating(typeof tObj.auditPenaltyMsg === "function" ? tObj.auditPenaltyMsg(formatMoney(penalty)) : `-${formatMoney(penalty)} | +3 Gold Shares`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        if (Math.random() < 0.5) {
+          const bonus = Math.round(game.getEarningsPerSecond() * 120 * game.getEventBonusMultiplier());
+          game.addCash(bonus);
+          spawnFloating(`+${formatMoney(bonus)} APPEAL WON!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+        } else {
+          const fine = Math.round(game.state.cash * 0.16);
+          game.spendCash(fine);
+          spawnFloating(`-${formatMoney(fine)} Appeal lost!`, window.innerWidth / 2, window.innerHeight / 2, "red");
+        }
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleMaintenanceEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(600 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.025));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(600, 1.15);
+      spawnFloating(tObj.equipmentFixedMsg || "Fixed! +15% speed", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(300, 0.7);
+      spawnFloating(tObj.equipmentWaitMsg || "-30% speed for 5 min", window.innerWidth / 2, window.innerHeight / 2, "red");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(300, 1.5);
+        spawnFloating(tObj.contractorMsg || "Contractor arrived! +50% speed", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handlePowerOutageEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1200 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      spawnFloating(tObj.generatorActiveMsg || "Generator running!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(300, 0.5);
+      spawnFloating(tObj.powerHalfMsg || "50% output for 5 min", window.innerWidth / 2, window.innerHeight / 2, "red");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(600, 1.25);
+        spawnFloating(tObj.generatorFundedMsg || "Generator funded! +25% speed", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleRobberyAttemptEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1500 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      const bounty = Math.round(game.getEarningsPerSecond() * 180 * game.getEventBonusMultiplier());
+      game.addCash(bounty);
+      spawnFloating(`+${formatMoney(bounty)} Security Bounty!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      spawnFloating(tObj.policeOnWayMsg || "Police en route!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        const insuranceBonus = Math.round(game.getEarningsPerSecond() * 240 * game.getEventBonusMultiplier());
+        game.addCash(insuranceBonus);
+        spawnFloating(`+${formatMoney(insuranceBonus)} Insurance!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleCelebrityVisitEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2e3 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.05));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(3600, 1.15);
+      spawnFloating(tObj.vipSpeedMsg || "VIP +15% speed for 1 hour!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      const reward = Math.round(game.getEarningsPerSecond() * 120 * game.getEventBonusMultiplier());
+      game.addCash(reward);
+      spawnFloating(`+${formatMoney(reward)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(3600, 1.15);
+        const bonus = Math.round(game.getEarningsPerSecond() * 180 * game.getEventBonusMultiplier());
+        game.addCash(bonus);
+        spawnFloating(`VIP BOOST + +${formatMoney(bonus)}`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleLotteryWinnerEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2500 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      const investPayout = Math.round(game.getEarningsPerSecond() * 30 * 6 * game.getEventBonusMultiplier());
+      game.addCash(investPayout);
+      game.triggerSpeedBoost(3600, 1.3);
+      spawnFloating(`+${formatMoney(investPayout)} INVESTMENT!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      const payout = Math.round(game.getEarningsPerSecond() * 60 * game.getEventBonusMultiplier());
+      game.addCash(payout);
+      spawnFloating(`+${formatMoney(payout)} DEPOSIT!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        const investPayout = Math.round(game.getEarningsPerSecond() * 30 * 6 * game.getEventBonusMultiplier());
+        const stdPayout = Math.round(game.getEarningsPerSecond() * 60 * game.getEventBonusMultiplier());
+        game.addCash(investPayout + stdPayout);
+        game.triggerSpeedBoost(3600, 1.3);
+        spawnFloating(`+${formatMoney(investPayout + stdPayout)} VIP PACKAGE!`, window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleCompetitorNewsEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1800 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.04));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(3600, 1.5);
+      game.triggerTempQueueBonus(10, 36e5);
+      spawnFloating(tObj.clientWave15Msg || "Client wave! x1.5 for 1h", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(1800, 1.05);
+      spawnFloating(tObj.clientBoost5Msg || "+5% clients for 30 min", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(3600, 2);
+        game.triggerTempQueueBonus(15, 36e5);
+        spawnFloating(tObj.clientWave2Msg || "Client wave! x2 for 1h", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleEconomicBoomEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(2200 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.05));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(3600, 1.2);
+      spawnFloating(tObj.eps20Msg || "EPS +20% for 1h!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(1800, 1.1);
+      spawnFloating(tObj.eps10Msg || "EPS +10% for 30 min", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(3600, 1.3);
+        spawnFloating(tObj.eps30Msg || "EPS +30% for 1h!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function handleAtmMalfunctionEvent(container, lang, tObj, eObj, eventModal) {
+    const cost = Math.round(Math.max(1e3 * Math.pow(4, game.state.currentBranch), game.state.cash * 0.03));
+    const btnA = document.createElement("button");
+    btnA.className = "event-option-btn";
+    const canAfford = game.state.cash >= cost;
+    if (!canAfford) btnA.classList.add("disabled");
+    btnA.innerHTML = `
+        <div class="event-option-title">${eObj.optA(formatMoney(cost))}</div>
+        <div class="event-option-desc">${eObj.optADesc}</div>
+    `;
+    btnA.addEventListener("click", () => {
+      if (!canAfford) return;
+      initSound2();
+      game.spendCash(cost);
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(600, 1.3);
+      game.triggerTempQueueBonus(8, 6e5);
+      spawnFloating(tObj.atmBackMsg || "ATMs back online!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    });
+    const btnB = document.createElement("button");
+    btnB.className = "event-option-btn";
+    btnB.innerHTML = `
+        <div class="event-option-title">${eObj.optB}</div>
+        <div class="event-option-desc">${eObj.optBDesc}</div>
+    `;
+    btnB.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      game.triggerSpeedBoost(300, 0.8);
+      spawnFloating(tObj.speed20MinusMsg || "-20% speed for 5 min", window.innerWidth / 2, window.innerHeight / 2, "red");
+    });
+    const btnC = document.createElement("button");
+    btnC.className = "event-option-btn ad-option";
+    btnC.innerHTML = `
+        <div class="event-option-title">${eObj.optC}</div>
+        <div class="event-option-desc">${eObj.optCDesc}</div>
+    `;
+    btnC.addEventListener("click", () => {
+      initSound2();
+      eventModal.classList.remove("active");
+      playAd(() => {
+        game.triggerSpeedBoost(600, 1.25);
+        game.triggerTempQueueBonus(8, 6e5);
+        spawnFloating(tObj.atmFixedWaveMsg || "ATMs fixed \u2014 client wave!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    container.appendChild(btnA);
+    container.appendChild(btnB);
+    container.appendChild(btnC);
+  }
+  function triggerRandomEvent() {
+    if (document.querySelector(".modal-overlay.active")) return;
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    let eventType = "crowd";
+    const rescueThreshold = 2e3 * Math.pow(6, game.state.currentBranch);
+    const currentEps = game.getEarningsPerSecond();
+    if (game.state.cash < rescueThreshold && game.state.vault.cashStored < rescueThreshold && currentEps * 30 < rescueThreshold) {
+      eventType = "rescue";
+    } else {
+      const normalEvents = [
+        "crowd",
+        "security",
+        "rush_hours",
+        "investor",
+        "audit",
+        "maintenance",
+        "power_outage",
+        "robbery_attempt",
+        "celebrity_visit",
+        "lottery_winner",
+        "competitor_news",
+        "economic_boom",
+        "atm_malfunction"
+      ];
+      eventType = normalEvents[Math.floor(Math.random() * normalEvents.length)];
+    }
+    const eventModal = document.getElementById("event-modal");
+    if (!eventModal) return;
+    const modalBox = eventModal.querySelector(".modal-box");
+    if (!modalBox) return;
+    const allEventClasses = [
+      "event-crowd",
+      "event-security",
+      "event-rescue",
+      "event-rush_hours",
+      "event-investor",
+      "event-audit",
+      "event-maintenance",
+      "event-power_outage",
+      "event-robbery_attempt",
+      "event-celebrity_visit",
+      "event-lottery_winner",
+      "event-competitor_news",
+      "event-economic_boom",
+      "event-atm_malfunction"
+    ];
+    modalBox.classList.remove(...allEventClasses);
+    modalBox.classList.add(`event-${eventType}`);
+    const iconEl = document.getElementById("event-icon");
+    const titleEl = document.getElementById("event-title");
+    const textEl = document.getElementById("event-text");
+    const container = document.getElementById("event-options-container");
+    if (!iconEl || !titleEl || !textEl || !container) return;
+    const eventCashValEl = document.getElementById("event-cash-val");
+    if (eventCashValEl) {
+      const labelText = tObj.cashLabel || "\u05D9\u05EA\u05E8\u05EA \u05DE\u05D6\u05D5\u05DE\u05E0\u05D9\u05DD";
+      const displayBox = document.getElementById("event-cash-display-box");
+      if (displayBox) {
+        displayBox.innerHTML = `${labelText}: <span id="event-cash-val" style="color:var(--money-green); font-family:'Outfit', sans-serif;">${formatMoney(game.state.cash)}</span>`;
+      }
+    }
+    const eObj = tObj.events && tObj.events[eventType] || tObj.events_extended && tObj.events_extended[eventType];
+    if (!eObj) return;
+    const EVENT_ICONS = {
+      crowd: "\u{1F465}",
+      security: "\u{1F6A8}",
+      rescue: "\u{1F3DB}\uFE0F",
+      rush_hours: "\u26A1",
+      investor: "\u{1F4BC}",
+      audit: "\u{1F4CB}",
+      maintenance: "\u{1F527}",
+      power_outage: "\u{1F50C}",
+      robbery_attempt: "\u{1F694}",
+      celebrity_visit: "\u{1F31F}",
+      lottery_winner: "\u{1F3B0}",
+      competitor_news: "\u{1F4F0}",
+      economic_boom: "\u{1F4C8}",
+      atm_malfunction: "\u{1F4B3}"
+    };
+    iconEl.innerText = EVENT_ICONS[eventType] || "\u{1F4E2}";
+    titleEl.innerText = eObj.title;
+    textEl.innerText = eObj.desc;
+    container.innerHTML = "";
+    const handler = EVENT_HANDLERS[eventType];
+    if (handler) {
+      handler(container, lang, tObj, eObj, eventModal);
+    }
+    if (AdService.isInCooldown()) {
+      container.querySelectorAll(".ad-option").forEach((btn) => btn.remove());
+      const adDependentEvents = ["rescue", "investor"];
+      if (adDependentEvents.includes(eventType) && container.children.length <= 1) {
+        return;
+      }
+    }
+    if (window.NotificationQueue) {
+      window.NotificationQueue.request("event-modal", window.NotificationQueue.PRIORITY.CASUAL, () => {
+        eventModal.classList.add("active");
+      }, { dropIfBusy: true });
+    } else {
+      eventModal.classList.add("active");
+    }
+  }
+  function updateAdvDisplay(budget) {
+    if (!DOM_CACHE.advDisplay) return;
+    const lang = game.state.language || "en";
+    const tObj = translations[lang];
+    if (budget === 0) {
+      DOM_CACHE.advDisplay.innerText = tObj.advValueOff;
+      DOM_CACHE.advDisplay.classList.remove("insufficient");
+    } else {
+      DOM_CACHE.advDisplay.innerText = formatMoney(budget) + tObj.perMinute;
+      if (!game.state.advActive) {
+        DOM_CACHE.advDisplay.innerText += tObj.advSuspended;
+        DOM_CACHE.advDisplay.classList.add("insufficient");
+      } else {
+        DOM_CACHE.advDisplay.classList.remove("insufficient");
+      }
+    }
+  }
+  function updateMuteButton() {
+    if (!DOM_CACHE.muteBtn) return;
+    const lang = window.gameLanguage || "en";
+    const tObj = translations[lang] || translations.en;
+    const isMuted = window.gameAudio ? window.gameAudio.isMuted : true;
+    if (isMuted) {
+      DOM_CACHE.muteBtn.innerText = "\u{1F507}";
+      DOM_CACHE.muteBtn.title = tObj.unmute;
+      DOM_CACHE.muteBtn.setAttribute("aria-label", tObj.unmute);
+      DOM_CACHE.muteBtn.classList.add("muted");
+    } else {
+      DOM_CACHE.muteBtn.innerText = "\u{1F50A}";
+      DOM_CACHE.muteBtn.title = tObj.mute;
+      DOM_CACHE.muteBtn.setAttribute("aria-label", tObj.mute);
+      DOM_CACHE.muteBtn.classList.remove("muted");
+    }
+  }
+  function initSound2() {
+    if (!soundInitialized) {
+      if (window.gameAudio && typeof window.gameAudio.init === "function") {
+        window.gameAudio.init();
+        if (!window.gameAudio.isMuted && typeof window.gameAudio.startMusic === "function") {
+          window.gameAudio.startMusic();
+        }
+      }
+      soundInitialized = true;
+    }
+  }
+  function triggerMilestoneConfetti(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const container = document.getElementById("floating-container") || document.body;
+    const colors = ["#dfab29", "#ffd700", "#10b981", "#3b82f6", "#ec4899", "#a855f7"];
+    const MAX_CONFETTI = window.innerWidth <= 768 ? 15 : 30;
+    const particles = [];
+    for (let i = 0; i < MAX_CONFETTI; i++) {
+      const particle = document.createElement("div");
+      particle.className = "confetti-particle";
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 40 + Math.random() * 110;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance - (30 + Math.random() * 40);
+      particle.style.setProperty("--dx", `${dx}px`);
+      particle.style.setProperty("--dy", `${dy}px`);
+      particle.style.left = `${centerX}px`;
+      particle.style.top = `${centerY}px`;
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      const size = 5 + Math.random() * 6;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      if (Math.random() > 0.5) {
+        particle.style.borderRadius = "0px";
+      }
+      container.appendChild(particle);
+      particles.push(particle);
+    }
+    setTimeout(() => particles.forEach((p) => p.remove()), 1200);
+  }
+  function handlePurchaseFeedback2(btn, e, beforeCash, beforeLevelOrUnlocked, type, extraId) {
+    const afterCash = game.state.cash;
+    const spent = beforeCash - afterCash;
+    let afterLevelOrUnlocked = false;
+    let isUnlock = false;
+    if (type === "teller") {
+      afterLevelOrUnlocked = game.state.tellers[extraId].level;
+    } else if (type === "guard") {
+      afterLevelOrUnlocked = game.state.guards[extraId].level;
+    } else if (type === "unlock-teller") {
+      afterLevelOrUnlocked = game.state.tellers[extraId].unlocked;
+      isUnlock = true;
+    } else if (type === "unlock-guard") {
+      afterLevelOrUnlocked = game.state.guards[extraId].unlocked;
+      isUnlock = true;
+    } else if (type === "vault") {
+      afterLevelOrUnlocked = game.state.vault.level;
+    } else if (type === "queue") {
+      afterLevelOrUnlocked = game.state.queueUpgradeLevel;
+    } else if (type === "hire-manager") {
+      afterLevelOrUnlocked = game.state.managers[extraId];
+      isUnlock = true;
+    } else if (type === "upgrade-manager") {
+      afterLevelOrUnlocked = game.state.managerUpgrades[extraId].level;
+    } else if (type === "unlock-dept") {
+      const deptObj = game.state.departments.find((d) => d.id === extraId);
+      afterLevelOrUnlocked = deptObj ? deptObj.unlocked : false;
+      isUnlock = true;
+    }
+    const rect = btn.getBoundingClientRect();
+    const x = e && e.clientX ? e.clientX : rect.left + rect.width / 2;
+    const y = e && e.clientY ? e.clientY : rect.top;
+    const card = btn.closest(".upgrade-card") || btn.closest(".upg-new-layout") || btn.closest(".mgr-new-layout");
+    if (card) {
+      card.classList.remove("sparkle-flash");
+      void card.offsetWidth;
+      card.classList.add("sparkle-flash");
+    }
+    if (spent > 0) {
+      spawnFloating(`-$${formatMoney(spent)}`, x, y, "red");
+      if (typeof spawnParticles === "function") {
+        spawnParticles(x, y, 8, "sparkle");
+      }
+    }
+    if (isUnlock) {
+      if (afterLevelOrUnlocked && !beforeLevelOrUnlocked) {
+        setTimeout(() => {
+          spawnFloating(`UNLOCKED! \u{1F513}`, x, y - 25, "gold");
+        }, 150);
+      }
+    } else {
+      const levelDiff = afterLevelOrUnlocked - beforeLevelOrUnlocked;
+      if (levelDiff > 0) {
+        setTimeout(() => {
+          spawnFloating(`LEVEL UP! +${levelDiff} \u26A1`, x, y - 25, "gold");
+        }, 150);
+        if (type === "teller") {
+          const milestones = [10, 25, 50, 100];
+          const reached = milestones.find((m) => beforeLevelOrUnlocked < m && afterLevelOrUnlocked >= m);
+          if (reached) {
+            setTimeout(() => {
+              triggerMilestoneConfetti(btn);
+              spawnFloating(`MILESTONE Lv ${reached}! \u{1F3C6}\u{1F389}`, x, y - 55, "#dfab29");
+              if (typeof rebuildTellersDOM === "function") rebuildTellersDOM();
+            }, 250);
+          }
+        }
+      }
+    }
+  }
+  function handleMissionRedirect2(missionType, targetId) {
+    let tabName = "upgrades";
+    let selector = "";
+    switch (missionType) {
+      case "upgrade_teller": {
+        tabName = "upgrades";
+        const tId = targetId !== void 0 ? targetId : 0;
+        selector = `.buy-btn[data-type="teller"][data-id="${tId}"], .buy-btn[data-action="unlock-teller"][data-id="${tId}"]`;
+        break;
+      }
+      case "upgrade_guard": {
+        tabName = "upgrades";
+        const gId = targetId !== void 0 ? targetId : 0;
+        selector = `.buy-btn[data-type="guard"][data-id="${gId}"], .buy-btn[data-action="unlock-guard"][data-id="${gId}"]`;
+        break;
+      }
+      case "upgrade_vault":
+        tabName = "upgrades";
+        selector = "#upgrade-vault-btn";
+        break;
+      case "clients":
+        tabName = "upgrades";
+        selector = "#upgrade-queue-btn";
+        break;
+      case "accumulate_cash":
+      case "earn_cash":
+      case "earn_eps":
+      case "serve_rich_vip":
+      case "vip_collector":
+      case "spend_cash":
+      case "break_the_wall":
+        tabName = "upgrades";
+        selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
+        break;
+      case "hire_managers":
+      case "upgrade_managers":
+      case "manager_hire":
+      case "all_managers":
+        tabName = "managers";
+        selector = ".buy-mgr-btn, .upgrade-mgr-btn";
+        break;
+      case "unlock_departments":
+      case "department_unlock":
+        tabName = "departments";
+        selector = ".dept-action-btn:not(.active)";
+        break;
+      case "teller_max":
+        tabName = "upgrades";
+        selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
+        break;
+      case "guard_trips":
+        tabName = "upgrades";
+        selector = '.buy-btn[data-type="guard"][data-id="0"]';
+        break;
+      case "boost_run":
+        tabName = "upgrades";
+        selector = '.buy-btn[data-type="teller"][data-id="0"]';
+        break;
+      case "department_grind":
+        tabName = "managers";
+        selector = `.upgrade-mgr-btn[data-type="${targetId}"], .buy-mgr-btn[data-type="${targetId}"]`;
+        break;
+      case "missions_veteran":
+        tabName = "missions";
+        break;
+    }
+    const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    if (tabBtn) {
+      tabBtn.click();
+    }
+    setTimeout(() => {
+      if (!selector) return;
+      const targetBtn = document.querySelector(selector);
+      if (targetBtn) {
+        const card = targetBtn.closest(".new-upg-wrapper, .upgrade-card, .manager-card, .department-card, .prestige-panel, .gold-upgrade-card");
+        if (card) {
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          card.classList.add("mission-highlight");
+          setTimeout(() => {
+            card.classList.remove("mission-highlight");
+          }, 2500);
+        }
+      }
+    }, 300);
+  }
+  function showContextualAdBanner() {
+    if (AdService.isInCooldown()) return;
+    if (game.state.boost2xTimeLeft > 0) return;
+    if (document.querySelector(".modal-overlay.active")) return;
+    if (contextualBannerShown) return;
+    const lang = game.state && game.state.language || "en";
+    const existing = document.getElementById("contextual-offer-banner");
+    if (existing) existing.remove();
+    const tObj = translations[lang] || translations.en;
+    const msg = tObj.boostMilestoneMsg || "\u{1F389} Cash milestone! Activate x2 boost?";
+    const banner = document.createElement("div");
+    banner.id = "contextual-offer-banner";
+    banner.innerHTML = `
+        <span style="font-size:0.82rem; color:var(--text-main); flex:1;">${msg}</span>
+        <button id="ctx-offer-yes" style="background:var(--primary-gold,#dfab29); color:#000; border:none; padding:0.28rem 0.7rem; border-radius:8px; font-size:0.78rem; cursor:pointer; font-weight:700; white-space:nowrap;">${tObj.ctxWatchBtn || "\u{1F3AC} Watch"}</button>
+        <button id="ctx-offer-no" style="background:transparent; border:1px solid var(--border-color,rgba(255,255,255,0.1)); color:var(--text-muted,#9ca3af); padding:0.28rem 0.5rem; border-radius:8px; font-size:0.78rem; cursor:pointer;">\u2715</button>
+    `;
+    Object.assign(banner.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.6rem",
+      position: "fixed",
+      bottom: "70px",
+      left: "0",
+      right: "0",
+      margin: "0 auto",
+      background: "var(--surface-color,rgba(20,24,36,0.95))",
+      border: "1px solid var(--primary-gold,#dfab29)",
+      borderRadius: "12px",
+      padding: "0.65rem 0.85rem",
+      zIndex: "2000",
+      maxWidth: "340px",
+      width: "90%",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
+      animation: "slideUpIn 0.3s ease"
+    });
+    document.body.appendChild(banner);
+    contextualBannerShown = true;
+    const removeBanner = () => {
+      if (banner.parentNode) banner.remove();
+      contextualBannerShown = false;
+      if (contextualOfferTimeout) clearTimeout(contextualOfferTimeout);
+    };
+    document.getElementById("ctx-offer-yes").addEventListener("click", () => {
+      initSound2();
+      removeBanner();
+      playAd(() => {
+        game.addBoost2x(2);
+        draw();
+        spawnFloating(tObj.boostActivatedMsg || "\u26A1 Boost x2 activated!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+      });
+    });
+    document.getElementById("ctx-offer-no").addEventListener("click", () => {
+      initSound2();
+      removeBanner();
+    });
+    contextualOfferTimeout = setTimeout(removeBanner, 9e3);
+  }
+  function openWeeklyRewardModal() {
+    const lang = game.state && game.state.language || "en";
+    const tObj = translations[lang] || translations.en;
+    const modal = document.getElementById("weekly-modal");
+    if (!modal) return;
+    const titleEl = document.getElementById("weekly-modal-title");
+    const textEl = document.getElementById("weekly-modal-text");
+    const statsBox = document.getElementById("weekly-stats-box");
+    if (titleEl) titleEl.innerText = tObj.weeklyTitle || "\u{1F3C6} Great Week!";
+    if (textEl) textEl.innerText = tObj.weeklyText || "A full week of running your empire! Your team is ready for a boost!";
+    if (statsBox) {
+      const eps = game.getEarningsPerSecond ? game.getEarningsPerSecond() : 0;
+      const served = game.state.stats && game.state.stats.clientsServed || 0;
+      const shares = game.state.shares || 0;
+      statsBox.innerHTML = typeof tObj.weeklyStats === "function" ? tObj.weeklyStats(formatMoney(eps), served.toLocaleString(), shares) : `\u{1F4B0} EPS: <strong>${formatMoney(eps)}</strong><br>\u{1F465} Clients served: <strong>${served.toLocaleString()}</strong><br>\u2B50 Gold shares: <strong>${shares}</strong>`;
+    }
+    const adBtn = document.getElementById("weekly-ad-btn");
+    const closeBtn = document.getElementById("weekly-close-btn");
+    if (adBtn) {
+      if (AdService.isInCooldown()) {
+        adBtn.style.display = "none";
+      } else {
+        adBtn.style.display = "";
+        adBtn.onclick = () => {
+          initSound2();
+          modal.classList.remove("active");
+          playAd(() => {
+            game.addBoost2x(8);
+            game.state.lastWeeklyReward = Date.now();
+            draw();
+            spawnFloating(tObj.boost8hMsg || "\u26A1 8h Boost!", window.innerWidth / 2, window.innerHeight / 2, "gold");
+          });
+        };
+      }
+    }
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        initSound2();
+        modal.classList.remove("active");
+        game.state.lastWeeklyReward = Date.now();
+      };
+    }
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        initSound2();
+        modal.classList.remove("active");
+        game.state.lastWeeklyReward = Date.now();
+      }
+    };
+    if (window.NotificationQueue) {
+      window.NotificationQueue.request("weekly-modal", window.NotificationQueue.PRIORITY.IMPORTANT, () => {
+        modal.classList.add("active");
+      });
+    } else {
+      modal.classList.add("active");
+    }
+  }
+  function checkWeeklyReward() {
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1e3;
+    const last = game.state && game.state.lastWeeklyReward || 0;
+    if (Date.now() - last >= ONE_WEEK_MS) {
+      setTimeout(openWeeklyRewardModal, 4e3);
+    }
+  }
+  function tick(timestamp) {
+    try {
+      const dt = (timestamp - lastTime) / 1e3;
+      lastTime = timestamp;
+      const cappedDt = Math.min(1, dt);
+      game.update(cappedDt);
+      if (game._contextualAdPending) {
+        game._contextualAdPending = null;
+        showContextualAdBanner();
+      }
+      {
+        const now = Date.now();
+        if (game.state.boost2xTimeLeft > 0) {
+          boostOfferEndTime = 0;
+          boostOfferNextTime = 0;
+        } else {
+          if (boostOfferEndTime > 0 && now > boostOfferEndTime) {
+            boostOfferEndTime = 0;
+            boostOfferNextTime = now + (900 + Math.random() * 900) * 1e3;
+          } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
+            if (!AdService.isInCooldown()) {
+              boostOfferEndTime = now + (600 + Math.random() * 600) * 1e3;
+              boostOfferNextTime = 0;
+            }
+          }
+        }
+        window._boostOfferEndTime = boostOfferEndTime;
+      }
+      eventTimer += cappedDt;
+      if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
+        eventTimer = 0;
+        triggerRandomEvent();
+      }
+      tabRefreshTimer += cappedDt;
+      if (tabRefreshTimer >= GAME_CONFIG.TAB_REFRESH_INTERVAL_SEC) {
+        tabRefreshTimer = 0;
+        const _activeTabEl = document.querySelector(".tab-btn.active");
+        if (_activeTabEl && _activeTabEl.getAttribute("data-tab") === "missions") {
+          game.checkMissions();
+          if (typeof window.updateMissionsTabProgress === "function") window.updateMissionsTabProgress();
+        }
+        const _newlyUnlockedAchievements = game.checkAchievements();
+        if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0) {
+          _newlyUnlockedAchievements.forEach((a) => {
+            if (typeof window.playAchievementUnlockFeedback === "function") window.playAchievementUnlockFeedback(a);
+          });
+          game.saveGame();
+        }
+        if (_activeTabEl && _activeTabEl.getAttribute("data-tab") === "daily") {
+          if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0 && typeof window.renderAchievementsTab === "function") {
+            window.renderAchievementsTab();
+          } else if (typeof window.updateAchievementsTabProgress === "function") {
+            window.updateAchievementsTabProgress();
+          }
+        }
+        updateButtonAffordability();
+        const _nmBranch = game.branches && game.branches[game.state.currentBranch];
+        if (_nmBranch) {
+          const _nmThreshold = _nmBranch.minCashToPrestige * 0.7;
+          const _nmActive = game.state.lifetimeCash >= _nmThreshold && game.state.cash < _nmBranch.minCashToPrestige;
+          document.querySelectorAll("[data-prestige-branch], #main-prestige-btn").forEach((el) => {
+            el.classList.toggle("prestige-near-miss-glow", _nmActive);
+          });
+        }
+        let _rewardReady = false;
+        if (game.state.missions) {
+          _rewardReady = game.state.missions.some((m) => m && m.completed && !m.claimed);
+        }
+        const tabBtnDaily = document.getElementById("tab-btn-daily");
+        const headerDailyBtn = document.getElementById("header-daily-btn");
+        if (tabBtnDaily) tabBtnDaily.classList.toggle("reward-ready-glow", _rewardReady);
+        if (headerDailyBtn) headerDailyBtn.classList.toggle("reward-ready-glow", _rewardReady);
+      }
+      fortuneWheelBtnTimer += cappedDt;
+      if (fortuneWheelBtnTimer >= 30) {
+        fortuneWheelBtnTimer = 0;
+        updateFortuneWheelBtnState();
+      }
+      drawTimer += cappedDt;
+      const targetFpsInterval = 0;
+      if (drawTimer >= targetFpsInterval) {
+        updateActiveCoins(drawTimer);
+        if (typeof updateFloatingText === "function") updateFloatingText(drawTimer);
+        drawTimer = 0;
+        draw();
+      }
+      autoSaveTimer += cappedDt;
+      if (autoSaveTimer >= GAME_CONFIG.AUTO_SAVE_INTERVAL_SEC) {
+        autoSaveTimer = 0;
+        game.saveGame();
+      }
+      rafId = requestAnimationFrame(tick);
+    } catch (e) {
+      console.error("Critical error in game loop!", e);
+      try {
+        game.saveGame();
+      } catch (saveErr) {
+        console.error("Failed to auto-save during crash recovery", saveErr);
+      }
+      if (typeof window.showToast === "function") {
+        const _toastLang = game.state && game.state.language || "en";
+        const _toastT = typeof translations !== "undefined" && translations[_toastLang] ? translations[_toastLang] : translations.en;
+        const crashMsg = _toastT.errorDesc || "A critical error occurred! Game progress was saved.";
+        window.showToast(crashMsg, "danger");
+      }
+      let overlay = document.getElementById("crash-overlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "crash-overlay";
+        const _crashLang = window.gameLanguage || "en";
+        const _crashT = typeof translations !== "undefined" && translations[_crashLang] ? translations[_crashLang] : translations.en;
+        const title = document.createElement("h1");
+        title.innerText = _crashT.errorTitle || "Oops! Something went wrong";
+        const desc = document.createElement("p");
+        desc.innerText = _crashT.errorDesc || "An unexpected error occurred in the game loop. Your progress has been saved.";
+        const reloadBtn = document.createElement("button");
+        reloadBtn.innerText = _crashT.reloadBtn || "Reload Game \u{1F504}";
+        reloadBtn.addEventListener("click", () => window.location.reload());
+        overlay.appendChild(title);
+        overlay.appendChild(desc);
+        overlay.appendChild(reloadBtn);
+        document.body.appendChild(overlay);
+      }
+    }
+  }
+  function syncBottomNav(activeTab) {
+    document.querySelectorAll(".bottom-nav-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.tab === activeTab);
+    });
+    const headerDailyBtn = document.getElementById("header-daily-btn");
+    if (headerDailyBtn) {
+      headerDailyBtn.classList.toggle("active", activeTab === "daily");
+    }
+  }
+  function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour, vaultLevel) {
+    const miniPct = document.getElementById("vault-mini-pct");
+    const miniFill = document.getElementById("vault-mini-fill");
+    const miniBtn = document.getElementById("vault-mini-btn");
+    const miniBar = document.getElementById("vault-mini-bar");
+    if (!miniPct) return;
+    miniPct.textContent = Math.round(pct) + "%";
+    if (miniFill) {
+      miniFill.style.width = pct + "%";
+      miniFill.setAttribute("aria-valuenow", Math.round(pct));
+    }
+    if (miniBtn) {
+      miniBtn.disabled = !isReady;
+    }
+    const fmt = typeof window.formatMoney === "function" ? window.formatMoney : ((v) => "$" + Math.round(v));
+    const miniStored = document.getElementById("vault-mini-stored");
+    const miniCap = document.getElementById("vault-mini-cap");
+    const miniYield = document.getElementById("vault-mini-yield");
+    const miniLevel = document.getElementById("vault-mini-level");
+    if (miniStored && cashStored !== void 0) miniStored.textContent = fmt(cashStored);
+    if (miniCap && capacity !== void 0) miniCap.textContent = fmt(capacity);
+    if (miniYield && yieldPerHour !== void 0) miniYield.textContent = "+" + fmt(yieldPerHour) + "/h";
+    if (miniLevel && vaultLevel !== void 0) miniLevel.textContent = "Lv." + vaultLevel;
+    if (miniFill) {
+      miniFill.style.background = "";
+      miniFill.classList.toggle("is-full", pct >= 95);
+      miniFill.classList.toggle("is-warm", pct >= 60 && pct < 95);
+    }
+    if (miniBar) {
+      miniBar.classList.toggle("is-full", pct >= 95);
+      miniBar.classList.toggle("is-ready", isReady && pct < 95);
+    }
+  }
+  function showOfflineEarningsModal() {
+    if (!window.game || !window.game.offlineEarningsReport || window.game.offlineEarningsReport <= 0) return;
+    const displayFn = () => {
+      if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
+      if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = typeof AdService !== "undefined" && AdService.isInCooldown() ? "none" : "";
+      if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add("active");
+    };
+    if (window.NotificationQueue) {
+      window.NotificationQueue.request("offline-modal", window.NotificationQueue.PRIORITY.IMPORTANT, displayFn);
+    } else {
+      displayFn();
+    }
+  }
+  window.showOfflineEarningsModal = showOfflineEarningsModal;
+  function showLoginRewardModal() {
+    if (!window.game || !window.game.state || !window.game.state.pendingLoginReward) return;
+    const modal = document.getElementById("login-reward-modal");
+    if (!modal) return;
+    const reward = window.game.state.pendingLoginReward;
+    const streak = window.game.state.loginStreak || 1;
+    const lang = window.game.state.language || "en";
+    const tObj = typeof translations !== "undefined" && translations[lang] ? translations[lang] : translations.he;
+    const streakTextEl = document.getElementById("login-reward-streak-text");
+    const amountEl = document.getElementById("login-reward-amount");
+    const descEl = document.getElementById("login-reward-desc");
+    const titleEl = document.getElementById("login-reward-title");
+    const lm = typeof translations !== "undefined" && translations[lang] && translations[lang].loginModal ? translations[lang].loginModal : translations.he.loginModal;
+    if (titleEl) titleEl.innerText = lm.title;
+    if (streakTextEl) {
+      streakTextEl.textContent = typeof lm.streakLabel === "function" ? lm.streakLabel(streak) : "Streak: " + streak + " days";
+    }
+    let displayText = "";
+    let descText = "";
+    if (reward.type === "cash") {
+      displayText = "+$" + formatMoney(reward.value);
+      descText = lm.cashDesc;
+    } else if (reward.type === "boost") {
+      const mins = Math.round(reward.value / 60);
+      displayText = typeof lm.boostLabel === "function" ? lm.boostLabel(mins) : "+" + mins + " min Boost x2";
+      descText = lm.boostDesc;
+    } else if (reward.type === "gold" || reward.type === "shares") {
+      displayText = "+" + reward.value + (tObj.goldSharesUnit || " Gold Shares");
+      descText = lm.sharesDesc;
+    }
+    if (amountEl) amountEl.innerText = displayText;
+    if (descEl) descEl.innerText = descText;
+    const collectBtn = document.getElementById("login-reward-collect-btn");
+    if (collectBtn) {
+      collectBtn.innerText = lm.collectBtn;
+      collectBtn.onclick = () => {
+        initSound2();
+        modal.classList.remove("active");
+        _applyLoginReward(reward);
+      };
+    }
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        initSound2();
+        modal.classList.remove("active");
+        _applyLoginReward(reward);
+      }
+    };
+    if (window.NotificationQueue) {
+      window.NotificationQueue.request("login-reward-modal", window.NotificationQueue.PRIORITY.IMPORTANT, () => {
+        modal.classList.add("active");
+      });
+    } else {
+      modal.classList.add("active");
+    }
+  }
+  function _applyLoginReward(reward) {
+    if (!reward) return;
+    if (reward.type === "cash") {
+      window.game.addCash(Math.round(reward.value));
+      spawnFloating("+$" + formatMoney(reward.value), window.innerWidth / 2, window.innerHeight / 2, "green");
+    } else if (reward.type === "boost") {
+      window.game.addBoost2x(reward.value / 3600);
+      spawnFloating("BOOST x2 +" + Math.round(reward.value / 60) + "min", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    } else if (reward.type === "gold" || reward.type === "shares") {
+      window.game.addShares(reward.value);
+      spawnFloating("+" + reward.value + " Shares", window.innerWidth / 2, window.innerHeight / 2, "gold");
+    }
+    window.game.state.pendingLoginReward = null;
+    window.game.saveGame();
+    draw();
+  }
+  function triggerPrestigeCeremony(sharesGained, branchName, callback) {
+    const _pLang = game.state && game.state.language || "en";
+    const _pT = translations[_pLang] || translations.en;
+    const overlay = document.createElement("div");
+    overlay.className = "prestige-ceremony-overlay";
+    overlay.setAttribute("aria-live", "polite");
+    overlay.setAttribute("role", "status");
+    const line1 = document.createElement("div");
+    line1.className = "ceremony-line1";
+    line1.style.cssText = "font-size:1.5rem; margin-bottom:0.5rem; opacity:0; transition:opacity 0.4s ease;";
+    line1.innerText = branchName + " " + (_pT.prestigeResetLabel || "resetting...");
+    const line2 = document.createElement("div");
+    line2.className = "ceremony-line2";
+    line2.style.cssText = "font-size:2.5rem; margin:0.5rem 0; opacity:0; transition:opacity 0.4s ease;";
+    line2.innerText = "0";
+    const line3 = document.createElement("div");
+    line3.className = "ceremony-line3";
+    line3.style.cssText = "font-size:1rem; color:#dfab29; opacity:0; transition:opacity 0.4s ease;";
+    line3.innerText = _pT.goldSharesLabel || "Gold Shares";
+    overlay.appendChild(line1);
+    overlay.appendChild(line2);
+    overlay.appendChild(line3);
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+      line1.style.opacity = "1";
+    }, 50);
+    setTimeout(() => {
+      line2.style.opacity = "1";
+      line3.style.opacity = "1";
+      ["\u{1F386}", "\u2728", "\u{1F31F}", "\u{1F4AB}", "\u{1F387}"].forEach(function(emoji, i) {
+        setTimeout(function() {
+          spawnFloating(emoji, Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1, window.innerHeight * 0.3, "gold");
+        }, i * 200);
+      });
+      const duration = 1e3;
+      const startTime = Date.now();
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const current = Math.floor(progress * sharesGained);
+        line2.innerText = "+" + current;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          line2.innerText = "+" + sharesGained;
+        }
+      };
+      requestAnimationFrame(animate);
+    }, 500);
+    setTimeout(() => {
+      overlay.style.transition = "opacity 0.5s ease";
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        if (typeof callback === "function") callback();
+      }, 500);
+    }, 2e3);
+  }
+  var uiEventsInitialized = false;
+  function initFocusTrapObserver() {
+    const modals = document.querySelectorAll(".modal-overlay");
+    modals.forEach((modal) => {
+      const obs = new MutationObserver(() => {
+        if (modal.classList.contains("active")) {
+          trapFocus(modal);
+        } else {
+          releaseFocus(modal);
+          if (window.NotificationQueue) window.NotificationQueue.notifyClosed(modal.id);
+        }
+      });
+      obs.observe(modal, { attributes: true, attributeFilter: ["class"] });
+    });
+  }
+  function initUIEvents() {
+    if (uiEventsInitialized) return;
+    uiEventsInitialized = true;
+    initFocusTrapObserver();
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const modals = [
+        { id: "fortune-wheel-modal", closeId: "fortune-close-btn" },
+        { id: "prestige-modal", closeId: "prestige-cancel-btn" },
+        { id: "lang-modal", closeId: "lang-modal-close" },
+        { id: "login-reward-modal", closeId: "login-reward-collect-btn" },
+        { id: "offline-modal", closeId: "offline-claim-btn" },
+        { id: "weekly-modal", closeId: "weekly-close-btn" },
+        { id: "analytics-modal", closeId: "analytics-close-btn" }
+      ];
+      for (const { id, closeId } of modals) {
+        const el = document.getElementById(id);
+        if (el && el.classList.contains("active")) {
+          const closeBtn = document.getElementById(closeId);
+          if (closeBtn) closeBtn.click();
+          break;
+        }
+      }
+    });
+    if (DOM_CACHE.resetBtn) {
+      const confirmCheck = document.getElementById("reset-confirm-checkbox");
+      if (confirmCheck) {
+        confirmCheck.addEventListener("change", (e) => {
+          DOM_CACHE.resetBtn.disabled = !e.target.checked;
+        });
+      }
+      DOM_CACHE.resetBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        initSound2();
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+        const lang = game.state.language || "en";
+        let confirmMsg = "\u05D4\u05D0\u05DD \u05D0\u05EA\u05D4 \u05D1\u05D8\u05D5\u05D7 \u05E9\u05D1\u05E8\u05E6\u05D5\u05E0\u05DA \u05DC\u05D0\u05E4\u05E1 \u05D0\u05EA \u05D4\u05DE\u05E9\u05D7\u05E7 \u05D5\u05DC\u05D4\u05EA\u05D7\u05D9\u05DC \u05DE-0? \u05DB\u05DC \u05D4\u05D4\u05EA\u05E7\u05D3\u05DE\u05D5\u05EA \u05E9\u05DC\u05DA \u05EA\u05D9\u05DE\u05D7\u05E7 \u05DC\u05D7\u05DC\u05D5\u05D8\u05D9\u05DF!";
+        if (lang === "en") {
+          confirmMsg = "Are you sure you want to reset the game and start from 0? All your progress will be completely deleted!";
+        } else if (lang === "es") {
+          confirmMsg = "\xBFEst\xE1s seguro de que quieres restablecer el juego y empezar desde 0? \xA1Todo tu progreso se eliminar\xE1 por completo!";
+        } else if (lang === "ru") {
+          confirmMsg = "\u0412\u044B \u0443\u0432\u0435\u0440\u0435\u043D\u044B, \u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0441\u0431\u0440\u043E\u0441\u0438\u0442\u044C \u0438\u0433\u0440\u0443 \u0438 \u043D\u0430\u0447\u0430\u0442\u044C \u0441 0? \u0412\u0435\u0441\u044C \u0432\u0430\u0448 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441 \u0431\u0443\u0434\u0435\u0442 \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E \u0443\u0434\u0430\u043B\u0435\u043D!";
+        }
+        if (confirm(confirmMsg)) {
+          game.clearSave();
+          location.reload();
+        }
+      });
+    }
+    if (DOM_CACHE.langBtn) {
+      DOM_CACHE.langBtn.addEventListener("click", () => {
+        initSound2();
+        if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = "inline-block";
+        if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add("active");
+      });
+    }
+    if (DOM_CACHE.langModalClose) {
+      DOM_CACHE.langModalClose.addEventListener("click", () => {
+        initSound2();
+        if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.remove("active");
+      });
+    }
+    if (DOM_CACHE.boostBtn) {
+      DOM_CACHE.boostBtn.addEventListener("click", () => {
+        initSound2();
+        openBoostModal();
+      });
+    }
+    if (DOM_CACHE.analyticsBtn) {
+      DOM_CACHE.analyticsBtn.addEventListener("click", () => {
+        initSound2();
+        openAnalyticsModal();
+      });
+    }
+    const analyticsFromSettingsBtn = document.getElementById("analytics-from-settings-btn");
+    if (analyticsFromSettingsBtn) {
+      analyticsFromSettingsBtn.addEventListener("click", () => {
+        if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.remove("active");
+        openAnalyticsModal();
+      });
+    }
+    const fortuneWheelBtn = document.getElementById("fortune-wheel-btn");
+    if (fortuneWheelBtn) {
+      fortuneWheelBtn.addEventListener("click", () => {
+        initSound2();
+        openFortuneWheel();
+      });
+    }
+    const headerDailyBtn = document.getElementById("header-daily-btn");
+    if (headerDailyBtn) {
+      headerDailyBtn.addEventListener("click", () => {
+        initSound2();
+        try {
+          navigator.vibrate && navigator.vibrate(5);
+        } catch {
+        }
+        const existingTabBtn = document.querySelector('.tab-btn[data-tab="daily"]');
+        if (existingTabBtn) {
+          existingTabBtn.click();
+        }
+        syncBottomNav("daily");
+      });
+    }
+    updateFortuneWheelBtnState();
+    if (DOM_CACHE.muteBtn) {
+      DOM_CACHE.muteBtn.addEventListener("click", () => {
+        initSound2();
+        if (window.gameAudio && typeof window.gameAudio.toggleMute === "function") {
+          window.gameAudio.toggleMute();
+        }
+        updateMuteButton();
+        if (window.gameAudio && !window.gameAudio.isMuted && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+      });
+    }
+    const elLangOptions = document.querySelectorAll(".lang-option-card");
+    elLangOptions.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        try {
+          initSound2();
+          const selectedLang = opt.getAttribute("data-lang");
+          game.setLanguage(selectedLang);
+          window.localStorage.setItem("idle_bank_language_chosen", "true");
+          DOM_CACHE.langModal.classList.remove("active");
+          applyLanguage(selectedLang);
+        } catch (err) {
+          console.error("Error inside language options selection click handler:", err);
+        }
+      });
+    });
+    document.querySelectorAll(".theme-option-btn-choice").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        try {
+          initSound2();
+          const theme = btn.getAttribute("data-theme");
+          applyTheme(theme);
+          if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+            window.gameAudio.playClick();
+          }
+        } catch (err) {
+          console.error("Error inside theme options selection click handler:", err);
+        }
+      });
+    });
+    if (DOM_CACHE.langModal) {
+      DOM_CACHE.langModal.addEventListener("click", (e) => {
+        try {
+          if (e.target === DOM_CACHE.langModal && window.localStorage.getItem("idle_bank_language_chosen")) {
+            initSound2();
+            DOM_CACHE.langModal.classList.remove("active");
+          }
+        } catch (err) {
+          console.error("Error closing language modal on overlay click:", err);
+        }
+      });
+    }
+    if (DOM_CACHE.advSlider) {
+      DOM_CACHE.advSlider.addEventListener("input", () => {
+        const sliderVal = parseInt(DOM_CACHE.advSlider.value);
+        const dynamicMax = game.getAdMaxBudget();
+        let budget = 0;
+        if (sliderVal > 0) {
+          budget = Math.round(dynamicMax * (sliderVal / 1e3));
+          budget = Math.max(1, Math.round(budget));
+        }
+        game.setAdvBudget(budget);
+        updateAdvDisplay(budget);
+      });
+    }
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabPanes = document.querySelectorAll(".tab-pane");
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tabId = btn.getAttribute("data-tab");
+        tabButtons.forEach((b) => b.classList.remove("active"));
+        tabPanes.forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        const targetPane = document.getElementById(`tab-${tabId}`);
+        document.querySelectorAll('.tab-btn[role="tab"]').forEach((b) => {
+          b.setAttribute("aria-selected", b.classList.contains("active") ? "true" : "false");
+        });
+        if (targetPane) targetPane.classList.add("active");
+        if (DOM_CACHE.bulkSelector) {
+          if (tabId === "upgrades" || tabId === "managers") {
+            DOM_CACHE.bulkSelector.style.display = "flex";
+          } else {
+            DOM_CACHE.bulkSelector.style.display = "none";
+          }
+        }
+        if (tabId === "daily" && typeof window.renderDailyChallengesSection === "function") {
+          window.renderDailyChallengesSection();
+        }
+        if (typeof window.invalidateTabHashes === "function") window.invalidateTabHashes();
+        if (tabId === "upgrades" && typeof window.renderUpgradesTab === "function") window.renderUpgradesTab();
+        else if (tabId === "managers" && typeof window.renderManagersTab === "function") window.renderManagersTab();
+        else if (tabId === "departments" && typeof window.renderDepartmentsTab === "function") window.renderDepartmentsTab();
+        else if (tabId === "missions" && typeof window.renderMissionsTab === "function") window.renderMissionsTab();
+        else if (tabId === "daily") {
+          if (typeof window.renderDailyChallengesSection === "function") window.renderDailyChallengesSection();
+          if (typeof window.renderAchievementsTab === "function") window.renderAchievementsTab();
+        } else if (tabId === "branches" && typeof window.renderBranchesTab === "function") window.renderBranchesTab();
+        syncBottomNav(tabId);
+        initSound2();
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+      });
+    });
+    document.querySelectorAll(".bottom-nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        try {
+          navigator.vibrate && navigator.vibrate(5);
+        } catch {
+        }
+        const tab = btn.dataset.tab;
+        const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+        if (existingTabBtn) {
+          existingTabBtn.click();
+        }
+        syncBottomNav(tab);
+      });
+    });
+    const vaultMiniBtn = document.getElementById("vault-mini-btn");
+    if (vaultMiniBtn) {
+      vaultMiniBtn.addEventListener("click", () => {
+        try {
+          navigator.vibrate && navigator.vibrate([8, 30, 8]);
+        } catch {
+        }
+        const mainVaultBtn = document.getElementById("collect-vault-btn");
+        if (mainVaultBtn) mainVaultBtn.click();
+      });
+    }
+    if (DOM_CACHE.bulkSelector) {
+      DOM_CACHE.bulkSelector.addEventListener("click", (e) => {
+        const btn = e.target.closest(".bulk-btn-option");
+        if (!btn) return;
+        initSound2();
+        currentUpgradeMode = btn.getAttribute("data-mode");
+        DOM_CACHE.bulkSelector.querySelectorAll(".bulk-btn-option").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (typeof refreshAllTabs === "function") {
+          const scrollPos = document.getElementById("tab-upgrades") ? document.getElementById("tab-upgrades").scrollTop : 0;
+          refreshAllTabs();
+          if (document.getElementById("tab-upgrades")) document.getElementById("tab-upgrades").scrollTop = scrollPos;
+        } else if (typeof updateButtonAffordability === "function") {
+          updateButtonAffordability();
+        }
+      });
+    }
+    const tabUpgrades = document.getElementById("tab-upgrades");
+    if (tabUpgrades) {
+      tabUpgrades.addEventListener("click", (e) => {
+        const btn = e.target.closest(".buy-btn");
+        if (!btn || btn.classList.contains("disabled")) return;
+        initSound2();
+        try {
+          navigator.vibrate && navigator.vibrate(12);
+        } catch {
+        }
+        const type = btn.getAttribute("data-type");
+        const id = parseInt(btn.getAttribute("data-id"));
+        if (isNaN(id) && (type === "teller" || type === "guard")) return;
+        const action = btn.getAttribute("data-action");
+        const beforeCash = game.state.cash;
+        let beforeVal = 0;
+        let feedType = "";
+        if (type === "teller") {
+          beforeVal = game.state.tellers[id].level;
+          feedType = "teller";
+          game.upgradeTellerBulk(id, currentUpgradeMode);
+        } else if (type === "guard") {
+          beforeVal = game.state.guards[id].level;
+          feedType = "guard";
+          game.upgradeGuardBulk(id, currentUpgradeMode);
+        } else if (action === "unlock-teller") {
+          beforeVal = game.state.tellers[id].unlocked;
+          feedType = "unlock-teller";
+          game.unlockTeller(id);
+        } else if (action === "unlock-guard") {
+          beforeVal = game.state.guards[id].unlocked;
+          feedType = "unlock-guard";
+          game.unlockGuard(id);
+          if (!beforeVal) showDiscoveryTip("guard");
+        } else if (btn.id === "upgrade-vault-btn") {
+          beforeVal = game.state.vault.level;
+          feedType = "vault";
+          game.upgradeVaultBulk(currentUpgradeMode);
+        } else if (btn.id === "upgrade-queue-btn") {
+          beforeVal = game.state.queueUpgradeLevel || 1;
+          feedType = "queue";
+          game.upgradeQueueBulk(currentUpgradeMode);
+        } else {
+          return;
+        }
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+        handlePurchaseFeedback2(btn, e, beforeCash, beforeVal, feedType, id);
+        if (feedType === "unlock-teller" || feedType === "unlock-guard") {
+          renderUpgradesTab();
+          if (feedType === "unlock-teller" && typeof window.rebuildTellersDOM === "function") {
+            window.rebuildTellersDOM();
+            if (typeof window.recalcGuardAnchors === "function") window.recalcGuardAnchors();
+          }
+        } else {
+          const scrollPos = tabUpgrades.scrollTop;
+          if (typeof refreshAllTabs === "function") {
+            refreshAllTabs();
+          } else if (typeof updateButtonAffordability === "function") {
+            updateButtonAffordability();
+          }
+          tabUpgrades.scrollTop = scrollPos;
+        }
+      });
+    }
+    if (DOM_CACHE.offlineModalDoubleBtn) {
+      DOM_CACHE.offlineModalDoubleBtn.addEventListener("click", () => {
+        initSound2();
+        if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove("active");
+        playAd(() => {
+          if (game.offlineEarningsReport && game.offlineEarningsReport > 0) {
+            const extra = game.offlineEarningsReport * 2;
+            game.state.cash = Math.round((game.state.cash + extra + Number.EPSILON) * 100) / 100;
+            game.state.lifetimeCash = Math.round((game.state.lifetimeCash + extra + Number.EPSILON) * 100) / 100;
+            if (window.gameAudio && typeof window.gameAudio.playChaChing === "function") {
+              window.gameAudio.playChaChing();
+            }
+            const rect = DOM_CACHE.offlineModalDoubleBtn.getBoundingClientRect();
+            spawnFloating("+$" + formatMoney(extra), rect.left + rect.width / 2, rect.top, "green");
+          }
+          game.offlineEarningsReport = 0;
+          game.saveGame();
+          draw();
+        });
+      });
+    }
+    const gdprAcceptBtn = document.getElementById("gdpr-accept-btn");
+    if (gdprAcceptBtn) {
+      gdprAcceptBtn.addEventListener("click", () => {
+        localStorage.setItem("gdpr_consent", "1");
+        const banner = document.getElementById("gdpr-banner");
+        if (banner) banner.style.display = "none";
+      });
+    }
+    if (DOM_CACHE.offlineModalClaimBtn) {
+      DOM_CACHE.offlineModalClaimBtn.addEventListener("click", () => {
+        initSound2();
+        if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove("active");
+        game.offlineEarningsReport = 0;
+        game.saveGame();
+        draw();
+      });
+    }
+    const prestigeModal = document.getElementById("prestige-modal");
+    const prestigeAdBtn = document.getElementById("prestige-ad-btn");
+    const prestigeRegularBtn = document.getElementById("prestige-regular-btn");
+    const prestigeCancelBtn = document.getElementById("prestige-cancel-btn");
+    if (prestigeAdBtn) {
+      prestigeAdBtn.addEventListener("click", () => {
+        initSound2();
+        if (prestigeModal) {
+          const target = parseInt(prestigeModal.getAttribute("data-target-branch"));
+          const sharesPreview = game.calculatePrestigeShares() * 3;
+          const _prT = translations[game.state && game.state.language || "en"] || translations.en;
+          const branchName = game.branches && game.branches[target] ? game.branches[target].name : (_prT.branchLabel || "Branch") + " " + target;
+          prestigeModal.classList.remove("active");
+          playAd(() => {
+            triggerPrestigeCeremony(Math.min(1e3, sharesPreview), branchName, () => {
+              game.prestige(target, true);
+              game.saveGame();
+              if (typeof syncBottomNav === "function") syncBottomNav("upgrades");
+              const firstTabBtn = document.querySelector(".tab-btn");
+              if (firstTabBtn) firstTabBtn.click();
+              draw();
+            });
+          });
+        }
+      });
+    }
+    if (prestigeRegularBtn) {
+      prestigeRegularBtn.addEventListener("click", () => {
+        initSound2();
+        if (prestigeModal) {
+          const target = parseInt(prestigeModal.getAttribute("data-target-branch"));
+          const sharesPreview = game.calculatePrestigeShares();
+          const _prT2 = translations[game.state && game.state.language || "en"] || translations.en;
+          const branchName = game.branches && game.branches[target] ? game.branches[target].name : (_prT2.branchLabel || "Branch") + " " + target;
+          prestigeModal.classList.remove("active");
+          triggerPrestigeCeremony(sharesPreview, branchName, () => {
+            game.prestige(target, false);
+            game.saveGame();
+            if (typeof syncBottomNav === "function") syncBottomNav("upgrades");
+            const firstTabBtn = document.querySelector(".tab-btn");
+            if (firstTabBtn) firstTabBtn.click();
+            draw();
+          });
+        }
+      });
+    }
+    if (prestigeCancelBtn) {
+      prestigeCancelBtn.addEventListener("click", () => {
+        initSound2();
+        if (prestigeModal) {
+          prestigeModal.classList.remove("active");
+        }
+      });
+    }
+    if (DOM_CACHE.vaultEmptyBtn) {
+      DOM_CACHE.vaultEmptyBtn.addEventListener("click", () => {
+        initSound2();
+        const collected = game.collectVault();
+        if (collected > 0) {
+          const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
+          const elStatCash = document.getElementById("stat-cash");
+          const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
+          animateCoins(rectBtn, rectCashBox, 2, "cash");
+          spawnFloating("+" + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
+          spawnVaultCoins(collected, rectBtn);
+          game.saveGame();
+          draw();
+          var tips = game.state.discoveredTips || {};
+          if (!tips.vault && tips.start) showDiscoveryTip("vault");
+        }
+      });
+    }
+    const vaultInfoBtn = document.getElementById("vault-info-btn");
+    if (vaultInfoBtn) {
+      vaultInfoBtn.addEventListener("click", () => {
+        initSound2();
+        const lang = game.state.language || "en";
+        const tObj = translations[lang];
+        if (tObj && typeof window.showToast === "function") {
+          window.showToast(tObj.vaultInfoMsg, "info");
+        }
+      });
+    }
+    if (DOM_CACHE.securityPath) {
+      DOM_CACHE.securityPath.addEventListener("click", () => {
+        initSound2();
+        for (let i = 0; i < game.state.guards.length; i++) {
+          const g = game.state.guards[i];
+          if (g.unlocked && g.state === "idle") {
+            if (game.triggerGuard(g.id)) {
+              break;
+            }
+          }
+        }
+      });
+      DOM_CACHE.securityPath.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          DOM_CACHE.securityPath.click();
+        }
+      });
+    }
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+      vaultGraphicEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
+        }
+      });
+    }
+    const triggerFirstInteraction = () => {
+      initSound2();
+      document.removeEventListener("click", triggerFirstInteraction);
+      document.removeEventListener("touchstart", triggerFirstInteraction);
+      document.removeEventListener("keydown", triggerFirstInteraction);
+    };
+    document.addEventListener("click", triggerFirstInteraction);
+    document.addEventListener("touchstart", triggerFirstInteraction);
+    document.addEventListener("keydown", triggerFirstInteraction);
+    const camera = document.querySelector(".security-camera");
+    if (camera) {
+      camera.style.cursor = "pointer";
+      camera.addEventListener("click", (e) => {
+        initSound2();
+        camera.classList.remove("camera-wiggle");
+        void camera.offsetWidth;
+        camera.classList.add("camera-wiggle");
+        const bonus = 10 * (game.state.currentBranch + 1);
+        game.addCash(bonus);
+        const rect = camera.getBoundingClientRect();
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+        draw();
+      });
+    }
+    const atm = document.querySelector(".atm-machine");
+    if (atm) {
+      atm.style.cursor = "pointer";
+      atm.addEventListener("click", (e) => {
+        initSound2();
+        atm.classList.remove("atm-vibrate");
+        void atm.offsetWidth;
+        atm.classList.add("atm-vibrate");
+        const receipt = document.createElement("div");
+        receipt.className = "atm-receipt";
+        receipt.innerText = "$" + 15 * (game.state.currentBranch + 1);
+        atm.appendChild(receipt);
+        setTimeout(() => receipt.remove(), 1200);
+        const bonus = 15 * (game.state.currentBranch + 1);
+        game.addCash(bonus);
+        const rect = atm.getBoundingClientRect();
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+        draw();
+      });
+    }
+    const plants = document.querySelectorAll(".potted-plant");
+    plants.forEach((plant) => {
+      plant.style.cursor = "pointer";
+      plant.addEventListener("click", (e) => {
+        initSound2();
+        plant.classList.remove("plant-shake");
+        void plant.offsetWidth;
+        plant.classList.add("plant-shake");
+        const leaf = document.createElement("div");
+        leaf.className = "falling-leaf";
+        leaf.innerText = "\u{1F343}";
+        plant.appendChild(leaf);
+        setTimeout(() => leaf.remove(), 1500);
+        const bonus = 2 * (game.state.currentBranch + 1);
+        game.addCash(bonus);
+        const rect = plant.getBoundingClientRect();
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        draw();
+      });
+    });
+    setTimeout(() => {
+      if (window.game && window.game.state) {
+        checkWeeklyReward();
+      }
+    }, 2e3);
+    initTutorialEvents();
+    maybeStartTutorial();
+  }
+  function _wheelWeightedRandom(prizes) {
+    const totalWeight = prizes.reduce((s, p) => s + p.weight, 0);
+    let rand = Math.random() * totalWeight;
+    for (const prize of prizes) {
+      rand -= prize.weight;
+      if (rand <= 0) return prize;
+    }
+    return prizes[prizes.length - 1];
+  }
+  function updateFortuneWheelBtnState() {
+    const btn = document.getElementById("fortune-wheel-btn");
+    if (!btn) return;
+    const lastSpin = game.state && game.state.lastSpinTime || 0;
+    const canSpin = Date.now() - lastSpin >= 864e5;
+    btn.classList.toggle("fortune-wheel-ready", canSpin);
+  }
+  function openFortuneWheel() {
+    initSound2();
+    const lang = game.state && game.state.language || "en";
+    const tObj = translations[lang] || translations.en;
+    const modal = document.getElementById("fortune-wheel-modal");
+    if (!modal) return;
+    const titleEl = document.getElementById("fortune-wheel-title");
+    if (titleEl) titleEl.textContent = tObj.fortuneWheelTitle || "\u05D2\u05DC\u05D2\u05DC \u05D4\u05DE\u05D6\u05DC \u05D4\u05D9\u05D5\u05DE\u05D9";
+    const subtitleEl = document.getElementById("fortune-wheel-subtitle");
+    if (subtitleEl) subtitleEl.textContent = tObj.fortuneWheelSubtitle || "\u05E1\u05D5\u05D1\u05D1 \u05E4\u05E2\u05DD \u05D1\u05D9\u05D5\u05DD \u05D5\u05D6\u05DB\u05D4 \u05D1\u05E4\u05E8\u05E1!";
+    const spinHintEl = document.getElementById("fortune-spin-hint");
+    if (spinHintEl) spinHintEl.textContent = tObj.fortuneWheelSpinHint || "\u{1F447} \u05DC\u05D7\u05E5 \u05E2\u05DC \u05D4\u05DB\u05E4\u05EA\u05D5\u05E8 \u05DC\u05DE\u05D8\u05D4 \u05DB\u05D3\u05D9 \u05DC\u05E1\u05D5\u05D1\u05D1 \u05D0\u05EA \u05D4\u05D2\u05DC\u05D2\u05DC";
+    const closeBtnEl = document.getElementById("fortune-close-btn");
+    if (closeBtnEl) closeBtnEl.textContent = tObj.fortuneWheelClose || "\u2715 \u05E1\u05D2\u05D5\u05E8 \u05D5\u05D7\u05D6\u05D5\u05E8 \u05DC\u05DE\u05E9\u05D7\u05E7";
+    const now = Date.now();
+    const lastSpin = game.state.lastSpinTime || 0;
+    const cooldownMs = 864e5;
+    const timeLeft = cooldownMs - (now - lastSpin);
+    const canSpin = timeLeft <= 0;
+    let adSpinGranted = false;
+    const spinBtn = document.getElementById("fortune-spin-btn");
+    const cooldownEl = document.getElementById("fortune-cooldown");
+    const resultEl = document.getElementById("fortune-result");
+    if (resultEl) resultEl.style.display = "none";
+    function formatShortAmount(num) {
+      if (num < 1e3) return "$" + Math.ceil(num);
+      const i = Math.floor(Math.log10(num) / 3);
+      const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd"];
+      const suffix = suffixes[i] || "?";
+      const rawVal = num / Math.pow(10, i * 3);
+      return "$" + Math.ceil(rawVal) + suffix;
+    }
+    const segmentsContainer = document.getElementById("wheel-segments-container");
+    const wheelGraphic = document.querySelector(".fortune-wheel-graphic");
+    if (segmentsContainer && wheelGraphic) {
+      segmentsContainer.innerHTML = "";
+      let currentAngle = 0;
+      const colors = ["#dfab29", "#10b981", "#3b82f6", "#a855f7", "#ef4444", "#06b6d4"];
+      let gradientString = "conic-gradient(";
+      GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
+        if (index >= 6) return;
+        const sliceAngle = p.weight / 100 * 360;
+        const startAngle = currentAngle;
+        const endAngle = currentAngle + sliceAngle;
+        gradientString += `${colors[index]} ${startAngle}deg ${endAngle}deg${index === 5 ? "" : ", "}`;
+        const seg = document.createElement("div");
+        seg.className = `wheel-seg seg-${index + 1}`;
+        const middleAngle = startAngle + sliceAngle / 2;
+        seg.style.transform = `rotate(${middleAngle}deg) translateY(-115px)`;
+        let icon = "\u{1F381}";
+        let text = "";
+        if (p.type === "cash") {
+          icon = p.label === "cash_small" ? "\u{1F4B0}" : p.label === "cash_medium" ? "\u{1F4B5}" : "\u{1F4B8}";
+          const eps = game.getEarningsPerSecond();
+          const timeAmount = 3600 * eps * p.value;
+          const pct = p.label === "cash_big" ? 0.3 : p.label === "cash_medium" ? 0.2 : 0.1;
+          const pctAmount = Math.round(game.state.cash * pct);
+          text = `+${formatShortAmount(Math.max(timeAmount, pctAmount))}`;
+        } else if (p.type === "boost") {
+          icon = "\u26A1";
+          text = `+${p.value}h`;
+        } else if (p.type === "shares") {
+          icon = "\u{1F4C8}";
+          const isSmall = p.label === "shares_1";
+          let sharesAmount = Math.max(p.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.5)));
+          sharesAmount = Math.min(1e4, sharesAmount);
+          text = `+${sharesAmount >= 1e3 ? sharesAmount / 1e3 + "K" : sharesAmount}`;
+        }
+        const isNarrow = p.weight <= 5;
+        const textSize = isNarrow ? "0.9rem" : "1.15rem";
+        const iconSize = isNarrow ? "1.2rem" : "1.6rem";
+        const gapSize = isNarrow ? "4px" : "6px";
+        seg.innerHTML = `
+                <div style="display:flex; flex-direction:row; align-items:center; gap:${gapSize}; transform: rotate(90deg); text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">
+                    <span style="font-size:${iconSize}; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));">${icon}</span>
+                    <span dir="ltr" style="font-size:${textSize}; font-weight:900;">${text}</span>
+                </div>
+            `;
+        segmentsContainer.appendChild(seg);
+        currentAngle = endAngle;
+      });
+      gradientString += ")";
+      wheelGraphic.style.background = gradientString;
+    }
+    if (spinBtn) {
+      if (canSpin) {
+        spinBtn.disabled = false;
+        spinBtn.textContent = tObj.fortuneWheelSpinBtn || "\u05E1\u05D5\u05D1\u05D1!";
+        if (cooldownEl) cooldownEl.style.display = "none";
+      } else {
+        spinBtn.disabled = true;
+        const hoursLeft = Math.floor(timeLeft / 36e5);
+        const minsLeft = Math.floor(timeLeft % 36e5 / 6e4);
+        const hStr = hoursLeft.toString().padStart(2, "0");
+        const mStr = minsLeft.toString().padStart(2, "0");
+        const cdText = tObj.fortuneWheelCooldown && tObj.fortuneWheelCooldown(hStr, mStr) || `${hStr}:${mStr}`;
+        spinBtn.textContent = cdText;
+        if (cooldownEl) {
+          cooldownEl.textContent = cdText;
+          cooldownEl.style.display = "block";
+        }
+      }
+      spinBtn.onclick = () => {
+        if (spinBtn.disabled) return;
+        initSound2();
+        const hintEl = document.getElementById("fortune-spin-hint");
+        if (hintEl) hintEl.style.display = "none";
+        spinBtn.disabled = true;
+        spinBtn.textContent = tObj.fortuneWheelSpinning || "\u05DE\u05E1\u05EA\u05D5\u05D1\u05D1...";
+        const prizePool = GAME_CONFIG.WHEEL_PRIZES;
+        const prize = _wheelWeightedRandom(prizePool);
+        let currentAngle = 0;
+        let targetAngle = 0;
+        for (let i = 0; i < GAME_CONFIG.WHEEL_PRIZES.length; i++) {
+          const p = GAME_CONFIG.WHEEL_PRIZES[i];
+          const sliceAngle = p.weight / 100 * 360;
+          if (p === prize) {
+            const minAngle = currentAngle + sliceAngle * 0.1;
+            const maxAngle = currentAngle + sliceAngle * 0.9;
+            const landedAngle = minAngle + Math.random() * (maxAngle - minAngle);
+            targetAngle = 360 - landedAngle;
+            break;
+          }
+          currentAngle += sliceAngle;
+        }
+        const wheelEl = document.getElementById("fortune-wheel-graphic");
+        if (wheelEl) {
+          wheelEl.classList.remove("wheel-spin");
+          const totalRotation = 1800 + targetAngle;
+          wheelEl.style.setProperty("--stop-angle", `${totalRotation}deg`);
+          void wheelEl.offsetWidth;
+          wheelEl.classList.add("wheel-spin");
+        }
+        setTimeout(() => {
+          let prizeText = "";
+          const lang2 = game.state && game.state.language || "en";
+          const tObj2 = translations[lang2] || translations.en;
+          const prizeLabel = tObj2.wheelPrizes && tObj2.wheelPrizes[prize.label] || prize.label;
+          if (prize.type === "cash") {
+            const eps = game.getEarningsPerSecond();
+            const timeAmount = 3600 * eps * prize.value;
+            const pctAmount = Math.round(game.state.cash * (prize.label === "cash_small" ? 0.1 : prize.label === "cash_medium" ? 0.2 : 0.3));
+            const amount = Math.max(timeAmount, pctAmount);
+            game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
+            game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+            prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
+            spawnFloating(`+${formatMoney(amount)}`, window.innerWidth / 2, window.innerHeight / 2 - 60, "green");
+          } else if (prize.type === "boost") {
+            game.addBoost2x(prize.value);
+            prizeText = `${prizeLabel}: +${prize.value}h BOOST`;
+            spawnFloating(`\u26A1 +${prize.value}h`, window.innerWidth / 2, window.innerHeight / 2 - 60, "gold");
+          } else if (prize.type === "gold" || prize.type === "shares") {
+            const isSmall = prize.label === "gold_1" || prize.label === "shares_1";
+            let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.5)));
+            sharesAmount = Math.min(1e4, sharesAmount);
+            game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 1e5);
+            const sharesLabel = `+${sharesAmount}`;
+            prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || "Gold Shares"}`;
+            const icon = prize.type === "gold" ? "\u{1F947}" : "\u{1F4C8}";
+            spawnFloating(`${icon} ${sharesLabel}`, window.innerWidth / 2, window.innerHeight / 2 - 60, "gold");
+          }
+          const wasAdSpin = adSpinGranted;
+          if (wasAdSpin) {
+            game.state.lastAdSpinTime = Date.now();
+            adSpinGranted = false;
+          } else {
+            game.state.lastSpinTime = Date.now();
+          }
+          game.saveGame();
+          updateFortuneWheelBtnState();
+          draw();
+          showDiscoveryTip("fortune");
+          if (resultEl) {
+            const titleText = (tObj2.fortuneWheelPrizeTitle || "\u05D6\u05DB\u05D9\u05EA \u05D1") + ":";
+            resultEl.innerHTML = `
+                        <div class="wheel-result-title">\u{1F451} ${titleText}</div>
+                        <div class="wheel-result-prize-container">
+                            <div class="laurel laurel-left">\u{1F33F}</div>
+                            <div class="wheel-result-prize">${prizeText}</div>
+                            <div class="laurel laurel-right">\u{1F33F}</div>
+                        </div>
+                    `;
+            resultEl.style.display = "block";
+          }
+          const spinBtn2 = document.getElementById("fortune-spin-btn");
+          if (spinBtn2) {
+            const lastSpin2 = game.state && game.state.lastSpinTime || 0;
+            let newTimeLeft2 = 864e5 - (Date.now() - lastSpin2);
+            if (newTimeLeft2 < 0) newTimeLeft2 = 0;
+            const h2 = Math.floor(newTimeLeft2 / 36e5).toString().padStart(2, "0");
+            const m2 = Math.floor(newTimeLeft2 % 36e5 / 6e4).toString().padStart(2, "0");
+            const cd2 = tObj2.fortuneWheelCooldown ? tObj2.fortuneWheelCooldown(h2, m2) : `${h2}:${m2}`;
+            spinBtn2.textContent = cd2;
+            if (cooldownEl) {
+              cooldownEl.textContent = cd2;
+              cooldownEl.style.display = "block";
+            }
+          }
+          const adSpinEl = document.getElementById("fortune-ad-spin-btn");
+          if (adSpinEl) {
+            adSpinEl.disabled = false;
+            adSpinEl.style.display = "block";
+            adSpinEl.textContent = tObj2.fortuneWheelAdSpinBtn || "\u{1F4FA} \u05E1\u05D9\u05D1\u05D5\u05D1 \u05E0\u05D5\u05E1\u05E3 \u2014 \u05E6\u05E4\u05D4 \u05D1\u05E4\u05E8\u05E1\u05D5\u05DE\u05EA";
+          }
+        }, 4e3);
+      };
+    }
+    const adSpinBtn = document.getElementById("fortune-ad-spin-btn");
+    if (adSpinBtn) {
+      adSpinBtn.disabled = false;
+      if (!canSpin) {
+        adSpinBtn.style.display = "block";
+        adSpinBtn.textContent = tObj.fortuneWheelAdSpinBtn || "\u{1F4FA} \u05E1\u05D9\u05D1\u05D5\u05D1 \u05E0\u05D5\u05E1\u05E3 \u2014 \u05E6\u05E4\u05D4 \u05D1\u05E4\u05E8\u05E1\u05D5\u05DE\u05EA";
+      } else {
+        adSpinBtn.style.display = "none";
+      }
+      adSpinBtn.onclick = () => {
+        if (adSpinBtn.disabled) return;
+        adSpinBtn.disabled = true;
+        adSpinBtn.style.display = "none";
+        playAd(() => {
+          adSpinGranted = true;
+          const sp = document.getElementById("fortune-spin-btn");
+          if (sp) {
+            sp.disabled = false;
+            const lang3 = game.state && game.state.language || "en";
+            const t3 = translations[lang3] || translations.en;
+            sp.textContent = t3.fortuneWheelSpinBtn || "\u05E1\u05D5\u05D1\u05D1!";
+          }
+          if (resultEl) resultEl.style.display = "none";
+          if (cooldownEl) cooldownEl.style.display = "none";
+          const hintEl2 = document.getElementById("fortune-spin-hint");
+          if (hintEl2) hintEl2.style.display = "block";
+        });
+      };
+    }
+    modal.classList.add("active");
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        initSound2();
+        modal.classList.remove("active");
+      }
+    };
+    const closeBtn = document.getElementById("fortune-close-btn");
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        initSound2();
+        modal.classList.remove("active");
+      };
+    }
+  }
+  var vipBannerCountdownInterval = null;
+  window.triggerVipVisitBanner = function() {
+    if (document.getElementById("vip-visit-banner")) return;
+    const lang = game.state && game.state.language || "en";
+    const tObj = translations[lang] || translations.en;
+    const banner = document.createElement("div");
+    banner.id = "vip-visit-banner";
+    banner.className = "vip-visit-banner";
+    let prestigeAmount = typeof game.calculatePrestigeShares === "function" ? game.calculatePrestigeShares() : 10;
+    let ownedShares = game.state && game.state.shares ? game.state.shares : 0;
+    let totalEffectiveShares = ownedShares + prestigeAmount;
+    let shareReward = Math.max(3, Math.ceil(prestigeAmount * 0.3), Math.ceil(totalEffectiveShares * 0.05));
+    let hourlyProfit = typeof game.getEarningsPerSecond === "function" ? game.getEarningsPerSecond() * 3600 : 0;
+    let cashReward = Math.ceil(hourlyProfit * 0.3);
+    const serveText = tObj.vipCloseBtn || "\u05D4\u05DE\u05E9\u05DA \u05DB\u05E8\u05D2\u05D9\u05DC";
+    const rewardType = Math.random() < 0.5 ? "shares" : "cash";
+    let premiumText = "";
+    if (rewardType === "shares") {
+      premiumText = typeof tObj.vipPremiumBtn === "function" ? tObj.vipPremiumBtn(shareReward) : tObj.vipPremiumBtn || "VIP Premium";
+    } else {
+      premiumText = tObj.vipPremiumCashBtn ? tObj.vipPremiumCashBtn(formatMoney(cashReward)) : `VIP Premium (\u05E4\u05E8\u05E1\u05D5\u05DE\u05EA + ${formatMoney(cashReward)})`;
+    }
+    const vipName = tObj.vipBannerTitle || "\u05DC\u05E7\u05D5\u05D7 \u05E2\u05E1\u05E7\u05D9";
+    banner.innerHTML = `
+            <div class="vip-premium-content">
+                <div class="vip-red-carpet"></div>
+                <div class="vip-shimmer"></div>
+                <div class="vip-profile">
+                    <div class="vip-avatar">\u{1F48E}</div>
+                    <div class="vip-ring"></div>
+                </div>
+                <div class="vip-info">
+                    <div class="vip-title-wrap"><span class="vip-badge">VIP</span> <span class="vip-name">${vipName}</span></div>
+                </div>
+                <div class="vip-progress-wrap">
+                    <div class="vip-progress-bar" id="vip-progress-bar"></div>
+                </div>
+                <div class="vip-actions">
+                    ${!AdService.isInCooldown() ? `
+                    <button class="vip-btn vip-serve-premium" id="vip-serve-ad"><span class="btn-icon">\u{1F3AC}</span> ${premiumText}</button>
+                    ` : ""}
+                    <button class="vip-btn vip-serve-cash" id="vip-serve-cash">${serveText}</button>
+                </div>
+            </div>
+        `;
+    document.body.appendChild(banner);
+    let secsLeft = 25;
+    const totalSecs = 25;
+    const progressBar = document.getElementById("vip-progress-bar");
+    if (vipBannerCountdownInterval) clearInterval(vipBannerCountdownInterval);
+    vipBannerCountdownInterval = setInterval(() => {
+      secsLeft--;
+      if (progressBar) {
+        const pct = secsLeft / totalSecs * 100;
+        progressBar.style.width = pct + "%";
+      }
+      if (secsLeft <= 0) {
+        clearInterval(vipBannerCountdownInterval);
+        removeVipVisitBanner();
+      }
+    }, 1e3);
+    document.getElementById("vip-serve-cash").addEventListener("click", () => {
+      initSound2();
+      serveVipVisitor("none");
+    });
+    const premiumAdBtn = document.getElementById("vip-serve-ad");
+    if (premiumAdBtn) {
+      premiumAdBtn.addEventListener("click", () => {
+        initSound2();
+        serveVipVisitor(rewardType);
+      });
+    }
+  };
+  function removeVipVisitBanner() {
+    if (vipBannerCountdownInterval) {
+      clearInterval(vipBannerCountdownInterval);
+      vipBannerCountdownInterval = null;
+    }
+    if (window._vipBannerRetryTimeout) {
+      clearTimeout(window._vipBannerRetryTimeout);
+      window._vipBannerRetryTimeout = null;
+    }
+    const banner = document.getElementById("vip-visit-banner");
+    if (banner) banner.remove();
+  }
+  function serveVipVisitor(rewardType) {
+    removeVipVisitBanner();
+    game.state.vipVisitActive = false;
+    game.state.nextVipVisit = Date.now() + (600 + Math.random() * 60) * 1e3;
+    game.state.vipVisitExpiry = 0;
+    game.state.vipServedTotal = (game.state.vipServedTotal || 0) + 1;
+    game.missionsDirty = true;
+    if (rewardType === "shares") {
+      playAd(() => {
+        let prestigeAmount = typeof game.calculatePrestigeShares === "function" ? game.calculatePrestigeShares() : 10;
+        let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.3));
+        game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1e9);
+        const msg = `\u2B50 ${shareReward} VIP Shares \u2B50`;
+        spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "gold");
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => spawnFloating("\u{1F48E}", window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), "gold"), Math.random() * 800);
+        }
+        game.saveGame();
+        draw();
+      });
+    } else if (rewardType === "cash") {
+      playAd(() => {
+        let hourlyProfit = typeof game.getEarningsPerSecond === "function" ? game.getEarningsPerSecond() * 3600 : 0;
+        let cashReward = Math.ceil(hourlyProfit * 0.3);
+        game.state.cash = Math.round((game.state.cash + cashReward + Number.EPSILON) * 100) / 100;
+        game.state.lifetimeCash = Math.round((game.state.lifetimeCash + cashReward + Number.EPSILON) * 100) / 100;
+        const msg = `\u{1F4B5} +${formatMoney(cashReward)} \u{1F4B5}`;
+        spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "green");
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => spawnFloating("\u{1F4B5}", window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), "green"), Math.random() * 800);
+        }
+        game.saveGame();
+        draw();
+      });
+    } else {
+      game.saveGame();
+      draw();
+    }
+  }
+  function renderDailyChallengesSection() {
+    if (!window.game || !window.game.state) return;
+    if (!window.dailyChallengeController) return;
+    window.dailyChallengeController.checkAndReset();
+    const lang = game.state && game.state.language || "en";
+    const tObj = translations[lang] || translations.en;
+    const container = document.getElementById("daily-challenges-content");
+    if (!container) return;
+    container.innerHTML = "";
+    const now = /* @__PURE__ */ new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setHours(24, 0, 0, 0);
+    const msToMidnight = tomorrow - now;
+    const hToMidnight = Math.floor(msToMidnight / 36e5).toString().padStart(2, "0");
+    const mToMidnight = Math.floor(msToMidnight % 36e5 / 6e4).toString().padStart(2, "0");
+    const resetText = tObj.dailyResetLabel ? tObj.dailyResetLabel(hToMidnight, mToMidnight) : `${hToMidnight}:${mToMidnight}`;
+    const headerEl = document.createElement("div");
+    headerEl.className = "daily-header-ai";
+    headerEl.innerHTML = `
+            <div class="daily-header-title">
+                <i class="fas fa-calendar-alt" style="color:var(--text-light); margin-left:8px;"></i> ${tObj.dailyChallengesTitle || "\u05D0\u05EA\u05D2\u05E8\u05D9 \u05D4\u05D9\u05D5\u05DD"}
+            </div>
+            <div class="daily-header-box">
+                <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || "3 \u05D0\u05EA\u05D2\u05E8\u05D9\u05DD \u05E7\u05E9\u05D9\u05DD \u05E9\u05DE\u05EA\u05D0\u05E4\u05E1\u05D9\u05DD \u05D1\u05D7\u05E6\u05D5\u05EA"}</span>
+                <span class="daily-reset-timer">\u05DE\u05EA\u05D0\u05E4\u05E1 \u05D1\u05E2\u05D5\u05D3 ${resetText}</span>
+            </div>
+        `;
+    container.appendChild(headerEl);
+    const challenges = game.state.dailyChallenges || [];
+    if (challenges.length === 0) {
+      const emptyEl = document.createElement("div");
+      emptyEl.style.color = "var(--text-muted)";
+      emptyEl.style.textAlign = "center";
+      emptyEl.style.padding = "1rem";
+      emptyEl.textContent = tObj.loadingChallengesMsg || "Loading...";
+      container.appendChild(emptyEl);
+      return;
+    }
+    challenges.forEach((c, idx) => {
+      const typeLabel = tObj.dailyChallengeTypes && tObj.dailyChallengeTypes[c.type] || c.type;
+      const pct = c.target > 0 ? Math.min(100, Math.floor(c.progress / c.target * 100)) : 0;
+      const rewardText = c.reward && c.reward.type === "gold" ? tObj.dailyRewardGold ? tObj.dailyRewardGold(c.reward.amount) : `+${c.reward.amount} gold` : tObj.dailyRewardShares ? tObj.dailyRewardShares(c.reward.amount) : `+${c.reward.amount}`;
+      const card = document.createElement("div");
+      card.className = "daily-challenge-card" + (c.completed ? " completed" : "") + (c.claimed ? " claimed" : "");
+      card.innerHTML = `
+                <div class="daily-card-top">
+                    <span class="daily-reward-pill">${rewardText}</span>
+                    <span class="daily-card-title">${typeLabel} <i class="fas fa-star" style="color:#fde047; margin-right:5px;"></i></span>
+                </div>
+                <div class="daily-card-progress">
+                    <div class="daily-progress-wrap">
+                        <div class="daily-progress-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>
+                <div class="daily-card-bottom">
+                    ${c.completed && !c.claimed ? `<button class="daily-claim-btn" data-idx="${idx}">${tObj.dailyClaimBtn || "\u05E7\u05D1\u05DC \u05E4\u05E8\u05E1"}</button>
+                           <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>` : c.claimed ? `<span class="daily-claimed-label">${tObj.dailyClaimedLabel || "\u05E0\u05D0\u05E1\u05E3"}</span>
+                               <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>` : `<span class="daily-pct-text">${pct}%</span>
+                               <span class="daily-amount-text">${formatMoney(c.progress)} / ${formatMoney(c.target)}</span>`}
+                </div>
+            `;
+      container.appendChild(card);
+    });
+    container.querySelectorAll(".daily-claim-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window._isClaimingDaily) return;
+        window._isClaimingDaily = true;
+        setTimeout(() => {
+          window._isClaimingDaily = false;
+        }, 500);
+        initSound2();
+        const idx = parseInt(btn.getAttribute("data-idx"));
+        const claimed = window.dailyChallengeController.claimReward(idx);
+        if (claimed) {
+          btn.disabled = true;
+          const lang2 = game.state && game.state.language || "en";
+          const tObj2 = translations[lang2] || translations.en;
+          const c = game.state.dailyChallenges[idx];
+          let msg = "+1";
+          if (c && c.reward) {
+            msg = c.reward.type === "gold" ? tObj2.dailyRewardGold ? tObj2.dailyRewardGold(c.reward.amount) : `+${c.reward.amount}` : tObj2.dailyRewardShares ? tObj2.dailyRewardShares(c.reward.amount) : `+${c.reward.amount}`;
+          }
+          spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "gold");
+          if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") window.gameAudio.playUnlock();
+          renderDailyChallengesSection();
+          draw();
+        }
+      });
+    });
+  }
+  window.applyLanguage = applyLanguage;
+  window.applyTheme = applyTheme;
+  window.playAd = playAd;
+  window.formatTime = formatTime;
+  window.openPrestigeModal = openPrestigeModal2;
+  window.openBoostModal = openBoostModal;
+  window.openAnalyticsModal = openAnalyticsModal;
+  window.handleCrowdEvent = handleCrowdEvent;
+  window.handleSecurityEvent = handleSecurityEvent;
+  window.startPromoRecording = function(durationMs = 15e3) {
+    const startBtn = document.createElement("button");
+    startBtn.innerHTML = "\u{1F534} \u05D4\u05EA\u05D7\u05DC \u05D4\u05E7\u05DC\u05D8\u05D4 \u05E2\u05DB\u05E9\u05D9\u05D5!";
+    startBtn.style.cssText = "position:fixed; top:40%; left:50%; transform:translate(-50%, -50%); z-index:999999; padding:20px 40px; font-size:24px; font-weight:bold; background:#e74c3c; color:white; border:4px solid white; border-radius:15px; cursor:pointer; box-shadow:0 10px 40px rgba(0,0,0,0.8);";
+    startBtn.onclick = async () => {
+      startBtn.remove();
+      if (game) {
+        game.state.language = "en";
+        draw();
+      }
+      const s = document.createElement("style");
+      s.innerHTML = "* { backdrop-filter: none !important; }";
+      document.head.appendChild(s);
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { frameRate: { ideal: 60 } },
+          audio: false
+        });
+        let mediaRecorder;
+        try {
+          mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9", videoBitsPerSecond: 8e6 });
+        } catch {
+          mediaRecorder = new MediaRecorder(stream);
+        }
+        const chunks = [];
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          const url = URL.createObjectURL(blob);
+          const btn = document.createElement("button");
+          btn.innerHTML = "\u{1F3A5} \u05D4\u05E1\u05E8\u05D8\u05D5\u05DF \u05DE\u05D5\u05DB\u05DF! \u05DC\u05D7\u05E5 \u05DB\u05D0\u05DF \u05DC\u05D4\u05D5\u05E8\u05D3\u05D4";
+          btn.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:999999; padding:20px 40px; font-size:24px; font-weight:bold; background:#4CAF50; color:white; border:4px solid white; border-radius:15px; cursor:pointer; box-shadow:0 10px 40px rgba(0,0,0,0.8);";
+          btn.onclick = () => {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "idle_bank_promo_en.webm";
+            document.body.appendChild(a);
+            a.click();
+            btn.innerHTML = "\u2705 \u05DE\u05E2\u05D5\u05DC\u05D4! \u05D4\u05E7\u05D5\u05D1\u05E5 \u05D9\u05D5\u05E8\u05D3";
+            setTimeout(() => btn.remove(), 3e3);
+          };
+          document.body.appendChild(btn);
+          stream.getTracks().forEach((track) => track.stop());
+          console.log("\u{1F3AC} Promo Recording ready! Waiting for user to click download button.");
+          s.remove();
+        };
+        mediaRecorder.start();
+        console.log(`\u{1F3A5} Recording started! Will automatically stop and download after ${durationMs / 1e3} seconds.`);
+        setTimeout(() => mediaRecorder.stop(), durationMs);
+      } catch (err) {
+        console.error("Screen recording was cancelled or failed:", err);
+        s.remove();
+      }
+    };
+    document.body.appendChild(startBtn);
+    console.log("Waiting for user to click the start button...");
+  };
+  function spawnVaultCoins(amount, btnRect) {
+  }
+  var DISCOVERY_TIPS = {
+    start: {
+      he: { icon: "\u{1F3E6}", title: "\u05D1\u05E8\u05D5\u05DB\u05D9\u05DD \u05D4\u05D1\u05D0\u05D9\u05DD \u05DC\u05D1\u05E0\u05E7 \u05E9\u05DC\u05DA!", body: '\u05DC\u05D7\u05E5 "\u05D0\u05E1\u05D5\u05E3" \u05E2\u05DC \u05D4\u05D3\u05DC\u05E4\u05E7 \u05DB\u05D3\u05D9 \u05DC\u05D0\u05E1\u05D5\u05E3 \u05DB\u05E1\u05E3 \u05DE\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA. \u05DC\u05D0\u05D7\u05E8 \u05DE\u05DB\u05DF \u05DC\u05D7\u05E5 "\u05E8\u05D5\u05E7\u05DF \u05DB\u05E1\u05E4\u05EA" \u05DC\u05D4\u05D5\u05E1\u05D9\u05E3 \u05D0\u05EA \u05D4\u05DB\u05E1\u05E3 \u05DC\u05D9\u05EA\u05E8\u05D4 \u05E9\u05DC\u05DA.' },
+      en: { icon: "\u{1F3E6}", title: "Welcome to your bank!", body: 'Tap "Collect" on a teller desk to gather cash from customers. Then tap "Empty Vault" to add it to your balance.' },
+      es: { icon: "\u{1F3E6}", title: "\xA1Bienvenido a tu banco!", body: 'Toca "Cobrar" en una caja para recolectar dinero. Luego toca "Vaciar B\xF3veda" para a\xF1adirlo a tu saldo.' },
+      ru: { icon: "\u{1F3E6}", title: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C \u0432 \u0431\u0430\u043D\u043A!", body: "\u041D\u0430\u0436\u043C\u0438 \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C\xBB \u0443 \u043A\u0430\u0441\u0441\u044B, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438. \u041F\u043E\u0442\u043E\u043C \u043D\u0430\u0436\u043C\u0438 \xAB\u041E\u043F\u0443\u0441\u0442\u043E\u0448\u0438\u0442\u044C \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435\xBB, \u0447\u0442\u043E\u0431\u044B \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0438\u0445 \u043D\u0430 \u0441\u0447\u0451\u0442." }
+    },
+    vault: {
+      he: { icon: "\u{1F510}", title: "\u05D4\u05DB\u05E1\u05E4\u05EA \u05DE\u05D7\u05DB\u05D4 \u05DC\u05DA!", body: '\u05D4\u05D3\u05DC\u05E4\u05E7\u05D9\u05DD \u05E9\u05DC\u05D7\u05D5 \u05DB\u05E1\u05E3 \u05DC\u05DB\u05E1\u05E4\u05EA. \u05DC\u05D7\u05E5 "\u05E8\u05D5\u05E7\u05DF \u05DB\u05E1\u05E4\u05EA" \u05DC\u05D4\u05D5\u05E1\u05D9\u05E3 \u05D0\u05D5\u05EA\u05D5 \u05DC\u05D9\u05EA\u05E8\u05D4. \u05E9\u05D3\u05E8\u05D2 \u05D0\u05EA \u05D4\u05DB\u05E1\u05E4\u05EA \u05DB\u05D3\u05D9 \u05E9\u05EA\u05D7\u05D6\u05D9\u05E7 \u05D9\u05D5\u05EA\u05E8 \u05DB\u05E1\u05E3.' },
+      en: { icon: "\u{1F510}", title: "The vault is waiting!", body: 'Tellers have sent cash to the vault. Tap "Empty Vault" to add it to your balance. Upgrade the vault to hold more.' },
+      es: { icon: "\u{1F510}", title: "\xA1La b\xF3veda te espera!", body: 'Las cajas han enviado dinero a la b\xF3veda. Toca "Vaciar B\xF3veda" para a\xF1adirlo a tu saldo. Mejora la b\xF3veda para que guarde m\xE1s.' },
+      ru: { icon: "\u{1F510}", title: "\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u0436\u0434\u0451\u0442!", body: "\u041A\u0430\u0441\u0441\u044B \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u043B\u0438 \u0434\u0435\u043D\u044C\u0433\u0438 \u0432 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435. \u041D\u0430\u0436\u043C\u0438 \xAB\u041E\u043F\u0443\u0441\u0442\u043E\u0448\u0438\u0442\u044C\xBB, \u0447\u0442\u043E\u0431\u044B \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0438\u0445 \u043D\u0430 \u0441\u0447\u0451\u0442. \u0423\u043B\u0443\u0447\u0448\u0438 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435, \u0447\u0442\u043E\u0431\u044B \u043E\u043D\u043E \u0432\u043C\u0435\u0449\u0430\u043B\u043E \u0431\u043E\u043B\u044C\u0448\u0435." }
+    },
+    guard: {
+      he: { icon: "\u{1F690}", title: "\u05D2\u05D9\u05DC\u05D9\u05EA: \u05D1\u05DC\u05D3\u05E8\u05D9\u05DD!", body: "\u05D4\u05D1\u05DC\u05D3\u05E8 \u05DE\u05E2\u05D1\u05D9\u05E8 \u05DB\u05E1\u05E3 \u05DE\u05D4\u05D3\u05DC\u05E4\u05E7\u05D9\u05DD \u05DC\u05DB\u05E1\u05E4\u05EA \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u2014 \u05D1\u05DC\u05D9 \u05E9\u05EA\u05E6\u05D8\u05E8\u05DA \u05DC\u05DC\u05D7\u05D5\u05E5. \u05E9\u05D3\u05E8\u05D2 \u05D0\u05D5\u05EA\u05D5 \u05DB\u05D3\u05D9 \u05E9\u05D9\u05E2\u05D1\u05D9\u05E8 \u05DE\u05D4\u05E8 \u05D9\u05D5\u05EA\u05E8 \u05D5\u05D9\u05DB\u05D9\u05DC \u05D9\u05D5\u05EA\u05E8." },
+      en: { icon: "\u{1F690}", title: "Discovered: Couriers!", body: "The courier automatically transfers cash from tellers to the vault \u2014 no tapping needed. Upgrade it for faster and larger transfers." },
+      es: { icon: "\u{1F690}", title: "\xA1Descubriste: Mensajeros!", body: "El mensajero transfiere dinero de las cajas a la b\xF3veda autom\xE1ticamente. \xA1Mej\xF3ralo para transferencias m\xE1s r\xE1pidas y mayores!" },
+      ru: { icon: "\u{1F690}", title: "\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435: \u041A\u0443\u0440\u044C\u0435\u0440\u044B!", body: "\u041A\u0443\u0440\u044C\u0435\u0440 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043F\u0435\u0440\u0435\u043D\u043E\u0441\u0438\u0442 \u0434\u0435\u043D\u044C\u0433\u0438 \u0438\u0437 \u043A\u0430\u0441\u0441 \u0432 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u2014 \u0431\u0435\u0437 \u043D\u0430\u0436\u0430\u0442\u0438\u0439. \u0423\u043B\u0443\u0447\u0448\u0438 \u0435\u0433\u043E \u0434\u043B\u044F \u0431\u043E\u043B\u044C\u0448\u0435\u0439 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438 \u0438 \u0432\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u0438." }
+    },
+    dept: {
+      he: { icon: "\u{1F3E2}", title: "\u05D2\u05D9\u05DC\u05D9\u05EA: \u05DE\u05D7\u05DC\u05E7\u05D5\u05EA!", body: "\u05DB\u05DC \u05DE\u05D7\u05DC\u05E7\u05D4 \u05E9\u05E4\u05D5\u05EA\u05D7\u05D9\u05DD \u05DE\u05DB\u05E4\u05D9\u05DC\u05D4 \u05D0\u05EA \u05D4\u05D4\u05DB\u05E0\u05E1\u05D4 \u05D4\u05DB\u05D5\u05DC\u05DC\u05EA \u05E9\u05DC \u05D4\u05D1\u05E0\u05E7. \u05E4\u05EA\u05D7 \u05DB\u05DE\u05D4 \u05E9\u05D9\u05D5\u05EA\u05E8 \u05DE\u05D7\u05DC\u05E7\u05D5\u05EA \u05DB\u05D3\u05D9 \u05DC\u05D2\u05D3\u05D5\u05DC \u05DE\u05D4\u05E8 \u05D9\u05D5\u05EA\u05E8." },
+      en: { icon: "\u{1F3E2}", title: "Discovered: Departments!", body: "Each department you unlock multiplies your total income. Open as many as possible to grow faster." },
+      es: { icon: "\u{1F3E2}", title: "\xA1Descubriste: Departamentos!", body: "Cada departamento que abres multiplica los ingresos totales. Abre tantos como puedas para crecer m\xE1s r\xE1pido." },
+      ru: { icon: "\u{1F3E2}", title: "\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435: \u041E\u0442\u0434\u0435\u043B\u044B!", body: "\u041A\u0430\u0436\u0434\u044B\u0439 \u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u043E\u0442\u0434\u0435\u043B \u0443\u043C\u043D\u043E\u0436\u0430\u0435\u0442 \u043E\u0431\u0449\u0438\u0439 \u0434\u043E\u0445\u043E\u0434 \u0431\u0430\u043D\u043A\u0430. \u041E\u0442\u043A\u0440\u044B\u0432\u0430\u0439 \u043A\u0430\u043A \u043C\u043E\u0436\u043D\u043E \u0431\u043E\u043B\u044C\u0448\u0435, \u0447\u0442\u043E\u0431\u044B \u0440\u0430\u0441\u0442\u0438 \u0431\u044B\u0441\u0442\u0440\u0435\u0435." }
+    },
+    manager: {
+      he: { icon: "\u{1F454}", title: "\u05D2\u05D9\u05DC\u05D9\u05EA: \u05DE\u05E0\u05D4\u05DC\u05D9\u05DD!", body: "\u05D4\u05DE\u05E0\u05D4\u05DC \u05DE\u05DE\u05E9\u05D9\u05DA \u05DC\u05E2\u05D1\u05D5\u05D3 \u05D2\u05DD \u05DB\u05E9\u05E1\u05D5\u05D2\u05E8\u05D9\u05DD \u05D0\u05EA \u05D4\u05DE\u05E9\u05D7\u05E7! \u05E9\u05DB\u05D5\u05E8 \u05DE\u05E0\u05D4\u05DC\u05D9\u05DD \u05DC\u05D3\u05DC\u05E4\u05E7\u05D9\u05DD \u05D5\u05DC\u05D1\u05DC\u05D3\u05E8\u05D9\u05DD \u05DB\u05D3\u05D9 \u05E9\u05D4\u05D1\u05E0\u05E7 \u05D9\u05E8\u05D5\u05E5 \u05DC\u05D2\u05DE\u05E8\u05D9 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9." },
+      en: { icon: "\u{1F454}", title: "Discovered: Managers!", body: "The manager keeps working even when you close the game! Hire managers for tellers and couriers so the bank runs fully automatically." },
+      es: { icon: "\u{1F454}", title: "\xA1Descubriste: Gerentes!", body: "\xA1El gerente sigue trabajando aunque cierres el juego! Contrata gerentes para cajas y mensajeros para automatizar el banco." },
+      ru: { icon: "\u{1F454}", title: "\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435: \u041C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u044B!", body: "\u041C\u0435\u043D\u0435\u0434\u0436\u0435\u0440 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u0442 \u0440\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u0434\u0430\u0436\u0435 \u043A\u043E\u0433\u0434\u0430 \u0442\u044B \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u0435\u0448\u044C \u0438\u0433\u0440\u0443! \u041D\u0430\u043D\u0438\u043C\u0430\u0439 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u043E\u0432 \u0434\u043B\u044F \u043A\u0430\u0441\u0441 \u0438 \u043A\u0443\u0440\u044C\u0435\u0440\u043E\u0432, \u0447\u0442\u043E\u0431\u044B \u0431\u0430\u043D\u043A \u0440\u0430\u0431\u043E\u0442\u0430\u043B \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438." }
+    },
+    prestige: {
+      he: { icon: "\u2B50", title: "\u05D4\u05D2\u05D9\u05E2 \u05D4\u05D6\u05DE\u05DF \u05DC-Prestige!", body: '\u05D4\u05D1\u05E0\u05E7 \u05E6\u05DE\u05D7 \u05DE\u05E1\u05E4\u05D9\u05E7. \u05DC\u05D7\u05E5 \u05E2\u05DC "\u05E1\u05E0\u05D9\u05E4\u05D9\u05DD" \u05D5\u05D1\u05D7\u05E8 Prestige \u2014 \u05D4\u05D1\u05E0\u05E7 \u05D9\u05EA\u05D0\u05E4\u05E1, \u05D0\u05D1\u05DC \u05EA\u05E7\u05D1\u05DC \u05DE\u05E0\u05D9\u05D5\u05EA \u05D6\u05D4\u05D1 \u05E9\u05DE\u05D2\u05D3\u05D9\u05DC\u05D5\u05EA \u05D0\u05EA \u05DB\u05DC \u05D4\u05D4\u05DB\u05E0\u05E1\u05D4 \u05DC\u05E6\u05DE\u05D9\u05EA\u05D5\u05EA!' },
+      en: { icon: "\u2B50", title: "Time to Prestige!", body: 'Your bank is big enough. Go to "Branches" and choose Prestige \u2014 the bank resets, but you earn Gold Shares that permanently multiply all income!' },
+      es: { icon: "\u2B50", title: "\xA1Hora del Prestige!", body: 'Tu banco ya es suficientemente grande. Ve a "Sucursales" y elige Prestige \u2014 el banco se reinicia, pero obtienes Acciones de Oro que multiplican permanentemente todos los ingresos.' },
+      ru: { icon: "\u2B50", title: "\u0412\u0440\u0435\u043C\u044F \u0434\u043B\u044F Prestige!", body: "\u0411\u0430\u043D\u043A \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E \u0432\u044B\u0440\u043E\u0441. \u041F\u0435\u0440\u0435\u0439\u0434\u0438 \u0432 \xAB\u0424\u0438\u043B\u0438\u0430\u043B\u044B\xBB \u0438 \u0432\u044B\u0431\u0435\u0440\u0438 Prestige \u2014 \u0431\u0430\u043D\u043A \u0441\u0431\u0440\u043E\u0441\u0438\u0442\u0441\u044F, \u043D\u043E \u0442\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0448\u044C \u0417\u043E\u043B\u043E\u0442\u044B\u0435 \u0410\u043A\u0446\u0438\u0438, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430 \u0443\u043C\u043D\u043E\u0436\u0430\u0442 \u0434\u043E\u0445\u043E\u0434!" }
+    },
+    fortune: {
+      he: { icon: "\u{1F3A1}", title: "\u05D2\u05D9\u05DC\u05D9\u05EA: \u05D2\u05DC\u05D2\u05DC \u05D4\u05DE\u05D6\u05DC!", body: "\u05D4\u05D2\u05DC\u05D2\u05DC \u05DE\u05EA\u05D0\u05E4\u05E1 \u05DB\u05DC 24 \u05E9\u05E2\u05D5\u05EA. \u05D7\u05D6\u05D5\u05E8 \u05DB\u05DC \u05D9\u05D5\u05DD \u05DC\u05E1\u05D5\u05D1\u05D1 \u05D5\u05DC\u05D6\u05DB\u05D5\u05EA \u05D1\u05DB\u05E1\u05E3, \u05DE\u05E0\u05D9\u05D5\u05EA, \u05D0\u05D5 \u05D1\u05D5\u05E0\u05D5\u05E1\u05D9\u05DD." },
+      en: { icon: "\u{1F3A1}", title: "Discovered: Fortune Wheel!", body: "The wheel resets every 24 hours. Come back daily to spin and win cash, shares, or bonuses." },
+      es: { icon: "\u{1F3A1}", title: "\xA1Descubriste: la Ruleta!", body: "La ruleta se reinicia cada 24 horas. Vuelve cada d\xEDa para girarla y ganar dinero, acciones o bonificaciones." },
+      ru: { icon: "\u{1F3A1}", title: "\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435: \u041A\u043E\u043B\u0435\u0441\u043E \u0424\u043E\u0440\u0442\u0443\u043D\u044B!", body: "\u041A\u043E\u043B\u0435\u0441\u043E \u043F\u0435\u0440\u0435\u0437\u0430\u0440\u044F\u0436\u0430\u0435\u0442\u0441\u044F \u043A\u0430\u0436\u0434\u044B\u0435 24 \u0447\u0430\u0441\u0430. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439\u0441\u044F \u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C, \u0447\u0442\u043E\u0431\u044B \u043A\u0440\u0443\u0442\u0438\u0442\u044C \u0438 \u0432\u044B\u0438\u0433\u0440\u044B\u0432\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438, \u0430\u043A\u0446\u0438\u0438 \u0438\u043B\u0438 \u0431\u043E\u043D\u0443\u0441\u044B." }
+    }
+  };
+  var _discoveryQueue = [];
+  var _discoveryActive = false;
+  function showDiscoveryTip(key) {
+    if (!window.game || !window.game.state) return;
+    if (!DISCOVERY_TIPS[key]) return;
+    if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+    if (window.game.state.discoveredTips[key]) return;
+    window.game.state.discoveredTips[key] = true;
+    window.game.saveGame();
+    _discoveryQueue.push(key);
+    if (!_discoveryActive) _nextDiscoveryTip();
+  }
+  function _nextDiscoveryTip() {
+    if (_discoveryQueue.length === 0) {
+      _discoveryActive = false;
+      return;
+    }
+    _discoveryActive = true;
+    var key = _discoveryQueue.shift();
+    var tipSet = DISCOVERY_TIPS[key];
+    if (!tipSet) {
+      _nextDiscoveryTip();
+      return;
+    }
+    var lang = window.game && window.game.state && window.game.state.language || "en";
+    var tip = tipSet[lang] || tipSet.he;
+    var panel = document.getElementById("discovery-tip-panel");
+    var iconEl = document.getElementById("discovery-tip-icon");
+    var titleEl = document.getElementById("discovery-tip-title");
+    var bodyEl = document.getElementById("discovery-tip-body");
+    if (!panel || !iconEl || !titleEl || !bodyEl) {
+      _discoveryActive = false;
+      return;
+    }
+    iconEl.textContent = tip.icon;
+    titleEl.textContent = tip.title;
+    bodyEl.textContent = tip.body;
+    var btnLabels = { he: "\u05D4\u05D1\u05E0\u05EA\u05D9!", en: "Got it!", es: "\xA1Entendido!", ru: "\u041F\u043E\u043D\u044F\u043B!" };
+    var tipBtn = document.getElementById("discovery-tip-btn");
+    if (tipBtn) tipBtn.textContent = btnLabels[lang] || "Got it!";
+    panel.classList.add("visible");
+  }
+  function _dismissDiscoveryTip() {
+    var panel = document.getElementById("discovery-tip-panel");
+    if (panel) panel.classList.remove("visible");
+    _discoveryActive = false;
+    if (_discoveryQueue.length > 0) setTimeout(_nextDiscoveryTip, 500);
+  }
+  function initTutorialEvents() {
+    var btn = document.getElementById("discovery-tip-btn");
+    if (btn) btn.addEventListener("click", function() {
+      initSound2();
+      _dismissDiscoveryTip();
+    });
+  }
+  function maybeStartTutorial() {
+    if (!window.game || !window.game.state) return;
+    if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+    var tips = window.game.state.discoveredTips;
+    var isNew = !tips.start && window.game.state.lifetimeCash <= 300 && !window.game.state.shares && !(window.game.state.missionsCompleted > 0);
+    if (isNew) setTimeout(function() {
+      var tryShow = function() {
+        if (document.querySelector(".modal-overlay.active")) {
+          setTimeout(tryShow, 1e3);
+          return;
+        }
+        showDiscoveryTip("start");
+      };
+      tryShow();
+    }, 2500);
+  }
+  function checkPrestigeTip() {
+    if (!window.game || !window.game.state) return;
+    if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
+    if (window.game.state.discoveredTips.prestige) return;
+    var branch = window.game.branches && window.game.branches[window.game.state.currentBranch];
+    if (branch && window.game.state.cash >= branch.minCashToPrestige) {
+      showDiscoveryTip("prestige");
+    }
+  }
+  window.showDiscoveryTip = showDiscoveryTip;
+  window.checkPrestigeTip = checkPrestigeTip;
+  window.showTutorialStep = function() {
+  };
+  window.completeTutorial = function() {
+  };
+  window.maybeStartTutorial = maybeStartTutorial;
+  window.spawnVaultCoins = spawnVaultCoins;
+  window.handleRescueEvent = handleRescueEvent;
+  window.handleRushHoursEvent = handleRushHoursEvent;
+  window.handleInvestorEvent = handleInvestorEvent;
+  window.triggerRandomEvent = triggerRandomEvent;
+  window.updateAdvDisplay = updateAdvDisplay;
+  window.updateMuteButton = updateMuteButton;
+  window.initSound = initSound2;
+  window.handlePurchaseFeedback = handlePurchaseFeedback2;
+  window.handleMissionRedirect = handleMissionRedirect2;
+  window.tick = tick;
+  window.initUIEvents = initUIEvents;
+  window.syncBottomNav = syncBottomNav;
+  window.updateVaultMiniBar = updateVaultMiniBar;
+  window.openFortuneWheel = openFortuneWheel;
+  window.triggerVipVisitBanner = triggerVipVisitBanner;
+  window.removeVipVisitBanner = removeVipVisitBanner;
+  window.serveVipVisitor = serveVipVisitor;
+  window.renderDailyChallengesSection = renderDailyChallengesSection;
+  window.showLoginRewardModal = showLoginRewardModal;
+  window.triggerPrestigeCeremony = triggerPrestigeCeremony;
+
+  // app.js
+  (() => {
+    "use strict";
+    if (!window.gameAudio) {
+      window.gameAudio = {
+        playClick: () => {
+        },
+        playUnlock: () => {
+        },
+        playChaChing: () => {
+        },
+        toggleMute: () => false,
+        isMuted: true,
+        init: () => {
+        }
+      };
+    }
+    function reportCrash2(message, stack) {
+      try {
+        const isNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
+        const crashlytics = isNative && window.Capacitor.Plugins && window.Capacitor.Plugins.FirebaseCrashlytics;
+        if (crashlytics) {
+          const fullMessage = stack ? `${message}
+${stack}` : String(message);
+          crashlytics.recordException({ message: fullMessage.slice(0, 2e3) });
+        }
+      } catch {
+      }
+    }
+    window.reportCrash = reportCrash2;
+    window.game = void 0;
+    window.currentUpgradeMode = "x1";
+    window.lastTime = void 0;
+    window.rafId = void 0;
+    window.prevCustomerQueueString = "";
+    window.prevTellerClientStates = {};
+    window.DOM_CACHE = {
+      cash: null,
+      eps: null,
+      shares: null,
+      multiplier: null,
+      branchName: null,
+      muteBtn: null,
+      resetBtn: null,
+      advSlider: null,
+      advDisplay: null,
+      boostBtn: null,
+      analyticsBtn: null,
+      vaultInfoBtn: null,
+      fortuneWheelBtn: null,
+      vaultMiniLabel: null,
+      skipLink: null,
+      resetConfirmLabel: null,
+      vaultMiniBtn: null,
+      doubleIncomeLabel: null,
+      analyticsFromSettingsBtn: null,
+      footerPrivacyLink: null,
+      controlPanelSection: null,
+      controlPanelSrHeading: null,
+      tabsNav: null,
+      bottomNav: null,
+      vaultMiniIcon: null,
+      vaultMiniFillEl: null,
+      bankFloorSection: null,
+      langBtn: null,
+      langModal: null,
+      langModalClose: null,
+      bulkSelector: null,
+      customerLine: null,
+      tellersZone: null,
+      securityPath: null,
+      guardAvatar: null,
+      guardStatus: null,
+      guardLoad: null,
+      vaultGraphic: null,
+      vaultFill: null,
+      vaultStats: null,
+      vaultEmptyBtn: null,
+      queueLabel: null,
+      queueZone: null,
+      tabBranches: null,
+      advLimitMax: null,
+      floatingContainer: null,
+      vaultCapValue: null,
+      vaultYieldValue: null,
+      vaultProgressLabel: null,
+      prestigePreviewLabel: null,
+      offlineModalClaimBtn: null,
+      appTitle: null,
+      labelCash: null,
+      labelPerSecond: null,
+      labelShares: null,
+      labelMultiplier: null,
+      labelSimulatorTitle: null,
+      labelPanelBadge: null,
+      labelAdvTitle: null,
+      labelAdvLimitOff: null,
+      labelGuardClickHint: null,
+      labelVaultTitle: null,
+      labelVaultLoading: null,
+      labelVaultSubtitle: null,
+      labelVaultYieldTitle: null,
+      labelVaultYieldSub: null,
+      labelVaultCapTitle: null,
+      labelVaultVolumeTitle: null,
+      labelCollectVaultBtn: null,
+      tabBtnUpgrades: null,
+      tabBtnManagers: null,
+      tabBtnDepartments: null,
+      tabBtnMissions: null,
+      tabBtnBranches: null,
+      labelFooter: null,
+      bulkLabelText: null,
+      offlineModalTitle: null,
+      offlineModalText: null,
+      langModalTitle: null,
+      langModalText: null,
+      settingsDangerTitle: null,
+      settingsThemeTitle: null,
+      labelAdvControl: null,
+      vaultGraphicLabel: null,
+      cashLiveBadge: null,
+      splashSubtitle: null
+    };
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        window.DOM_CACHE.cash = document.getElementById("cash-value");
+        window.DOM_CACHE.eps = document.getElementById("eps-value");
+        window.DOM_CACHE.shares = document.getElementById("shares-value");
+        window.DOM_CACHE.multiplier = document.getElementById("multiplier-value");
+        window.DOM_CACHE.branchName = document.getElementById("branch-name");
+        window.DOM_CACHE.muteBtn = document.getElementById("mute-btn");
+        window.DOM_CACHE.resetBtn = document.getElementById("reset-game-btn");
+        window.DOM_CACHE.advSlider = document.getElementById("adv-budget-slider");
+        window.DOM_CACHE.advDisplay = document.getElementById("adv-budget-display");
+        window.DOM_CACHE.boostBtn = document.getElementById("boost-btn");
+        window.DOM_CACHE.analyticsBtn = document.getElementById("analytics-btn");
+        window.DOM_CACHE.vaultInfoBtn = document.getElementById("vault-info-btn");
+        window.DOM_CACHE.fortuneWheelBtn = document.getElementById("fortune-wheel-btn");
+        window.DOM_CACHE.vaultMiniLabel = document.getElementById("vault-mini-label");
+        window.DOM_CACHE.skipLink = document.getElementById("skip-link");
+        window.DOM_CACHE.resetConfirmLabel = document.getElementById("reset-confirm-label");
+        window.DOM_CACHE.vaultMiniBtn = document.getElementById("vault-mini-btn");
+        window.DOM_CACHE.doubleIncomeLabel = document.getElementById("double-income-label");
+        window.DOM_CACHE.analyticsFromSettingsBtn = document.getElementById("analytics-from-settings-btn");
+        window.DOM_CACHE.footerPrivacyLink = document.getElementById("footer-privacy-link");
+        window.DOM_CACHE.controlPanelSection = document.getElementById("control-panel-section");
+        window.DOM_CACHE.controlPanelSrHeading = document.getElementById("control-panel-sr-heading");
+        window.DOM_CACHE.tabsNav = document.getElementById("tabs-nav");
+        window.DOM_CACHE.bottomNav = document.getElementById("bottom-nav");
+        window.DOM_CACHE.vaultMiniIcon = document.getElementById("vault-mini-icon");
+        window.DOM_CACHE.vaultMiniFillEl = document.getElementById("vault-mini-fill");
+        window.DOM_CACHE.bankFloorSection = document.getElementById("bank-floor-section");
+        window.DOM_CACHE.langBtn = document.getElementById("lang-btn");
+        window.DOM_CACHE.langModal = document.getElementById("lang-modal");
+        window.DOM_CACHE.langModalClose = document.getElementById("lang-modal-close");
+        window.DOM_CACHE.bulkSelector = document.getElementById("global-bulk-selector");
+        window.DOM_CACHE.customerLine = document.getElementById("customer-line");
+        window.DOM_CACHE.tellersZone = document.getElementById("tellers-zone");
+        window.DOM_CACHE.securityPath = document.getElementById("security-path");
+        window.DOM_CACHE.guardAvatar = document.getElementById("guard-avatar");
+        window.DOM_CACHE.guardStatus = document.getElementById("guard-status-text");
+        window.DOM_CACHE.guardLoad = document.getElementById("guard-load");
+        window.DOM_CACHE.vaultGraphic = document.getElementById("vault-graphic");
+        window.DOM_CACHE.vaultFill = document.getElementById("vault-fill");
+        window.DOM_CACHE.vaultStats = document.getElementById("vault-stats");
+        window.DOM_CACHE.vaultEmptyBtn = document.getElementById("collect-vault-btn");
+        window.DOM_CACHE.queueLabel = document.getElementById("queue-label");
+        window.DOM_CACHE.queueZone = document.querySelector(".queue-zone");
+        window.DOM_CACHE.tabBranches = document.getElementById("tab-branches");
+        window.DOM_CACHE.advLimitMax = document.getElementById("label-adv-limit-max");
+        window.DOM_CACHE.floatingContainer = document.getElementById("floating-container");
+        window.DOM_CACHE.vaultCapValue = document.getElementById("vault-cap-value");
+        window.DOM_CACHE.vaultYieldValue = document.getElementById("vault-yield-value");
+        window.DOM_CACHE.vaultProgressLabel = document.getElementById("vault-progress-label");
+        window.DOM_CACHE.prestigePreviewLabel = document.getElementById("prestige-preview-label");
+        window.DOM_CACHE.offlineModal = document.getElementById("offline-modal");
+        window.DOM_CACHE.offlineModalAmount = document.getElementById("modal-amount");
+        window.DOM_CACHE.offlineModalDoubleBtn = document.getElementById("offline-double-btn");
+        window.DOM_CACHE.offlineModalClaimBtn = document.getElementById("offline-claim-btn");
+        window.DOM_CACHE.appTitle = document.getElementById("app-title");
+        window.DOM_CACHE.labelCash = document.getElementById("label-cash");
+        window.DOM_CACHE.labelPerSecond = document.getElementById("label-per-second");
+        window.DOM_CACHE.labelShares = document.getElementById("label-shares");
+        window.DOM_CACHE.labelMultiplier = document.getElementById("label-multiplier");
+        window.DOM_CACHE.labelSimulatorTitle = document.getElementById("label-simulator-title");
+        window.DOM_CACHE.labelPanelBadge = document.getElementById("label-panel-badge");
+        window.DOM_CACHE.labelAdvTitle = document.getElementById("label-adv-title");
+        window.DOM_CACHE.labelAdvLimitOff = document.getElementById("label-adv-limit-off");
+        window.DOM_CACHE.labelGuardClickHint = document.getElementById("label-guard-click-hint");
+        window.DOM_CACHE.labelVaultTitle = document.getElementById("label-vault-title");
+        window.DOM_CACHE.labelVaultLoading = document.getElementById("label-vault-loading");
+        window.DOM_CACHE.labelVaultSubtitle = document.getElementById("label-vault-subtitle");
+        window.DOM_CACHE.labelVaultYieldTitle = document.getElementById("label-vault-yield-title");
+        window.DOM_CACHE.labelVaultYieldSub = document.getElementById("label-vault-yield-sub");
+        window.DOM_CACHE.labelVaultCapTitle = document.getElementById("label-vault-cap-title");
+        window.DOM_CACHE.labelVaultVolumeTitle = document.getElementById("label-vault-volume-title");
+        window.DOM_CACHE.labelCollectVaultBtn = document.getElementById("label-collect-vault-btn");
+        window.DOM_CACHE.tabBtnUpgrades = document.getElementById("tab-btn-upgrades");
+        window.DOM_CACHE.tabBtnManagers = document.getElementById("tab-btn-managers");
+        window.DOM_CACHE.tabBtnDepartments = document.getElementById("tab-btn-departments");
+        window.DOM_CACHE.tabBtnMissions = document.getElementById("tab-btn-missions");
+        window.DOM_CACHE.tabBtnBranches = document.getElementById("tab-btn-branches");
+        window.DOM_CACHE.labelFooter = document.getElementById("label-footer");
+        window.DOM_CACHE.bulkLabelText = document.getElementById("bulk-label-text");
+        window.DOM_CACHE.offlineModalTitle = document.getElementById("offline-modal-title");
+        window.DOM_CACHE.offlineModalText = document.getElementById("offline-modal-text");
+        window.DOM_CACHE.langModalTitle = document.getElementById("lang-modal-title");
+        window.DOM_CACHE.langModalText = document.getElementById("lang-modal-text");
+        window.DOM_CACHE.settingsDangerTitle = document.getElementById("settings-danger-title");
+        window.DOM_CACHE.settingsThemeTitle = document.getElementById("settings-theme-title");
+        window.DOM_CACHE.labelAdvControl = document.getElementById("label-adv-control");
+        window.DOM_CACHE.vaultGraphicLabel = document.getElementById("vault-graphic-label");
+        window.DOM_CACHE.cashLiveBadge = document.getElementById("cash-live-badge");
+        window.DOM_CACHE.splashSubtitle = document.getElementById("splash-subtitle");
+        window.DOM_CACHE.queueCapLabel = document.getElementById("queue-capacity-label");
+        window.DOM_CACHE.queueFillBar = document.getElementById("queue-progress-fill");
+        window.DOM_CACHE.queueStatText = document.getElementById("queue-status-text");
+        window.DOM_CACHE.queueStatIcon = document.getElementById("queue-status-icon");
+        if (typeof window.IdleBankGame !== "function") {
+          console.error("IdleBankGame class is not defined. game.js may have failed to load.");
+          throw new Error("IdleBankGame not defined \u2014 caught by boot try/catch");
+        }
+        window.game = new window.IdleBankGame();
+        delete window.IdleBankGame;
+        if (typeof window.DailyChallengeController === "function") {
+          window.dailyChallengeController = new window.DailyChallengeController(window.game);
+          window.dailyChallengeController.checkAndReset();
+        }
+        initUIEvents();
+        const chosenLang = window.game.state.language || "en";
+        const isFirstTime = !window.localStorage.getItem("idle_bank_language_chosen");
+        if (isFirstTime) {
+          window.game.setLanguage("en");
+          applyLanguage("en");
+          if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = "none";
+          const showLangModal = () => {
+            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add("active");
+          };
+          if (window.NotificationQueue) {
+            window.NotificationQueue.request("lang-modal", window.NotificationQueue.PRIORITY.CRITICAL, showLangModal);
+          } else {
+            showLangModal();
+          }
+        } else {
+          applyLanguage(chosenLang);
+        }
+        const savedTheme = window.localStorage.getItem("idle_bank_theme") || "blue";
+        applyTheme(savedTheme);
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            cancelAnimationFrame(window.rafId);
+            if (window.game) {
+              window.game.saveGame(true);
+            }
+            if (window.gameAudio && typeof window.gameAudio.suspend === "function") {
+              window.gameAudio.suspend();
+            }
+          } else {
+            if (window.gameAudio && typeof window.gameAudio.resume === "function") {
+              window.gameAudio.resume();
+            }
+            window.game.recalculateEps();
+            window.game.calculateOfflineEarnings();
+            if (typeof window.showOfflineEarningsModal === "function") {
+              window.showOfflineEarningsModal();
+            }
+            window.lastTime = performance.now();
+            refreshAllTabs();
+            cancelAnimationFrame(window.rafId);
+            window.rafId = requestAnimationFrame(tick);
+          }
+        });
+        if (typeof window.showOfflineEarningsModal === "function") {
+          window.showOfflineEarningsModal();
+        }
+        const vaultGraphicEl = document.getElementById("vault-graphic");
+        if (vaultGraphicEl) {
+          if (!vaultGraphicEl.querySelector(".vault-door-img")) {
+            const vaultImg = document.createElement("img");
+            vaultImg.className = "vault-door-img";
+            vaultImg.src = "images/vault-door.png";
+            vaultImg.alt = "";
+            vaultGraphicEl.insertBefore(vaultImg, vaultGraphicEl.firstChild);
+          }
+        }
+        window.DOM_CACHE.vaultDoorImg = document.querySelector(".vault-door-img");
+        const splashScreen = document.getElementById("splash-screen");
+        if (splashScreen) {
+          if (typeof window.rebuildTellersDOM === "function") window.rebuildTellersDOM();
+          if (typeof initCoinPool === "function") initCoinPool();
+          if (typeof window.renderUpgradesTab === "function") window.renderUpgradesTab();
+          if (typeof window.renderManagersTab === "function") window.renderManagersTab();
+          if (typeof window.renderDepartmentsTab === "function") window.renderDepartmentsTab();
+          if (typeof window.renderMissionsTab === "function") window.renderMissionsTab();
+          if (typeof window.renderBranchesTab === "function") window.renderBranchesTab();
+          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+            window.Capacitor.Plugins.SplashScreen.hide();
+          }
+          const finishSplash = () => {
+            setTimeout(() => {
+              splashScreen.style.opacity = "0";
+              splashScreen.style.transform = "scale(1.05)";
+              splashScreen.style.visibility = "hidden";
+              setTimeout(() => splashScreen.remove(), 800);
+            }, 500);
+          };
+          const fill = document.getElementById("splash-progress-fill");
+          const pText = document.getElementById("splash-progress-text");
+          if (fill && pText) {
+            let progress = 0;
+            const interval = setInterval(() => {
+              progress += Math.floor(Math.random() * 12) + 8;
+              if (progress >= 100) progress = 100;
+              fill.style.width = progress + "%";
+              pText.innerText = progress + "%";
+              if (progress === 100) {
+                clearInterval(interval);
+                finishSplash();
+              }
+            }, 80);
+          } else {
+            finishSplash();
+          }
+        }
+        if (!localStorage.getItem("gdpr_consent")) {
+          setTimeout(() => {
+            const banner = document.getElementById("gdpr-banner");
+            if (banner) banner.style.display = "flex";
+          }, 1800);
+        }
+        window.lastTime = performance.now();
+        cancelAnimationFrame(window.rafId);
+        window.rafId = requestAnimationFrame(tick);
+        if (window.Capacitor && "serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (let reg of registrations) {
+              reg.unregister();
+            }
+          });
+        } else if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
+          navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).then((reg) => {
+            reg.update();
+          }).catch((err) => console.error("Service Worker registration failed", err));
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (typeof window.game !== "undefined" && window.game && typeof window.game.saveGame === "function") {
+              window.game.saveGame(true);
+            }
+            window.location.reload();
+          });
+        }
+      } catch (bootErr) {
+        console.error("[IDLE BANK BOOT ERROR]", bootErr);
+        const splashScreen = document.getElementById("splash-screen");
+        if (splashScreen) {
+          splashScreen.style.opacity = "0";
+          splashScreen.style.visibility = "hidden";
+          setTimeout(() => splashScreen.remove(), 800);
+        }
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+          window.Capacitor.Plugins.SplashScreen.hide();
+        }
+      }
+    });
+    window.addEventListener("beforeunload", () => {
+      if (window.game) {
+        window.game.saveGame(true);
+      }
+    });
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error("Global crash intercepted:", message, "at", source, ":", lineno);
+      reportCrash2(`${message} at ${source}:${lineno}:${colno}`, error && error.stack);
+      const activeGame = window.game;
+      if (activeGame) {
+        try {
+          activeGame.saveGame(true);
+        } catch (saveErr) {
+          console.error("Failed to save state during window.onerror crash recovery:", saveErr);
+        }
+      }
+      return false;
+    };
+    window.addEventListener("unhandledrejection", function(event) {
+      console.error("Unhandled promise rejection intercepted:", event.reason);
+      const reason = event.reason;
+      reportCrash2(reason && reason.message ? reason.message : String(reason), reason && reason.stack);
+      const activeGame = window.game;
+      if (activeGame) {
+        try {
+          activeGame.saveGame(true);
+        } catch (saveErr) {
+          console.error("Failed to save state during unhandledrejection crash recovery:", saveErr);
+        }
+      }
+    });
+  })();
+})();
+//# sourceMappingURL=app.bundle.js.map

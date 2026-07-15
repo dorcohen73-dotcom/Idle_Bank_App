@@ -16,6 +16,7 @@ const sharedGameGlobals = [
     'getClientSVG', 'handleCrowdEvent', 'handleInvestorEvent',
     'handleMissionRedirect', 'handlePurchaseFeedback', 'handleRescueEvent',
     'handleRushHoursEvent', 'handleSecurityEvent', 'initCoinPool', 'initSound',
+    'reportCrash',
     'initUIEvents', 'invalidateTabHashes', 'lastTime', 'maybeStartTutorial',
     'openAnalyticsModal', 'openBoostModal', 'openFortuneWheel',
     'openPrestigeModal', 'playAd', 'prevCustomerQueueString',
@@ -46,13 +47,14 @@ module.exports = [
             '.agents/**',
             '.netlify/**',
             '*.min.js',
+            'app.bundle.js',
+            'app.bundle.js.map',
         ],
     },
     {
         // Browser game scripts, loaded via plain <script> tags (non-module, shared global scope)
         files: [
             'achievement-controller.js',
-            'app.js',
             'audio.js',
             'notification-queue.js',
             'config.js',
@@ -63,8 +65,6 @@ module.exports = [
             'save-manager.js',
             'sw.js',
             'ui-draw.js',
-            'ui-events.js',
-            'ui-tabs.js',
         ],
         languageOptions: {
             ecmaVersion: 2022,
@@ -81,6 +81,28 @@ module.exports = [
             // builtinGlobals:false — the shared-global names above are predeclared for
             // cross-file no-undef resolution; their single real declaration in the
             // owning file isn't a redeclaration bug.
+            'no-redeclare': ['warn', { builtinGlobals: false }],
+            'no-fallthrough': 'warn',
+            'no-empty': 'warn',
+            'no-constant-condition': ['warn', { checkLoops: false }],
+        },
+    },
+    {
+        // Entry-point and UI scripts, loaded via <script type="module"> and native
+        // import/export between them, but still reading game/config/locale/ui-draw
+        // globals set up by the classic scripts above (see build plan).
+        files: ['app.js', 'ui-events.js', 'ui/tabs/**/*.js'],
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'module',
+            globals: {
+                ...globals.browser,
+                ...Object.fromEntries(sharedGameGlobals.map((name) => [name, 'writable'])),
+            },
+        },
+        rules: {
+            'no-unused-vars': ['warn', { args: 'none', varsIgnorePattern: '^_' }],
+            'no-undef': 'error',
             'no-redeclare': ['warn', { builtinGlobals: false }],
             'no-fallthrough': 'warn',
             'no-empty': 'warn',

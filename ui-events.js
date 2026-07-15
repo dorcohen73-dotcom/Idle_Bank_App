@@ -1,5 +1,5 @@
-(function(window) {
 // UI Events & main loop module for Idle Bank Empire
+import { refreshAllTabs, updateButtonAffordability, renderUpgradesTab } from './ui/tabs/index.js';
 
 var soundInitialized = false;
 var autoSaveTimer = 0;
@@ -2056,6 +2056,16 @@ function tick(timestamp) {
                     el.classList.toggle('prestige-near-miss-glow', _nmActive);
                 });
             }
+
+            // Challenges/Achievements Reward Ready Glow
+            let _rewardReady = false;
+            if (game.state.missions) {
+                _rewardReady = game.state.missions.some(m => m && m.completed && !m.claimed);
+            }
+            const tabBtnDaily = document.getElementById('tab-btn-daily');
+            const headerDailyBtn = document.getElementById('header-daily-btn');
+            if (tabBtnDaily) tabBtnDaily.classList.toggle('reward-ready-glow', _rewardReady);
+            if (headerDailyBtn) headerDailyBtn.classList.toggle('reward-ready-glow', _rewardReady);
         }
 
         fortuneWheelBtnTimer += cappedDt;
@@ -3635,7 +3645,6 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
     // ==========================================
 
     function spawnVaultCoins(amount, btnRect) {
-        return; // Disabled for performance
     }
 
     // ==========================================
@@ -3803,5 +3812,6 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
     window.renderDailyChallengesSection = renderDailyChallengesSection;
     window.showLoginRewardModal = showLoginRewardModal;
     window.triggerPrestigeCeremony = triggerPrestigeCeremony;
-})(window);
+
+export { tick, initUIEvents, applyLanguage, applyTheme };
 
