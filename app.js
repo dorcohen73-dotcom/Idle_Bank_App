@@ -1,5 +1,5 @@
 // Entry Point Module for Idle Bank Empire
-import { initUIEvents, applyLanguage, applyTheme, tick } from './ui-events.js';
+import { initUIEvents, applyLanguage, applyTheme, tick } from './ui/events/index.js';
 import { refreshAllTabs } from './ui/tabs/index.js';
 
 (() => {

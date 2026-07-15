@@ -1,0 +1,219 @@
+import { showContextualAdBanner, AdService } from './ads.js';
+import { triggerRandomEvent } from './random-events.js';
+import { updateFortuneWheelBtnState } from './modals.js';
+
+let autoSaveTimer = 0;
+let eventTimer = 0;
+let tabRefreshTimer = 0;
+let fortuneWheelBtnTimer = 0;
+let drawTimer = 0;
+let boostOfferEndTime = 0;
+let boostOfferNextTime = 0;
+
+export function resetBoostOfferTimer() {
+    boostOfferEndTime = 0;
+    window._boostOfferEndTime = 0;
+}
+
+export function tick(timestamp) {
+    try {
+        const dt = (timestamp - lastTime) / 1000.0;
+        lastTime = timestamp;
+
+        const cappedDt = Math.min(1.0, dt);
+
+        game.update(cappedDt);
+
+        // Contextual ad offer
+        if (game._contextualAdPending) {
+            game._contextualAdPending = null;
+            showContextualAdBanner();
+        }
+
+        // Boost offer window management
+        {
+            const now = Date.now();
+            if (game.state.boost2xTimeLeft > 0) {
+                // Boost active — reset offer cycle to start fresh after boost ends
+                boostOfferEndTime = 0;
+                boostOfferNextTime = 0;
+            } else {
+                if (boostOfferEndTime > 0 && now > boostOfferEndTime) {
+                    // Offer expired — schedule next window in 15-30 min
+                    boostOfferEndTime = 0;
+                    boostOfferNextTime = now + (900 + Math.random() * 900) * 1000;
+                } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
+                    if (!AdService.isInCooldown()) {
+                        // Start new offer window: 10-20 min duration
+                        boostOfferEndTime = now + (600 + Math.random() * 600) * 1000;
+                        boostOfferNextTime = 0;
+                    }
+                }
+            }
+            window._boostOfferEndTime = boostOfferEndTime;
+        }
+
+        eventTimer += cappedDt;
+        if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
+            eventTimer = 0;
+            triggerRandomEvent();
+        }
+
+        tabRefreshTimer += cappedDt;
+        if (tabRefreshTimer >= GAME_CONFIG.TAB_REFRESH_INTERVAL_SEC) {
+            tabRefreshTimer = 0;
+            const _activeTabEl = document.querySelector('.tab-btn.active');
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'missions') {
+                game.checkMissions();
+                if (typeof window.updateMissionsTabProgress === 'function') window.updateMissionsTabProgress();
+            }
+
+            // Achievements: checked unconditionally (the income bonus must apply globally and
+            // promptly regardless of which tab is open), rendered only when its tab is active.
+            const _newlyUnlockedAchievements = game.checkAchievements();
+            if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0) {
+                _newlyUnlockedAchievements.forEach(a => {
+                    if (typeof window.playAchievementUnlockFeedback === 'function') window.playAchievementUnlockFeedback(a);
+                });
+                game.saveGame();
+            }
+            if (_activeTabEl && _activeTabEl.getAttribute('data-tab') === 'daily') {
+                if (_newlyUnlockedAchievements && _newlyUnlockedAchievements.length > 0 && typeof window.renderAchievementsTab === 'function') {
+                    window.renderAchievementsTab();
+                } else if (typeof window.updateAchievementsTabProgress === 'function') {
+                    window.updateAchievementsTabProgress();
+                }
+            }
+
+            updateButtonAffordability();
+
+            // Near-miss prestige glow: light up prestige buttons when >= 70% of threshold
+            const _nmBranch = game.branches && game.branches[game.state.currentBranch];
+            if (_nmBranch) {
+                const _nmThreshold = _nmBranch.minCashToPrestige * 0.7;
+                const _nmActive = game.state.lifetimeCash >= _nmThreshold && game.state.cash < _nmBranch.minCashToPrestige;
+                document.querySelectorAll('[data-prestige-branch], #main-prestige-btn').forEach(el => {
+                    el.classList.toggle('prestige-near-miss-glow', _nmActive);
+                });
+            }
+
+            // Challenges/Achievements Reward Ready Glow
+            let _rewardReady = false;
+            if (game.state.missions) {
+                _rewardReady = game.state.missions.some(m => m && m.completed && !m.claimed);
+            }
+            const tabBtnDaily = document.getElementById('tab-btn-daily');
+            const headerDailyBtn = document.getElementById('header-daily-btn');
+            if (tabBtnDaily) tabBtnDaily.classList.toggle('reward-ready-glow', _rewardReady);
+            if (headerDailyBtn) headerDailyBtn.classList.toggle('reward-ready-glow', _rewardReady);
+        }
+
+        fortuneWheelBtnTimer += cappedDt;
+        if (fortuneWheelBtnTimer >= 30) {
+            fortuneWheelBtnTimer = 0;
+            updateFortuneWheelBtnState();
+        }
+
+        // Performance Throttling
+        drawTimer += cappedDt;
+        const targetFpsInterval = 0; // Run at native 60fps on all platforms to prevent stuttering/freezes
+
+        if (drawTimer >= targetFpsInterval) {
+            updateActiveCoins(drawTimer);
+            if (typeof updateFloatingText === 'function') updateFloatingText(drawTimer);
+            drawTimer = 0;
+            draw();
+        }
+
+        autoSaveTimer += cappedDt;
+        if (autoSaveTimer >= GAME_CONFIG.AUTO_SAVE_INTERVAL_SEC) {
+            autoSaveTimer = 0;
+            game.saveGame();
+        }
+
+        rafId = requestAnimationFrame(tick);
+    } catch(e) {
+        console.error("Critical error in game loop!", e);
+        try {
+            game.saveGame();
+        } catch(saveErr) {
+            console.error("Failed to auto-save during crash recovery", saveErr);
+        }
+        
+        if (typeof window.showToast === 'function') {
+            const _toastLang = (game.state && game.state.language) || 'en';
+            const _toastT = (typeof translations !== 'undefined' && translations[_toastLang]) ? translations[_toastLang] : translations.en;
+            const crashMsg = _toastT.errorDesc || 'A critical error occurred! Game progress was saved.';
+            window.showToast(crashMsg, 'danger');
+        }
+        
+        let overlay = document.getElementById('crash-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'crash-overlay';
+            
+            const _crashLang = window.gameLanguage || 'en';
+            const _crashT = (typeof translations !== 'undefined' && translations[_crashLang]) ? translations[_crashLang] : translations.en;
+            const title = document.createElement('h1');
+            title.innerText = _crashT.errorTitle || 'Oops! Something went wrong';
+
+            const desc = document.createElement('p');
+            desc.innerText = _crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.';
+
+            const reloadBtn = document.createElement('button');
+            reloadBtn.innerText = _crashT.reloadBtn || 'Reload Game 🔄';
+            reloadBtn.addEventListener('click', () => window.location.reload());
+            
+            overlay.appendChild(title);
+            overlay.appendChild(desc);
+            overlay.appendChild(reloadBtn);
+            document.body.appendChild(overlay);
+        }
+    }
+}
+
+export function syncBottomNav(activeTab) {
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === activeTab);
+    });
+    const headerDailyBtn = document.getElementById('header-daily-btn');
+    if (headerDailyBtn) {
+        headerDailyBtn.classList.toggle('active', activeTab === 'daily');
+    }
+}
+
+export function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerHour, vaultLevel) {
+    const miniPct = document.getElementById('vault-mini-pct');
+    const miniFill = document.getElementById('vault-mini-fill');
+    const miniBtn = document.getElementById('vault-mini-btn');
+    const miniBar = document.getElementById('vault-mini-bar');
+    if (!miniPct) return;
+    miniPct.textContent = Math.round(pct) + '%';
+    if (miniFill) {
+        miniFill.style.width = pct + '%';
+        miniFill.setAttribute('aria-valuenow', Math.round(pct));
+    }
+    if (miniBtn) {
+        miniBtn.disabled = !isReady;
+    }
+    const fmt = (typeof window.formatMoney === 'function') ? window.formatMoney : (v => '$' + Math.round(v));
+    const miniStored = document.getElementById('vault-mini-stored');
+    const miniCap = document.getElementById('vault-mini-cap');
+    const miniYield = document.getElementById('vault-mini-yield');
+    const miniLevel = document.getElementById('vault-mini-level');
+    if (miniStored && cashStored !== undefined) miniStored.textContent = fmt(cashStored);
+    if (miniCap && capacity !== undefined) miniCap.textContent = fmt(capacity);
+    if (miniYield && yieldPerHour !== undefined) miniYield.textContent = '+' + fmt(yieldPerHour) + '/h';
+    if (miniLevel && vaultLevel !== undefined) miniLevel.textContent = 'Lv.' + vaultLevel;
+    // CSS classes לפס מילוי (ללא inline style — ה-CSS מטפל בצבע)
+    if (miniFill) {
+        miniFill.style.background = '';
+        miniFill.classList.toggle('is-full', pct >= 95);
+        miniFill.classList.toggle('is-warm', pct >= 60 && pct < 95);
+    }
+    // classes על הבר לאנימציות גלו
+    if (miniBar) {
+        miniBar.classList.toggle('is-full', pct >= 95);
+        miniBar.classList.toggle('is-ready', isReady && pct < 95);
+    }
+}

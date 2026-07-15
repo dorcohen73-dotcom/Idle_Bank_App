@@ -1,0 +1,685 @@
+import { _getFocusableElements, trapFocus, releaseFocus, initFocusTrapObserver } from './focus-trap.js';
+import { AdService, playAd, formatTime, updateAdvDisplay, updateMuteButton, initSound, showContextualAdBanner } from './ads.js';
+import { applyLanguage, applyTheme } from './i18n-theme.js';
+import { triggerRandomEvent, handleCrowdEvent, handleSecurityEvent, handleRescueEvent, handleRushHoursEvent, handleInvestorEvent } from './random-events.js';
+import { triggerMilestoneConfetti, handlePurchaseFeedback, handleMissionRedirect } from './purchase-feedback.js';
+import {
+    openPrestigeModal, openBoostModal, openAnalyticsModal, openWeeklyRewardModal, checkWeeklyReward,
+    showOfflineEarningsModal, showLoginRewardModal, triggerPrestigeCeremony,
+    updateFortuneWheelBtnState, openFortuneWheel,
+} from './modals.js';
+import { tick, syncBottomNav, updateVaultMiniBar } from './main-loop.js';
+import {
+    triggerVipVisitBanner, removeVipVisitBanner, serveVipVisitor, renderDailyChallengesSection,
+    startPromoRecording, spawnVaultCoins, showDiscoveryTip, initTutorialEvents, maybeStartTutorial, checkPrestigeTip,
+} from './engagement.js';
+
+let uiEventsInitialized = false;
+
+function initUIEvents() {
+    if (uiEventsInitialized) return;
+    uiEventsInitialized = true;
+    initFocusTrapObserver();
+
+    // Escape key closes the topmost open modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const modals = [
+            { id: 'fortune-wheel-modal', closeId: 'fortune-close-btn' },
+            { id: 'prestige-modal',      closeId: 'prestige-cancel-btn' },
+            { id: 'lang-modal',          closeId: 'lang-modal-close' },
+            { id: 'login-reward-modal',  closeId: 'login-reward-collect-btn' },
+            { id: 'offline-modal',       closeId: 'offline-claim-btn' },
+            { id: 'weekly-modal',        closeId: 'weekly-close-btn' },
+            { id: 'analytics-modal',     closeId: 'analytics-close-btn' },
+        ];
+        for (const { id, closeId } of modals) {
+            const el = document.getElementById(id);
+            if (el && el.classList.contains('active')) {
+                const closeBtn = document.getElementById(closeId);
+                if (closeBtn) closeBtn.click();
+                break;
+            }
+        }
+    });
+    if (DOM_CACHE.resetBtn) {
+        const confirmCheck = document.getElementById('reset-confirm-checkbox');
+        if (confirmCheck) {
+            confirmCheck.addEventListener('change', (e) => {
+                DOM_CACHE.resetBtn.disabled = !e.target.checked;
+            });
+        }
+        DOM_CACHE.resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            initSound();
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+            
+            const lang = game.state.language || 'en';
+            let confirmMsg = 'האם אתה בטוח שברצונך לאפס את המשחק ולהתחיל מ-0? כל ההתקדמות שלך תימחק לחלוטין!';
+            if (lang === 'en') {
+                confirmMsg = 'Are you sure you want to reset the game and start from 0? All your progress will be completely deleted!';
+            } else if (lang === 'es') {
+                confirmMsg = '¿Estás seguro de que quieres restablecer el juego y empezar desde 0? ¡Todo tu progreso se eliminará por completo!';
+            } else if (lang === 'ru') {
+                confirmMsg = 'Вы уверены, что хотите сбросить игру и начать с 0? Весь ваш прогресс будет полностью удален!';
+            }
+            
+            if (confirm(confirmMsg)) {
+                game.clearSave();
+                location.reload();
+            }
+        });
+    }
+
+    if (DOM_CACHE.langBtn) {
+        DOM_CACHE.langBtn.addEventListener('click', () => {
+            initSound();
+            if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'inline-block';
+            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active');
+        });
+    }
+
+    if (DOM_CACHE.langModalClose) {
+        DOM_CACHE.langModalClose.addEventListener('click', () => {
+            initSound();
+            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.remove('active');
+        });
+    }
+
+    if (DOM_CACHE.boostBtn) {
+        DOM_CACHE.boostBtn.addEventListener('click', () => {
+            initSound();
+            openBoostModal();
+        });
+    }
+
+    if (DOM_CACHE.analyticsBtn) {
+        DOM_CACHE.analyticsBtn.addEventListener('click', () => {
+            initSound();
+            openAnalyticsModal();
+        });
+    }
+
+    const analyticsFromSettingsBtn = document.getElementById('analytics-from-settings-btn');
+    if (analyticsFromSettingsBtn) {
+        analyticsFromSettingsBtn.addEventListener('click', () => {
+            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.remove('active');
+            openAnalyticsModal();
+        });
+    }
+
+    const fortuneWheelBtn = document.getElementById('fortune-wheel-btn');
+    if (fortuneWheelBtn) {
+        fortuneWheelBtn.addEventListener('click', () => {
+            initSound();
+            openFortuneWheel();
+        });
+    }
+
+    const headerDailyBtn = document.getElementById('header-daily-btn');
+    if (headerDailyBtn) {
+        headerDailyBtn.addEventListener('click', () => {
+            initSound();
+            try { navigator.vibrate && navigator.vibrate(5); } catch { /* vibration unsupported */ }
+            const existingTabBtn = document.querySelector('.tab-btn[data-tab="daily"]');
+            if (existingTabBtn) {
+                existingTabBtn.click();
+            }
+            syncBottomNav('daily');
+        });
+    }
+    updateFortuneWheelBtnState();
+
+    if (DOM_CACHE.muteBtn) {
+        DOM_CACHE.muteBtn.addEventListener('click', () => {
+            initSound();
+            if (window.gameAudio && typeof window.gameAudio.toggleMute === 'function') {
+                window.gameAudio.toggleMute();
+            }
+            updateMuteButton();
+            if (window.gameAudio && !window.gameAudio.isMuted && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+        });
+    }
+
+    const elLangOptions = document.querySelectorAll('.lang-option-card');
+    elLangOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            try {
+                initSound();
+                const selectedLang = opt.getAttribute('data-lang');
+                game.setLanguage(selectedLang);
+                window.localStorage.setItem('idle_bank_language_chosen', 'true');
+                DOM_CACHE.langModal.classList.remove('active');
+                applyLanguage(selectedLang);
+            } catch (err) {
+                console.error("Error inside language options selection click handler:", err);
+            }
+        });
+    });
+
+    document.querySelectorAll('.theme-option-btn-choice').forEach(btn => {
+        btn.addEventListener('click', () => {
+            try {
+                initSound();
+                const theme = btn.getAttribute('data-theme');
+                applyTheme(theme);
+                if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                    window.gameAudio.playClick();
+                }
+            } catch (err) {
+                console.error("Error inside theme options selection click handler:", err);
+            }
+        });
+    });
+
+    if (DOM_CACHE.langModal) {
+        DOM_CACHE.langModal.addEventListener('click', (e) => {
+            try {
+                if (e.target === DOM_CACHE.langModal && window.localStorage.getItem('idle_bank_language_chosen')) {
+                    initSound();
+                    DOM_CACHE.langModal.classList.remove('active');
+                }
+            } catch (err) {
+                console.error("Error closing language modal on overlay click:", err);
+            }
+        });
+    }
+
+    if (DOM_CACHE.advSlider) {
+        DOM_CACHE.advSlider.addEventListener('input', () => {
+            const sliderVal = parseInt(DOM_CACHE.advSlider.value);
+            const dynamicMax = game.getAdMaxBudget();
+            let budget = 0;
+            if (sliderVal > 0) {
+                budget = Math.round(dynamicMax * (sliderVal / 1000));
+                budget = Math.max(1, Math.round(budget));
+            }
+            game.setAdvBudget(budget);
+            updateAdvDisplay(budget);
+        });
+    }
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabPanes.forEach(p => p.classList.remove('active'));
+
+            btn.classList.add('active');
+            const targetPane = document.getElementById(`tab-${tabId}`);
+
+            // Update ARIA for accessibility
+            document.querySelectorAll('.tab-btn[role="tab"]').forEach(b => {
+                b.setAttribute('aria-selected', b.classList.contains('active') ? 'true' : 'false');
+            });
+            if (targetPane) targetPane.classList.add('active');
+
+            if (DOM_CACHE.bulkSelector) {
+                if (tabId === 'upgrades' || tabId === 'managers') {
+                    DOM_CACHE.bulkSelector.style.display = 'flex';
+                } else {
+                    DOM_CACHE.bulkSelector.style.display = 'none';
+                }
+            }
+
+            if (tabId === 'daily' && typeof window.renderDailyChallengesSection === 'function') {
+                window.renderDailyChallengesSection();
+            }
+
+            if (typeof window.invalidateTabHashes === 'function') window.invalidateTabHashes();
+            if (tabId === 'upgrades' && typeof window.renderUpgradesTab === 'function') window.renderUpgradesTab();
+            else if (tabId === 'managers' && typeof window.renderManagersTab === 'function') window.renderManagersTab();
+            else if (tabId === 'departments' && typeof window.renderDepartmentsTab === 'function') window.renderDepartmentsTab();
+            else if (tabId === 'missions' && typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+            else if (tabId === 'daily') {
+                if (typeof window.renderDailyChallengesSection === 'function') window.renderDailyChallengesSection();
+                if (typeof window.renderAchievementsTab === 'function') window.renderAchievementsTab();
+            }
+            else if (tabId === 'branches' && typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
+
+            // סנכרון Bottom Nav
+            syncBottomNav(tabId);
+
+            initSound();
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+        });
+    });
+
+    // Bottom Nav click handlers
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            try { navigator.vibrate && navigator.vibrate(5); } catch { /* vibration unsupported */ }
+            const tab = btn.dataset.tab;
+            // מפעיל את הלוגיקה הקיימת של הטאבים
+            const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+            if (existingTabBtn) {
+                existingTabBtn.click();
+            }
+            syncBottomNav(tab);
+        });
+    });
+
+    // Vault Mini Btn — מחובר לאותה לוגיקה של collect vault
+    const vaultMiniBtn = document.getElementById('vault-mini-btn');
+    if (vaultMiniBtn) {
+        vaultMiniBtn.addEventListener('click', () => {
+            try { navigator.vibrate && navigator.vibrate([8, 30, 8]); } catch { /* vibration unsupported */ }
+            const mainVaultBtn = document.getElementById('collect-vault-btn');
+            if (mainVaultBtn) mainVaultBtn.click();
+        });
+    }
+
+    if (DOM_CACHE.bulkSelector) {
+        DOM_CACHE.bulkSelector.addEventListener('click', (e) => {
+            const btn = e.target.closest('.bulk-btn-option');
+            if (!btn) return;
+            
+            initSound();
+            currentUpgradeMode = btn.getAttribute('data-mode');
+            DOM_CACHE.bulkSelector.querySelectorAll('.bulk-btn-option').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            if (typeof refreshAllTabs === 'function') {
+                const scrollPos = document.getElementById('tab-upgrades') ? document.getElementById('tab-upgrades').scrollTop : 0;
+                refreshAllTabs();
+                if (document.getElementById('tab-upgrades')) document.getElementById('tab-upgrades').scrollTop = scrollPos;
+            } else if (typeof updateButtonAffordability === 'function') {
+                updateButtonAffordability();
+            }
+        });
+    }
+
+    const tabUpgrades = document.getElementById('tab-upgrades');
+    if (tabUpgrades) {
+        tabUpgrades.addEventListener('click', (e) => {
+            const btn = e.target.closest('.buy-btn');
+            if (!btn || btn.classList.contains('disabled')) return;
+
+            initSound();
+            try { navigator.vibrate && navigator.vibrate(12); } catch { /* vibration unsupported */ }
+            const type = btn.getAttribute('data-type');
+            const id = parseInt(btn.getAttribute('data-id'));
+            if (isNaN(id) && (type === 'teller' || type === 'guard')) return;
+            const action = btn.getAttribute('data-action');
+
+            const beforeCash = game.state.cash;
+            let beforeVal = 0;
+            let feedType = '';
+
+            if (type === 'teller') {
+                beforeVal = game.state.tellers[id].level;
+                feedType = 'teller';
+                game.upgradeTellerBulk(id, currentUpgradeMode);
+            } else if (type === 'guard') {
+                beforeVal = game.state.guards[id].level;
+                feedType = 'guard';
+                game.upgradeGuardBulk(id, currentUpgradeMode);
+            } else if (action === 'unlock-teller') {
+                beforeVal = game.state.tellers[id].unlocked;
+                feedType = 'unlock-teller';
+                game.unlockTeller(id);
+            } else if (action === 'unlock-guard') {
+                beforeVal = game.state.guards[id].unlocked;
+                feedType = 'unlock-guard';
+                game.unlockGuard(id);
+                if (!beforeVal) showDiscoveryTip('guard');
+            } else if (btn.id === 'upgrade-vault-btn') {
+                beforeVal = game.state.vault.level;
+                feedType = 'vault';
+                game.upgradeVaultBulk(currentUpgradeMode);
+            } else if (btn.id === 'upgrade-queue-btn') {
+                beforeVal = game.state.queueUpgradeLevel || 1;
+                feedType = 'queue';
+                game.upgradeQueueBulk(currentUpgradeMode);
+            } else {
+                return;
+            }
+
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+
+            handlePurchaseFeedback(btn, e, beforeCash, beforeVal, feedType, id);
+            if (feedType === 'unlock-teller' || feedType === 'unlock-guard') {
+                renderUpgradesTab();
+                if (feedType === 'unlock-teller' && typeof window.rebuildTellersDOM === 'function') {
+                    window.rebuildTellersDOM();
+                    if (typeof window.recalcGuardAnchors === 'function') window.recalcGuardAnchors();
+                }
+            } else {
+                const scrollPos = tabUpgrades.scrollTop;
+                if (typeof refreshAllTabs === 'function') {
+                    refreshAllTabs();
+                } else if (typeof updateButtonAffordability === 'function') {
+                    updateButtonAffordability();
+                }
+                tabUpgrades.scrollTop = scrollPos;
+            }
+        });
+    }
+
+    if (DOM_CACHE.offlineModalDoubleBtn) {
+        DOM_CACHE.offlineModalDoubleBtn.addEventListener('click', () => {
+            initSound();
+            if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove('active');
+            playAd(() => {
+                if (game.offlineEarningsReport && game.offlineEarningsReport > 0) {
+                    const extra = game.offlineEarningsReport * 2;
+                    game.state.cash = Math.round((game.state.cash + extra + Number.EPSILON) * 100) / 100;
+                    game.state.lifetimeCash = Math.round((game.state.lifetimeCash + extra + Number.EPSILON) * 100) / 100;
+                    if (window.gameAudio && typeof window.gameAudio.playChaChing === 'function') {
+                        window.gameAudio.playChaChing();
+                    }
+                    const rect = DOM_CACHE.offlineModalDoubleBtn.getBoundingClientRect();
+                    spawnFloating('+$' + formatMoney(extra), rect.left + rect.width / 2, rect.top, 'green');
+                }
+                game.offlineEarningsReport = 0;
+                game.saveGame();
+                draw();
+            });
+        });
+    }
+
+    const gdprAcceptBtn = document.getElementById('gdpr-accept-btn');
+    if (gdprAcceptBtn) {
+        gdprAcceptBtn.addEventListener('click', () => {
+            localStorage.setItem('gdpr_consent', '1');
+            const banner = document.getElementById('gdpr-banner');
+            if (banner) banner.style.display = 'none';
+        });
+    }
+
+    if (DOM_CACHE.offlineModalClaimBtn) {
+        DOM_CACHE.offlineModalClaimBtn.addEventListener('click', () => {
+            initSound();
+            if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove('active');
+            game.offlineEarningsReport = 0;
+            game.saveGame();
+            draw();
+        });
+    }
+
+    const prestigeModal = document.getElementById('prestige-modal');
+    const prestigeAdBtn = document.getElementById('prestige-ad-btn');
+    const prestigeRegularBtn = document.getElementById('prestige-regular-btn');
+    const prestigeCancelBtn = document.getElementById('prestige-cancel-btn');
+
+    if (prestigeAdBtn) {
+        prestigeAdBtn.addEventListener('click', () => {
+            initSound();
+            if (prestigeModal) {
+                const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
+                const sharesPreview = game.calculatePrestigeShares() * 3;
+                const _prT = translations[(game.state && game.state.language) || 'en'] || translations.en;
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT.branchLabel || 'Branch') + ' ' + target);
+                prestigeModal.classList.remove('active');
+                playAd(() => {
+                    triggerPrestigeCeremony(Math.min(1000, sharesPreview), branchName, () => {
+                        game.prestige(target, true);
+                        game.saveGame();
+                        if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
+                        const firstTabBtn = document.querySelector('.tab-btn');
+                        if (firstTabBtn) firstTabBtn.click();
+                        draw();
+                    });
+                });
+            }
+        });
+    }
+
+    if (prestigeRegularBtn) {
+        prestigeRegularBtn.addEventListener('click', () => {
+            initSound();
+            if (prestigeModal) {
+                const target = parseInt(prestigeModal.getAttribute('data-target-branch'));
+                const sharesPreview = game.calculatePrestigeShares();
+                const _prT2 = translations[(game.state && game.state.language) || 'en'] || translations.en;
+                const branchName = (game.branches && game.branches[target]) ? game.branches[target].name : ((_prT2.branchLabel || 'Branch') + ' ' + target);
+                prestigeModal.classList.remove('active');
+                triggerPrestigeCeremony(sharesPreview, branchName, () => {
+                    game.prestige(target, false);
+                    game.saveGame();
+                    if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
+                    const firstTabBtn = document.querySelector('.tab-btn');
+                    if (firstTabBtn) firstTabBtn.click();
+                    draw();
+                });
+            }
+        });
+    }
+
+    if (prestigeCancelBtn) {
+        prestigeCancelBtn.addEventListener('click', () => {
+            initSound();
+            if (prestigeModal) {
+                prestigeModal.classList.remove('active');
+            }
+        });
+    }
+
+    if (DOM_CACHE.vaultEmptyBtn) {
+        DOM_CACHE.vaultEmptyBtn.addEventListener('click', () => {
+            initSound();
+            const collected = game.collectVault();
+            if (collected > 0) {
+                const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
+                const elStatCash = document.getElementById('stat-cash');
+                const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
+                animateCoins(rectBtn, rectCashBox, 2, 'cash');
+                spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green');
+                // Gold coins rain effect on vault collect
+                spawnVaultCoins(collected, rectBtn);
+                game.saveGame();
+                draw();
+                // Discovery tip: first time vault is collected (after start tip was already shown)
+                var tips = game.state.discoveredTips || {};
+                if (!tips.vault && tips.start) showDiscoveryTip('vault');
+            }
+        });
+    }
+
+    const vaultInfoBtn = document.getElementById('vault-info-btn');
+    if (vaultInfoBtn) {
+        vaultInfoBtn.addEventListener('click', () => {
+            initSound();
+            const lang = game.state.language || 'en';
+            const tObj = translations[lang];
+            if (tObj && typeof window.showToast === 'function') {
+                window.showToast(tObj.vaultInfoMsg, 'info');
+            }
+        });
+    }
+
+    if (DOM_CACHE.securityPath) {
+        DOM_CACHE.securityPath.addEventListener('click', () => {
+            initSound();
+            for (let i = 0; i < game.state.guards.length; i++) {
+                const g = game.state.guards[i];
+                if (g.unlocked && g.state === 'idle') {
+                    if (game.triggerGuard(g.id)) {
+                        break;
+                    }
+                }
+            }
+        });
+        // Keyboard support for non-button interactive div
+        DOM_CACHE.securityPath.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                DOM_CACHE.securityPath.click();
+            }
+        });
+    }
+
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+        // Keyboard support for non-button interactive div
+        vaultGraphicEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
+            }
+        });
+    }
+
+    const triggerFirstInteraction = () => {
+        initSound();
+        document.removeEventListener('click', triggerFirstInteraction);
+        document.removeEventListener('touchstart', triggerFirstInteraction);
+        document.removeEventListener('keydown', triggerFirstInteraction);
+    };
+    document.addEventListener('click', triggerFirstInteraction);
+    document.addEventListener('touchstart', triggerFirstInteraction);
+    document.addEventListener('keydown', triggerFirstInteraction);
+
+    // Decoration interactions (Living Bank Simulator)
+    const camera = document.querySelector('.security-camera');
+    if (camera) {
+        camera.style.cursor = 'pointer';
+        camera.addEventListener('click', (e) => {
+            initSound();
+            camera.classList.remove('camera-wiggle');
+            void camera.offsetWidth; // trigger reflow
+            camera.classList.add('camera-wiggle');
+            
+            const bonus = 10 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = camera.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+            draw();
+        });
+    }
+
+    const atm = document.querySelector('.atm-machine');
+    if (atm) {
+        atm.style.cursor = 'pointer';
+        atm.addEventListener('click', (e) => {
+            initSound();
+            atm.classList.remove('atm-vibrate');
+            void atm.offsetWidth; // trigger reflow
+            atm.classList.add('atm-vibrate');
+            
+            // Create falling/sliding receipt
+            const receipt = document.createElement('div');
+            receipt.className = 'atm-receipt';
+            receipt.innerText = '$' + (15 * (game.state.currentBranch + 1));
+            atm.appendChild(receipt);
+            setTimeout(() => receipt.remove(), 1200);
+
+            const bonus = 15 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = atm.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+            draw();
+        });
+    }
+
+    const plants = document.querySelectorAll('.potted-plant');
+    plants.forEach(plant => {
+        plant.style.cursor = 'pointer';
+        plant.addEventListener('click', (e) => {
+            initSound();
+            plant.classList.remove('plant-shake');
+            void plant.offsetWidth; // trigger reflow
+            plant.classList.add('plant-shake');
+            
+            // Create falling leaf
+            const leaf = document.createElement('div');
+            leaf.className = 'falling-leaf';
+            leaf.innerText = '🍃';
+            plant.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 1500);
+
+            const bonus = 2 * (game.state.currentBranch + 1);
+            game.addCash(bonus);
+            
+            const rect = plant.getBoundingClientRect();
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            draw();
+        });
+    });
+
+    // Check weekly reward on game start
+    setTimeout(() => {
+        if (window.game && window.game.state) {
+            checkWeeklyReward();
+        }
+    }, 2000);
+
+    // Initialize tutorial system
+    initTutorialEvents();
+    maybeStartTutorial();
+}
+
+window.showTutorialStep   = function() {};
+window.completeTutorial   = function() {};
+
+export {
+    _getFocusableElements, trapFocus, releaseFocus, initFocusTrapObserver,
+    AdService, playAd, formatTime, updateAdvDisplay, updateMuteButton, initSound, showContextualAdBanner,
+    applyLanguage, applyTheme,
+    triggerRandomEvent, handleCrowdEvent, handleSecurityEvent, handleRescueEvent, handleRushHoursEvent, handleInvestorEvent,
+    triggerMilestoneConfetti, handlePurchaseFeedback, handleMissionRedirect,
+    openPrestigeModal, openBoostModal, openAnalyticsModal, openWeeklyRewardModal, checkWeeklyReward,
+    showOfflineEarningsModal, showLoginRewardModal, triggerPrestigeCeremony,
+    updateFortuneWheelBtnState, openFortuneWheel,
+    tick, syncBottomNav, updateVaultMiniBar,
+    triggerVipVisitBanner, removeVipVisitBanner, serveVipVisitor, renderDailyChallengesSection,
+    startPromoRecording, spawnVaultCoins, showDiscoveryTip, initTutorialEvents, maybeStartTutorial, checkPrestigeTip,
+    initUIEvents,
+};
+
+// Dual-exposed on window for classic <script> consumers (game.js, save-manager.js,
+// mission-controller.js, ui-draw.js, ui/tabs/*.js) that still call these as bare/window globals.
+window.applyLanguage = applyLanguage;
+window.applyTheme = applyTheme;
+window.playAd = playAd;
+window.formatTime = formatTime;
+window.openPrestigeModal = openPrestigeModal;
+window.openBoostModal = openBoostModal;
+window.openAnalyticsModal = openAnalyticsModal;
+window.handleCrowdEvent = handleCrowdEvent;
+window.handleSecurityEvent = handleSecurityEvent;
+window.handleRescueEvent = handleRescueEvent;
+window.handleRushHoursEvent = handleRushHoursEvent;
+window.handleInvestorEvent = handleInvestorEvent;
+window.triggerRandomEvent = triggerRandomEvent;
+window.updateAdvDisplay = updateAdvDisplay;
+window.updateMuteButton = updateMuteButton;
+window.initSound = initSound;
+window.handlePurchaseFeedback = handlePurchaseFeedback;
+window.handleMissionRedirect = handleMissionRedirect;
+window.tick = tick;
+window.initUIEvents = initUIEvents;
+window.syncBottomNav = syncBottomNav;
+window.updateVaultMiniBar = updateVaultMiniBar;
+window.openFortuneWheel = openFortuneWheel;
+window.triggerVipVisitBanner = triggerVipVisitBanner;
+window.removeVipVisitBanner = removeVipVisitBanner;
+window.serveVipVisitor = serveVipVisitor;
+window.renderDailyChallengesSection = renderDailyChallengesSection;
+window.showLoginRewardModal = showLoginRewardModal;
+window.triggerPrestigeCeremony = triggerPrestigeCeremony;
+window.showOfflineEarningsModal = showOfflineEarningsModal;
+window.showDiscoveryTip = showDiscoveryTip;
+window.checkPrestigeTip = checkPrestigeTip;
+window.maybeStartTutorial = maybeStartTutorial;
+window.spawnVaultCoins = spawnVaultCoins;
+window.startPromoRecording = startPromoRecording;
