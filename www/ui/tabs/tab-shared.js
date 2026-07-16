@@ -200,69 +200,57 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const eps = capacity / speed;
         
         card.innerHTML = `
-            <div class="upg-v2-info">
-                <div class="upg-v2-avatar-wrap">
-                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
+            <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge">${type === 'teller' ? (translations[lang].teller || 'ספר') : (translations[lang].guard || 'שומר')} ${id + 1}</div>
+                    <div class="upg-v2-main-title">${translations[lang].levelAbbr || 'רמה'} ${entity.level}</div>
                 </div>
-                <div class="upg-v2-details">
-                    <div class="upg-v2-title">${title} <span class="upg-v2-level-up">${levelsToBuy > 1 ? '(+'+levelsToBuy+')' : ''}</span></div>
-                    <div class="upg-v2-desc">${desc}</div>
-                    
-                    <div class="upg-v2-divider"></div>
-                    
-                    <div class="upg-v2-stats">
-                        <div class="upg-v2-stat">
-                            <div class="upg-v2-stat-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                            </div>
-                            <div class="upg-v2-stat-text">
-                                <div class="upg-v2-stat-label">${speedLabel}</div>
-                                <div class="upg-v2-stat-val">${speed} <span class="arrow">➔</span> ${nextSpeed}</div>
-                            </div>
+                
+                <div class="upg-v2-desc-text">${desc}</div>
+                
+                <div class="upg-v2-stats-glass-box">
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
                         </div>
-                        <div class="upg-v2-stat">
-                            <div class="upg-v2-stat-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                            </div>
-                            <div class="upg-v2-stat-text">
-                                <div class="upg-v2-stat-label">${capLabel}</div>
-                                <div class="upg-v2-stat-val">${formatMoney(capacity)} <span class="arrow">➔</span> ${formatMoney(nextCapacity)}</div>
-                            </div>
+                        <div class="upg-v2-stat-label">${capLabel}</div>
+                        <div class="upg-v2-stat-val">${formatMoney(capacity)} <span class="arrow" style="color: #4ade80;">➔</span></div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
                         </div>
-                        <div class="upg-v2-stat">
-                            <div class="upg-v2-stat-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
-                            </div>
-                            <div class="upg-v2-stat-text">
-                                <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
-                                <div class="upg-v2-stat-val">${formatMoney(eps)}</div>
-                            </div>
+                        <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
+                        <div class="upg-v2-stat-val">$${eps.toFixed(1)}</div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
+                        <div class="upg-v2-stat-label">${speedLabel}</div>
+                        <div class="upg-v2-stat-val">${speed} <span class="arrow" style="color: #4ade80;">➔</span> ${nextSpeed}</div>
                     </div>
                 </div>
+                
+                <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${title} — ${formatMoney(cost)}">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-sparkles">✨</div>
+                        <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel} <span class="upg-v2-btn-amount">${levelsToBuy > 1 ? '+'+levelsToBuy : ''}</span></div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                            ${formatMoney(cost)}
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </button>
             </div>
-            
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${title} — ${formatMoney(cost)}">
-                <div class="upg-v2-btn-left-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-                    </svg>
-                </div>
-                <div class="upg-v2-btn-content">
-                    <div class="upg-v2-btn-top">
-                        <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
-                        <span class="upg-v2-btn-amount">+${levelsToBuy}</span>
-                    </div>
-                    <div class="upg-v2-btn-divider"></div>
-                    <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
-                    </div>
-                </div>
-                <div class="upg-v2-btn-sparkles">✨</div>
-            </button>
         `;
         if (avatarBgUrl) {
             const avEl = card.querySelector('.card-avatar');
@@ -294,33 +282,32 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
 
         card.className = 'upgrade-card premium-upg-card locked-card';
         card.innerHTML = `
-            <div class="upg-v2-info">
-                <div class="upg-v2-avatar-wrap locked">
-                    <div class="upg-v2-avatar" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
-                    <div class="lock-overlay">🔒</div>
+            <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].locked || 'נעול'}</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">${title}</div>
                 </div>
-                <div class="upg-v2-details">
-                    <div class="upg-v2-title">${title}</div>
-                    <div class="upg-v2-desc">${desc}</div>
-                </div>
+                
+                <div class="upg-v2-desc-text">${desc}</div>
+                
+                <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].unlockLabel} ${id + 1} — ${formatMoney(cost)}">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: ${canBuy ? '#2b1f02' : '#64748b'};">${unlockText}</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).unlockCost}</span>
+                            ${formatMoney(cost)}
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${canBuy ? '#ffe066' : '#475569'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
             </div>
-            <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-action="${unlockAction}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].unlockLabel} ${id + 1} — ${formatMoney(cost)}">
-                <div class="upg-v2-btn-left-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                </div>
-                <div class="upg-v2-btn-content">
-                    <div class="upg-v2-btn-top">
-                        <span class="upg-v2-btn-upgrade-text">${unlockText}</span>
-                    </div>
-                    <div class="upg-v2-btn-divider"></div>
-                    <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).unlockCost}</span>
-                        <span class="upg-v2-btn-cost">${formatMoney(cost)}</span>
-                    </div>
-                </div>
-            </button>
         `;
         if (avatarBgUrl2) {
             const avEl2 = card.querySelector('.card-avatar');

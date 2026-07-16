@@ -1608,18 +1608,11 @@ class IdleBankGame {
         const currentLen = this.customerQueue.length;
         const fillRatio = currentLen / capacity;
         const fillPercent = Math.min(100, Math.floor(fillRatio * 100));
-        // maxPossibleCapacity is a fixed reference (doesn't grow with ad spend like
-        // `capacity` does), so the UI can show a bar that actually reflects a bigger
-        // ad-boosted queue instead of always reading ~100% of its own shifting cap.
-        const maxPossibleCapacity = this.economyManager.getMaxPossibleQueueCapacity(level);
-        const fixedFillPercent = Math.min(100, Math.floor((currentLen / maxPossibleCapacity) * 100));
         return {
             level,
             capacity,
             currentLen,
-            fillPercent,
-            maxPossibleCapacity,
-            fixedFillPercent
+            fillPercent
         };
     }
 

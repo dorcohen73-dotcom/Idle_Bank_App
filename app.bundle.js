@@ -890,9 +890,9 @@
       const queueData = game.getQueueRenderData();
       const maxCap = queueData.capacity;
       const currentLen = queueData.currentLen;
-      capLabel.textContent = `${currentLen}/${queueData.maxPossibleCapacity}`;
+      capLabel.textContent = `${currentLen}/${maxCap}`;
       if (fillBar) {
-        const pct = Math.min(100, Math.max(0, currentLen / queueData.maxPossibleCapacity * 100));
+        const pct = Math.min(100, Math.max(0, currentLen / maxCap * 100));
         fillBar.style.width = `${pct}%`;
         fillBar.setAttribute("aria-valuenow", Math.round(pct));
       }
@@ -5287,7 +5287,8 @@
     const tObj = translations[lang].departments;
     game.state.departments.forEach((d) => {
       const isUnlocked = d.unlocked;
-      const canBuy = game.state.cash >= d.cost;
+      const unlockCost = game.getDepartmentUnlockCost(d);
+      const canBuy = game.state.cash >= unlockCost;
       const card = document.createElement("div");
       card.className = `upgrade-card department-card feature-card ${isUnlocked ? "active" : "locked"}`;
       const reward = game.getDepartmentReward(d.id);
@@ -5320,7 +5321,7 @@
                 <button class="dept-action-btn buy-btn ${canBuy ? "" : "disabled"}" data-dept-idx="${d.id}" ${canBuy ? "" : "disabled"}>
                     <span class="btn-arrow">\u25B2</span>
                     <span class="btn-lbl">${tObj.unlock}</span>
-                    <span class="btn-cost">${formatMoney(d.cost)}</span>
+                    <span class="btn-cost">${formatMoney(unlockCost)}</span>
                 </button>
             `;
       } else {
@@ -6337,7 +6338,7 @@
         const deptId = parseInt(btn.getAttribute("data-dept-idx"));
         const dept = game.state.departments.find((d) => d.id === deptId);
         if (dept && !dept.unlocked) {
-          const cost = dept.cost;
+          const cost = game.getDepartmentUnlockCost(dept);
           const canBuy = window.game.state.cash >= cost;
           if (canBuy) {
             btn.classList.remove("disabled");

@@ -13,7 +13,13 @@ class MissionController {
         // Branch 0: 300s. Branch 1: 240s. Branch 3: 150s. Branch 5+: 60s.
         const diminishingFactor = Math.max(0.2, 1 - (branchIndex * 0.15));
         const currentEps = Math.max(this.game.getEarningsPerSecond(), 1);
-        const referenceReward = Math.max(currentEps * 300 * diminishingFactor, 150);
+        // Sub-linear in currentEps (exponent < 1): keeps early-game rewards close to the old
+        // eps*300 formula while damping the runaway loop where rising EPS inflates mission
+        // rewards 1:1, which fund upgrades that raise EPS further.
+        const referenceReward = Math.max(
+            GAME_CONFIG.MISSION_REWARD_SCALE * Math.pow(currentEps, GAME_CONFIG.MISSION_REWARD_EPS_EXPONENT) * diminishingFactor,
+            150
+        );
 
         const pool = [
             {
@@ -154,7 +160,7 @@ class MissionController {
         const lockedDepts = (this.game.state.departments || []).filter(d => d && !d.unlocked);
         if (lockedDepts.length > 0) {
             const cheapestLocked = lockedDepts.reduce((min, d) => d.cost < min.cost ? d : min, lockedDepts[0]);
-            const playerHasHalfCost = this.game.state.cash >= cheapestLocked.cost * 0.5;
+            const playerHasHalfCost = this.game.state.cash >= this.game.getDepartmentUnlockCost(cheapestLocked) * 0.5;
             if (playerHasHalfCost) {
                 pool.push({
                     type: 'department_unlock',

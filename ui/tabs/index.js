@@ -23,6 +23,20 @@ function refreshAllTabs() {
     rebuildTellersDOM();
 }
 
+// .upg-v2-btn-cost wraps an icon + sub-label span with the price as a trailing
+// text node - writing .innerText there wipes those sibling elements, so only
+// the trailing text node is touched.
+function updateCostText(costEl, newCost) {
+    if (!costEl) return;
+    let node = costEl.lastChild;
+    while (node && node.nodeType !== Node.TEXT_NODE) node = node.previousSibling;
+    if (!node) {
+        node = document.createTextNode('');
+        costEl.appendChild(node);
+    }
+    if (node.textContent.trim() !== newCost) node.textContent = newCost;
+}
+
 // Lightweight inline updater to refresh buy buttons, text and enabled states dynamically without DOM recreation
 function updateButtonAffordability() {
     const activeTabEl = document.querySelector('.tab-btn.active');
@@ -47,9 +61,12 @@ function updateButtonAffordability() {
                         const amtEl = btn.querySelector('.upg-v2-btn-amount');
                         const costEl = btn.querySelector('.upg-v2-btn-cost');
                         const newAmt = details.levels > 1 ? '+' + details.levels : '';
-                        if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                        if (amtEl && amtEl.innerText !== newAmt) {
+                            amtEl.innerText = newAmt;
+                            amtEl.style.display = details.levels > 1 ? 'inline' : 'none';
+                        }
                         const newCost = formatMoney(details.cost);
-                        if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+                        updateCostText(costEl, newCost);
 
                         const card = btn.closest('.premium-upg-card');
                         if (card) {
@@ -63,13 +80,13 @@ function updateButtonAffordability() {
                                 const speed = game.getTellerSpeed(t.level).toFixed(1);
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                                 const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
-                                const newStat0 = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
-                                const newStat1 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
-                                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
-                                if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                                const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
+                                const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span>';
+                                const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + '</span>';
+                                if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
+                                if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
                                 if (statVals[2]) {
-                                    const newStat2 = formatMoney(capacity / speed);
-                                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                                    if (statVals[2].innerHTML !== newStatSpeed) statVals[2].innerHTML = newStatSpeed;
                                 }
                             }
                         }
@@ -91,9 +108,12 @@ function updateButtonAffordability() {
                         const amtEl = btn.querySelector('.upg-v2-btn-amount');
                         const costEl = btn.querySelector('.upg-v2-btn-cost');
                         const newAmt = details.levels > 1 ? '+' + details.levels : '';
-                        if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                        if (amtEl && amtEl.innerText !== newAmt) {
+                            amtEl.innerText = newAmt;
+                            amtEl.style.display = details.levels > 1 ? 'inline' : 'none';
+                        }
                         const newCost = formatMoney(details.cost);
-                        if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+                        updateCostText(costEl, newCost);
 
                         const card = btn.closest('.premium-upg-card');
                         if (card) {
@@ -107,13 +127,13 @@ function updateButtonAffordability() {
                                 const speed = game.getGuardSpeed(g.level).toFixed(1);
                                 const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                                 const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
-                                const newStat0 = speed + ' <span class="arrow">➔</span> ' + nextSpeed;
-                                const newStat1 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
-                                if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
-                                if (statVals[1].innerHTML !== newStat1) statVals[1].innerHTML = newStat1;
+                                const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
+                                const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span>';
+                                const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + '</span>';
+                                if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
+                                if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
                                 if (statVals[2]) {
-                                    const newStat2 = formatMoney(capacity / speed);
-                                    if (statVals[2].innerHTML !== newStat2) statVals[2].innerHTML = newStat2;
+                                    if (statVals[2].innerHTML !== newStatSpeed) statVals[2].innerHTML = newStatSpeed;
                                 }
                             }
                         }
@@ -132,9 +152,12 @@ function updateButtonAffordability() {
                     const amtEl = btn.querySelector('.upg-v2-btn-amount');
                     const costEl = btn.querySelector('.upg-v2-btn-cost');
                     const newAmt = details.levels > 1 ? '+' + details.levels : '';
-                    if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
+                    if (amtEl && amtEl.innerText !== newAmt) {
+                        amtEl.innerText = newAmt;
+                        amtEl.style.display = details.levels > 1 ? 'inline' : 'none';
+                    }
                     const newCost = formatMoney(details.cost);
-                    if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+                    updateCostText(costEl, newCost);
 
                     const card = btn.closest('.premium-upg-card');
                     if (card) {
@@ -146,7 +169,7 @@ function updateButtonAffordability() {
                         if (statVals.length >= 1) {
                             const capacity = game.getVaultCapacity(game.state.vault.level);
                             const nextCapacity = game.getVaultCapacity(game.state.vault.level + details.levels);
-                            const newStat0 = formatMoney(capacity) + ' <span class="arrow">➔</span> ' + formatMoney(nextCapacity);
+                            const newStat0 = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
                             if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
                         }
                     }
@@ -161,7 +184,7 @@ function updateButtonAffordability() {
                     const newAmt = details.levels > 1 ? '+' + details.levels : '';
                     if (amtEl && amtEl.innerText !== newAmt) amtEl.innerText = newAmt;
                     const newCost = formatMoney(details.cost);
-                    if (costEl && costEl.innerText !== newCost) costEl.innerText = newCost;
+                    updateCostText(costEl, newCost);
 
                     const card = btn.closest('.premium-upg-card');
                     if (card) {
@@ -171,8 +194,8 @@ function updateButtonAffordability() {
 
                         const statVals = card.querySelectorAll('.upg-v2-stat-val');
                         if (statVals.length >= 1) {
-                            const capacity = game.getQueueCapacity(game.state.queueUpgradeLevel || 1);
-                            const nextCapacity = game.getQueueCapacity((game.state.queueUpgradeLevel || 1) + details.levels);
+                            const capacity = game.getBaseQueueCapacity(game.state.queueUpgradeLevel || 1);
+                            const nextCapacity = game.getBaseQueueCapacity((game.state.queueUpgradeLevel || 1) + details.levels);
                             const newStat0 = capacity + ' <span class="arrow">➔</span> ' + nextCapacity;
                             if (statVals[0].innerHTML !== newStat0) statVals[0].innerHTML = newStat0;
                         }
@@ -298,7 +321,7 @@ function updateButtonAffordability() {
             const deptId = parseInt(btn.getAttribute('data-dept-idx'));
             const dept = game.state.departments.find(d => d.id === deptId);
             if (dept && !dept.unlocked) {
-                const cost = dept.cost;
+                const cost = game.getDepartmentUnlockCost(dept);
                 const canBuy = window.game.state.cash >= cost;
                 
                 if (canBuy) {

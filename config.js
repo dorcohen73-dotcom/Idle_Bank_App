@@ -49,6 +49,18 @@ const GAME_CONFIG = {
     AUTO_SAVE_INTERVAL_SEC: 5.0,
     TAB_REFRESH_INTERVAL_SEC: 1.0,
 
+    // Offline earnings balance: "full automation" (operations+finance hired) earns offline
+    // cash uncapped by any vault/teller capacity, unlike the other two offline modes. This
+    // factor throttles that uncapped path so long offline sessions don't out-pace active play.
+    OFFLINE_FULL_AUTO_EFFICIENCY: 0.5,
+
+    // Mission reward balance: reward scales sub-linearly with the player's current EPS so
+    // rising income doesn't keep inflating mission payouts 1:1 (which fed a runaway
+    // buy-upgrades -> higher EPS -> bigger mission reward loop within a single branch).
+    // Tuned so referenceReward matches the old linear formula (~eps*300) around eps=10.
+    MISSION_REWARD_EPS_EXPONENT: 0.7,
+    MISSION_REWARD_SCALE: 600,
+
     // SVG Cache limits
     SVG_CACHE_MAX_SIZE: 200,
 

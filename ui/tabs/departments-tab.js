@@ -84,7 +84,8 @@ export function renderDepartmentsTab() {
     const tObj = translations[lang].departments;
     game.state.departments.forEach((d) => {
         const isUnlocked = d.unlocked;
-        const canBuy = game.state.cash >= d.cost;
+        const unlockCost = game.getDepartmentUnlockCost(d);
+        const canBuy = game.state.cash >= unlockCost;
         
         const card = document.createElement('div');
         card.className = `upgrade-card department-card feature-card ${isUnlocked ? 'active' : 'locked'}`;
@@ -122,7 +123,7 @@ export function renderDepartmentsTab() {
                 <button class="dept-action-btn buy-btn ${canBuy ? '' : 'disabled'}" data-dept-idx="${d.id}" ${canBuy ? '' : 'disabled'}>
                     <span class="btn-arrow">▲</span>
                     <span class="btn-lbl">${tObj.unlock}</span>
-                    <span class="btn-cost">${formatMoney(d.cost)}</span>
+                    <span class="btn-cost">${formatMoney(unlockCost)}</span>
                 </button>
             `;
         } else {

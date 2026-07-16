@@ -831,7 +831,12 @@ class SaveManager {
             const baseEps = boostTimeActiveOffline > 0 ? (eps / 2.0) : eps;
             const normalTime = elapsedSec - boostTimeActiveOffline;
             offlineCashEarned = (baseEps * boostTimeActiveOffline * 2.0) + (baseEps * normalTime);
-            
+
+            // Unlike the vault/teller offline modes below, full automation has no capacity
+            // cap on offline earnings — throttle it so long offline stretches don't out-earn
+            // active play at 1:1 EPS rate.
+            offlineCashEarned *= GAME_CONFIG.OFFLINE_FULL_AUTO_EFFICIENCY;
+
             // Apply accountant income multiplier if active
             if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
                 const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);

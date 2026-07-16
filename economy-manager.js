@@ -26,6 +26,19 @@ class EconomyManager {
         return Math.min(this.game.tellerUnlockCosts.length, 4 + branchIndex);
     }
 
+    // Unlock/upgrade cost scaling: branch multiplier keeps pace consistent across branches
+    // (branch N shouldn't clear N-times faster than branch 0 just because it starts with a
+    // bigger income multiplier). Prestige-shares multiplier does the same job across a
+    // player's *lifetime* — without it, a veteran sitting on a large banked shares multiplier
+    // (which can reach several thousand x at a maxed-out wallet) would blow through the exact
+    // same branch a brand-new player (shares = 0, multiplier = 1, fully unaffected) finds a
+    // normal challenge, and would keep accelerating further with every prestige. This keeps a
+    // given branch feeling like roughly the same amount of "real" progress regardless of how
+    // long someone has already played, while leaving new players completely untouched.
+    getCostScalingMultiplier() {
+        return this.getBranchMultiplier() * this.getPrestigeMultiplier();
+    }
+
     getTotalMultiplier() {
         if (this.cachedTotalMult !== null && this.cachedTotalMult !== undefined) {
             return this.cachedTotalMult;
@@ -123,7 +136,8 @@ class EconomyManager {
     }
 
     getTellerUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.TELLER_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.TELLER_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.TELLER_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.TELLER_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Guards Formulas
@@ -158,7 +172,8 @@ class EconomyManager {
     }
 
     getGuardUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.GUARD_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.GUARD_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.GUARD_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.GUARD_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Vault Formulas
@@ -176,7 +191,8 @@ class EconomyManager {
     }
 
     getVaultUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.VAULT_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.VAULT_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.VAULT_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.VAULT_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Queue Lobby Formulas
@@ -187,31 +203,16 @@ class EconomyManager {
 
     getQueueCapacity(level) {
         const base = this.getBaseQueueCapacity(level);
-        let capacity = base + (this.game.tempQueueBonus || 0);
-        // Without this, a faster ad-campaign spawn rate has no visible effect once the
-        // queue is already at its cap - the extra customers have nowhere to go and are
-        // silently dropped by the `customerQueue.length < maxQueue` gate. Scaling
-        // capacity with ad spend makes the campaign's effect actually show up as a
-        // bigger, faster-filling queue instead of looking like it does nothing.
-        if (this.game.state.advActive && this.game.state.advBudget > 0) {
-            const adMaxBudget = this.game.getAdMaxBudget();
-            const normalizedBudget = Math.min(1, this.game.state.advBudget / adMaxBudget);
-            capacity += Math.ceil(base * normalizedBudget);
-        }
-        return capacity;
-    }
-
-    // Fixed reference point (base capacity at full possible ad-campaign boost) for UI
-    // bars: the actual capacity above already grows with ad spend, so a bar scaled to
-    // "current capacity" always reads ~100% full regardless of campaign level - it hides
-    // the real difference between e.g. a 5-slot queue and a 10-slot queue.
-    getMaxPossibleQueueCapacity(level) {
-        const base = this.getBaseQueueCapacity(level);
-        return base + (this.game.tempQueueBonus || 0) + base;
+        // Capacity depends only on the queue/lobby upgrade level (plus tempQueueBonus,
+        // a separate one-off reward mechanic) - deliberately NOT on ad spend. Ad
+        // campaigns affect arrival rate (see game.js update()), not how many people
+        // can physically wait in the lobby.
+        return base + (this.game.tempQueueBonus || 0);
     }
 
     getQueueUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.QUEUE_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.QUEUE_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.QUEUE_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.QUEUE_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     getCumulativeUpgradeCost(type, startLevel, targetLevel) {
@@ -237,11 +238,11 @@ class EconomyManager {
         if (type === 'queue') return this.getQueueUpgradeCost(level);
         if (type === 'manager') {
             const costs = GAME_CONFIG.MANAGER_UPGRADE_COSTS[id] || GAME_CONFIG.MANAGER_UPGRADE_COSTS_DEFAULT;
-            let cost = costs[level] || 0;
+            let cost = (costs[level] || 0) * this.getCostScalingMultiplier();
             if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.managerDiscount) {
-                cost = Math.round(cost * (1 - 0.05 * this.game.state.goldUpgrades.managerDiscount)); // -5% per level
+                cost = cost * (1 - 0.05 * this.game.state.goldUpgrades.managerDiscount); // -5% per level
             }
-            return cost;
+            return Math.round(cost);
         }
         return 0;
     }

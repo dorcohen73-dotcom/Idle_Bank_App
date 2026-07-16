@@ -18,9 +18,6 @@ class IdleBankGame {
         
         // Expose configuration properties for public API backward compatibility with ui-draw/ui-tabs
         this.branches = GAME_CONFIG.BRANCHES;
-        this.tellerUnlockCosts = GAME_CONFIG.TELLER_UNLOCK_COSTS;
-        this.guardUnlockCosts = GAME_CONFIG.GUARD_UNLOCK_COSTS;
-        this.managerCosts = GAME_CONFIG.MANAGER_COSTS;
         this.managerUpgradeCosts = GAME_CONFIG.MANAGER_UPGRADE_COSTS;
 
         this.initDefaultState();
@@ -33,6 +30,40 @@ class IdleBankGame {
 
         // Load state
         this.loadGame();
+    }
+
+    // Unlock/hire cost tables, scaled by both branch multiplier and prestige-shares multiplier.
+    // Getters (not constructor-time snapshots) so they stay in sync with the player's current
+    // power level. Branch scaling keeps pace consistent across branches (branch N shouldn't
+    // clear N-times faster than branch 0 just because it starts with a bigger income
+    // multiplier); shares scaling does the same job across a player's *lifetime* — without it,
+    // a veteran with a large banked shares multiplier would blow through the exact same branch
+    // a brand-new player (shares = 0, fully unaffected) finds a normal challenge, and would keep
+    // accelerating further with every prestige.
+    get tellerUnlockCosts() {
+        const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
+        return GAME_CONFIG.TELLER_UNLOCK_COSTS.map(c => Math.round(c * mult));
+    }
+
+    get guardUnlockCosts() {
+        const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
+        return GAME_CONFIG.GUARD_UNLOCK_COSTS.map(c => Math.round(c * mult));
+    }
+
+    get managerCosts() {
+        const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
+        const scaled = {};
+        for (const key in GAME_CONFIG.MANAGER_COSTS) {
+            scaled[key] = Math.round(GAME_CONFIG.MANAGER_COSTS[key] * mult);
+        }
+        return scaled;
+    }
+
+    // Department unlock cost, scaled the same way — dept.cost itself stays the small base
+    // value in state (and in save data) so this can't drift when the branch multiplier changes.
+    getDepartmentUnlockCost(dept) {
+        const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
+        return Math.round(dept.cost * mult);
     }
 
     initDefaultState() {
@@ -564,7 +595,7 @@ class IdleBankGame {
         const dept = this.state.departments.find(d => d.id === id);
         if (!dept || dept.unlocked) return false;
 
-        if (this.spendCash(dept.cost)) {
+        if (this.spendCash(this.getDepartmentUnlockCost(dept))) {
             dept.unlocked = true;
             this.missionsDirty = true;
             window.gameAudio.playUnlock();
@@ -1608,18 +1639,11 @@ class IdleBankGame {
         const currentLen = this.customerQueue.length;
         const fillRatio = currentLen / capacity;
         const fillPercent = Math.min(100, Math.floor(fillRatio * 100));
-        // maxPossibleCapacity is a fixed reference (doesn't grow with ad spend like
-        // `capacity` does), so the UI can show a bar that actually reflects a bigger
-        // ad-boosted queue instead of always reading ~100% of its own shifting cap.
-        const maxPossibleCapacity = this.economyManager.getMaxPossibleQueueCapacity(level);
-        const fixedFillPercent = Math.min(100, Math.floor((currentLen / maxPossibleCapacity) * 100));
         return {
             level,
             capacity,
             currentLen,
-            fillPercent,
-            maxPossibleCapacity,
-            fixedFillPercent
+            fillPercent
         };
     }
 

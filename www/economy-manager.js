@@ -187,27 +187,11 @@ class EconomyManager {
 
     getQueueCapacity(level) {
         const base = this.getBaseQueueCapacity(level);
-        let capacity = base + (this.game.tempQueueBonus || 0);
-        // Without this, a faster ad-campaign spawn rate has no visible effect once the
-        // queue is already at its cap - the extra customers have nowhere to go and are
-        // silently dropped by the `customerQueue.length < maxQueue` gate. Scaling
-        // capacity with ad spend makes the campaign's effect actually show up as a
-        // bigger, faster-filling queue instead of looking like it does nothing.
-        if (this.game.state.advActive && this.game.state.advBudget > 0) {
-            const adMaxBudget = this.game.getAdMaxBudget();
-            const normalizedBudget = Math.min(1, this.game.state.advBudget / adMaxBudget);
-            capacity += Math.ceil(base * normalizedBudget);
-        }
-        return capacity;
-    }
-
-    // Fixed reference point (base capacity at full possible ad-campaign boost) for UI
-    // bars: the actual capacity above already grows with ad spend, so a bar scaled to
-    // "current capacity" always reads ~100% full regardless of campaign level - it hides
-    // the real difference between e.g. a 5-slot queue and a 10-slot queue.
-    getMaxPossibleQueueCapacity(level) {
-        const base = this.getBaseQueueCapacity(level);
-        return base + (this.game.tempQueueBonus || 0) + base;
+        // Capacity depends only on the queue/lobby upgrade level (plus tempQueueBonus,
+        // a separate one-off reward mechanic) - deliberately NOT on ad spend. Ad
+        // campaigns affect arrival rate (see game.js update()), not how many people
+        // can physically wait in the lobby.
+        return base + (this.game.tempQueueBonus || 0);
     }
 
     getQueueUpgradeCost(level) {

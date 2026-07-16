@@ -100,17 +100,10 @@ export function updateQueueDisplay(tObj) {
         const maxCap = queueData.capacity;
         const currentLen = queueData.currentLen;
 
-        // Denominator is the fixed reference (doesn't move), matching the bar below -
-        // only currentLen (the numerator) should visibly change as customers come and
-        // go. Showing the ad-campaign-boosted `maxCap` here instead made the bottom of
-        // the fraction jump around with campaign spend while the count stayed put.
-        capLabel.textContent = `${currentLen}/${queueData.maxPossibleCapacity}`;
+        capLabel.textContent = `${currentLen}/${maxCap}`;
 
         if (fillBar) {
-            // Scaled against a fixed max (not the ad-campaign-boosted `maxCap`, which
-            // grows with ad spend) so the bar actually shows a bigger queue when the
-            // campaign is running, instead of always reading ~100% of its own cap.
-            const pct = Math.min(100, Math.max(0, (currentLen / queueData.maxPossibleCapacity) * 100));
+            const pct = Math.min(100, Math.max(0, (currentLen / maxCap) * 100));
             fillBar.style.width = `${pct}%`;
             fillBar.setAttribute('aria-valuenow', Math.round(pct));
         }

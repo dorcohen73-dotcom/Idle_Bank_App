@@ -40,51 +40,43 @@ export function renderUpgradesTab() {
     const vaultCard = document.createElement('div');
     vaultCard.className = 'upgrade-card premium-upg-card';
     vaultCard.innerHTML = `
-        <div class="upg-v2-info">
-            <div class="upg-v2-avatar-wrap">
-                <div class="upg-v2-avatar" style="background-image: url('images/vault-door.png');"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/vault-door.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-content-overlay">
+            <div class="upg-v2-header-row">
+                <div class="upg-v2-badge">${translations[lang].vaultTitle || 'כספת'}</div>
+                <div class="upg-v2-main-title">${translations[lang].levelAbbr || 'רמה'} ${vault.level}</div>
             </div>
-            <div class="upg-v2-details">
-                <div class="upg-v2-title">${tObj.vaultTitle(vault.level)} <span class="upg-v2-level-up">${vLevelsToBuy > 1 ? '(+'+vLevelsToBuy+')' : ''}</span></div>
-                <div class="upg-v2-desc">${tObj.vaultDesc}</div>
-                
-                <div class="upg-v2-divider"></div>
-                
-                <div class="upg-v2-stats">
-                    <div class="upg-v2-stat">
-                        <div class="upg-v2-stat-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
-                        </div>
-                        <div class="upg-v2-stat-text">
-                            <div class="upg-v2-stat-label">${tObj.vaultCap}</div>
-                            <div class="upg-v2-stat-val">${formatMoney(vCap)} <span class="arrow">➔</span> ${formatMoney(nextVCap)}</div>
-                        </div>
+            
+            <div class="upg-v2-desc-text">${tObj.vaultDesc}</div>
+            
+            <div class="upg-v2-stats-glass-box">
+                <div class="upg-v2-stat">
+                    <div class="upg-v2-stat-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    </div>
+                    <div class="upg-v2-stat-label">${tObj.vaultCap}</div>
+                    <div class="upg-v2-stat-val">${formatMoney(vCap)} <span class="arrow" style="color: #4ade80;">➔</span> ${formatMoney(nextVCap)}</div>
+                </div>
+            </div>
+            
+            <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} — ${formatMoney(vCost)}">
+                <div class="upg-v2-btn-left">
+                    <div class="upg-v2-btn-sparkles">✨</div>
+                    <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel} <span class="upg-v2-btn-amount">${vLevelsToBuy > 1 ? '+'+vLevelsToBuy : ''}</span></div>
+                    <div class="upg-v2-btn-cost">
+                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                        ${formatMoney(vCost)}
                     </div>
                 </div>
-            </div>
+                <div class="upg-v2-btn-right">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </div>
+            </button>
         </div>
-        
-        <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} — ${formatMoney(vCost)}">
-            <div class="upg-v2-btn-left-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-                </svg>
-            </div>
-            <div class="upg-v2-btn-content">
-                <div class="upg-v2-btn-top">
-                    <span class="upg-v2-btn-upgrade-text">${translations[lang].upgradeLabel}</span>
-                    <span class="upg-v2-btn-amount">+${vLevelsToBuy}</span>
-                </div>
-                <div class="upg-v2-btn-divider"></div>
-                <div class="upg-v2-btn-bottom">
-                    <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                    <span class="upg-v2-btn-cost">${formatMoney(vCost)}</span>
-                </div>
-            </div>
-            <div class="upg-v2-btn-sparkles">✨</div>
-        </button>
     `;
     container.appendChild(vaultCard);
 
@@ -96,8 +88,8 @@ export function renderUpgradesTab() {
     const qDetails = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, queueLvl, game.state.cash);
     const qLevelsToBuy = qDetails.levels;
     const qCost = qDetails.cost;
-    const qCap = game.getQueueCapacity(queueLvl);
-    const nextQCap = game.getQueueCapacity(queueLvl + qLevelsToBuy);
+    const qCap = game.getBaseQueueCapacity(queueLvl);
+    const nextQCap = game.getBaseQueueCapacity(queueLvl + qLevelsToBuy);
     const qCanBuy = qDetails.canAfford;
 
     const queueCard = document.createElement('div');
@@ -106,75 +98,66 @@ export function renderUpgradesTab() {
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-            <div class="upg-v2-info">
-                <div class="upg-v2-avatar-wrap">
-                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
-                </div>
-                <div class="upg-v2-details">
-                    <div class="upg-v2-title">${tObj.queueMaxTitle}</div>
-                    <div class="upg-v2-desc">${tObj.queueMaxDesc(qCap)}</div>
-                </div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-content-overlay">
+            <div class="upg-v2-header-row">
+                <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
+                <div class="upg-v2-main-title">${tObj.queueMaxTitle}</div>
             </div>
-            <button class="upg-v2-buy-btn buy-btn disabled" disabled>
-                <div class="upg-v2-btn-left-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </div>
-                <div class="upg-v2-btn-content">
-                    <div class="upg-v2-btn-top">
-                        <span class="upg-v2-btn-upgrade-text">${translations[lang].maxLevel}</span>
+            
+            <div class="upg-v2-desc-text">${tObj.queueMaxDesc(qCap)}</div>
+            
+            <button class="upg-v2-buy-btn buy-btn disabled" disabled style="margin-top: auto;">
+                <div class="upg-v2-btn-center">
+                    <div class="upg-v2-btn-lbl" style="color: #64748b;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        ${translations[lang].maxLevel}
                     </div>
                 </div>
             </button>
+        </div>
         `;
     } else {
         queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-            <div class="upg-v2-info">
-                <div class="upg-v2-avatar-wrap">
-                    <div class="upg-v2-avatar" style="background-image: url('images/client-1.png');"></div>
-                </div>
-                <div class="upg-v2-details">
-                    <div class="upg-v2-title">${tObj.queueTitle(queueLvl)} <span class="upg-v2-level-up">${qLevelsToBuy > 1 ? '(+'+qLevelsToBuy+')' : ''}</span></div>
-                    <div class="upg-v2-desc">${tObj.queueDesc}</div>
-                    
-                    <div class="upg-v2-divider"></div>
-                    
-                    <div class="upg-v2-stats">
-                        <div class="upg-v2-stat">
-                            <div class="upg-v2-stat-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                            </div>
-                            <div class="upg-v2-stat-text">
-                                <div class="upg-v2-stat-label">${tObj.queueCap}</div>
-                                <div class="upg-v2-stat-val">${qCap} <span class="arrow">➔</span> ${nextQCap}</div>
-                            </div>
-                        </div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-content-overlay">
+            <div class="upg-v2-header-row">
+                <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
+                <div class="upg-v2-main-title">${translations[lang].levelAbbr || 'רמה'} ${queueLvl}</div>
+            </div>
+            
+            <div class="upg-v2-desc-text">${tObj.queueDesc}</div>
+            
+            <div class="upg-v2-stats-glass-box">
+                <div class="upg-v2-stat">
+                    <div class="upg-v2-stat-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     </div>
+                    <div class="upg-v2-stat-label">${tObj.queueCap}</div>
+                    <div class="upg-v2-stat-val">${qCap} <span class="arrow" style="color: #4ade80;">➔</span> ${nextQCap}</div>
                 </div>
             </div>
             
             <button class="upg-v2-buy-btn buy-btn ${qCanBuy ? '' : 'disabled'}" id="upgrade-queue-btn" ${qCanBuy ? '' : 'disabled'}>
-                <div class="upg-v2-btn-left-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dfab29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                <div class="upg-v2-btn-left">
+                    <div class="upg-v2-btn-sparkles">✨</div>
+                    <div class="upg-v2-btn-lbl">${tObj.queueUpgradeBtn || 'שדרג'} <span class="upg-v2-btn-amount">${qLevelsToBuy > 1 ? '+'+qLevelsToBuy : ''}</span></div>
+                    <div class="upg-v2-btn-cost">
+                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
+                        ${formatMoney(qCost)}
+                    </div>
+                </div>
+                <div class="upg-v2-btn-right">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </div>
-                <div class="upg-v2-btn-content">
-                    <div class="upg-v2-btn-top">
-                        <span class="upg-v2-btn-upgrade-text">${tObj.queueUpgradeBtn}</span>
-                        <span class="upg-v2-btn-amount">+${qLevelsToBuy}</span>
-                    </div>
-                    <div class="upg-v2-btn-divider"></div>
-                    <div class="upg-v2-btn-bottom">
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        <span class="upg-v2-btn-cost">${formatMoney(qCost)}</span>
-                    </div>
-                </div>
-                <div class="upg-v2-btn-sparkles">✨</div>
             </button>
-        `;
+        </div>
+    `;
     }
     container.appendChild(queueCard);
 

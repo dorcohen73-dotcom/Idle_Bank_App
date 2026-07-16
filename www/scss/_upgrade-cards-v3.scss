@@ -1,308 +1,296 @@
 /* ==============================================================
-   Premium Upgrades Redesign (V2)
+   Premium Upgrades Redesign (V3 - Impressive Layout)
 ============================================================== */
 .upgrade-card.premium-upg-card {
-    background: #101421;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 1rem 1.25rem;
+    position: relative;
+    border-radius: 24px;
+    background: #0a0e17;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(139, 92, 246, 0.1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 260px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s ease;
-    flex-wrap: wrap; /* CRITICAL: Allows button to drop gracefully instead of squishing */
 }
 
 .upgrade-card.premium-upg-card:hover {
-    background: #141a29;
-    border-color: #374151;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.7);
 }
 
 .upgrade-card.premium-upg-card.locked-card {
-    opacity: 0.8;
+    opacity: 0.7;
+    filter: saturate(0.6);
 }
 
-/* Info Section */
-.upg-v2-info {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex: 1 1 250px; /* Forces wrap on very narrow columns */
-    min-width: 0;
-}
-
-.upg-v2-avatar-wrap {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid #374151;
-    flex-shrink: 0;
-    position: relative;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-}
-
-.upgrade-card.premium-upg-card:hover .upg-v2-avatar-wrap {
-    border-color: rgba(223, 171, 41, 0.5);
-    box-shadow: 0 0 15px rgba(223, 171, 41, 0.2), inset 0 0 10px rgba(0,0,0,0.5);
-}
-
-.upg-v2-avatar {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-}
-
-.upg-v2-avatar-wrap.locked {
-    filter: grayscale(1) brightness(0.4);
-    border-color: #1f2937;
-}
-
-.upg-v2-avatar-wrap.locked .lock-overlay {
+/* Avatar Large (D-shape on right) */
+.upg-v2-avatar-large {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    right: 0; /* In RTL, right is the start */
+    width: 45%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: rgba(255,255,255,0.8);
+    border-radius: 0 24px 24px 0;
+    /* Adding a curved mask or border radius on the inner side */
+    border-top-left-radius: 120px;
+    border-bottom-left-radius: 120px;
+    border-left: 2px solid rgba(223, 171, 41, 0.5);
+    z-index: 1;
+    box-shadow: inset 10px 0 20px rgba(0,0,0,0.8);
 }
 
-/* Details */
-.upg-v2-details {
+html[dir="ltr"] .upg-v2-avatar-large {
+    right: auto;
+    left: 0;
+    border-radius: 24px 0 0 24px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 120px;
+    border-bottom-right-radius: 120px;
+    border-left: none;
+    border-right: 2px solid rgba(223, 171, 41, 0.5);
+    box-shadow: inset -10px 0 20px rgba(0,0,0,0.8);
+}
+
+/* Content Overlay */
+.upg-v2-content-overlay {
+    position: relative;
+    z-index: 2;
+    padding: 1.5rem;
+    padding-inline-end: 48%; /* Push text area to 52% of the card to avoid avatar overlap */
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    flex-grow: 1;
-    min-width: 0; /* CRITICAL */
+    align-items: flex-start; /* Aligns to right in RTL, left in LTR */
+    text-align: right;
+    /* Gradient to ensure text is readable over the avatar image */
+    background: linear-gradient(90deg, rgba(10, 14, 23, 1) 40%, rgba(10, 14, 23, 0.9) 65%, rgba(10, 14, 23, 0) 100%);
 }
 
-.upg-v2-title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #f8fafc;
+html[dir="ltr"] .upg-v2-content-overlay {
+    text-align: left;
+    background: linear-gradient(-90deg, rgba(10, 14, 23, 1) 40%, rgba(10, 14, 23, 0.9) 65%, rgba(10, 14, 23, 0) 100%);
+}
+
+/* Header Row */
+.upg-v2-header-row {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap; /* allow title to wrap */
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap; /* Prevent overflow if title is too long */
 }
 
-.upg-v2-level-up {
-    color: #4ade80;
-    font-size: 1.1rem;
+.upg-v2-main-title {
+    font-size: 2.2rem;
     font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
-.upg-v2-desc {
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-top: 0.15rem;
+.upg-v2-badge {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    color: #4ade80;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    white-space: nowrap;
 }
 
-.upg-v2-divider {
-    height: 1px;
-    background: #1f2937;
+.upg-v2-desc-text {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+/* Stats Glass Box */
+.upg-v2-stats-glass-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
     width: 100%;
-    margin: 0.75rem 0;
-}
-
-/* Stats */
-.upg-v2-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.5rem;
-    width: 100%;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    backdrop-filter: blur(5px);
 }
 
 .upg-v2-stat {
     display: flex;
-    flex-direction: column; /* Stack icon and text for clean grid look in narrow columns */
+    flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.25rem;
-    min-width: 0;
+    gap: 0.3rem;
 }
 
 .upg-v2-stat-icon {
-    color: #64748b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0.1rem;
-}
-
-.upg-v2-stat-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    min-width: 0;
+    color: #dfab29;
+    margin-bottom: 0.2rem;
 }
 
 .upg-v2-stat-label {
+    font-size: 0.9rem;
     color: #94a3b8;
-    font-size: 0.75rem;
-    margin-bottom: 0.15rem;
+    font-weight: 600;
 }
 
 .upg-v2-stat-val {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #cbd5e1;
-    word-break: break-word; /* Prevents overflow */
-    line-height: 1.15;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
 }
 
-.upg-v2-stat-val .arrow {
-    color: #dfab29;
-    font-size: 0.75rem;
-    margin: 0 0.15rem;
-}
-
-/* Action Button */
-button.upg-v2-buy-btn {
-    background: linear-gradient(180deg, #ffe066 0%, #d4af37 45%, #b8860b 55%, #8b6508 100%);
-    border: 1px solid #ffeb99 !important;
-    border-radius: 12px !important;
-    display: flex !important;
-    align-items: stretch !important;
-    padding: 0 !important;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 6px rgba(0,0,0,0.5) !important;
-    position: relative;
-    flex: 1 1 140px; 
-    min-width: 140px;
-    overflow: hidden;
-    text-align: right;
-    font-family: inherit;
-    transition: transform 0.1s, filter 0.2s;
-}
-
-button.upg-v2-buy-btn:hover:not(.disabled) {
-    transform: translateY(-2px) !important;
-    filter: brightness(1.15);
-    box-shadow: 0 8px 24px rgba(223, 171, 41, 0.4), inset 0 2px 4px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(0,0,0,0.4) !important;
-}
-
-button.upg-v2-buy-btn:active:not(.disabled) {
-    transform: translateY(1px) !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.8), inset 0 3px 8px rgba(0,0,0,0.6) !important;
-}
-
-.upg-v2-btn-left-icon {
-    background: linear-gradient(180deg, #1e2532 0%, #0b0f16 100%);
-    width: 48px;
+/* Split Buy Button */
+.upg-v2-buy-btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0 11px 11px 0;
-    border-left: 1px solid rgba(255,255,255,0.1);
-    box-shadow: inset -3px 0 6px rgba(0,0,0,0.6);
-    flex-shrink: 0;
-    z-index: 2;
+    align-items: stretch;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    margin-top: auto; /* Pushes button to bottom if card grows */
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.2s;
+    font-family: inherit;
 }
 
-.upg-v2-btn-left-icon svg {
-    stroke: #ffe066 !important;
-    filter: drop-shadow(0 0 4px rgba(255, 224, 102, 0.4));
+.upg-v2-buy-btn:hover:not(.disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
 }
 
-.upg-v2-btn-content {
+.upg-v2-buy-btn:active:not(.disabled) {
+    transform: translateY(1px);
+}
+
+.upg-v2-btn-left {
+    flex: 1;
+    background: linear-gradient(180deg, #ffe066 0%, #d4af37 45%, #b8860b 100%);
+    border: 1px solid #ffeb99;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex-grow: 1;
-    padding: 0.6rem 1rem 0.6rem 0.75rem;
     align-items: flex-start;
-    z-index: 2;
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.8);
+    text-align: right;
 }
 
-.upg-v2-btn-top {
-    font-size: 0.85rem;
+html[dir="ltr"] .upg-v2-btn-left {
+    text-align: left;
+}
+
+.upg-v2-btn-lbl {
+    font-size: 1.4rem;
     font-weight: 900;
     color: #2b1f02;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-bottom: 0.15rem;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+    gap: 0.5rem;
 }
 
 .upg-v2-btn-amount {
+    font-size: 1.1rem;
     color: #0b4a1c;
-    font-size: 1.15rem;
-    font-weight: 900;
-}
-
-.upg-v2-btn-divider {
-    height: 1px;
-    background: linear-gradient(90deg, rgba(69, 53, 16, 0.3) 0%, transparent 100%);
-    width: 100%;
-    margin: 0.15rem 0 0.25rem 0;
-}
-
-.upg-v2-btn-bottom {
-    display: flex;
-    flex-direction: column;
-}
-
-.upg-v2-btn-sub {
-    font-size: 0.65rem;
-    color: #4a380e;
-    font-weight: 700;
 }
 
 .upg-v2-btn-cost {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 900;
     color: #0f172a;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+}
+
+.upg-v2-coin-icon {
+    stroke: #0f172a;
+}
+
+.upg-v2-btn-sub {
+    font-size: 0.8rem;
+    color: #4a380e;
+    margin-inline-start: 0.5rem;
+}
+
+.upg-v2-btn-right {
+    background: linear-gradient(180deg, #1e2532 0%, #0b0f16 100%);
+    border: 1px solid #ffe066;
+    border-radius: 12px;
+    width: 60px;
+    margin-inline-start: 0.75rem; /* Space between buttons dynamically handled by inline-start */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.1);
+    flex-shrink: 0;
 }
 
 .upg-v2-btn-sparkles {
     position: absolute;
-    top: 6px;
-    left: 8px;
-    font-size: 0.9rem;
+    top: 8px;
+    left: 12px;
+    font-size: 1.2rem;
     opacity: 0.8;
-    z-index: 2;
-    pointer-events: none;
 }
 
-/* Button Disabled State */
-button.upg-v2-buy-btn.disabled {
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05) !important;
-    cursor: not-allowed;
-    border: 1px solid #334155 !important;
+html[dir="ltr"] .upg-v2-btn-sparkles {
+    left: auto;
+    right: 12px;
 }
 
-button.upg-v2-buy-btn.disabled .upg-v2-btn-left-icon {
-    background: #080b12;
-    border-left-color: #1e293b;
-    box-shadow: inset -2px 0 4px rgba(0,0,0,0.8);
+/* Disabled State */
+.upg-v2-buy-btn.disabled .upg-v2-btn-left {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-color: #334155;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05);
 }
 
-button.upg-v2-buy-btn.disabled .upg-v2-btn-left-icon svg {
-    stroke: #475569 !important;
-    filter: none;
-}
-
-button.upg-v2-buy-btn.disabled .upg-v2-btn-top,
-button.upg-v2-buy-btn.disabled .upg-v2-btn-sub,
-button.upg-v2-buy-btn.disabled .upg-v2-btn-cost {
+.upg-v2-buy-btn.disabled .upg-v2-btn-lbl,
+.upg-v2-buy-btn.disabled .upg-v2-btn-cost {
     color: #64748b;
     text-shadow: none;
 }
 
-button.upg-v2-buy-btn.disabled .upg-v2-btn-amount {
+.upg-v2-buy-btn.disabled .upg-v2-coin-icon {
+    stroke: #64748b;
+}
+
+.upg-v2-buy-btn.disabled .upg-v2-btn-sub {
     color: #475569;
+}
+
+.upg-v2-buy-btn.disabled .upg-v2-btn-right {
+    background: #080b12;
+    border-color: #1e293b;
+}
+
+.upg-v2-buy-btn.disabled .upg-v2-btn-right svg {
+    stroke: #475569;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .upg-v2-main-title { font-size: 1.8rem; }
+    .upg-v2-badge { font-size: 0.9rem; }
+    .upg-v2-desc-text { font-size: 0.95rem; }
+    .upg-v2-stats-glass-box { gap: 0.5rem; padding: 0.75rem; }
+    .upg-v2-stat-val { font-size: 1rem; }
+    .upg-v2-content-overlay { padding: 1rem; padding-inline-end: 45%; }
 }
