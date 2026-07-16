@@ -253,6 +253,10 @@ class IdleBankGame {
         return this.economyManager.getQueueCapacity(level);
     }
 
+    getBaseQueueCapacity(level) {
+        return this.economyManager.getBaseQueueCapacity(level);
+    }
+
     getQueueUpgradeCost(level) {
         return this.economyManager.getQueueUpgradeCost(level);
     }
@@ -902,9 +906,11 @@ class IdleBankGame {
                 this.state.cash = Math.round((this.state.cash - costThisFrame + Number.EPSILON) * 100) / 100;
                 this.state.advActive = true;
             } else {
-                this.state.advBudget = 0;
+                // Insufficient cash for this frame only: suspend the campaign but keep
+                // the configured budget, so it auto-resumes once cash recovers instead
+                // of forcing the player to re-drag the slider every time (matches the
+                // "Suspended - No cash" UI text, which implies a temporary pause).
                 this.state.advActive = false;
-                this.saveGame();
             }
         } else {
             this.state.advActive = false;
@@ -915,14 +921,33 @@ class IdleBankGame {
         let spawnInterval = 4.0;
         if (this.state.managers && this.state.managers.customer && this.state.managerUpgrades.customer) {
             const customerLvl = this.state.managerUpgrades.customer.level;
-            spawnInterval = 1.5 / (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.customer.spawnIntervalBoost * (customerLvl - 1));
+            // Base numerator matches the un-hired fallback above (4.0s) rather than 1.5s:
+            // save-manager.js force-hires the customer manager for everyone from the start
+            // ("prevent deadlock"), so the old 1.5s value was actually every player's
+            // baseline, not an upgraded state. At 1.5s a single starting teller (5s/customer)
+            // couldn't keep up at all - the queue hit its cap ~10s into a brand new game and
+            // stayed there permanently. 4.0s at level 1 keeps the same upgrade curve but
+            // starts close to what a level-1 teller can actually sustain.
+            spawnInterval = 4.0 / (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.customer.spawnIntervalBoost * (customerLvl - 1));
         }
         
         let adMaxBudget = 0;
+        let normalizedBudget = 0;
         if (this.state.advActive && advBudget > 0) {
             adMaxBudget = this.getAdMaxBudget();
-            const normalizedBudget = advBudget / adMaxBudget;
-            
+            normalizedBudget = Math.min(1, advBudget / adMaxBudget);
+        }
+
+        // Organic walk-in traffic without an active campaign is deliberately slow (3x
+        // slower than the customer-manager-driven rate) - most customers should only
+        // show up because of marketing, not "for free". Without this, arrivals kept
+        // pace with (or outran) teller throughput even at 0% ad spend, so the queue
+        // could never actually drain no matter how little you invested. This scales
+        // linearly down to no slowdown at 100% budget.
+        const ORGANIC_SLOWDOWN = 3.0;
+        spawnInterval *= (ORGANIC_SLOWDOWN - normalizedBudget * (ORGANIC_SLOWDOWN - 1));
+
+        if (this.state.advActive && advBudget > 0) {
             let totalServiceRate = 0;
             this.state.tellers.forEach(t => {
                 if (t.unlocked) {
@@ -932,8 +957,14 @@ class IdleBankGame {
             });
             
             const baseSpawnRate = 1 / spawnInterval;
-            const maxSpawnRate = Math.max(1.5, totalServiceRate * 1.3);
-            const maxBoostFactor = maxSpawnRate / baseSpawnRate;
+            // Cap scales with current teller throughput (not a fixed number) so the
+            // campaign keeps mattering as tellers get upgraded in later stages, but the
+            // multiplier itself (2.5x) is well above the old 1.3x, which capped the
+            // max achievable boost so tightly the slider barely did anything. An
+            // absolute ceiling (4x) keeps the ratio from ballooning at high teller/
+            // customer-manager levels, where the two scale at different rates.
+            const maxSpawnRate = Math.max(2.5, totalServiceRate * 2.5);
+            const maxBoostFactor = Math.min(4, maxSpawnRate / baseSpawnRate);
             
             let boostFactor = 1 + normalizedBudget * (maxBoostFactor - 1);
             if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades.marketing) {
@@ -1577,11 +1608,18 @@ class IdleBankGame {
         const currentLen = this.customerQueue.length;
         const fillRatio = currentLen / capacity;
         const fillPercent = Math.min(100, Math.floor(fillRatio * 100));
+        // maxPossibleCapacity is a fixed reference (doesn't grow with ad spend like
+        // `capacity` does), so the UI can show a bar that actually reflects a bigger
+        // ad-boosted queue instead of always reading ~100% of its own shifting cap.
+        const maxPossibleCapacity = this.economyManager.getMaxPossibleQueueCapacity(level);
+        const fixedFillPercent = Math.min(100, Math.floor((currentLen / maxPossibleCapacity) * 100));
         return {
             level,
             capacity,
             currentLen,
-            fillPercent
+            fillPercent,
+            maxPossibleCapacity,
+            fixedFillPercent
         };
     }
 
