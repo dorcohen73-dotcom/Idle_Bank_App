@@ -1935,7 +1935,7 @@
     if (handler) {
       handler(container, lang, tObj, eObj, eventModal);
     }
-    if (AdService2.isInCooldown()) {
+    if (AdService.isInCooldown()) {
       container.querySelectorAll(".ad-option").forEach((btn) => btn.remove());
       const adDependentEvents = ["rescue", "investor"];
       if (adDependentEvents.includes(eventType) && container.children.length <= 1) {
@@ -2530,7 +2530,7 @@
     const adBtn = document.getElementById("weekly-ad-btn");
     const closeBtn = document.getElementById("weekly-close-btn");
     if (adBtn) {
-      if (AdService2.isInCooldown()) {
+      if (AdService.isInCooldown()) {
         adBtn.style.display = "none";
       } else {
         adBtn.style.display = "";
@@ -2579,7 +2579,7 @@
     if (!window.game || !window.game.offlineEarningsReport || window.game.offlineEarningsReport <= 0) return;
     const displayFn = () => {
       if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
-      if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = typeof AdService2 !== "undefined" && AdService2.isInCooldown() ? "none" : "";
+      if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = typeof AdService !== "undefined" && AdService.isInCooldown() ? "none" : "";
       if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add("active");
     };
     if (window.NotificationQueue) {
@@ -3018,7 +3018,7 @@
             boostOfferEndTime = 0;
             boostOfferNextTime = now + (900 + Math.random() * 900) * 1e3;
           } else if (boostOfferEndTime === 0 && (boostOfferNextTime === 0 || now > boostOfferNextTime)) {
-            if (!AdService2.isInCooldown()) {
+            if (!AdService.isInCooldown()) {
               boostOfferEndTime = now + (600 + Math.random() * 600) * 1e3;
               boostOfferNextTime = 0;
             }
@@ -3170,14 +3170,14 @@
   var soundInitialized = false;
   var contextualBannerShown = false;
   var contextualOfferTimeout = null;
-  var AdService2 = {
+  var AdService = {
     _isShowing: false,
     lastWatchedAt: 0,
     AD_OFFER_COOLDOWN_MS: 7 * 60 * 1e3,
     adMobAvailable: false,
     _currentCallback: null,
     isInCooldown: function() {
-      return AdService2.lastWatchedAt > 0 && Date.now() - AdService2.lastWatchedAt < AdService2.AD_OFFER_COOLDOWN_MS;
+      return AdService.lastWatchedAt > 0 && Date.now() - AdService.lastWatchedAt < AdService.AD_OFFER_COOLDOWN_MS;
     },
     initAdMob: async function() {
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob) {
@@ -3185,28 +3185,28 @@
           await window.Capacitor.Plugins.AdMob.initialize({
             requestTrackingAuthorization: true
           });
-          AdService2.adMobAvailable = true;
+          AdService.adMobAvailable = true;
           window.Capacitor.Plugins.AdMob.addListener("rewardedVideoAdReward", () => {
-            if (AdService2._currentCallback) {
-              AdService2._currentCallback();
-              AdService2._currentCallback = null;
+            if (AdService._currentCallback) {
+              AdService._currentCallback();
+              AdService._currentCallback = null;
             }
-            AdService2.lastWatchedAt = Date.now();
+            AdService.lastWatchedAt = Date.now();
             resetBoostOfferTimer();
           });
           window.Capacitor.Plugins.AdMob.addListener("rewardedVideoAdDismissed", () => {
-            AdService2._isShowing = false;
-            AdService2._currentCallback = null;
-            AdService2.prepareAd();
+            AdService._isShowing = false;
+            AdService._currentCallback = null;
+            AdService.prepareAd();
           });
-          await AdService2.prepareAd();
+          await AdService.prepareAd();
         } catch (e) {
           console.error("AdMob init failed", e);
         }
       }
     },
     prepareAd: async function() {
-      if (!AdService2.adMobAvailable) return;
+      if (!AdService.adMobAvailable) return;
       try {
         await window.Capacitor.Plugins.AdMob.prepareRewardVideoAd({
           adId: "ca-app-pub-1189054329275307/1609550976",
@@ -3217,20 +3217,20 @@
       }
     },
     show: async function(callback) {
-      if (AdService2._isShowing) return;
-      AdService2._isShowing = true;
-      if (AdService2.adMobAvailable) {
+      if (AdService._isShowing) return;
+      AdService._isShowing = true;
+      if (AdService.adMobAvailable) {
         try {
-          AdService2._currentCallback = callback;
+          AdService._currentCallback = callback;
           await window.Capacitor.Plugins.AdMob.showRewardVideoAd();
           return;
         } catch (e) {
           console.error("AdMob show failed, falling back to mock:", e);
-          AdService2._isShowing = false;
-          AdService2._currentCallback = null;
+          AdService._isShowing = false;
+          AdService._currentCallback = null;
         }
       }
-      AdService2._isShowing = true;
+      AdService._isShowing = true;
       let interval = null;
       let settled = false;
       const removeOverlay = () => {
@@ -3241,10 +3241,10 @@
         if (settled) return;
         settled = true;
         if (interval) clearInterval(interval);
-        AdService2._isShowing = false;
+        AdService._isShowing = false;
         removeOverlay();
         if (grantReward) {
-          AdService2.lastWatchedAt = Date.now();
+          AdService.lastWatchedAt = Date.now();
           resetBoostOfferTimer();
           if (callback) callback();
         }
@@ -3290,9 +3290,9 @@
       }
     }
   };
-  setTimeout(() => AdService2.initAdMob(), 1e3);
+  setTimeout(() => AdService.initAdMob(), 1e3);
   function playAd(callback) {
-    AdService2.show(callback);
+    AdService.show(callback);
   }
   function formatTime2(sec) {
     const hours = Math.floor(sec / 3600);
@@ -3346,7 +3346,7 @@
     }
   }
   function showContextualAdBanner() {
-    if (AdService2.isInCooldown()) return;
+    if (AdService.isInCooldown()) return;
     if (game.state.boost2xTimeLeft > 0) return;
     if (document.querySelector(".modal-overlay.active")) return;
     if (contextualBannerShown) return;

@@ -1,4 +1,4 @@
-import { initSound, playAd } from './ads.js';
+import { initSound, playAd, AdService } from './ads.js';
 
 let vipBannerCountdownInterval = null;
 
@@ -455,3 +455,4 @@ let _discoveryActive = false;
             showDiscoveryTip('prestige');
         }
     }
+
