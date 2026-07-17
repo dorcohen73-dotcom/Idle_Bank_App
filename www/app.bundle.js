@@ -4177,22 +4177,23 @@
       const isMax = currentLvl >= maxLvl;
       const canAfford = game.state.shares >= cost;
       const iconSrc = iconMapping[key];
+      let cleanTitle = upgradeData.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "").trim();
       goldCardsHtml += `
-            <div class="gold-upgrade-card">
-                ${isMax ? `<div class="gold-max-badge">MAX</div>` : ""}
+            <div class="gold-upgrade-card ${isMax ? "is-maxed" : ""}">
                 <div class="gold-card-right">
                     <img class="gold-big-illustration" src="${iconSrc}" alt="${upgradeData.title}">
                 </div>
                 <div class="gold-card-middle">
-                    <div class="gold-upgrade-title">${upgradeData.title}</div>
+                    <div class="gold-upgrade-title">${cleanTitle}</div>
                     <div class="gold-upgrade-desc">${desc}</div>
                     <div class="gold-upgrade-action-row">
-                        <span class="gold-level-pill ${isMax ? "max" : ""}">
+                        <span class="gold-level-pill">
                             ${currentLvl}/${maxLvl}
-                            ${isMax ? `<span class="gold-checkmark">\u2714</span>` : ""}
                         </span>
                         ${isMax ? `
-                            <span style="background: rgba(223,171,41,0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
+                            <div class="gold-max-reached-btn">
+                                \u{1F451} \u05DE\u05D9\u05E8\u05D1\u05D9
+                            </div>
                         ` : `
                             <button class="buy-btn ${canAfford ? "" : "disabled"} buy-gold-btn" data-gold-up="${key}" ${canAfford ? "" : "disabled"}>
                                 ${cost} \u{1FA99}
@@ -4243,9 +4244,20 @@
             </div>
         </div>
     `;
+    let rawTitle = translations[lang].goldShopTitle.replace("\u{1F3DB}\uFE0F", "").trim();
+    let parts = rawTitle.split("(");
+    let formattedTitle = parts[0].trim();
+    if (parts.length > 1) {
+      formattedTitle += `<br><span class="prestige-subtitle">(${parts[1]}</span>`;
+    }
     goldShopSection.innerHTML = `
-        <div class="prestige-title" style="margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.5rem;">${translations[lang].goldShopTitle}</div>
-        <p class="prestige-description" style="margin-bottom: 1rem;">${translations[lang].goldShopDesc}</p>
+        <div class="prestige-shop-header">
+            <div class="prestige-shop-bg-stars"></div>
+            <div class="prestige-title-wrapper">
+                <img src="images/golden_temple.png" class="prestige-temple-img" alt="Temple" />
+                <div class="prestige-title-text">${formattedTitle}</div>
+            </div>
+        </div>
         <div class="gold-upgrades-grid">
             ${goldCardsHtml}
         </div>

@@ -1216,39 +1216,39 @@ Object.assign(translations.he, {
     goldUpgrades: {
         startingCash: {
             title: "💵 הון התחלתי",
-            desc: (lvl, nextVal) => `התחל כל סבב עם הון עצמי גבוה יותר. (רמה ${lvl}/4 -> התחלה עם $${nextVal})`
+            desc: (lvl, nextVal) => `התחל כל סבב עם הון עצמי גבוה יותר. (התחלה עם $${nextVal})`
         },
         guardSpeed: {
             title: "בלדרות פדרלית",
-            desc: (lvl) => `בונוס מהירות קבוע של +10% לבלדרים לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `בונוס מהירות קבוע של +10% לבלדרים לכל רמה.`
         },
         premiumYield: {
             title: "📈 שירות לקוחות יוקרתי",
-            desc: (lvl) => `שפר רווחי כספרים ב-+10% קבוע לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `שפר רווחי כספרים ב-+10% קבוע לכל רמה.`
         },
         shareEfficiency: {
             title: "🪙 תשואת מניות מוגברת",
-            desc: (lvl) => `הגדל את הערך של כל מניית זהב ב-+1% קבוע לכל רמה. (רמה ${lvl}/4)`
+            desc: (lvl) => `הגדל את הערך של כל מניית זהב ב-+1% קבוע לכל רמה.`
         },
         offlineEarnings: {
             title: "💤 משמרות ארוכות",
-            desc: (lvl) => `הארך את זמן איסוף המזומנים מחוץ למשחק ב-+2 שעות לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `הארך את זמן איסוף המזומנים מחוץ למשחק ב-+2 שעות לכל רמה.`
         },
         tellerCapacityBoost: {
             title: "👔 תוכנה מתקדמת",
-            desc: (lvl) => `תוספת קבועה של +10% לקיבולת הכספרים לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `תוספת קבועה של +10% לקיבולת הכספרים לכל רמה.`
         },
         vaultCapacityBoost: {
             title: "🏦 אחסון דחוס",
-            desc: (lvl) => `תוספת קבועה של +10% לקיבולת הכספת לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `תוספת קבועה של +10% לקיבולת הכספת לכל רמה.`
         },
         eventBonus: {
             title: "🎩 יח\"צ כריזמטי",
-            desc: (lvl) => `תוספת קבועה של +20% למזומנים מכל האירועים האקראיים לכל רמה. (רמה ${lvl}/5)`
+            desc: (lvl) => `תוספת קבועה של +20% למזומנים מכל האירועים האקראיים לכל רמה.`
         },
         managerDiscount: {
             title: "📉 הכשרת מנהלים",
-            desc: (lvl) => `מפחית את עלויות השדרוג של כל המנהלים ב-5% לכל רמה. (רמה ${lvl}/4)`
+            desc: (lvl) => `מפחית את עלויות השדרוג של כל המנהלים ב-5% לכל רמה.`
         }
     },
     managerLevelLabel: (lvl) => `רמה ${lvl}/5`,
@@ -1422,39 +1422,39 @@ Object.assign(translations.en, {
     goldUpgrades: {
         startingCash: {
             title: "💵 Starting Cash",
-            desc: (lvl, nextVal) => `Start each round with more cash. (Lvl ${lvl}/4 -> Starts with $${nextVal})`
+            desc: (lvl, nextVal) => `Start each round with more cash. (Starts with $${nextVal})`
         },
         guardSpeed: {
             title: "👮 Federal Escort",
-            desc: (lvl) => `Permanent +10% speed boost for guards per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Permanent +10% speed boost for guards per level.`
         },
         premiumYield: {
             title: "📈 Premium Customer Service",
-            desc: (lvl) => `Permanent +10% income boost for tellers per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Permanent +10% income boost for tellers per level.`
         },
         shareEfficiency: {
             title: "🪙 Enhanced Share Yield",
-            desc: (lvl) => `Increase the yield of each Golden Share by +1% per level. (Lvl ${lvl}/4)`
+            desc: (lvl) => `Increase the yield of each Golden Share by +1% per level.`
         },
         offlineEarnings: {
             title: "💤 Longer Shifts",
-            desc: (lvl) => `Increase maximum offline earning time by +2 hours per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Increase maximum offline earning time by +2 hours per level.`
         },
         tellerCapacityBoost: {
             title: "👔 Advanced Software",
-            desc: (lvl) => `Permanent +10% capacity for tellers per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Permanent +10% capacity for tellers per level.`
         },
         vaultCapacityBoost: {
             title: "🏦 Compressed Storage",
-            desc: (lvl) => `Permanent +10% capacity for the vault per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Permanent +10% capacity for the vault per level.`
         },
         eventBonus: {
             title: "🎩 Charismatic PR",
-            desc: (lvl) => `Permanent +20% rewards from all random events per level. (Lvl ${lvl}/5)`
+            desc: (lvl) => `Permanent +20% rewards from all random events per level.`
         },
         managerDiscount: {
             title: "📉 Corporate Training",
-            desc: (lvl) => `Reduces manager upgrade costs by -5% per level. (Lvl ${lvl}/4)`
+            desc: (lvl) => `Reduces manager upgrade costs by -5% per level.`
         }
     },
     managerLevelLabel: (lvl) => `Lvl ${lvl}/5`,
@@ -1628,39 +1628,39 @@ Object.assign(translations.es, {
     goldUpgrades: {
         startingCash: {
             title: "💵 Capital Inicial",
-            desc: (lvl, nextVal) => `Comienza cada ronda con más efectivo. (Nivel ${lvl}/4 -> Comienza con $${nextVal})`
+            desc: (lvl, nextVal) => `Comienza cada ronda con más efectivo. (Comienza con $${nextVal})`
         },
         guardSpeed: {
             title: "👮 Escolta Federal",
-            desc: (lvl) => `Aumento de velocidad permanente de +10% para guardias por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Aumento de velocidad permanente de +10% para guardias por nivel.`
         },
         premiumYield: {
             title: "📈 Servicio al Cliente Premium",
-            desc: (lvl) => `Aumento de ingresos permanente de +10% para cajeros por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Aumento de ingresos permanente de +10% para cajeros por nivel.`
         },
         shareEfficiency: {
             title: "🪙 Rendimiento de Acciones",
-            desc: (lvl) => `Incrementa el rendimiento de cada Acción de Oro en +1% por nivel. (Nivel ${lvl}/4)`
+            desc: (lvl) => `Incrementa el rendimiento de cada Acción de Oro en +1% por nivel.`
         },
         offlineEarnings: {
             title: "💤 Turnos Largos",
-            desc: (lvl) => `Aumenta el tiempo máximo de ganancias sin conexión en +2 horas por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Aumenta el tiempo máximo de ganancias sin conexión en +2 horas por nivel.`
         },
         tellerCapacityBoost: {
             title: "👔 Software Avanzado",
-            desc: (lvl) => `Capacidad permanente de +10% para cajeros por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Capacidad permanente de +10% para cajeros por nivel.`
         },
         vaultCapacityBoost: {
             title: "🏦 Almacenamiento Comprimido",
-            desc: (lvl) => `Capacidad permanente de +10% para la bóveda por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Capacidad permanente de +10% para la bóveda por nivel.`
         },
         eventBonus: {
             title: "🎩 Relaciones Públicas",
-            desc: (lvl) => `Recompensas permanentes de +20% en todos los eventos aleatorios por nivel. (Nivel ${lvl}/5)`
+            desc: (lvl) => `Recompensas permanentes de +20% en todos los eventos aleatorios por nivel.`
         },
         managerDiscount: {
             title: "📉 Entrenamiento Corporativo",
-            desc: (lvl) => `Reduce los costos de mejora de gerentes en -5% por nivel. (Nivel ${lvl}/4)`
+            desc: (lvl) => `Reduce los costos de mejora de gerentes en -5% por nivel.`
         }
     },
     managerLevelLabel: (lvl) => `Nivel ${lvl}/5`,
@@ -2391,39 +2391,39 @@ Object.assign(translations.ru, {
     goldUpgrades: {
         startingCash: {
             title: "💵 Начальный капитал",
-            desc: (lvl, nextVal) => `Начинайте каждый раунд с большей суммой наличных. (Уровень ${lvl}/4 -> Старт с $${nextVal})`
+            desc: (lvl, nextVal) => `Начинайте каждый раунд с большей суммой наличных. (Старт с $${nextVal})`
         },
         guardSpeed: {
             title: "👮 Федеральное сопровождение",
-            desc: (lvl) => `Постоянное ускорение инкассаторов на +10% за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Постоянное ускорение инкассаторов на +10% за уровень.`
         },
         premiumYield: {
             title: "📈 Премиум обслуживание",
-            desc: (lvl) => `Постоянное увеличение дохода кассиров на +10% за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Постоянное увеличение дохода кассиров на +10% за уровень.`
         },
         shareEfficiency: {
             title: "🪙 Эффективность акций",
-            desc: (lvl) => `Увеличивает доходность от каждой Золотой Акции на +1% за уровень. (Уровень ${lvl}/4)`
+            desc: (lvl) => `Увеличивает доходность от каждой Золотой Акции на +1% за уровень.`
         },
         offlineEarnings: {
             title: "💤 Длинные смены",
-            desc: (lvl) => `Увеличивает максимальное время оффлайн-заработка на +2 часа за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Увеличивает максимальное время оффлайн-заработка на +2 часа за уровень.`
         },
         tellerCapacityBoost: {
             title: "👔 Продвинутое ПО",
-            desc: (lvl) => `Постоянные +10% к вместимости кассиров за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Постоянные +10% к вместимости кассиров за уровень.`
         },
         vaultCapacityBoost: {
             title: "🏦 Сжатое хранилище",
-            desc: (lvl) => `Постоянные +10% к вместимости хранилища за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Постоянные +10% к вместимости хранилища за уровень.`
         },
         eventBonus: {
             title: "🎩 Харизматичный PR",
-            desc: (lvl) => `Постоянные +20% к наградам за случайные события за уровень. (Уровень ${lvl}/5)`
+            desc: (lvl) => `Постоянные +20% к наградам за случайные события за уровень.`
         },
         managerDiscount: {
             title: "📉 Корпоративное обучение",
-            desc: (lvl) => `Снижает стоимость улучшения менеджеров на -5% за уровень. (Уровень ${lvl}/4)`
+            desc: (lvl) => `Снижает стоимость улучшения менеджеров на -5% за уровень.`
         }
     },
     managerLevelLabel: (lvl) => `Уровень ${lvl}/5`,
