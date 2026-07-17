@@ -12,6 +12,16 @@
     gap: 1rem;
 }
 
+.control-panel-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    margin: 0 0 0.5rem 0;
+    width: 100%;
+}
+
 /* Tabs Navigation (Pill Style) */
 .tabs-nav {
     display: grid;

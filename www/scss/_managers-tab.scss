@@ -424,6 +424,7 @@ header, .control-panel, .bank-floor {
 .tabs-nav {
     border-bottom: 2px solid rgba(255, 255, 255, 0.05) !important;
     position: relative;
+    bottom: auto !important;
 }
 .tab-btn {
     background: transparent !important;

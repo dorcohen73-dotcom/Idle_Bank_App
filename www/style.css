@@ -1828,6 +1828,16 @@ header {
   gap: 1rem;
 }
 
+.control-panel-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  margin: 0 0 0.5rem 0;
+  width: 100%;
+}
+
 /* Tabs Navigation (Pill Style) */
 .tabs-nav {
   display: grid;
@@ -5200,6 +5210,7 @@ header, .control-panel, .bank-floor {
 .tabs-nav {
   border-bottom: 2px solid rgba(255, 255, 255, 0.05) !important;
   position: relative;
+  bottom: auto !important;
 }
 
 .tab-btn {
