@@ -4787,16 +4787,25 @@
     container.innerHTML = "";
     const lang = game.state.language || "en";
     const tObj = translations[lang].upgrades;
+    const tellersGrid = document.createElement("div");
+    tellersGrid.className = "upgrades-grid";
+    container.appendChild(tellersGrid);
     game.state.tellers.forEach((t) => {
       const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode);
-      container.appendChild(card);
+      tellersGrid.appendChild(card);
     });
     createSeparator(container);
+    const guardsGrid = document.createElement("div");
+    guardsGrid.className = "upgrades-grid";
+    container.appendChild(guardsGrid);
     game.state.guards.forEach((g) => {
       const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode);
-      container.appendChild(card);
+      guardsGrid.appendChild(card);
     });
     createSeparator(container);
+    const miscGrid = document.createElement("div");
+    miscGrid.className = "upgrades-grid";
+    container.appendChild(miscGrid);
     const vault = game.state.vault;
     const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
@@ -4845,7 +4854,7 @@
             </button>
         </div>
     `;
-    container.appendChild(vaultCard);
+    miscGrid.appendChild(vaultCard);
     createSeparator(container);
     const queueLvl = game.state.queueUpgradeLevel || 1;
     const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, queueLvl, game.state.cash);
@@ -4859,7 +4868,7 @@
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
       queueCard.className = "upgrade-card premium-upg-card";
       queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
@@ -4881,7 +4890,7 @@
     } else {
       queueCard.className = "upgrade-card premium-upg-card";
       queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
@@ -4920,7 +4929,7 @@
         </div>
     `;
     }
-    container.appendChild(queueCard);
+    miscGrid.appendChild(queueCard);
     let bestBtnSelector = null;
     let maxRatio = -1;
     game.state.tellers.forEach((t) => {

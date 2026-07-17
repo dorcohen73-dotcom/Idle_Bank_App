@@ -137,10 +137,10 @@ class IdleBankGame {
 
             departments: [
                 { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
-                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
-                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
-                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
+                { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 10500 },
+                { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 240000 },
+                { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 3600000 },
+                { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 75000000 }
             ],
 
             missions: [],

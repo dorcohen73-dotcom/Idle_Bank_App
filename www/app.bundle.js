@@ -890,9 +890,9 @@
       const queueData = game.getQueueRenderData();
       const maxCap = queueData.capacity;
       const currentLen = queueData.currentLen;
-      capLabel.textContent = `${currentLen}/${queueData.maxPossibleCapacity}`;
+      capLabel.textContent = `${currentLen}/${maxCap}`;
       if (fillBar) {
-        const pct = Math.min(100, Math.max(0, currentLen / queueData.maxPossibleCapacity * 100));
+        const pct = Math.min(100, Math.max(0, currentLen / maxCap * 100));
         fillBar.style.width = `${pct}%`;
         fillBar.setAttribute("aria-valuenow", Math.round(pct));
       }
@@ -4787,16 +4787,25 @@
     container.innerHTML = "";
     const lang = game.state.language || "en";
     const tObj = translations[lang].upgrades;
+    const tellersGrid = document.createElement("div");
+    tellersGrid.className = "upgrades-grid";
+    container.appendChild(tellersGrid);
     game.state.tellers.forEach((t) => {
       const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode);
-      container.appendChild(card);
+      tellersGrid.appendChild(card);
     });
     createSeparator(container);
+    const guardsGrid = document.createElement("div");
+    guardsGrid.className = "upgrades-grid";
+    container.appendChild(guardsGrid);
     game.state.guards.forEach((g) => {
       const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode);
-      container.appendChild(card);
+      guardsGrid.appendChild(card);
     });
     createSeparator(container);
+    const miscGrid = document.createElement("div");
+    miscGrid.className = "upgrades-grid";
+    container.appendChild(miscGrid);
     const vault = game.state.vault;
     const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
@@ -4845,7 +4854,7 @@
             </button>
         </div>
     `;
-    container.appendChild(vaultCard);
+    miscGrid.appendChild(vaultCard);
     createSeparator(container);
     const queueLvl = game.state.queueUpgradeLevel || 1;
     const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, queueLvl, game.state.cash);
@@ -4859,7 +4868,7 @@
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
       queueCard.className = "upgrade-card premium-upg-card";
       queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
@@ -4881,7 +4890,7 @@
     } else {
       queueCard.className = "upgrade-card premium-upg-card";
       queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
@@ -4920,7 +4929,7 @@
         </div>
     `;
     }
-    container.appendChild(queueCard);
+    miscGrid.appendChild(queueCard);
     let bestBtnSelector = null;
     let maxRatio = -1;
     game.state.tellers.forEach((t) => {
@@ -5287,7 +5296,8 @@
     const tObj = translations[lang].departments;
     game.state.departments.forEach((d) => {
       const isUnlocked = d.unlocked;
-      const canBuy = game.state.cash >= d.cost;
+      const unlockCost = game.getDepartmentUnlockCost(d);
+      const canBuy = game.state.cash >= unlockCost;
       const card = document.createElement("div");
       card.className = `upgrade-card department-card feature-card ${isUnlocked ? "active" : "locked"}`;
       const reward = game.getDepartmentReward(d.id);
@@ -5320,7 +5330,7 @@
                 <button class="dept-action-btn buy-btn ${canBuy ? "" : "disabled"}" data-dept-idx="${d.id}" ${canBuy ? "" : "disabled"}>
                     <span class="btn-arrow">\u25B2</span>
                     <span class="btn-lbl">${tObj.unlock}</span>
-                    <span class="btn-cost">${formatMoney(d.cost)}</span>
+                    <span class="btn-cost">${formatMoney(unlockCost)}</span>
                 </button>
             `;
       } else {
@@ -6337,7 +6347,7 @@
         const deptId = parseInt(btn.getAttribute("data-dept-idx"));
         const dept = game.state.departments.find((d) => d.id === deptId);
         if (dept && !dept.unlocked) {
-          const cost = dept.cost;
+          const cost = game.getDepartmentUnlockCost(dept);
           const canBuy = window.game.state.cash >= cost;
           if (canBuy) {
             btn.classList.remove("disabled");
