@@ -13,6 +13,8 @@ import {
     triggerVipVisitBanner, removeVipVisitBanner, serveVipVisitor, renderDailyChallengesSection,
     startPromoRecording, spawnVaultCoins, showDiscoveryTip, initTutorialEvents, maybeStartTutorial, checkPrestigeTip,
 } from './engagement.js';
+import { setCurrentUpgradeMode } from '../tabs/tab-shared.js';
+import { refreshAllTabs } from '../tabs/index.js';
 
 let uiEventsInitialized = false;
 
