@@ -12,6 +12,7 @@
     "build": "npm run bundle && npm run css && node tools/build.js",
     "cap-build": "npm run build && node build.js",
     "cap-sync": "npm run cap-build && npx cap sync",
+    "verify-android-sync": "node tools/verify-android-sync.js",
     "lint": "eslint ."
   },
   "devDependencies": {

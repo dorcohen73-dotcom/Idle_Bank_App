@@ -640,6 +640,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                         let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
                         sharesAmount = Math.min(10000, sharesAmount); // Max 10,000 per spin
                         game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 100000);
+                        if (game.economyManager) game.economyManager.cachedTotalMult = null;
                         const sharesLabel = `+${sharesAmount}`;
                         prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || 'Gold Shares'}`;
 

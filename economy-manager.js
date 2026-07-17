@@ -148,7 +148,7 @@ class EconomyManager {
         let speedFactor = 1.0;
         
         if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
-            const opsLvl = this.game.state.managerUpgrades.operations.level;
+            const opsLvl = this.game.state.managerUpgrades.operations.level || 1;
             speedFactor *= Math.max(0.10, 1 - (opsLvl - 1) * GAME_CONFIG.GUARD_SKILL_SPEED_DECAY); // -4% transit time per level starting from lvl 1
         }
         
@@ -166,7 +166,7 @@ class EconomyManager {
         const baseCap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
         let cap = (this.game.state.managers && this.game.state.managers.operations) ? Math.round(baseCap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR) : baseCap;
         if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
-            const opsCapLvl = this.game.state.managerUpgrades.operations.level;
+            const opsCapLvl = this.game.state.managerUpgrades.operations.level || 1;
             cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.operations.guardCapBoost * opsCapLvl));
         }
         this._cachedGuardCap.set(level, cap);

@@ -799,6 +799,7 @@ class IdleBankGame {
         const savedLoginStreak = this.state.loginStreak || 0;
         const savedPendingLoginReward = this.state.pendingLoginReward || null;
         const savedBoost2xUsedEver = this.state.boost2xUsedEver || false;
+        const savedBoost2xTimeLeft = this.state.boost2xTimeLeft || 0;
         const savedDailyChallenges = this.state.dailyChallenges;
         const savedLastDailyReset = this.state.lastDailyReset;
         const savedMigrations = this.state.migrations ? Object.assign({}, this.state.migrations) : {};
@@ -823,6 +824,7 @@ class IdleBankGame {
         this.state.loginStreak = savedLoginStreak;
         this.state.pendingLoginReward = savedPendingLoginReward;
         this.state.boost2xUsedEver = savedBoost2xUsedEver;
+        this.state.boost2xTimeLeft = savedBoost2xTimeLeft;
         this.state.dailyChallenges = savedDailyChallenges;
         this.state.lastDailyReset = savedLastDailyReset;
         this.state.migrations = savedMigrations;
@@ -1522,6 +1524,7 @@ class IdleBankGame {
     addShares(amount) {
         // Same 100K wallet cap enforced by prestige()
         this.state.shares = Math.min(100000, (this.state.shares || 0) + amount);
+        if (this.economyManager) this.economyManager.cachedTotalMult = null;
         this.saveGame();
     }
 

@@ -7,13 +7,13 @@
   function updateCachedSuffixes2(lang) {
     cachedLang = lang || "en";
     if (cachedLang === "en") {
-      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
       cachedFallback = " monstrous";
     } else if (cachedLang === "es") {
-      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
       cachedFallback = " monstruoso";
     } else if (cachedLang === "ru") {
-      cachedSuffixes = ["", " \u0442\u044B\u0441.", " \u043C\u043B\u043D", " \u043C\u043B\u0440\u0434", " \u0442\u0440\u043B\u043D", " \u043A\u0432\u0434\u0440\u043B\u043D"];
+      cachedSuffixes = ["", " \u0442\u044B\u0441.", " \u043C\u043B\u043D", " \u043C\u043B\u0440\u0434", " \u0442\u0440\u043B\u043D", " \u043A\u0432\u0434\u0440\u043B\u043D", " \u043A\u0432\u0438\u043D\u0442.", " \u0441\u0435\u043A\u0441\u0442.", " \u0441\u0435\u043F\u0442.", " \u043E\u043A\u0442.", " \u043D\u043E\u043D.", " \u0434\u0435\u0446."];
       cachedFallback = " \u043E\u0433\u0440\u043E\u043C\u043D\u043E\u0435";
     } else {
       cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
@@ -90,11 +90,17 @@
     if (!container) {
       container = document.createElement("div");
       container.id = "toast-container";
+      container.setAttribute("role", "status");
+      container.setAttribute("aria-live", "polite");
       document.body.appendChild(container);
     }
     const toast = document.createElement("div");
     toast.className = `custom-toast toast-${type}`;
     toast.innerText = message;
+    if (type === "danger") {
+      toast.setAttribute("role", "alert");
+      toast.setAttribute("aria-live", "assertive");
+    }
     container.appendChild(toast);
     setTimeout(() => {
       toast.classList.add("show");
@@ -107,16 +113,6 @@
 
   // ui/draw/animations.js
   var activeCoins = [];
-  function getVaultTargetRect() {
-    let targetEl = DOM_CACHE.vaultGraphic;
-    if (window.innerWidth <= 768) {
-      const miniIcon = document.querySelector(".vault-mini-icon");
-      if (miniIcon && window.getComputedStyle(miniIcon).display !== "none") {
-        targetEl = miniIcon;
-      }
-    }
-    return targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
-  }
   var floatingTextPool = [];
   var FLOATING_POOL_SIZE = 40;
   var activeFloatingText = [];
@@ -310,7 +306,7 @@
       });
     }
   }
-  function animateCoins2() {
+  function animateCoins() {
   }
 
   // ui/draw/bank-floor.js
@@ -374,8 +370,6 @@
           const collected = game.collectTellerCash(t.id);
           if (collected > 0) {
             const rectBtn = collectBtn.getBoundingClientRect();
-            const rectVault = getVaultTargetRect();
-            animateCoins2(rectBtn, rectVault, 6, "coin");
             spawnFloating2("+" + formatMoney2(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
           }
         });
@@ -509,8 +503,6 @@
   }
 
   // ui/draw/security.js
-  var _guardAnimTriggers = [];
-  var prevGuardStates = {};
   var lastGuardStatusText = "";
   function updateGuardsDisplay(lang) {
     const unlockedGuards = game.state.guards.filter((g) => g.unlocked);
@@ -614,80 +606,6 @@
       }
     } else {
       DOM_CACHE.securityPath.style.display = "none";
-    }
-    _guardAnimTriggers.length = 0;
-    game.state.guards.forEach((g, idx) => {
-      if (!g.unlocked) return;
-      const gData = game.getGuardRenderData(g.id);
-      if (!gData) return;
-      const prevState = prevGuardStates[idx];
-      if (prevState !== gData.state) {
-        _guardAnimTriggers.push({
-          g,
-          gData,
-          idx,
-          prevState
-        });
-      }
-    });
-    if (_guardAnimTriggers.length > 0) {
-      const reads = [];
-      _guardAnimTriggers.forEach((item) => {
-        const { g, gData, prevState } = item;
-        const prevIsMoving = prevState && prevState.startsWith("moving_to_teller_");
-        const currIsCollecting = gData.state.startsWith("collecting_from_teller_");
-        if (prevIsMoving && currIsCollecting) {
-          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
-          const tellerRects = [];
-          game.state.tellers.forEach((t) => {
-            const tData = game.getTellerRenderData(t.id);
-            if (tData && tData.unlocked && tData.cashStored > 0) {
-              const tCache = TELLER_DOM_CACHE[t.id];
-              const tNode = tCache ? tCache.node : null;
-              if (tNode) {
-                tellerRects.push({
-                  node: tNode
-                });
-              }
-            }
-          });
-          reads.push({
-            type: "collecting",
-            g,
-            rectGuard,
-            tellers: tellerRects.map((tInfo) => ({
-              rect: tInfo.node.getBoundingClientRect()
-            }))
-          });
-        } else if (prevState === "moving_to_vault" && gData.state === "depositing") {
-          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
-          const rectVault = getVaultTargetRect();
-          reads.push({
-            type: "depositing",
-            g,
-            rectGuard,
-            rectVault
-          });
-        }
-      });
-      reads.forEach((read) => {
-        if (read.type === "collecting") {
-          if (read.rectGuard) {
-            read.tellers.forEach((tInfo) => {
-              animateCoins2(tInfo.rect, read.rectGuard, 4, "coin");
-            });
-          }
-        } else if (read.type === "depositing") {
-          if (read.rectGuard && read.rectVault) {
-            animateCoins2(read.rectGuard, read.rectVault, 6, "coin");
-          }
-        }
-      });
-      _guardAnimTriggers.forEach((item) => {
-        prevGuardStates[item.idx] = item.gData.state;
-      });
     }
   }
 
@@ -1051,7 +969,7 @@
   window.spawnFloating = spawnFloating2;
   window.updateFloatingText = updateFloatingText2;
   window.updateActiveCoins = updateActiveCoins2;
-  window.animateCoins = animateCoins2;
+  window.animateCoins = animateCoins;
   window.spawnParticles = spawnParticles2;
   window.initCoinPool = initCoinPool2;
   window.rebuildTellersDOM = rebuildTellersDOM2;
@@ -1061,6 +979,7 @@
 
   // ui/events/focus-trap.js
   var _focusTrapHandlers = /* @__PURE__ */ new Map();
+  var _previouslyFocused = /* @__PURE__ */ new Map();
   function _getFocusableElements(container) {
     return Array.from(container.querySelectorAll(
       'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -1068,6 +987,9 @@
   }
   function trapFocus(modal) {
     if (_focusTrapHandlers.has(modal)) return;
+    if (document.activeElement && document.activeElement !== document.body) {
+      _previouslyFocused.set(modal, document.activeElement);
+    }
     const handler = function(e) {
       if (e.key !== "Tab") return;
       const focusable2 = _getFocusableElements(modal);
@@ -1096,6 +1018,11 @@
     if (!handler) return;
     modal.removeEventListener("keydown", handler);
     _focusTrapHandlers.delete(modal);
+    const toRestore = _previouslyFocused.get(modal);
+    _previouslyFocused.delete(modal);
+    if (toRestore && document.body.contains(toRestore) && typeof toRestore.focus === "function") {
+      toRestore.focus();
+    }
   }
   function initFocusTrapObserver() {
     const modals = document.querySelectorAll(".modal-overlay");
@@ -1210,6 +1137,7 @@
         let prestigeAmount = typeof game.calculatePrestigeShares === "function" ? game.calculatePrestigeShares() : 10;
         let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.3));
         game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1e9);
+        if (game.economyManager) game.economyManager.cachedTotalMult = null;
         const msg = `\u2B50 ${shareReward} VIP Shares \u2B50`;
         spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "gold");
         for (let i = 0; i < 20; i++) {
@@ -2055,6 +1983,7 @@
             let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.5)));
             sharesAmount = Math.min(1e4, sharesAmount);
             game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 1e5);
+            if (game.economyManager) game.economyManager.cachedTotalMult = null;
             const sharesLabel = `+${sharesAmount}`;
             prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || "Gold Shares"}`;
             const icon = prize.type === "gold" ? "\u{1F947}" : "\u{1F4C8}";
@@ -4458,15 +4387,8 @@
           btn.disabled = true;
           const rectBtn = btn.getBoundingClientRect();
           if (collected.type === "cash") {
-            const rectCashBox = document.getElementById("stat-cash").getBoundingClientRect();
-            animateCoins(rectBtn, rectCashBox, 10, "cash_silent");
             spawnFloating("+" + formatMoney(collected.amount), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", "2.2rem");
           } else {
-            const rectSharesBox = document.getElementById("stat-shares");
-            if (rectSharesBox) {
-              const rectShares = rectSharesBox.getBoundingClientRect();
-              animateCoins(rectBtn, rectShares, collected.amount, "gold");
-            }
             const lang2 = game.state && game.state.language || "en";
             const shareLbl = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
             spawnFloating("+" + collected.amount + " " + shareLbl + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
@@ -4521,11 +4443,8 @@
 
   // ui/tabs/achievements-tab.js
   function playAchievementUnlockFeedback(achievement) {
-    const targetEl = document.getElementById("eps-value-container") || document.getElementById("stat-cash");
-    const toRect = targetEl ? targetEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
     const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
     const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
-    animateCoins(fromRect, toRect, 8, "gold");
     spawnFloating("\u{1F3C6} +" + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "") + "%", fromRect.left + fromRect.width / 2, fromRect.top, "gold", "2.2rem");
     if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
       window.gameAudio.playUnlock();
@@ -4634,10 +4553,6 @@
         if (collected && collected.type !== "none" && collected.amount > 0) {
           btn.disabled = true;
           const rectBtn = btn.getBoundingClientRect();
-          const rectSharesBox = document.getElementById("stat-shares");
-          if (rectSharesBox) {
-            animateCoins(rectBtn, rectSharesBox.getBoundingClientRect(), collected.amount, "gold");
-          }
           const lang2 = game.state && game.state.language || "en";
           const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
           spawnFloating("+" + collected.amount + " " + shareLbl2 + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
@@ -5425,9 +5340,6 @@
         const collected = game.collectVault();
         if (collected > 0) {
           const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
-          const elStatCash = document.getElementById("stat-cash");
-          const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
-          animateCoins(rectBtn, rectCashBox, 2, "cash");
           spawnFloating("+" + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
           spawnVaultCoins(collected, rectBtn);
           game.saveGame();

@@ -480,9 +480,6 @@ function initUIEvents() {
             const collected = game.collectVault();
             if (collected > 0) {
                 const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
-                const elStatCash = document.getElementById('stat-cash');
-                const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
-                animateCoins(rectBtn, rectCashBox, 2, 'cash');
                 spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green');
                 // Gold coins rain effect on vault collect
                 spawnVaultCoins(collected, rectBtn);

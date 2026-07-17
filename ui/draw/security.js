@@ -1,13 +1,9 @@
-import { getVaultTargetRect, animateCoins } from './animations.js';
 import { formatMoney } from './format.js';
-import { TELLER_DOM_CACHE } from './bank-floor.js';
 
-let _guardAnimTriggers = [];
-let prevGuardStates = {};
 let lastGuardStatusText = '';
 
-// Per-frame refresh of the security guard runners (position/state), the courier
-// status label, and the coin-carrying animations triggered by guard state changes.
+// Per-frame refresh of the security guard runners (position/state) and the
+// courier status label.
 export function updateGuardsDisplay(lang) {
     const unlockedGuards = game.state.guards.filter(g => g.unlocked);
     if (unlockedGuards.length > 0) {
@@ -146,92 +142,5 @@ export function updateGuardsDisplay(lang) {
         }
     } else {
         DOM_CACHE.securityPath.style.display = 'none';
-    }
-
-    // Dynamic Coin animations for parallel guards - Batched Reads/Writes to avoid layout reflows
-    _guardAnimTriggers.length = 0;
-
-    game.state.guards.forEach((g, idx) => {
-        if (!g.unlocked) return;
-        const gData = game.getGuardRenderData(g.id);
-        if (!gData) return;
-        const prevState = prevGuardStates[idx];
-        if (prevState !== gData.state) {
-            _guardAnimTriggers.push({
-                g,
-                gData,
-                idx,
-                prevState
-            });
-        }
-    });
-
-    if (_guardAnimTriggers.length > 0) {
-        // Step 1: Batch all DOM Reads (getBoundingClientRect)
-        const reads = [];
-        _guardAnimTriggers.forEach(item => {
-            const { g, gData, prevState } = item;
-            const prevIsMoving = prevState && prevState.startsWith('moving_to_teller_');
-            const currIsCollecting = gData.state.startsWith('collecting_from_teller_');
-
-            if (prevIsMoving && currIsCollecting) {
-                const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-                const rectGuard = runner ? runner.getBoundingClientRect() : (DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null);
-
-                const tellerRects = [];
-                game.state.tellers.forEach(t => {
-                    const tData = game.getTellerRenderData(t.id);
-                    if (tData && tData.unlocked && tData.cashStored > 0) {
-                        const tCache = TELLER_DOM_CACHE[t.id];
-                        const tNode = tCache ? tCache.node : null;
-                        if (tNode) {
-                            tellerRects.push({
-                                node: tNode
-                            });
-                        }
-                    }
-                });
-
-                reads.push({
-                    type: 'collecting',
-                    g,
-                    rectGuard,
-                    tellers: tellerRects.map(tInfo => ({
-                        rect: tInfo.node.getBoundingClientRect()
-                    }))
-                });
-            } else if (prevState === 'moving_to_vault' && gData.state === 'depositing') {
-                const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-                const rectGuard = runner ? runner.getBoundingClientRect() : (DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null);
-                const rectVault = getVaultTargetRect();
-
-                reads.push({
-                    type: 'depositing',
-                    g,
-                    rectGuard,
-                    rectVault
-                });
-            }
-        });
-
-        // Step 2: Batch all DOM Writes (triggering animations)
-        reads.forEach(read => {
-            if (read.type === 'collecting') {
-                if (read.rectGuard) {
-                    read.tellers.forEach(tInfo => {
-                        animateCoins(tInfo.rect, read.rectGuard, 4, 'coin');
-                    });
-                }
-            } else if (read.type === 'depositing') {
-                if (read.rectGuard && read.rectVault) {
-                    animateCoins(read.rectGuard, read.rectVault, 6, 'coin');
-                }
-            }
-        });
-
-        // Update previous state cache
-        _guardAnimTriggers.forEach(item => {
-            prevGuardStates[item.idx] = item.gData.state;
-        });
     }
 }

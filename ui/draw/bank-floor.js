@@ -1,5 +1,5 @@
 import { formatMoney } from './format.js';
-import { getVaultTargetRect, spawnFloating, animateCoins } from './animations.js';
+import { spawnFloating } from './animations.js';
 
 export let TELLER_DOM_CACHE = {};
 let prevTellerCashHtml = {};
@@ -72,8 +72,6 @@ export function rebuildTellersDOM() {
                 const collected = game.collectTellerCash(t.id);
                 if (collected > 0) {
                     const rectBtn = collectBtn.getBoundingClientRect();
-                    const rectVault = getVaultTargetRect();
-                    animateCoins(rectBtn, rectVault, 6, 'coin');
                     spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green');
                 }
             });

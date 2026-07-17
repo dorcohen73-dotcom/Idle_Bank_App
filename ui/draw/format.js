@@ -6,13 +6,13 @@ export let cachedLang = 'he';
 export function updateCachedSuffixes(lang) {
     cachedLang = lang || 'en';
     if (cachedLang === 'en') {
-        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
+        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
         cachedFallback = ' monstrous';
     } else if (cachedLang === 'es') {
-        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
+        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
         cachedFallback = ' monstruoso';
     } else if (cachedLang === 'ru') {
-        cachedSuffixes = ['', ' тыс.', ' млн', ' млрд', ' трлн', ' квдрлн'];
+        cachedSuffixes = ['', ' тыс.', ' млн', ' млрд', ' трлн', ' квдрлн', ' квинт.', ' секст.', ' септ.', ' окт.', ' нон.', ' дец.'];
         cachedFallback = ' огромное';
     } else {
         cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון', ' קווינטיליון', ' סקסטיליון', ' ספטיליון', ' אוקטיליון', ' נוניליון', ' דציליון'];

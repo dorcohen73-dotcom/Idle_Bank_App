@@ -180,16 +180,9 @@ export function renderMissionsTab() {
                 btn.disabled = true;
                 const rectBtn = btn.getBoundingClientRect();
                 if (collected.type === 'cash') {
-                    const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
-                    animateCoins(rectBtn, rectCashBox, 10, 'cash_silent');
                     spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem');
                 } else {
                     // shares / gold reward
-                    const rectSharesBox = document.getElementById('stat-shares');
-                    if (rectSharesBox) {
-                        const rectShares = rectSharesBox.getBoundingClientRect();
-                        animateCoins(rectBtn, rectShares, collected.amount, 'gold');
-                    }
                     const lang = (game.state && game.state.language) || 'en';
                     const shareLbl = (translations[lang] || translations.en).sharesLabel || 'Gold Shares';
                     spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');

@@ -19,6 +19,10 @@ Write-Host "Syncing web assets into the Android project..."
 npm run cap-sync
 if ($LASTEXITCODE -ne 0) { throw "cap-sync failed" }
 
+Write-Host "Verifying Android assets match source..."
+node tools\verify-android-sync.js
+if ($LASTEXITCODE -ne 0) { throw "Android assets are out of sync with source - see errors above" }
+
 cd C:\Users\dorco\Desktop\AntiGravity\IdleBank\android
 Write-Host "Building Release App Bundle (AAB)..."
 .\gradlew bundleRelease
