@@ -784,11 +784,13 @@ class SaveManager {
         
         // Accountant manager adds offline time
         if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
-            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineLimitBoost * this.game.state.managerUpgrades.accountant.level);
+            const accLvl = this.game.state.managerUpgrades.accountant.level || 1;
+            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineLimitBoost * accLvl);
         }
         
         if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
-            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * this.game.state.managerUpgrades.marketing.level); // +1 hour per level
+            const mktLvl = this.game.state.managerUpgrades.marketing.level || 1;
+            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * mktLvl); // +1 hour per level
         }
         // Offline limit boost from service manager (merged from tech)
         const svcMgr = this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service;
@@ -839,7 +841,8 @@ class SaveManager {
 
             // Apply accountant income multiplier if active
             if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
-                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+                const accLvl = this.game.state.managerUpgrades.accountant.level || 1;
+                const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * accLvl);
                 offlineCashEarned *= accountantBoost;
             }
             
@@ -886,7 +889,8 @@ class SaveManager {
             // Compute accountant boost factor before the loop so state and report match
             let accountantBoostFactor = 1;
             if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
-                accountantBoostFactor = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);
+                const accLvl = this.game.state.managerUpgrades.accountant.level || 1;
+                accountantBoostFactor = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * accLvl);
             }
 
             this.game.state.tellers.forEach(t => {

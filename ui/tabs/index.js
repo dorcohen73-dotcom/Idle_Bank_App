@@ -7,7 +7,7 @@ import { renderMissionsTab } from './missions-tab.js';
 import { renderAchievementsTab, playAchievementUnlockFeedback } from './achievements-tab.js';
 
 // Refresh all active tabs
-export function refreshAllTabs() {
+function refreshAllTabs() {
     invalidateTabHashes();
     const activeTabEl = document.querySelector('.tab-btn.active');
     const activeTab = activeTabEl ? activeTabEl.getAttribute('data-tab') : 'upgrades';
