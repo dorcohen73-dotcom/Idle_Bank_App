@@ -124,7 +124,7 @@ export function renderBranchesTab() {
             try {
                 const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
                 if (!currentCanPrestige) {
-                    if (typeof showToast === 'function') showToast('עדיין אין מספיק כסף כדי לעבור סניף', 'danger');
+                    if (typeof showToast === 'function') showToast(translations[game.state.language || 'en'].branches.notEnoughCashToast, 'danger');
                     return;
                 }
                 initSound();
@@ -132,7 +132,7 @@ export function renderBranchesTab() {
                 openPrestigeModal(target);
             } catch (err) {
                 console.error('[Prestige branch button] click failed:', err);
-                if (typeof showToast === 'function') showToast('שגיאה בפתיחת המסך: ' + err.message, 'danger');
+                if (typeof showToast === 'function') showToast(translations[game.state.language || 'en'].branches.screenErrorToast + ': ' + err.message, 'danger');
                 if (typeof reportCrash === 'function') reportCrash('branch prestige btn click: ' + err.message, err.stack);
             }
         });
@@ -145,7 +145,7 @@ export function renderBranchesTab() {
             try {
                 const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
                 if (!currentCanPrestige) {
-                    if (typeof showToast === 'function') showToast('עדיין אין מספיק כסף כדי לעבור סניף', 'danger');
+                    if (typeof showToast === 'function') showToast(translations[game.state.language || 'en'].branches.notEnoughCashToast, 'danger');
                     return;
                 }
                 initSound();
@@ -165,7 +165,7 @@ export function renderBranchesTab() {
                 openPrestigeModal(targetBranch);
             } catch (err) {
                 console.error('[Main prestige button] click failed:', err);
-                if (typeof showToast === 'function') showToast('שגיאה בפתיחת המסך: ' + err.message, 'danger');
+                if (typeof showToast === 'function') showToast(translations[game.state.language || 'en'].branches.screenErrorToast + ': ' + err.message, 'danger');
                 if (typeof reportCrash === 'function') reportCrash('main prestige btn click: ' + err.message, err.stack);
             }
         });
@@ -243,7 +243,7 @@ export function renderBranchesTab() {
                         </span>
                         ${isMax ? `
                             <div class="gold-max-reached-btn">
-                                👑 מירבי
+                                👑 ${translations[lang].maxLevel}
                             </div>
                         ` : `
                             <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>

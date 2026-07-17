@@ -123,7 +123,7 @@ function initUIEvents() {
     if (headerDailyBtn) {
         headerDailyBtn.addEventListener('click', () => {
             initSound();
-            try { navigator.vibrate && navigator.vibrate(5); } catch { /* vibration unsupported */ }
+            try { navigator.vibrate && navigator.vibrate(5); } catch (e) { /* vibration unsupported */ }
             const existingTabBtn = document.querySelector('.tab-btn[data-tab="daily"]');
             if (existingTabBtn) {
                 existingTabBtn.click();
@@ -258,7 +258,7 @@ function initUIEvents() {
     // Bottom Nav click handlers
     document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            try { navigator.vibrate && navigator.vibrate(5); } catch { /* vibration unsupported */ }
+            try { navigator.vibrate && navigator.vibrate(5); } catch (e) { /* vibration unsupported */ }
             const tab = btn.dataset.tab;
             // מפעיל את הלוגיקה הקיימת של הטאבים
             const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
@@ -273,7 +273,7 @@ function initUIEvents() {
     const vaultMiniBtn = document.getElementById('vault-mini-btn');
     if (vaultMiniBtn) {
         vaultMiniBtn.addEventListener('click', () => {
-            try { navigator.vibrate && navigator.vibrate([8, 30, 8]); } catch { /* vibration unsupported */ }
+            try { navigator.vibrate && navigator.vibrate([8, 30, 8]); } catch (e) { /* vibration unsupported */ }
             const mainVaultBtn = document.getElementById('collect-vault-btn');
             if (mainVaultBtn) mainVaultBtn.click();
         });
@@ -306,7 +306,7 @@ function initUIEvents() {
             if (!btn || btn.classList.contains('disabled')) return;
 
             initSound();
-            try { navigator.vibrate && navigator.vibrate(12); } catch { /* vibration unsupported */ }
+            try { navigator.vibrate && navigator.vibrate(12); } catch (e) { /* vibration unsupported */ }
             const type = btn.getAttribute('data-type');
             const id = parseInt(btn.getAttribute('data-id'));
             if (isNaN(id) && (type === 'teller' || type === 'guard')) return;

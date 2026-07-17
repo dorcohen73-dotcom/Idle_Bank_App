@@ -1047,9 +1047,11 @@ class IdleBankGame {
                     const now = Date.now();
                     if (!this.lastBounceTime || now - this.lastBounceTime > 1500) {
                         this.lastBounceTime = now;
-                        const doorX = window.innerWidth * 0.15; 
-                        const doorY = window.innerHeight * 0.85; 
-                        window.UI.spawnFloating('לקוח עזב 😡', doorX + (Math.random() * 40 - 20), doorY + (Math.random() * 20 - 10), 'red', '1.1rem');
+                        const doorX = window.innerWidth * 0.15;
+                        const doorY = window.innerHeight * 0.85;
+                        const lang = this.state.language || 'en';
+                        const leftText = (typeof translations !== 'undefined' && translations[lang] && translations[lang].customerLeftText) || 'Customer left 😡';
+                        window.UI.spawnFloating(leftText, doorX + (Math.random() * 40 - 20), doorY + (Math.random() * 20 - 10), 'red', '1.1rem');
                     }
                 }
             }

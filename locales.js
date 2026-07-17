@@ -22,6 +22,7 @@ const translations = {
         queueAriaLabel: "תור לקוחות",
         advSliderLabel: "תקציב קמפיין פרסום",
         cashLiveBadge: "● פעיל",
+        customerLeftText: "לקוח עזב 😡",
         splashSubtitle: "טוען את חווית ה-VIP...",
         skipLinkText: "דלג לתוכן",
         analyticsBtnTitle: "מדדים ואנליטיקה",
@@ -186,7 +187,9 @@ const translations = {
             sold: "נמכר 💰",
             sellAndBuild: "מכור והקם סניף!",
             locked: "נעול (פתח קודם סניף קודם)",
-            minCash: (val) => `דרישת כסף נוכחית: ${val}`
+            minCash: (val) => `דרישת כסף נוכחית: ${val}`,
+            notEnoughCashToast: "עדיין אין מספיק כסף כדי לעבור סניף",
+            screenErrorToast: "שגיאה בפתיחת המסך"
         },
         missions: {
             clientsTitle: "שירות לקוחות בסניף",
@@ -310,6 +313,7 @@ const translations = {
         queueAriaLabel: "Customer queue",
         advSliderLabel: "Ad campaign budget",
         cashLiveBadge: "● LIVE",
+        customerLeftText: "Customer left 😡",
         splashSubtitle: "Loading VIP experience...",
         skipLinkText: "Skip to content",
         analyticsBtnTitle: "Metrics & Analytics",
@@ -474,7 +478,9 @@ const translations = {
             sold: "Sold 💰",
             sellAndBuild: "Sell & Rebuild!",
             locked: "Locked (Open previous branch first)",
-            minCash: (val) => `Current cash requirement: ${val}`
+            minCash: (val) => `Current cash requirement: ${val}`,
+            notEnoughCashToast: "Not enough cash yet to switch branches",
+            screenErrorToast: "Error opening screen"
         },
         missions: {
             clientsTitle: "Customer Service in Branch",
@@ -598,6 +604,7 @@ const translations = {
         queueAriaLabel: "Cola de clientes",
         advSliderLabel: "Presupuesto de campaña publicitaria",
         cashLiveBadge: "● VIVO",
+        customerLeftText: "Cliente se fue 😡",
         splashSubtitle: "Cargando experiencia VIP...",
         skipLinkText: "Saltar al contenido",
         analyticsBtnTitle: "Métricas y Análisis",
@@ -762,7 +769,9 @@ const translations = {
             sold: "Vendido 💰",
             sellAndBuild: "¡Vender y Reconstruir!",
             locked: "Bloqueado (Abre la sucursal anterior primero)",
-            minCash: (val) => `Requisito de efectivo actual: ${val}`
+            minCash: (val) => `Requisito de efectivo actual: ${val}`,
+            notEnoughCashToast: "Todavía no hay suficiente efectivo para cambiar de sucursal",
+            screenErrorToast: "Error al abrir la pantalla"
         },
         missions: {
             clientsTitle: "Atención al Cliente en Sucursal",
@@ -886,6 +895,7 @@ const translations = {
         queueAriaLabel: "Очередь клиентов",
         advSliderLabel: "Бюджет рекламной кампании",
         cashLiveBadge: "● ОНЛАЙН",
+        customerLeftText: "Клиент ушёл 😡",
         splashSubtitle: "Загрузка VIP-опыта...",
         skipLinkText: "Перейти к содержимому",
         analyticsBtnTitle: "Метрики и аналитика",
@@ -1050,7 +1060,9 @@ const translations = {
             sold: "Продано 💰",
             sellAndBuild: "Продать и Переехать!",
             locked: "Закрыто (Сначала откройте предыдущий филиал)",
-            minCash: (val) => `Текущее требование капитала: ${val}`
+            minCash: (val) => `Текущее требование капитала: ${val}`,
+            notEnoughCashToast: "Пока недостаточно денег для перехода в другой филиал",
+            screenErrorToast: "Ошибка при открытии экрана"
         },
         missions: {
             clientsTitle: "Обслуживание клиентов в филиале",

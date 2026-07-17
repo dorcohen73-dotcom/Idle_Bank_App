@@ -4094,7 +4094,7 @@
         try {
           const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
           if (!currentCanPrestige) {
-            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.notEnoughCashToast, "danger");
             return;
           }
           initSound();
@@ -4102,7 +4102,7 @@
           openPrestigeModal(target);
         } catch (err) {
           console.error("[Prestige branch button] click failed:", err);
-          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.screenErrorToast + ": " + err.message, "danger");
           if (typeof reportCrash === "function") reportCrash("branch prestige btn click: " + err.message, err.stack);
         }
       });
@@ -4113,7 +4113,7 @@
         try {
           const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
           if (!currentCanPrestige) {
-            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.notEnoughCashToast, "danger");
             return;
           }
           initSound();
@@ -4129,7 +4129,7 @@
           openPrestigeModal(targetBranch);
         } catch (err) {
           console.error("[Main prestige button] click failed:", err);
-          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.screenErrorToast + ": " + err.message, "danger");
           if (typeof reportCrash === "function") reportCrash("main prestige btn click: " + err.message, err.stack);
         }
       });
@@ -4196,7 +4196,7 @@
                         </span>
                         ${isMax ? `
                             <div class="gold-max-reached-btn">
-                                \u{1F451} \u05DE\u05D9\u05E8\u05D1\u05D9
+                                \u{1F451} ${translations[lang].maxLevel}
                             </div>
                         ` : `
                             <button class="buy-btn ${canAfford ? "" : "disabled"} buy-gold-btn" data-gold-up="${key}" ${canAfford ? "" : "disabled"}>
@@ -5081,7 +5081,7 @@
         initSound2();
         try {
           navigator.vibrate && navigator.vibrate(5);
-        } catch {
+        } catch (e) {
         }
         const existingTabBtn = document.querySelector('.tab-btn[data-tab="daily"]');
         if (existingTabBtn) {
@@ -5200,7 +5200,7 @@
       btn.addEventListener("click", () => {
         try {
           navigator.vibrate && navigator.vibrate(5);
-        } catch {
+        } catch (e) {
         }
         const tab = btn.dataset.tab;
         const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
@@ -5215,7 +5215,7 @@
       vaultMiniBtn.addEventListener("click", () => {
         try {
           navigator.vibrate && navigator.vibrate([8, 30, 8]);
-        } catch {
+        } catch (e) {
         }
         const mainVaultBtn = document.getElementById("collect-vault-btn");
         if (mainVaultBtn) mainVaultBtn.click();
@@ -5246,7 +5246,7 @@
         initSound2();
         try {
           navigator.vibrate && navigator.vibrate(12);
-        } catch {
+        } catch (e2) {
         }
         const type = btn.getAttribute("data-type");
         const id = parseInt(btn.getAttribute("data-id"));
