@@ -241,7 +241,7 @@ class SaveManager {
         const isString = (v) => typeof v === 'string';
 
         // General numbers
-        if (!isNum(state.cash) || state.cash < 0) state.cash = 180;
+        if (!isNum(state.cash) || state.cash < 0) state.cash = 2000;
         else state.cash = roundCents(state.cash);
 
         if (!isNum(state.lifetimeCash) || state.lifetimeCash < 0) state.lifetimeCash = state.cash;

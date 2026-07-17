@@ -77,8 +77,8 @@ class IdleBankGame {
         this.cachedEps = 0;
         
         this.state = {
-            cash: 180,                     // Starting cash
-            lifetimeCash: 180,             // For prestige calculations
+            cash: 2000,                     // Starting cash
+            lifetimeCash: 2000,             // For prestige calculations
             shares: 0,                     // Golden Shares
             currentBranch: 0,              // 0: Jerusalem, 1: Tel Aviv, 2: NY, 3: London
             maxBranchUnlocked: 0,
@@ -700,7 +700,7 @@ class IdleBankGame {
 
     calculatePrestigeShares() {
         // H-06: cache result — invalidate only when lifetimeCash or shares change
-        const lifetimeCash = this.state.lifetimeCash || 180;
+        const lifetimeCash = this.state.lifetimeCash || 2000;
         
         // Ensure stats object exists
         if (!this.state.stats) this.state.stats = {};
