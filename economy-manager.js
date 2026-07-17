@@ -26,17 +26,15 @@ class EconomyManager {
         return Math.min(this.game.tellerUnlockCosts.length, 4 + branchIndex);
     }
 
-    // Unlock/upgrade cost scaling: branch multiplier keeps pace consistent across branches
-    // (branch N shouldn't clear N-times faster than branch 0 just because it starts with a
-    // bigger income multiplier). Prestige-shares multiplier does the same job across a
-    // player's *lifetime* — without it, a veteran sitting on a large banked shares multiplier
-    // (which can reach several thousand x at a maxed-out wallet) would blow through the exact
-    // same branch a brand-new player (shares = 0, multiplier = 1, fully unaffected) finds a
-    // normal challenge, and would keep accelerating further with every prestige. This keeps a
-    // given branch feeling like roughly the same amount of "real" progress regardless of how
-    // long someone has already played, while leaving new players completely untouched.
+    // Unlock/upgrade cost scaling uses ONLY the branch multiplier, so prices stay fixed while
+    // playing a branch and only step up when the player advances to a harder branch (a
+    // deliberate, visible milestone — not a silent drift). Prestige shares deliberately do NOT
+    // factor in here (unlike getTotalMultiplier, where they boost income): shares are earned
+    // continuously via ads/missions/prestige, and letting them also inflate costs made prices
+    // creep up mid-session with no player-facing trigger, which read as a bug rather than
+    // progression.
     getCostScalingMultiplier() {
-        return this.getBranchMultiplier() * this.getPrestigeMultiplier();
+        return this.getBranchMultiplier();
     }
 
     getTotalMultiplier() {

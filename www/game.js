@@ -32,14 +32,12 @@ class IdleBankGame {
         this.loadGame();
     }
 
-    // Unlock/hire cost tables, scaled by both branch multiplier and prestige-shares multiplier.
-    // Getters (not constructor-time snapshots) so they stay in sync with the player's current
-    // power level. Branch scaling keeps pace consistent across branches (branch N shouldn't
-    // clear N-times faster than branch 0 just because it starts with a bigger income
-    // multiplier); shares scaling does the same job across a player's *lifetime* — without it,
-    // a veteran with a large banked shares multiplier would blow through the exact same branch
-    // a brand-new player (shares = 0, fully unaffected) finds a normal challenge, and would keep
-    // accelerating further with every prestige.
+    // Unlock/hire cost tables, scaled by the branch multiplier only (see
+    // EconomyManager.getCostScalingMultiplier). Getters (not constructor-time snapshots) so
+    // they stay in sync with the player's current branch. Branch scaling keeps pace consistent
+    // across branches (branch N shouldn't clear N-times faster than branch 0 just because it
+    // starts with a bigger income multiplier) — prestige shares are deliberately excluded so
+    // prices never drift mid-session just from earning shares via ads/missions/prestige.
     get tellerUnlockCosts() {
         const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
         return GAME_CONFIG.TELLER_UNLOCK_COSTS.map(c => Math.round(c * mult));
@@ -59,8 +57,9 @@ class IdleBankGame {
         return scaled;
     }
 
-    // Department unlock cost, scaled the same way — dept.cost itself stays the small base
-    // value in state (and in save data) so this can't drift when the branch multiplier changes.
+    // Department unlock cost scales only with the branch multiplier (see
+    // EconomyManager.getCostScalingMultiplier) — it steps up when the player advances to a
+    // harder branch, but never drifts within a branch just from earning prestige shares.
     getDepartmentUnlockCost(dept) {
         const mult = this.economyManager ? this.economyManager.getCostScalingMultiplier() : 1;
         return Math.round(dept.cost * mult);
