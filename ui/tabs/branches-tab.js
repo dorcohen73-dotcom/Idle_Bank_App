@@ -230,8 +230,7 @@ export function renderBranchesTab() {
         let cleanTitle = upgradeData.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '').trim();
 
         goldCardsHtml += `
-            <div class="gold-upgrade-card">
-                ${isMax ? `<div class="gold-max-badge">MAX</div>` : ''}
+            <div class="gold-upgrade-card ${isMax ? 'is-maxed' : ''}">
                 <div class="gold-card-right">
                     <img class="gold-big-illustration" src="${iconSrc}" alt="${upgradeData.title}">
                 </div>
@@ -239,12 +238,13 @@ export function renderBranchesTab() {
                     <div class="gold-upgrade-title">${cleanTitle}</div>
                     <div class="gold-upgrade-desc">${desc}</div>
                     <div class="gold-upgrade-action-row">
-                        <span class="gold-level-pill ${isMax ? 'max' : ''}">
+                        <span class="gold-level-pill">
                             ${currentLvl}/${maxLvl}
-                            ${isMax ? `<span class="gold-checkmark">✔</span>` : ''}
                         </span>
                         ${isMax ? `
-                            <span style="background: rgba(223,171,41,0.15); color: var(--gold-light); border: 1px solid rgba(223,171,41,0.3); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">MAX</span>
+                            <div class="gold-max-reached-btn">
+                                👑 מירבי
+                            </div>
                         ` : `
                             <button class="buy-btn ${canAfford ? '' : 'disabled'} buy-gold-btn" data-gold-up="${key}" ${canAfford ? '' : 'disabled'}>
                                 ${cost} 🪙
