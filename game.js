@@ -1041,6 +1041,17 @@ class IdleBankGame {
                 
                 this.customerCounter++;
                 this.customerQueue.push({ id: 'c_' + this.customerCounter, type, seed: Math.floor(Math.random() * 1000) });
+            } else {
+                // Queue is full - Marketing bounce mechanic
+                if (this.state.advActive && advBudget > 0 && typeof window !== 'undefined' && window.UI && typeof window.UI.spawnFloating === 'function') {
+                    const now = Date.now();
+                    if (!this.lastBounceTime || now - this.lastBounceTime > 1500) {
+                        this.lastBounceTime = now;
+                        const doorX = window.innerWidth * 0.15; 
+                        const doorY = window.innerHeight * 0.85; 
+                        window.UI.spawnFloating('לקוח עזב 😡', doorX + (Math.random() * 40 - 20), doorY + (Math.random() * 20 - 10), 'red', '1.1rem');
+                    }
+                }
             }
         }
 
