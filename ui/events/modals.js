@@ -55,7 +55,7 @@ export function openBoostModal() {
     
     const cashValEl = document.getElementById('event-cash-val');
     if (cashValEl) {
-        cashValEl.innerText = '$' + formatMoney(game.state.cash);
+        cashValEl.innerText = formatMoney(game.state.cash);
     }
 
     container.innerHTML = '';

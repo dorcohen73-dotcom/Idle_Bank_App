@@ -1562,7 +1562,7 @@
     textEl.innerText = tObj.boostModalText;
     const cashValEl = document.getElementById("event-cash-val");
     if (cashValEl) {
-      cashValEl.innerText = "$" + formatMoney(game.state.cash);
+      cashValEl.innerText = formatMoney(game.state.cash);
     }
     container.innerHTML = "";
     const _boostEps = game.getEarningsPerSecond() || 0;
