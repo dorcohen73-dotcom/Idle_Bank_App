@@ -1560,6 +1560,10 @@
     iconEl.innerText = "\u26A1";
     titleEl.innerText = tObj.boostModalTitle;
     textEl.innerText = tObj.boostModalText;
+    const cashValEl = document.getElementById("event-cash-val");
+    if (cashValEl) {
+      cashValEl.innerText = "$" + formatMoney(game.state.cash);
+    }
     container.innerHTML = "";
     const _boostEps = game.getEarningsPerSecond() || 0;
     const _projectedEarnings = Math.floor(_boostEps * 4 * 3600);
