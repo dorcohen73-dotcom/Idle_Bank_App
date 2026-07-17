@@ -227,7 +227,7 @@ export function renderBranchesTab() {
         const canAfford = game.state.shares >= cost;
         const iconSrc = iconMapping[key];
         
-        let desc = translations[lang].goldUpgradesDesc && translations[lang].goldUpgradesDesc[key] 
+        desc = translations[lang].goldUpgradesDesc && translations[lang].goldUpgradesDesc[key] 
             ? translations[lang].goldUpgradesDesc[key] 
             : upgradeData.desc;
 
