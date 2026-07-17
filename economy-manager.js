@@ -58,32 +58,36 @@ class EconomyManager {
         // Manager Yield Boosts
         if (this.game.state.managers && this.game.state.managerUpgrades) {
             if (this.game.state.managers.customer && this.game.state.managerUpgrades.customer) {
-                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.customer.incomeBoost * this.game.state.managerUpgrades.customer.level);
+                const lvl = this.game.state.managerUpgrades.customer.level || 1;
+                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.customer.incomeBoost * lvl);
             }
             if (this.game.state.managers.finance && this.game.state.managerUpgrades.finance) {
-                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.incomeBoost * this.game.state.managerUpgrades.finance.level);
+                const lvl = this.game.state.managerUpgrades.finance.level || 1;
+                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.incomeBoost * lvl);
                 const hasHigherDept = this.game.state.departments && this.game.state.departments.some(d => d.id > 0 && d.unlocked);
                 if (hasHigherDept) {
-                    mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.deptIncomeBoost * this.game.state.managerUpgrades.finance.level);
+                    mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.finance.deptIncomeBoost * lvl);
                 }
             }
             if (this.game.state.managers.service && this.game.state.managerUpgrades.service) {
-                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.incomeBoost * this.game.state.managerUpgrades.service.level);
+                const lvl = this.game.state.managerUpgrades.service.level || 1;
+                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.incomeBoost * lvl);
             }
             if (this.game.state.managers.vip && this.game.state.managerUpgrades.vip) {
-                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.incomeBoost * this.game.state.managerUpgrades.vip.level);
+                const lvl = this.game.state.managerUpgrades.vip.level || 1;
+                mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.incomeBoost * lvl);
             }
         }
         // Marketing fix: adBoost when advertising is active
         if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades && this.game.state.managerUpgrades.marketing) {
             if (this.game.state.advBudget > 0 && this.game.state.advActive) {
-                const mktLvl = this.game.state.managerUpgrades.marketing.level;
+                const mktLvl = this.game.state.managerUpgrades.marketing.level || 1;
                 mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.adBoost * mktLvl);
             }
         }
         // Service manager EPS boost (merged from tech)
         if (this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service) {
-            const svcLvl = this.game.state.managerUpgrades.service.level;
+            const svcLvl = this.game.state.managerUpgrades.service.level || 1;
             mult *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.epsBoost * svcLvl);
         }
 
@@ -102,7 +106,7 @@ class EconomyManager {
         let speedFactor = 1.0;
         
         if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
-            const opsLvl = this.game.state.managerUpgrades.operations.level;
+            const opsLvl = this.game.state.managerUpgrades.operations.level || 1;
             speedFactor *= Math.max(0.10, 1 - (opsLvl - 1) * GAME_CONFIG.TELLER_SKILL_SPEED_DECAY); // -3% processing duration per level starting from lvl 1
         }
         
@@ -123,7 +127,7 @@ class EconomyManager {
         let cap = Math.round(GAME_CONFIG.TELLER_BASE_CAPACITY * Math.pow(GAME_CONFIG.TELLER_CAPACITY_GROWTH, level - 1));
 
         if (this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service) {
-            const svcLvl = this.game.state.managerUpgrades.service.level;
+            const svcLvl = this.game.state.managerUpgrades.service.level || 1;
             cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.service.capacityBoost * svcLvl)); // +5% desk capacity per level
         }
 
