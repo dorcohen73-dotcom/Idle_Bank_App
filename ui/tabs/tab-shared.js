@@ -5,6 +5,12 @@ let _buyBtnCache = null;
 let _lastManagersHash = null;
 let _lastBranchesHash = null;
 
+export let currentUpgradeMode = '1';
+
+export function setCurrentUpgradeMode(mode) {
+    currentUpgradeMode = mode;
+}
+
 export function invalidateTabHashes() {
     _lastManagersHash = null;
     _lastBranchesHash = null;

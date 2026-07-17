@@ -4077,7 +4077,7 @@
         const btn = e.target.closest(".bulk-btn-option");
         if (!btn) return;
         initSound2();
-        currentUpgradeMode = btn.getAttribute("data-mode");
+        setCurrentUpgradeMode(btn.getAttribute("data-mode"));
         DOM_CACHE.bulkSelector.querySelectorAll(".bulk-btn-option").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         if (typeof refreshAllTabs === "function") {
@@ -4426,6 +4426,7 @@
   var _buyBtnCache = null;
   var _lastManagersHash = null;
   var _lastBranchesHash = null;
+  var currentUpgradeMode2 = "1";
   function invalidateTabHashes() {
     _lastManagersHash = null;
     _lastBranchesHash = null;
@@ -4566,12 +4567,12 @@
     hr.style.borderTop = "1px solid var(--border-color)";
     container.appendChild(hr);
   }
-  function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode2) {
+  function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode3) {
     const card = document.createElement("div");
     card.className = "upgrade-card";
     const id = entity.id;
     if (entity.unlocked) {
-      const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode2, entity.level, game.state.cash);
+      const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode3, entity.level, game.state.cash);
       const levelsToBuy = details.levels;
       const nextLevel = entity.level + levelsToBuy;
       const cost = details.cost;
@@ -4791,7 +4792,7 @@
     tellersGrid.className = "upgrades-grid";
     container.appendChild(tellersGrid);
     game.state.tellers.forEach((t) => {
-      const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode);
+      const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode2);
       tellersGrid.appendChild(card);
     });
     createSeparator(container);
@@ -4799,7 +4800,7 @@
     guardsGrid.className = "upgrades-grid";
     container.appendChild(guardsGrid);
     game.state.guards.forEach((g) => {
-      const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode);
+      const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode2);
       guardsGrid.appendChild(card);
     });
     createSeparator(container);
@@ -4807,7 +4808,7 @@
     miscGrid.className = "upgrades-grid";
     container.appendChild(miscGrid);
     const vault = game.state.vault;
-    const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, vault.level, game.state.cash);
+    const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode2, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
     const vCost = details.cost;
     const vCap = game.getVaultCapacity(vault.level);
@@ -4857,7 +4858,7 @@
     miscGrid.appendChild(vaultCard);
     createSeparator(container);
     const queueLvl = game.state.queueUpgradeLevel || 1;
-    const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, queueLvl, game.state.cash);
+    const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode2, queueLvl, game.state.cash);
     const qLevelsToBuy = qDetails.levels;
     const qCost = qDetails.cost;
     const qCap = game.getBaseQueueCapacity(queueLvl);
@@ -4934,7 +4935,7 @@
     let maxRatio = -1;
     game.state.tellers.forEach((t) => {
       if (!t.unlocked) return;
-      const details2 = game.getBulkUpgradeDetails("teller", t.id, currentUpgradeMode, t.level, game.state.cash);
+      const details2 = game.getBulkUpgradeDetails("teller", t.id, currentUpgradeMode2, t.level, game.state.cash);
       if (details2.canAfford && details2.cost > 0) {
         const nextLvl = t.level + details2.levels;
         const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));

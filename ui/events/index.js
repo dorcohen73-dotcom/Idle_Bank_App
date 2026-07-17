@@ -284,7 +284,7 @@ function initUIEvents() {
             if (!btn) return;
             
             initSound();
-            currentUpgradeMode = btn.getAttribute('data-mode');
+            setCurrentUpgradeMode(btn.getAttribute('data-mode'));
             DOM_CACHE.bulkSelector.querySelectorAll('.bulk-btn-option').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -683,3 +683,4 @@ window.checkPrestigeTip = checkPrestigeTip;
 window.maybeStartTutorial = maybeStartTutorial;
 window.spawnVaultCoins = spawnVaultCoins;
 window.startPromoRecording = startPromoRecording;
+

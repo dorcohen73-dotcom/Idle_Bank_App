@@ -1,4 +1,4 @@
-import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache } from './tab-shared.js';
+import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache, currentUpgradeMode } from './tab-shared.js';
 
 // Dynamic builder for Upgrades Tab
 export function renderUpgradesTab() {
@@ -231,3 +231,4 @@ export function renderUpgradesTab() {
         }
     }
 }
+

@@ -363,3 +363,4 @@ window.playAchievementUnlockFeedback = playAchievementUnlockFeedback;
 window.refreshAllTabs = refreshAllTabs;
 window.updateButtonAffordability = updateButtonAffordability;
 window.invalidateTabHashes = invalidateTabHashes;
+
