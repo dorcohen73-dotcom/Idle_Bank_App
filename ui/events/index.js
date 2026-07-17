@@ -318,11 +318,11 @@ function initUIEvents() {
             if (type === 'teller') {
                 beforeVal = game.state.tellers[id].level;
                 feedType = 'teller';
-                game.upgradeTellerBulk(id, currentUpgradeMode);
+                game.upgradeTellerBulk(id, window.currentUpgradeMode);
             } else if (type === 'guard') {
                 beforeVal = game.state.guards[id].level;
                 feedType = 'guard';
-                game.upgradeGuardBulk(id, currentUpgradeMode);
+                game.upgradeGuardBulk(id, window.currentUpgradeMode);
             } else if (action === 'unlock-teller') {
                 beforeVal = game.state.tellers[id].unlocked;
                 feedType = 'unlock-teller';
@@ -335,11 +335,11 @@ function initUIEvents() {
             } else if (btn.id === 'upgrade-vault-btn') {
                 beforeVal = game.state.vault.level;
                 feedType = 'vault';
-                game.upgradeVaultBulk(currentUpgradeMode);
+                game.upgradeVaultBulk(window.currentUpgradeMode);
             } else if (btn.id === 'upgrade-queue-btn') {
                 beforeVal = game.state.queueUpgradeLevel || 1;
                 feedType = 'queue';
-                game.upgradeQueueBulk(currentUpgradeMode);
+                game.upgradeQueueBulk(window.currentUpgradeMode);
             } else {
                 return;
             }

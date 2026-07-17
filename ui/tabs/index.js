@@ -53,7 +53,7 @@ function updateButtonAffordability() {
             if (type === 'teller') {
                 const t = game.state.tellers[id];
                 if (t.unlocked) {
-                    const details = game.getBulkUpgradeDetails('teller', id, currentUpgradeMode, t.level, game.state.cash);
+                    const details = game.getBulkUpgradeDetails('teller', id, window.currentUpgradeMode, t.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
                     
@@ -100,7 +100,7 @@ function updateButtonAffordability() {
             } else if (type === 'guard') {
                 const g = game.state.guards[id];
                 if (g.unlocked) {
-                    const details = game.getBulkUpgradeDetails('guard', id, currentUpgradeMode, g.level, game.state.cash);
+                    const details = game.getBulkUpgradeDetails('guard', id, window.currentUpgradeMode, g.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
                     
@@ -145,7 +145,7 @@ function updateButtonAffordability() {
                     btn.disabled = !canBuy;
                 }
             } else if (type === 'vault' || btn.id === 'upgrade-vault-btn') {
-                const details = game.getBulkUpgradeDetails('vault', null, currentUpgradeMode, game.state.vault.level, game.state.cash);
+                const details = game.getBulkUpgradeDetails('vault', null, window.currentUpgradeMode, game.state.vault.level, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
                 if (btn.classList.contains('upg-v2-buy-btn')) {
@@ -175,7 +175,7 @@ function updateButtonAffordability() {
                     }
                 }
             } else if (btn.id === 'upgrade-queue-btn') {
-                const details = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
+                const details = game.getBulkUpgradeDetails('queue', null, window.currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
                 btn.classList.toggle('disabled', !details.canAfford);
                 btn.disabled = !details.canAfford;
                 if (btn.classList.contains('upg-v2-buy-btn')) {
@@ -233,7 +233,7 @@ function updateButtonAffordability() {
                         return;
                     }
                     const isHired = game.state.managers[type];
-                    const details = game.getBulkUpgradeDetails('manager', type, currentUpgradeMode, mgr.level, game.state.cash);
+                    const details = game.getBulkUpgradeDetails('manager', type, window.currentUpgradeMode, mgr.level, game.state.cash);
                     btn.classList.toggle('disabled', !details.canAfford);
                     btn.disabled = !details.canAfford;
                     const newText = `${translations[lang].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ''}<br>${formatMoney(details.cost)}`;

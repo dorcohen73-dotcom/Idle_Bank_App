@@ -5,10 +5,10 @@ let _buyBtnCache = null;
 let _lastManagersHash = null;
 let _lastBranchesHash = null;
 
-export let currentUpgradeMode = '1';
+
 
 export function setCurrentUpgradeMode(mode) {
-    currentUpgradeMode = mode;
+    window.currentUpgradeMode = mode;
 }
 
 export function invalidateTabHashes() {
@@ -167,7 +167,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
     const id = entity.id;
 
     if (entity.unlocked) {
-        const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode, entity.level, game.state.cash);
+        const details = game.getBulkUpgradeDetails(type, id, window.currentUpgradeMode, entity.level, game.state.cash);
         const levelsToBuy = details.levels;
         const nextLevel = entity.level + levelsToBuy;
         const cost = details.cost;
@@ -372,3 +372,4 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
     }
     return card;
 }
+

@@ -198,7 +198,7 @@ export function renderManagersTab() {
                     </button>
                 `;
             } else if (level < 5) {
-                const details = game.getBulkUpgradeDetails('manager', type, currentUpgradeMode, level, game.state.cash);
+                const details = game.getBulkUpgradeDetails('manager', type, window.currentUpgradeMode, level, game.state.cash);
                 const costToUpgrade = details.cost;
                 const canUpgrade = details.canAfford;
                 const levelsToBuy = details.levels;
@@ -263,7 +263,7 @@ export function renderManagersTab() {
             const beforeCash = game.state.cash;
             const beforeLevel = game.state.managerUpgrades[type] ? game.state.managerUpgrades[type].level : 1;
 
-            game.upgradeManagerBulk(type, currentUpgradeMode);
+            game.upgradeManagerBulk(type, window.currentUpgradeMode);
 
             handlePurchaseFeedback(btn, e, beforeCash, beforeLevel, 'upgrade-manager', type);
             updateButtonAffordability();

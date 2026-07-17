@@ -4109,11 +4109,11 @@
         if (type === "teller") {
           beforeVal = game.state.tellers[id].level;
           feedType = "teller";
-          game.upgradeTellerBulk(id, currentUpgradeMode);
+          game.upgradeTellerBulk(id, window.currentUpgradeMode);
         } else if (type === "guard") {
           beforeVal = game.state.guards[id].level;
           feedType = "guard";
-          game.upgradeGuardBulk(id, currentUpgradeMode);
+          game.upgradeGuardBulk(id, window.currentUpgradeMode);
         } else if (action === "unlock-teller") {
           beforeVal = game.state.tellers[id].unlocked;
           feedType = "unlock-teller";
@@ -4126,11 +4126,11 @@
         } else if (btn.id === "upgrade-vault-btn") {
           beforeVal = game.state.vault.level;
           feedType = "vault";
-          game.upgradeVaultBulk(currentUpgradeMode);
+          game.upgradeVaultBulk(window.currentUpgradeMode);
         } else if (btn.id === "upgrade-queue-btn") {
           beforeVal = game.state.queueUpgradeLevel || 1;
           feedType = "queue";
-          game.upgradeQueueBulk(currentUpgradeMode);
+          game.upgradeQueueBulk(window.currentUpgradeMode);
         } else {
           return;
         }
@@ -4426,7 +4426,6 @@
   var _buyBtnCache = null;
   var _lastManagersHash = null;
   var _lastBranchesHash = null;
-  var currentUpgradeMode2 = "1";
   function invalidateTabHashes() {
     _lastManagersHash = null;
     _lastBranchesHash = null;
@@ -4567,12 +4566,12 @@
     hr.style.borderTop = "1px solid var(--border-color)";
     container.appendChild(hr);
   }
-  function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode3) {
+  function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
     const card = document.createElement("div");
     card.className = "upgrade-card";
     const id = entity.id;
     if (entity.unlocked) {
-      const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode3, entity.level, game.state.cash);
+      const details = game.getBulkUpgradeDetails(type, id, window.currentUpgradeMode, entity.level, game.state.cash);
       const levelsToBuy = details.levels;
       const nextLevel = entity.level + levelsToBuy;
       const cost = details.cost;
@@ -4792,7 +4791,7 @@
     tellersGrid.className = "upgrades-grid";
     container.appendChild(tellersGrid);
     game.state.tellers.forEach((t) => {
-      const card = buildEntityCard("teller", t, lang, tObj, currentUpgradeMode2);
+      const card = buildEntityCard("teller", t, lang, tObj, window.currentUpgradeMode);
       tellersGrid.appendChild(card);
     });
     createSeparator(container);
@@ -4800,7 +4799,7 @@
     guardsGrid.className = "upgrades-grid";
     container.appendChild(guardsGrid);
     game.state.guards.forEach((g) => {
-      const card = buildEntityCard("guard", g, lang, tObj, currentUpgradeMode2);
+      const card = buildEntityCard("guard", g, lang, tObj, window.currentUpgradeMode);
       guardsGrid.appendChild(card);
     });
     createSeparator(container);
@@ -4808,7 +4807,7 @@
     miscGrid.className = "upgrades-grid";
     container.appendChild(miscGrid);
     const vault = game.state.vault;
-    const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode2, vault.level, game.state.cash);
+    const details = game.getBulkUpgradeDetails("vault", null, window.currentUpgradeMode, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
     const vCost = details.cost;
     const vCap = game.getVaultCapacity(vault.level);
@@ -4858,7 +4857,7 @@
     miscGrid.appendChild(vaultCard);
     createSeparator(container);
     const queueLvl = game.state.queueUpgradeLevel || 1;
-    const qDetails = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode2, queueLvl, game.state.cash);
+    const qDetails = game.getBulkUpgradeDetails("queue", null, window.currentUpgradeMode, queueLvl, game.state.cash);
     const qLevelsToBuy = qDetails.levels;
     const qCost = qDetails.cost;
     const qCap = game.getBaseQueueCapacity(queueLvl);
@@ -4935,7 +4934,7 @@
     let maxRatio = -1;
     game.state.tellers.forEach((t) => {
       if (!t.unlocked) return;
-      const details2 = game.getBulkUpgradeDetails("teller", t.id, currentUpgradeMode2, t.level, game.state.cash);
+      const details2 = game.getBulkUpgradeDetails("teller", t.id, window.currentUpgradeMode, t.level, game.state.cash);
       if (details2.canAfford && details2.cost > 0) {
         const nextLvl = t.level + details2.levels;
         const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));
@@ -5156,7 +5155,7 @@
                     </button>
                 `;
         } else if (level < 5) {
-          const details = game.getBulkUpgradeDetails("manager", type, currentUpgradeMode, level, game.state.cash);
+          const details = game.getBulkUpgradeDetails("manager", type, window.currentUpgradeMode, level, game.state.cash);
           const costToUpgrade = details.cost;
           const canUpgrade = details.canAfford;
           const levelsToBuy = details.levels;
@@ -5210,7 +5209,7 @@
         const type = btn.getAttribute("data-mgr-type");
         const beforeCash = game.state.cash;
         const beforeLevel = game.state.managerUpgrades[type] ? game.state.managerUpgrades[type].level : 1;
-        game.upgradeManagerBulk(type, currentUpgradeMode);
+        game.upgradeManagerBulk(type, window.currentUpgradeMode);
         handlePurchaseFeedback(btn, e, beforeCash, beforeLevel, "upgrade-manager", type);
         updateButtonAffordability2();
       });
@@ -6097,7 +6096,7 @@
         if (type === "teller") {
           const t = game.state.tellers[id];
           if (t.unlocked) {
-            const details = game.getBulkUpgradeDetails("teller", id, currentUpgradeMode, t.level, game.state.cash);
+            const details = game.getBulkUpgradeDetails("teller", id, window.currentUpgradeMode, t.level, game.state.cash);
             btn.classList.toggle("disabled", !details.canAfford);
             btn.disabled = !details.canAfford;
             if (btn.classList.contains("upg-v2-buy-btn")) {
@@ -6141,7 +6140,7 @@
         } else if (type === "guard") {
           const g = game.state.guards[id];
           if (g.unlocked) {
-            const details = game.getBulkUpgradeDetails("guard", id, currentUpgradeMode, g.level, game.state.cash);
+            const details = game.getBulkUpgradeDetails("guard", id, window.currentUpgradeMode, g.level, game.state.cash);
             btn.classList.toggle("disabled", !details.canAfford);
             btn.disabled = !details.canAfford;
             if (btn.classList.contains("upg-v2-buy-btn")) {
@@ -6183,7 +6182,7 @@
             btn.disabled = !canBuy;
           }
         } else if (type === "vault" || btn.id === "upgrade-vault-btn") {
-          const details = game.getBulkUpgradeDetails("vault", null, currentUpgradeMode, game.state.vault.level, game.state.cash);
+          const details = game.getBulkUpgradeDetails("vault", null, window.currentUpgradeMode, game.state.vault.level, game.state.cash);
           btn.classList.toggle("disabled", !details.canAfford);
           btn.disabled = !details.canAfford;
           if (btn.classList.contains("upg-v2-buy-btn")) {
@@ -6211,7 +6210,7 @@
             }
           }
         } else if (btn.id === "upgrade-queue-btn") {
-          const details = game.getBulkUpgradeDetails("queue", null, currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
+          const details = game.getBulkUpgradeDetails("queue", null, window.currentUpgradeMode, game.state.queueUpgradeLevel || 1, game.state.cash);
           btn.classList.toggle("disabled", !details.canAfford);
           btn.disabled = !details.canAfford;
           if (btn.classList.contains("upg-v2-buy-btn")) {
@@ -6264,7 +6263,7 @@
               return;
             }
             const isHired = game.state.managers[type];
-            const details = game.getBulkUpgradeDetails("manager", type, currentUpgradeMode, mgr.level, game.state.cash);
+            const details = game.getBulkUpgradeDetails("manager", type, window.currentUpgradeMode, mgr.level, game.state.cash);
             btn.classList.toggle("disabled", !details.canAfford);
             btn.disabled = !details.canAfford;
             const newText = `${translations[lang].upgradeLabel}${details.levels > 1 ? ` <span class="upgrade-amount-text">+${details.levels}</span>` : ""}<br>${formatMoney(details.cost)}`;

@@ -1,4 +1,4 @@
-import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache, currentUpgradeMode } from './tab-shared.js';
+import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache,  } from './tab-shared.js';
 
 // Dynamic builder for Upgrades Tab
 export function renderUpgradesTab() {
@@ -16,7 +16,7 @@ export function renderUpgradesTab() {
     container.appendChild(tellersGrid);
 
     game.state.tellers.forEach(t => {
-        const card = buildEntityCard('teller', t, lang, tObj, currentUpgradeMode);
+        const card = buildEntityCard('teller', t, lang, tObj, window.currentUpgradeMode);
         tellersGrid.appendChild(card);
     });
 
@@ -29,7 +29,7 @@ export function renderUpgradesTab() {
     container.appendChild(guardsGrid);
 
     game.state.guards.forEach(g => {
-        const card = buildEntityCard('guard', g, lang, tObj, currentUpgradeMode);
+        const card = buildEntityCard('guard', g, lang, tObj, window.currentUpgradeMode);
         guardsGrid.appendChild(card);
     });
 
@@ -43,7 +43,7 @@ export function renderUpgradesTab() {
 
     // Vault upgrade card
     const vault = game.state.vault;
-    const details = game.getBulkUpgradeDetails('vault', null, currentUpgradeMode, vault.level, game.state.cash);
+    const details = game.getBulkUpgradeDetails('vault', null, window.currentUpgradeMode, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
     const vCost = details.cost;
     const vCap = game.getVaultCapacity(vault.level);
@@ -99,7 +99,7 @@ export function renderUpgradesTab() {
 
     // Lobby Queue Capacity upgrade card
     const queueLvl = game.state.queueUpgradeLevel || 1;
-    const qDetails = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, queueLvl, game.state.cash);
+    const qDetails = game.getBulkUpgradeDetails('queue', null, window.currentUpgradeMode, queueLvl, game.state.cash);
     const qLevelsToBuy = qDetails.levels;
     const qCost = qDetails.cost;
     const qCap = game.getBaseQueueCapacity(queueLvl);
@@ -183,7 +183,7 @@ export function renderUpgradesTab() {
     // Check tellers for best EPS/Cost ratio
     game.state.tellers.forEach(t => {
         if (!t.unlocked) return;
-        const details = game.getBulkUpgradeDetails('teller', t.id, currentUpgradeMode, t.level, game.state.cash);
+        const details = game.getBulkUpgradeDetails('teller', t.id, window.currentUpgradeMode, t.level, game.state.cash);
         if (details.canAfford && details.cost > 0) {
             const nextLvl = t.level + details.levels;
             const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));
