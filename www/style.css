@@ -6123,8 +6123,8 @@ header, .control-panel, .bank-floor {
    ========================================================= */
 .gold-card-right {
   flex-shrink: 0;
-  width: 135px;
-  height: 135px;
+  width: 160px;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6156,8 +6156,8 @@ header, .control-panel, .bank-floor {
   }
 }
 .gold-big-illustration {
-  width: 85%;
-  height: 85%;
+  width: 95%;
+  height: 95%;
   object-fit: contain;
   z-index: 1;
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.9));
