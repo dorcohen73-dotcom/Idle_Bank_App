@@ -1003,13 +1003,12 @@ class IdleBankGame {
             
             const baseSpawnRate = 1 / spawnInterval;
             // Cap scales with current teller throughput (not a fixed number) so the
-            // campaign keeps mattering as tellers get upgraded in later stages, but the
-            // multiplier itself (2.5x) is well above the old 1.3x, which capped the
-            // max achievable boost so tightly the slider barely did anything. An
-            // absolute ceiling (4x) keeps the ratio from ballooning at high teller/
-            // customer-manager levels, where the two scale at different rates.
-            const maxSpawnRate = Math.max(2.5, totalServiceRate * 2.5);
-            const maxBoostFactor = Math.min(4, maxSpawnRate / baseSpawnRate);
+            // campaign keeps mattering as tellers get upgraded in later stages.
+            // We removed the absolute ceiling (Math.min(4)) so that setting the campaign 
+            // to maximum will ALWAYS guarantee that customers spawn faster than tellers 
+            // can serve them, effectively filling the queue (as the user expects).
+            const maxSpawnRate = Math.max(2.5, totalServiceRate * 1.5);
+            const maxBoostFactor = maxSpawnRate / baseSpawnRate;
             
             let boostFactor = 1 + normalizedBudget * (maxBoostFactor - 1);
             if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades.marketing) {
