@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
 
@@ -63,10 +63,9 @@
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- font-display:optional (not swap) — a native app shouldn't have its layout
-         reflow later because a webfont swapped in after the fact; if Heebo isn't
-         ready basically instantly it just stays on the fallback for this load. -->
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=optional" rel="stylesheet">
+    <!-- Google Fonts - Heebo -->
+    <!-- Swap ensures that if the user's connection is slow, they still see Arial, and it swaps to Heebo when loaded -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- Preload critical assets -->
     <link rel="preload" href="images/icon.png" as="image">
     <link rel="preload" href="images/nav_bank.png" as="image">
@@ -496,6 +495,7 @@
                     שמורות.</span></p>
             <div class="footer-links">
                 <a href="privacy.html" class="footer-link" id="footer-privacy-link" target="_blank" rel="noopener">מדיניות פרטיות</a> |
+                <a href="terms.html" class="footer-link" id="footer-terms-link" target="_blank" rel="noopener">תנאי שימוש</a> |
                 <span class="footer-version">v1.0.135</span>
             </div>
         </footer>
@@ -593,6 +593,8 @@
                 מסכם</button>
             <div class="settings-privacy-row">
                 <a href="privacy.html" target="_blank" id="settings-privacy-link" class="settings-privacy-link">🔒 מדיניות פרטיות</a>
+                <span aria-hidden="true"> · </span>
+                <a href="terms.html" target="_blank" id="settings-terms-link" class="settings-privacy-link">📜 תנאי שימוש</a>
             </div>
             <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
         </div>
@@ -797,14 +799,14 @@
         </div>
     </div>
 
-    <script src="config.js?v=20260716_3" defer></script>
-    <script src="locales.js?v=20260716_3" defer></script>
-    <script src="economy-manager.js?v=20260716_3" defer></script>
-    <script src="save-manager.js?v=20260716_3" defer></script>
-    <script src="mission-controller.js?v=20260716_3" defer></script>
-    <script src="achievement-controller.js?v=20260716_3" defer></script>
-    <script src="game.js?v=20260716_3" defer></script>
-    <script src="app.bundle.js?v=20260716_3" defer></script>
+    <script src="config.js?v=20260717_1" defer></script>
+    <script src="locales.js?v=20260717_1" defer></script>
+    <script src="economy-manager.js?v=20260717_1" defer></script>
+    <script src="save-manager.js?v=20260717_1" defer></script>
+    <script src="mission-controller.js?v=20260717_1" defer></script>
+    <script src="achievement-controller.js?v=20260717_1" defer></script>
+    <script src="game.js?v=20260717_1" defer></script>
+    <script src="app.bundle.js?v=20260717_1" defer></script>
     
 </body>
 

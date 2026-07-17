@@ -136,6 +136,8 @@ export function applyLanguage(lang) {
     if (gdprPrivacyLinkEl) gdprPrivacyLinkEl.innerText = tObj.privacyPolicyLink || '🔒 Privacy Policy';
     const settingsPrivacyLink = document.getElementById('settings-privacy-link');
     if (settingsPrivacyLink) settingsPrivacyLink.innerText = tObj.privacyPolicyLink || '🔒 Privacy Policy';
+    const settingsTermsLink = document.getElementById('settings-terms-link');
+    if (settingsTermsLink) settingsTermsLink.innerText = tObj.termsOfServiceLink || '📜 Terms of Service';
 
     const elLangOptions = document.querySelectorAll('.lang-option-card');
     elLangOptions.forEach(opt => {
@@ -197,6 +199,7 @@ export function applyLanguage(lang) {
     if (DOM_CACHE.doubleIncomeLabel) DOM_CACHE.doubleIncomeLabel.innerText = tObj.doubleIncomeLabel || 'Double Income';
     if (DOM_CACHE.analyticsFromSettingsBtn) DOM_CACHE.analyticsFromSettingsBtn.innerText = tObj.analyticsShortcutBtn || '📊 Analytics Summary';
     if (DOM_CACHE.footerPrivacyLink) DOM_CACHE.footerPrivacyLink.innerText = tObj.footerPrivacyLink || 'Privacy Policy';
+    if (DOM_CACHE.footerTermsLink) DOM_CACHE.footerTermsLink.innerText = tObj.footerTermsLink || 'Terms of Service';
     if (DOM_CACHE.controlPanelSection) DOM_CACHE.controlPanelSection.setAttribute('aria-label', tObj.controlPanelLabel || 'Control Panel & Upgrades');
     if (DOM_CACHE.controlPanelSrHeading) DOM_CACHE.controlPanelSrHeading.innerText = tObj.controlPanelLabel || 'Control Panel & Upgrades';
     if (DOM_CACHE.tabsNav) DOM_CACHE.tabsNav.setAttribute('aria-label', tObj.tabsNavLabel || 'Internal navigation menu');

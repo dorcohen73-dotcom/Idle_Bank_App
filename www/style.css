@@ -9223,7 +9223,7 @@ header {
   letter-spacing: 6px;
   margin-bottom: 5px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-  font-family: "Heebo", sans-serif;
+  font-family: "Heebo", Arial, sans-serif;
   animation: textPulse 3s ease-in-out infinite alternate;
 }
 
@@ -9265,7 +9265,7 @@ header {
 
 .splash-subtitle-en {
   color: #ffd700;
-  font-family: "Heebo", sans-serif;
+  font-family: "Heebo", Arial, sans-serif;
   font-size: 0.9rem;
   letter-spacing: 3px;
   font-weight: 500;
@@ -9345,7 +9345,7 @@ header {
   top: 50%;
   transform: translateY(-50%);
   color: #fff;
-  font-family: "Heebo", sans-serif;
+  font-family: "Heebo", Arial, sans-serif;
   font-weight: 800;
   font-size: 0.95rem;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
@@ -9354,7 +9354,7 @@ header {
 
 .splash-status-text {
   color: #a0aec0;
-  font-family: "Heebo", sans-serif;
+  font-family: "Heebo", Arial, sans-serif;
   font-size: 0.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -11526,7 +11526,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   text-align: center;
   position: relative;
   overflow: hidden;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
   max-width: 400px;
   margin: 0 auto;
 }
@@ -11569,7 +11569,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   margin: 0 0 10px 0 !important;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
   direction: rtl;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
   letter-spacing: -0.5px;
 }
 
@@ -11581,7 +11581,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   line-height: 1.4 !important;
   direction: rtl;
   padding: 0 20px;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
 }
 
 .offline-premium-divider {
@@ -11618,7 +11618,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   font-weight: 900 !important;
   text-shadow: 0 0 15px rgba(74, 222, 128, 0.5) !important;
   letter-spacing: 0px;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
 }
 
 .offline-premium-btn-ad {
@@ -11637,7 +11637,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   align-items: center !important;
   gap: 12px !important;
   width: 100% !important;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
   direction: rtl;
 }
@@ -11658,7 +11658,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   transition: all 0.3s ease !important;
   width: 100% !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
-  font-family: "Heebo", sans-serif !important;
+  font-family: "Heebo", Arial, sans-serif !important;
 }
 
 .offline-premium-btn-claim:hover {
@@ -12686,7 +12686,7 @@ button.buy-btn.mgr-buy-btn.disabled {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: "Assistant", "Heebo", sans-serif;
+  font-family: "Assistant", "Heebo", Arial, sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -4px 6px rgba(0, 0, 0, 0.3);

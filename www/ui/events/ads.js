@@ -13,14 +13,32 @@ const TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
 
 export var AdService = {
     _isShowing: false,
+    // Two independent cooldown pools so a big reward (prestige, weekly, offline-double,
+    // the boost offer) doesn't get shadowed by a small one (contextual banner, VIP visit,
+    // fortune wheel) sharing the same timer, or vice versa.
     lastWatchedAt: 0,
+    lastWatchedAtShort: 0,
     AD_OFFER_COOLDOWN_MS: 7 * 60 * 1000,
+    AD_OFFER_COOLDOWN_SHORT_MS: 2.5 * 60 * 1000,
     adMobAvailable: false,
     _currentCallback: null,
-    
-    isInCooldown: function() {
+    _currentTier: 'big',
+
+    isInCooldown: function(tier) {
+        if (tier === 'short') {
+            return AdService.lastWatchedAtShort > 0 &&
+                (Date.now() - AdService.lastWatchedAtShort) < AdService.AD_OFFER_COOLDOWN_SHORT_MS;
+        }
         return AdService.lastWatchedAt > 0 &&
             (Date.now() - AdService.lastWatchedAt) < AdService.AD_OFFER_COOLDOWN_MS;
+    },
+
+    _markWatched: function() {
+        if (AdService._currentTier === 'short') {
+            AdService.lastWatchedAtShort = Date.now();
+        } else {
+            AdService.lastWatchedAt = Date.now();
+        }
     },
     
     initAdMob: async function() {
@@ -37,7 +55,7 @@ export var AdService = {
                         AdService._currentCallback();
                         AdService._currentCallback = null;
                     }
-                    AdService.lastWatchedAt = Date.now();
+                    AdService._markWatched();
                     resetBoostOfferTimer();
                 });
                 
@@ -66,9 +84,10 @@ export var AdService = {
         }
     },
 
-    show: async function(callback) {
+    show: async function(callback, tier) {
         if (AdService._isShowing) return;
         AdService._isShowing = true;
+        AdService._currentTier = tier === 'short' ? 'short' : 'big';
 
         if (AdService.adMobAvailable) {
             try {
@@ -104,7 +123,7 @@ export var AdService = {
             AdService._isShowing = false;
             removeOverlay();
             if (grantReward) {
-                AdService.lastWatchedAt = Date.now();
+                AdService._markWatched();
                 resetBoostOfferTimer();
                 if (callback) callback();
             }
@@ -161,8 +180,8 @@ export var AdService = {
 // Initialize AdMob asynchronously
 setTimeout(() => AdService.initAdMob(), 1000);
 
-export function playAd(callback) {
-    AdService.show(callback);
+export function playAd(callback, tier) {
+    AdService.show(callback, tier);
 }
 
 export function formatTime(sec) {
@@ -221,7 +240,7 @@ export function initSound() {
 }
 
 export function showContextualAdBanner() {
-    if (AdService.isInCooldown()) return;
+    if (AdService.isInCooldown('short')) return;
     if (game.state.boost2xTimeLeft > 0) return;
     if (document.querySelector('.modal-overlay.active')) return;
     if (contextualBannerShown) return;
@@ -266,7 +285,7 @@ export function showContextualAdBanner() {
             game.addBoost2x(2);
             draw();
             spawnFloating(tObj.boostActivatedMsg || '⚡ Boost x2 activated!', window.innerWidth / 2, window.innerHeight / 2, 'gold');
-        });
+        }, 'short');
     });
 
     document.getElementById('ctx-offer-no').addEventListener('click', () => {

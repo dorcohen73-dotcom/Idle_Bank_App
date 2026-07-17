@@ -65,6 +65,7 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         doubleIncomeLabel: null,
         analyticsFromSettingsBtn: null,
         footerPrivacyLink: null,
+        footerTermsLink: null,
         controlPanelSection: null,
         controlPanelSrHeading: null,
         tabsNav: null,
@@ -155,6 +156,7 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         window.DOM_CACHE.doubleIncomeLabel = document.getElementById('double-income-label');
         window.DOM_CACHE.analyticsFromSettingsBtn = document.getElementById('analytics-from-settings-btn');
         window.DOM_CACHE.footerPrivacyLink = document.getElementById('footer-privacy-link');
+        window.DOM_CACHE.footerTermsLink = document.getElementById('footer-terms-link');
         window.DOM_CACHE.controlPanelSection = document.getElementById('control-panel-section');
         window.DOM_CACHE.controlPanelSrHeading = document.getElementById('control-panel-sr-heading');
         window.DOM_CACHE.tabsNav = document.getElementById('tabs-nav');

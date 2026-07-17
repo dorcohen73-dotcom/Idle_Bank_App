@@ -2703,6 +2703,8 @@
     if (gdprPrivacyLinkEl) gdprPrivacyLinkEl.innerText = tObj.privacyPolicyLink || "\u{1F512} Privacy Policy";
     const settingsPrivacyLink = document.getElementById("settings-privacy-link");
     if (settingsPrivacyLink) settingsPrivacyLink.innerText = tObj.privacyPolicyLink || "\u{1F512} Privacy Policy";
+    const settingsTermsLink = document.getElementById("settings-terms-link");
+    if (settingsTermsLink) settingsTermsLink.innerText = tObj.termsOfServiceLink || "\u{1F4DC} Terms of Service";
     const elLangOptions = document.querySelectorAll(".lang-option-card");
     elLangOptions.forEach((opt) => {
       if (opt.getAttribute("data-lang") === lang) {
@@ -2760,6 +2762,7 @@
     if (DOM_CACHE.doubleIncomeLabel) DOM_CACHE.doubleIncomeLabel.innerText = tObj.doubleIncomeLabel || "Double Income";
     if (DOM_CACHE.analyticsFromSettingsBtn) DOM_CACHE.analyticsFromSettingsBtn.innerText = tObj.analyticsShortcutBtn || "\u{1F4CA} Analytics Summary";
     if (DOM_CACHE.footerPrivacyLink) DOM_CACHE.footerPrivacyLink.innerText = tObj.footerPrivacyLink || "Privacy Policy";
+    if (DOM_CACHE.footerTermsLink) DOM_CACHE.footerTermsLink.innerText = tObj.footerTermsLink || "Terms of Service";
     if (DOM_CACHE.controlPanelSection) DOM_CACHE.controlPanelSection.setAttribute("aria-label", tObj.controlPanelLabel || "Control Panel & Upgrades");
     if (DOM_CACHE.controlPanelSrHeading) DOM_CACHE.controlPanelSrHeading.innerText = tObj.controlPanelLabel || "Control Panel & Upgrades";
     if (DOM_CACHE.tabsNav) DOM_CACHE.tabsNav.setAttribute("aria-label", tObj.tabsNavLabel || "Internal navigation menu");
@@ -5603,6 +5606,7 @@ ${stack}` : String(message);
       doubleIncomeLabel: null,
       analyticsFromSettingsBtn: null,
       footerPrivacyLink: null,
+      footerTermsLink: null,
       controlPanelSection: null,
       controlPanelSrHeading: null,
       tabsNav: null,
@@ -5692,6 +5696,7 @@ ${stack}` : String(message);
         window.DOM_CACHE.doubleIncomeLabel = document.getElementById("double-income-label");
         window.DOM_CACHE.analyticsFromSettingsBtn = document.getElementById("analytics-from-settings-btn");
         window.DOM_CACHE.footerPrivacyLink = document.getElementById("footer-privacy-link");
+        window.DOM_CACHE.footerTermsLink = document.getElementById("footer-terms-link");
         window.DOM_CACHE.controlPanelSection = document.getElementById("control-panel-section");
         window.DOM_CACHE.controlPanelSrHeading = document.getElementById("control-panel-sr-heading");
         window.DOM_CACHE.tabsNav = document.getElementById("tabs-nav");

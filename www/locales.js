@@ -13,6 +13,7 @@ const translations = {
         doubleIncomeLabel: "הכפלת הכנסה",
         analyticsShortcutBtn: "📊 נתונים מסכם",
         footerPrivacyLink: "מדיניות פרטיות",
+        footerTermsLink: "תנאי שימוש",
         controlPanelLabel: "לוח בקרה ושדרוגים",
         tabsNavLabel: "תפריט ניווט פנימי",
         bottomNavLabel: "ניווט תחתון",
@@ -65,6 +66,7 @@ const translations = {
         gdprText: "הנתונים שלך נשמרים על המכשיר בלבד — אין שרת, אין מעקב.",
         gdprAcceptBtn: "הבנתי ✓",
         privacyPolicyLink: "🔒 מדיניות פרטיות",
+        termsOfServiceLink: "📜 תנאי שימוש",
         confirmPrestige: (branchName, shares) => `האם אתה בטוח שברצונך למכור את הסניף ולפתוח סניף חדש ב-${branchName}? תקבל +${shares} מניות זהב!`,
         insufficientFunds: "מחסור במזומן",
         maxLevel: "רמה מקסימלית",
@@ -166,11 +168,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} מניות זהב`,
             prestigeMinLabel: (val) => `מינימום כסף נדרש למעבר בסניף זה: ${val}`,
             names: [
-                "סיטיבנק (סניף מקומי)",
-                "אייץ'-אס-בי-סי (סניף פיננסי)",
-                "דויטשה בנק (פרנקפורט)",
-                "ג'יי פי מורגן (וול סטריט)",
-                "גולדמן זקס (אימפריית השקעות)"
+                "קאש-אפ (CashUp)",
+                "נאו-בנק (NeoBank)",
+                "קריפטו איקס (Crypto X)",
+                "מון-טרייד (MoonTrade)",
+                "הייפ קפיטל (Hype Capital)"
             ],
             descs: [
                 "הבנק המקומי הראשון שלך. כאן הכל מתחיל.",
@@ -299,6 +301,7 @@ const translations = {
         doubleIncomeLabel: "Double Income",
         analyticsShortcutBtn: "📊 Analytics Summary",
         footerPrivacyLink: "Privacy Policy",
+        footerTermsLink: "Terms of Service",
         controlPanelLabel: "Control Panel & Upgrades",
         tabsNavLabel: "Internal navigation menu",
         bottomNavLabel: "Bottom navigation",
@@ -351,6 +354,7 @@ const translations = {
         gdprText: "Your data is stored on your device only — no server, no tracking.",
         gdprAcceptBtn: "Got it ✓",
         privacyPolicyLink: "🔒 Privacy Policy",
+        termsOfServiceLink: "📜 Terms of Service",
         confirmPrestige: (branchName, shares) => `Are you sure you want to sell your branch and start a new one in ${branchName}? You will get +${shares} Golden Shares!`,
         insufficientFunds: "Need Cash",
         maxLevel: "Max Level",
@@ -452,11 +456,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} Shares`,
             prestigeMinLabel: (val) => `Minimum cash required for prestige in this branch: ${val}`,
             names: [
-                "Citibank (Local Branch)",
-                "HSBC (Financial Branch)",
-                "Deutsche Bank (Frankfurt)",
-                "JPMorgan Chase (Wall Street)",
-                "Goldman Sachs (Investment Empire)"
+                "CashUp (Local Branch)",
+                "NeoBank (Financial Branch)",
+                "Crypto X (Digital Exchange)",
+                "MoonTrade (Trading Hub)",
+                "Hype Capital (Investment Empire)"
             ],
             descs: [
                 "Your first local bank branch. This is where it all begins.",
@@ -585,6 +589,7 @@ const translations = {
         doubleIncomeLabel: "Duplicar Ingresos",
         analyticsShortcutBtn: "📊 Resumen Analítico",
         footerPrivacyLink: "Política de Privacidad",
+        footerTermsLink: "Términos de Servicio",
         controlPanelLabel: "Panel de Control y Mejoras",
         tabsNavLabel: "Menú de navegación interno",
         bottomNavLabel: "Navegación inferior",
@@ -637,6 +642,7 @@ const translations = {
         gdprText: "Tus datos se almacenan solo en tu dispositivo — sin servidor, sin rastreo.",
         gdprAcceptBtn: "Entendido ✓",
         privacyPolicyLink: "🔒 Política de Privacidad",
+        termsOfServiceLink: "📜 Términos de Servicio",
         confirmPrestige: (branchName, shares) => `¿Estás seguro de que quieres vender tu sucursal y abrir una nueva en ${branchName}? ¡Recibirás +${shares} Acciones de Oro!`,
         insufficientFunds: "Falta Efectivo",
         maxLevel: "Nivel Máximo",
@@ -738,11 +744,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} Acciones`,
             prestigeMinLabel: (val) => `Mínimo de efectivo requerido para el prestigio en esta sucursal: ${val}`,
             names: [
-                "Citibank (Sucursal Local)",
-                "HSBC (Sucursal Financiera)",
-                "Deutsche Bank (Fráncfort)",
-                "JPMorgan Chase (Wall Street)",
-                "Goldman Sachs (Imperio de Inversión)"
+                "CashUp (Sucursal Local)",
+                "NeoBank (Sucursal Financiera)",
+                "Crypto X (Intercambio Digital)",
+                "MoonTrade (Centro de Trading)",
+                "Hype Capital (Imperio de Inversión)"
             ],
             descs: [
                 "Tu primera sucursal bancaria local. Aquí es donde comienza todo.",
@@ -871,6 +877,7 @@ const translations = {
         doubleIncomeLabel: "Удвоение дохода",
         analyticsShortcutBtn: "📊 Сводка аналитики",
         footerPrivacyLink: "Политика конфиденциальности",
+        footerTermsLink: "Условия использования",
         controlPanelLabel: "Панель управления и улучшений",
         tabsNavLabel: "Внутреннее меню навигации",
         bottomNavLabel: "Нижняя навигация",
@@ -923,6 +930,7 @@ const translations = {
         gdprText: "Ваши данные хранятся только на вашем устройстве — без сервера, без слежки.",
         gdprAcceptBtn: "Понятно ✓",
         privacyPolicyLink: "🔒 Конфиденциальность",
+        termsOfServiceLink: "📜 Условия использования",
         confirmPrestige: (branchName, shares) => `Вы уверены, что хотите продать филиал и открыть новый в ${branchName}? Вы получите +${shares} Золотых акций!`,
         insufficientFunds: "Нужны деньги",
         maxLevel: "Макс. Уровень",
@@ -1024,18 +1032,18 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} шт.`,
             prestigeMinLabel: (val) => `Минимум наличных для престижа в этом филиале: ${val}`,
             names: [
-                "Ситибанк (Местный филиал)",
-                "HSBC (Финансовый филиал)",
-                "Дойче Банк (Франкфурт)",
-                "JPMorgan Chase (Уолл-стрит)",
-                "Goldman Sachs (Инвестиционная империя)"
+                "CashUp (Местный филиал)",
+                "NeoBank (Финансовый филиал)",
+                "Crypto X (Цифровая биржа)",
+                "MoonTrade (Торговый центр)",
+                "Hype Capital (Инвестиционная империя)"
             ],
             descs: [
-                "Ваш первый местный филиал Ситибанка. Здесь всё начинается.",
-                "Глобальный финансовый гигант HSBC. Клиенты здесь богаче и транзакции проходят быстрее.",
+                "Ваш первый местный филиал. Здесь всё начинается.",
+                "Глобальный финансовый гигант. Клиенты здесь богаче и транзакции проходят быстрее.",
                 "Сердце европейских финансов. Сделки с недвижимостью и международный корпоративный банкинг.",
-                "Сердце бизнеса Уолл-стрит от JPMorgan Chase. Огромные кредиты и многомиллионные сделки.",
-                "Легендарная инвестиционная империя Goldman Sachs. Колоссальная прибыль, заполняющая золотые сейфы."
+                "Сердце делового Уолл-стрит. Огромные кредиты и многомиллионные сделки.",
+                "Легендарная инвестиционная империя. Колоссальная прибыль, заполняющая золотые сейфы."
             ],
             active: "Активный филиал 🏛",
             travel: "Вернуться в филиал",

@@ -52,7 +52,7 @@ let vipBannerCountdownInterval = null;
                     <div class="vip-progress-bar" id="vip-progress-bar"></div>
                 </div>
                 <div class="vip-actions">
-                    ${!AdService.isInCooldown() ? `
+                    ${!AdService.isInCooldown('short') ? `
                     <button class="vip-btn vip-serve-premium" id="vip-serve-ad"><span class="btn-icon">🎬</span> ${premiumText}</button>
                     ` : ''}
                     <button class="vip-btn vip-serve-cash" id="vip-serve-cash">${serveText}</button>
@@ -125,7 +125,7 @@ let vipBannerCountdownInterval = null;
                 }
                 game.saveGame();
                 draw();
-            });
+            }, 'short');
         } else if (rewardType === 'cash') {
             playAd(() => {
                 let hourlyProfit = typeof game.getEarningsPerSecond === 'function' ? game.getEarningsPerSecond() * 3600 : 0;
@@ -140,7 +140,7 @@ let vipBannerCountdownInterval = null;
                 }
                 game.saveGame();
                 draw();
-            });
+            }, 'short');
         } else {
             game.saveGame();
             draw();

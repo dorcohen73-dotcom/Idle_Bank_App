@@ -23,11 +23,23 @@ const GAME_CONFIG = {
     GUARD_SKILL_SPEED_DECAY: 0.04, // Alon's level upgrades: -4% per level
     GUARD_SPEED_GOLD_UPGRADE_FACTOR: 0.10, // Guard speed gold upgrade: -10% per level
 
-    GUARD_BASE_CAPACITY: 250,
+    // Base tuned so a level-1 guard's EFFECTIVE capacity (this base x GUARD_AUTO_CAPACITY_FACTOR
+    // 1.5 x the operations manager's guardCapBoost, both of which apply out of the box since
+    // operations starts hired by default — see game.js initial state) lands at ~208, just above
+    // a single teller's capacity through level 5 (204) and clearly behind it by level 6-7
+    // (220-238). That's the realistic early-game scenario: one teller, guard never touched yet.
+    // With the old base of 250 (effective 450) the crossover didn't land until teller level ~16,
+    // by which point a player following the game's own "best value" recommendation had long since
+    // stopped noticing the guard existed. Verified via a deterministic sim over economy-manager.js's
+    // real formulas (levels 1-40) — see commit message for the crossover table.
+    GUARD_BASE_CAPACITY: 115,
     // Deliberately grows SLOWER than TELLER_CAPACITY_GROWTH (1.08). A static guard's
     // per-trip capacity is meant to fall behind rising teller cash-holding capacity as the
     // player levels tellers (which is cheap), so cash starts backing up at the tellers and
-    // upgrading guards becomes a real, felt need — not a purchase with no payoff.
+    // upgrading guards becomes a real, felt need — not a purchase with no payoff. This gap
+    // keeps widening at higher levels too (not just an early one-off): by teller level 30 a
+    // single guard leveled in lockstep covers barely 1/6th of one branch's combined teller
+    // capacity, so the pressure recurs through the midgame instead of being front-loaded once.
     GUARD_CAPACITY_GROWTH: 1.05,
     GUARD_AUTO_CAPACITY_FACTOR: 1.5, // Alon manager auto capacity multiplier (+50%)
 
@@ -69,11 +81,11 @@ const GAME_CONFIG = {
 
     // Branches and prestige constants
     BRANCHES: [
-        { name: "סיטיבנק (סניף מקומי)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
-        { name: "אייץ'-אס-בי-סי (סניף פיננסי)", baseMultiplier: 5, minCashToPrestige: 2500000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
-        { id: 'deutsche', name: "דויטשה בנק (פרנקפורט)", baseMultiplier: 15, minCashToPrestige: 500000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
-        { name: "ג'יי פי מורגן (וול סטריט)", baseMultiplier: 30, minCashToPrestige: 250000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
-        { name: "גולדמן זקס (אימפריית השקעות)", baseMultiplier: 200, minCashToPrestige: 100000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
+        { name: "קאש-אפ (CashUp)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
+        { name: "נאו-בנק (NeoBank)", baseMultiplier: 5, minCashToPrestige: 2500000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
+        { name: "קריפטו איקס (Crypto X)", baseMultiplier: 15, minCashToPrestige: 500000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
+        { name: "מון-טרייד (MoonTrade)", baseMultiplier: 30, minCashToPrestige: 250000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
+        { name: "הייפ קפיטל (Hype Capital)", baseMultiplier: 200, minCashToPrestige: 100000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
     ],
 
     TELLER_UNLOCK_COSTS: [0, 800, 20000, 600000, 18000000, 500000000, 12500000000, 300000000000],
