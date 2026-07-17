@@ -12158,6 +12158,31 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     filter: drop-shadow(0 0 20px rgba(223, 171, 41, 0.5));
   }
 }
+@media (max-width: 480px) {
+  .modal-title#event-title {
+    font-size: 1.25rem;
+  }
+  .event-cash-display-box {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    margin: 0.5rem auto;
+  }
+  .event-cash-display-box .event-cash-val {
+    font-size: 1.25rem;
+  }
+  .event-option-btn {
+    padding: 0.8rem 1rem;
+  }
+  .event-option-title {
+    font-size: 1.05rem;
+  }
+  .event-option-desc {
+    font-size: 0.85rem;
+  }
+  .modal-icon#event-icon {
+    font-size: 3rem;
+  }
+}
 /* 
  * Premium Departments Tab Styles 
  * Ultra-premium design exactly matching the 3D depth and glassmorphism of the reference
