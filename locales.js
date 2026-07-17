@@ -166,11 +166,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} מניות זהב`,
             prestigeMinLabel: (val) => `מינימום כסף נדרש למעבר בסניף זה: ${val}`,
             names: [
-                "סיטיבנק (סניף מקומי)",
-                "אייץ'-אס-בי-סי (סניף פיננסי)",
-                "דויטשה בנק (פרנקפורט)",
-                "ג'יי פי מורגן (וול סטריט)",
-                "גולדמן זקס (אימפריית השקעות)"
+                "קאש-אפ (CashUp)",
+                "נאו-בנק (NeoBank)",
+                "קריפטו איקס (Crypto X)",
+                "מון-טרייד (MoonTrade)",
+                "הייפ קפיטל (Hype Capital)"
             ],
             descs: [
                 "הבנק המקומי הראשון שלך. כאן הכל מתחיל.",
@@ -452,11 +452,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} Shares`,
             prestigeMinLabel: (val) => `Minimum cash required for prestige in this branch: ${val}`,
             names: [
-                "Citibank (Local Branch)",
-                "HSBC (Financial Branch)",
-                "Deutsche Bank (Frankfurt)",
-                "JPMorgan Chase (Wall Street)",
-                "Goldman Sachs (Investment Empire)"
+                "CashUp (Local Branch)",
+                "NeoBank (Financial Branch)",
+                "Crypto X (Digital Exchange)",
+                "MoonTrade (Trading Hub)",
+                "Hype Capital (Investment Empire)"
             ],
             descs: [
                 "Your first local bank branch. This is where it all begins.",
@@ -738,11 +738,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} Acciones`,
             prestigeMinLabel: (val) => `Mínimo de efectivo requerido para el prestigio en esta sucursal: ${val}`,
             names: [
-                "Citibank (Sucursal Local)",
-                "HSBC (Sucursal Financiera)",
-                "Deutsche Bank (Fráncfort)",
-                "JPMorgan Chase (Wall Street)",
-                "Goldman Sachs (Imperio de Inversión)"
+                "CashUp (Sucursal Local)",
+                "NeoBank (Sucursal Financiera)",
+                "Crypto X (Intercambio Digital)",
+                "MoonTrade (Centro de Trading)",
+                "Hype Capital (Imperio de Inversión)"
             ],
             descs: [
                 "Tu primera sucursal bancaria local. Aquí es donde comienza todo.",
@@ -1024,11 +1024,11 @@ const translations = {
             prestigeRewardValue: (val) => `+ ${val} шт.`,
             prestigeMinLabel: (val) => `Минимум наличных для престижа в этом филиале: ${val}`,
             names: [
-                "Ситибанк (Местный филиал)",
-                "HSBC (Финансовый филиал)",
-                "Дойче Банк (Франкфурт)",
-                "JPMorgan Chase (Уолл-стрит)",
-                "Goldman Sachs (Инвестиционная империя)"
+                "CashUp (Местный филиал)",
+                "NeoBank (Финансовый филиал)",
+                "Crypto X (Цифровая биржа)",
+                "MoonTrade (Торговый центр)",
+                "Hype Capital (Инвестиционная империя)"
             ],
             descs: [
                 "Ваш первый местный филиал Ситибанка. Здесь всё начинается.",
