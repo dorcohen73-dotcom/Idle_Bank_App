@@ -6123,8 +6123,8 @@ header, .control-panel, .bank-floor {
    ========================================================= */
 .gold-card-right {
   flex-shrink: 0;
-  width: 110px;
-  height: 110px;
+  width: 135px;
+  height: 135px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6156,8 +6156,8 @@ header, .control-panel, .bank-floor {
   }
 }
 .gold-big-illustration {
-  width: 80%;
-  height: 80%;
+  width: 85%;
+  height: 85%;
   object-fit: contain;
   z-index: 1;
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.9));
@@ -6176,7 +6176,7 @@ header, .control-panel, .bank-floor {
 }
 
 .gold-upgrade-title {
-  font-size: 1.8rem;
+  font-size: 2.1rem;
   font-weight: 900;
   background: linear-gradient(180deg, #ffffff 0%, #ffe38f 30%, #d4af37 60%, #b8860b 100%);
   -webkit-background-clip: text;
@@ -6189,7 +6189,7 @@ header, .control-panel, .bank-floor {
 }
 
 .gold-upgrade-desc {
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   color: #cbd5e1;
   line-height: 1.5;
   margin-bottom: 0.2rem;
