@@ -377,123 +377,343 @@
     box-sizing: border-box;
 }
 
-/* Grid of gold upgrade cards */
+/* =========================================================
+   PRESTIGE SHOP HEADER (NEW PREMIUM DESIGN)
+   ========================================================= */
+.prestige-shop-header {
+    position: relative;
+    margin-top: 1.5rem;
+    padding: 2rem 1rem;
+    border-top: 1px solid rgba(223, 171, 41, 0.4);
+    text-align: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at top center, rgba(30, 40, 80, 0.4) 0%, rgba(10, 15, 30, 0) 70%);
+}
+
+.prestige-shop-bg-stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 80px 70px, #d4af37, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 150px 20px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2.5px 2.5px at 250px 90px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 320px 40px, #d4af37, rgba(0,0,0,0));
+    opacity: 0.5;
+    pointer-events: none;
+    animation: twinkleBg 4s infinite alternate;
+}
+
+@keyframes twinkleBg {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.7; }
+}
+
+.prestige-title-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    position: relative;
+    z-index: 1;
+}
+
+.prestige-temple-img {
+    height: 90px;
+    object-fit: contain;
+    mix-blend-mode: screen; /* Removes black background from AI generated icons */
+    filter: drop-shadow(0 0 25px rgba(223, 171, 41, 0.9));
+    animation: floatIcon 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatIcon {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}
+
+.prestige-title-text {
+    font-size: 2.6rem;
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(180deg, #ffffff 0%, #ffe38f 30%, #d4af37 60%, #b8860b 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.9);
+    letter-spacing: 0.5px;
+    text-align: right;
+}
+
+.prestige-subtitle {
+    font-size: 1.4rem;
+    opacity: 0.85;
+    background: linear-gradient(180deg, #ffe38f 0%, #b8860b 100%);
+    -webkit-background-clip: text;
+}
+
+.prestige-shop-header .prestige-description {
+    color: #e0e5ec;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Grid of gold upgrade cards 
+   ========================================================= */
 .gold-upgrades-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.9rem;
-    margin-bottom: 1.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Premium Gold Upgrade Cards matching image design */
+/* =========================================================
+   Ultra-Premium Gold Upgrade Cards 
+   ========================================================= */
 .gold-upgrade-card {
-    background: #0b0f19 !important; /* Deep dark background */
-    border: 1px solid rgba(223, 171, 41, 0.4) !important;
+    background: 
+        url('../images/gold_swoosh.svg') right bottom / cover no-repeat,
+        linear-gradient(145deg, #070d20 0%, #030612 100%) !important;
+    background-blend-mode: color-dodge, normal;
     border-radius: 16px;
-    padding: 1.2rem;
+    padding: 1.8rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
     position: relative;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.95),
+        inset 0 0 40px rgba(10, 20, 50, 0.9);
     width: 100%;
     box-sizing: border-box;
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.5rem;
+    border: none !important;
+    z-index: 1;
+}
+
+/* Jewel Corners and Massive Gold Frame */
+.gold-upgrade-card::before {
+    content: '';
+    position: absolute;
+    top: -5px; left: -5px; right: -5px; bottom: -5px;
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 2;
+    /* This creates the thick gold border and the blue jewels in the corners */
+    background:
+        /* Top Left Jewel */
+        radial-gradient(circle at 18px 18px, #0044ff 1px, #1a237e 4px, #000 6px, transparent 7px),
+        /* Top Right Jewel */
+        radial-gradient(circle at calc(100% - 18px) 18px, #0044ff 1px, #1a237e 4px, #000 6px, transparent 7px),
+        /* Bottom Left Jewel */
+        radial-gradient(circle at 18px calc(100% - 18px), #0044ff 1px, #1a237e 4px, #000 6px, transparent 7px),
+        /* Bottom Right Jewel */
+        radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #0044ff 1px, #1a237e 4px, #000 6px, transparent 7px),
+        /* Corner Filigree Gold Swirls */
+        radial-gradient(circle at 18px 18px, #fcebb6 6px, #a67c00 12px, transparent 15px),
+        radial-gradient(circle at calc(100% - 18px) 18px, #fcebb6 6px, #a67c00 12px, transparent 15px),
+        radial-gradient(circle at 18px calc(100% - 18px), #fcebb6 6px, #a67c00 12px, transparent 15px),
+        radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #fcebb6 6px, #a67c00 12px, transparent 15px),
+        /* The main border */
+        linear-gradient(135deg, #fcebb6 0%, #a67c00 20%, #2a1f0b 50%, #a67c00 80%, #fcebb6 100%);
+    
+    /* We mask out the center so it only shows as a thick border */
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 6px; /* border thickness */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+}
+
+/* Inner golden etched line */
+.gold-upgrade-card::after {
+    content: '';
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 1.5px solid rgba(223, 171, 41, 0.5);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow: inset 0 0 20px rgba(223, 171, 41, 0.1);
 }
 
 .gold-upgrade-card:hover {
-    border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 20px rgba(223, 171, 41, 0.25);
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.02);
 }
 
-/* Right Side: Large 3D Illustration */
+/* =========================================================
+   Right Side: Large 3D Illustration 
+   ========================================================= */
 .gold-card-right {
     flex-shrink: 0;
-    width: 90px;
-    height: 90px;
+    width: 110px;
+    height: 110px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    border-radius: 12px;
+    background: 
+        linear-gradient(135deg, rgba(10,15,35,0.9), rgba(0,0,0,1)) padding-box,
+        linear-gradient(135deg, #a67c00 0%, #ffe066 50%, #4a3614 100%) border-box;
+    border: 2px solid transparent;
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.8),
+        inset 0 0 25px rgba(223, 171, 41, 0.2);
+    z-index: 1;
 }
+
+/* Subtle glow behind the image inside its frame */
 .gold-card-right::before {
     content: '';
     position: absolute;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, rgba(223, 171, 41, 0.2) 0%, rgba(0,0,0,0) 70%);
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(223, 171, 41, 0.3) 0%, rgba(0,0,0,0) 60%);
     z-index: 0;
-}
-.gold-big-illustration {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
-    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
+    animation: slowSpin 15s linear infinite;
 }
 
-/* Middle: Text and Action */
+@keyframes slowSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.gold-big-illustration {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    z-index: 1;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
+}
+
+/* =========================================================
+   Middle: Text and Action 
+   ========================================================= */
 .gold-card-middle {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.8rem;
+    z-index: 1;
 }
 
 .gold-upgrade-title {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    color: #ffffff !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    background: linear-gradient(180deg, #ffffff 0%, #ffe38f 30%, #d4af37 60%, #b8860b 100%);
+    -webkit-background-clip: text;
+    color: transparent !important;
+    text-shadow: 0 4px 6px rgba(0,0,0,0.8);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.gold-title-icon {
-    font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
 
 .gold-upgrade-desc {
-    font-size: 0.85rem;
-    color: #a3aab5;
-    line-height: 1.4;
-    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin-bottom: 0.2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
 }
 
 .gold-upgrade-action-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.2rem;
 }
 
+/* =========================================================
+   3D Gold Bar Button 
+   ========================================================= */
+.gold-upgrade-card .buy-gold-btn {
+    position: relative;
+    background: linear-gradient(180deg, #fff2cc 0%, #e6c27a 15%, #b8860b 50%, #8a6300 85%, #4a3614 100%) !important;
+    border: 1px solid #fffde4 !important;
+    border-radius: 8px;
+    padding: 0.8rem 1.8rem !important;
+    color: #2b1f00 !important;
+    font-weight: 900 !important;
+    font-size: 1.4rem !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.7) !important;
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.9),
+        inset 0 4px 8px rgba(255,255,255,0.8),
+        inset 0 -6px 12px rgba(0,0,0,0.6),
+        inset 0 0 15px rgba(255, 232, 133, 0.6) !important;
+    transition: all 0.1s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 150px;
+}
+.gold-upgrade-card .buy-gold-btn:active {
+    transform: translateY(6px);
+    box-shadow: 
+        0 2px 4px rgba(0,0,0,0.9),
+        inset 0 2px 5px rgba(0,0,0,0.8),
+        inset 0 -2px 4px rgba(255,255,255,0.3) !important;
+}
+
+/* DISABLED BUTTON - It should look like a locked Dark Gold / Titanium Bar, NOT plain grey */
+.gold-upgrade-card .buy-gold-btn.disabled {
+    background: linear-gradient(180deg, #a3957a 0%, #7d7059 20%, #4a4130 80%, #2b251a 100%) !important;
+    border: 1px solid #c9baa1 !important;
+    color: #1c1811 !important;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.3) !important;
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.8),
+        inset 0 4px 8px rgba(255,255,255,0.4),
+        inset 0 -6px 12px rgba(0,0,0,0.7) !important;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================================
+   Metallic Level Pill 
+   ========================================================= */
 .gold-level-pill {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    background: rgba(20, 24, 36, 0.8);
-    border: 1px solid rgba(223, 171, 41, 0.3);
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    color: #ffffff;
+    background: linear-gradient(to bottom, #1e1508, #0a0702);
+    border: 1.5px solid #a67c00;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #fcebb6;
+    font-weight: 900;
+    box-shadow: 
+        inset 0 3px 6px rgba(0,0,0,0.9),
+        0 1px 2px rgba(255,255,255,0.1);
 }
 
 .gold-level-pill.max {
     border-color: #34d399;
+    color: #34d399;
+    background: linear-gradient(to bottom, #062b1a, #020c07);
 }
 
 .gold-checkmark {
     color: #34d399;
     font-weight: 900;
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
 
 /* Left Side: Icon and MAX */

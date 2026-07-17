@@ -300,10 +300,21 @@ export function renderBranchesTab() {
             </div>
         </div>
     `;
-    
+    let rawTitle = translations[lang].goldShopTitle.replace('🏛️', '').trim();
+    let parts = rawTitle.split('(');
+    let formattedTitle = parts[0].trim();
+    if (parts.length > 1) {
+        formattedTitle += `<br><span class="prestige-subtitle">(${parts[1]}</span>`;
+    }
+
     goldShopSection.innerHTML = `
-        <div class="prestige-title" style="margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.5rem;">${translations[lang].goldShopTitle}</div>
-        <p class="prestige-description" style="margin-bottom: 1rem;">${translations[lang].goldShopDesc}</p>
+        <div class="prestige-shop-header">
+            <div class="prestige-shop-bg-stars"></div>
+            <div class="prestige-title-wrapper">
+                <img src="images/golden_temple.png" class="prestige-temple-img" alt="Temple" />
+                <div class="prestige-title-text">${formattedTitle}</div>
+            </div>
+        </div>
         <div class="gold-upgrades-grid">
             ${goldCardsHtml}
         </div>
