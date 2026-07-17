@@ -86,8 +86,6 @@ html[dir="ltr"] .upg-v2-avatar-large {
 }
 
 html[dir="ltr"] .upg-v2-content-overlay {
-    padding-inline-start: 0.75rem;
-    padding-inline-end: 29%;
     text-align: left;
     background: linear-gradient(-90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.95) 60%, rgba(3, 8, 20, 0) 72%);
 }
@@ -458,8 +456,6 @@ html[dir="ltr"] .upgrade-card.premium-upg-card .recommended-badge {
     }
     
     html[dir="ltr"] .upg-v2-content-overlay {
-        padding-inline-start: 0.4rem !important;
-        padding-inline-end: 82px !important;
         background: linear-gradient(-90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.8) 75%, rgba(3, 8, 20, 0) 100%);
         align-items: flex-start;
         text-align: left;
