@@ -265,7 +265,7 @@ export function checkWeeklyReward() {
 }
 
 export function showOfflineEarningsModal() {
-    if (!window.game || !window.game.offlineEarningsReport || window.game.offlineEarningsReport <= 0) return;
+    if (!window.game || !window.game.offlineEarningsReport || isNaN(window.game.offlineEarningsReport) || window.game.offlineEarningsReport <= 0) return;
 
     const displayFn = () => {
         if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);

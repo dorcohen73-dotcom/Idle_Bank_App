@@ -5,6 +5,12 @@ let _buyBtnCache = null;
 let _lastManagersHash = null;
 let _lastBranchesHash = null;
 
+
+
+export function setCurrentUpgradeMode(mode) {
+    window.currentUpgradeMode = mode;
+}
+
 export function invalidateTabHashes() {
     _lastManagersHash = null;
     _lastBranchesHash = null;
@@ -161,7 +167,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
     const id = entity.id;
 
     if (entity.unlocked) {
-        const details = game.getBulkUpgradeDetails(type, id, currentUpgradeMode, entity.level, game.state.cash);
+        const details = game.getBulkUpgradeDetails(type, id, window.currentUpgradeMode, entity.level, game.state.cash);
         const levelsToBuy = details.levels;
         const nextLevel = entity.level + levelsToBuy;
         const cost = details.cost;
@@ -203,8 +209,11 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
             <div class="upg-v2-content-overlay">
                 <div class="upg-v2-header-row">
-                    <div class="upg-v2-badge">${type === 'teller' ? (translations[lang].teller || 'ספר') : (translations[lang].guard || 'שומר')} ${id + 1}</div>
-                    <div class="upg-v2-main-title">${translations[lang].levelAbbr || 'רמה'} ${entity.level}</div>
+                    <div class="upg-v2-badge">${type === 'teller' ? (translations[lang].tellerLabel || 'כספר') : (translations[lang].guardLabel || 'שומר')} ${id + 1}</div>
+                    <div class="upg-v2-main-title">
+                        <svg class="bank-icon-title" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-6 8 6"></path><rect x="4" y="10" width="16" height="12" rx="2"></rect><path d="M12 2v6"></path><path d="M8 2h8"></path><path d="M9 14h6"></path><path d="M9 18h6"></path></svg>
+                        ${translations[lang].levelAbbr || 'רמה'} ${entity.level}
+                    </div>
                 </div>
                 
                 <div class="upg-v2-desc-text">${desc}</div>
@@ -215,39 +224,86 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
                         </div>
                         <div class="upg-v2-stat-label">${capLabel}</div>
-                        <div class="upg-v2-stat-val">${formatMoney(capacity)} <span class="arrow" style="color: #4ade80;">➔</span></div>
+                        <div class="upg-v2-stat-val">
+                            <span class="val-current">${formatMoney(capacity)}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">➔</span>
+                            <span class="val-next">${formatMoney(nextCapacity)}</span>
+                        </div>
                     </div>
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
                         </div>
                         <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
-                        <div class="upg-v2-stat-val">$${eps.toFixed(1)}</div>
+                        <div class="upg-v2-stat-val">
+                            <span class="val-current">${formatMoney(eps)}</span>
+                        </div>
                     </div>
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
                         <div class="upg-v2-stat-label">${speedLabel}</div>
-                        <div class="upg-v2-stat-val">${speed} <span class="arrow" style="color: #4ade80;">➔</span> ${nextSpeed}</div>
+                        <div class="upg-v2-stat-val">
+                            <span class="val-current">${speed}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">➔</span>
+                            <span class="val-next">${nextSpeed}</span>
+                        </div>
                     </div>
                 </div>
                 
                 <button class="upg-v2-buy-btn buy-btn ${canBuy ? '' : 'disabled'}" data-type="${type}" data-id="${id}" ${canBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${title} — ${formatMoney(cost)}">
                     <div class="upg-v2-btn-left">
-                        <div class="upg-v2-btn-sparkles">✨</div>
-                        <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel} <span class="upg-v2-btn-amount">${levelsToBuy > 1 ? '+'+levelsToBuy : ''}</span></div>
+                        <svg class="premium-cash-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff2a8" />
+                                    <stop offset="40%" stop-color="#d4af37" />
+                                    <stop offset="80%" stop-color="#aa7c11" />
+                                    <stop offset="100%" stop-color="#664600" />
+                                </linearGradient>
+                                <linearGradient id="cashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#4ade80" />
+                                    <stop offset="100%" stop-color="#166534" />
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.8"/>
+                                </filter>
+                            </defs>
+                            <!-- Stack of Cash -->
+                            <rect x="15" y="40" width="70" height="40" rx="4" fill="url(#cashGrad)" filter="url(#glow)" transform="rotate(-10 50 50)" />
+                            <rect x="10" y="30" width="70" height="40" rx="4" fill="#22c55e" filter="url(#glow)" transform="rotate(-5 50 50)" />
+                            <rect x="5" y="20" width="70" height="40" rx="4" fill="#4ade80" filter="url(#glow)" />
+                            <rect x="15" y="30" width="50" height="20" rx="2" fill="#14532d" />
+                            <circle cx="40" cy="40" r="6" fill="#4ade80" />
+                            <!-- Gold Coins -->
+                            <ellipse cx="75" cy="70" rx="18" ry="6" fill="#8c6600" />
+                            <ellipse cx="75" cy="68" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)" />
+                            <ellipse cx="75" cy="62" rx="18" ry="6" fill="#8c6600" />
+                            <ellipse cx="75" cy="60" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)" />
+                            <ellipse cx="65" cy="80" rx="20" ry="8" fill="#8c6600" />
+                            <ellipse cx="65" cy="76" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)" />
+                            <ellipse cx="65" cy="70" rx="20" ry="8" fill="#8c6600" />
+                            <ellipse cx="65" cy="66" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)" />
+                            <!-- Star Sparkle -->
+                            <path d="M 20 10 L 22 18 L 30 20 L 22 22 L 20 30 L 18 22 L 10 20 L 18 18 Z" fill="#ffffff" filter="url(#glow)" />
+                            <path d="M 85 45 L 86 50 L 91 51 L 86 52 L 85 57 L 84 52 L 79 51 L 84 50 Z" fill="#ffffff" filter="url(#glow)" />
+                        </svg>
+                    </div>
+                    <div class="upg-v2-btn-center">
+                        <div class="upg-v2-btn-lbl">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+                            ${translations[lang].upgradeLabel}
+                            <span class="upg-v2-btn-amount" style="display: ${levelsToBuy > 1 ? 'inline' : 'none'};">+${levelsToBuy}</span>
+                        </div>
                         <div class="upg-v2-btn-cost">
-                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                            <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
                             ${formatMoney(cost)}
                         </div>
                     </div>
                     <div class="upg-v2-btn-right">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
+                        <div class="dark-circle-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
                     </div>
                 </button>
             </div>
@@ -316,3 +372,4 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
     }
     return card;
 }
+

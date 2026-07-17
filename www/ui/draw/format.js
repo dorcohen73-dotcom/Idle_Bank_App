@@ -1,6 +1,6 @@
 let svgCache = new Map();
-let cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
-let cachedFallback = ' מפלצתי';
+let cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון', ' קווינטיליון', ' סקסטיליון', ' ספטיליון', ' אוקטיליון', ' נוניליון', ' דציליון'];
+let cachedFallback = ' עצום';
 export let cachedLang = 'he';
 
 export function updateCachedSuffixes(lang) {
@@ -15,8 +15,8 @@ export function updateCachedSuffixes(lang) {
         cachedSuffixes = ['', ' тыс.', ' млн', ' млрд', ' трлн', ' квдрлн'];
         cachedFallback = ' огромное';
     } else {
-        cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון'];
-        cachedFallback = ' מפלצתי';
+        cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון', ' קווינטיליון', ' סקסטיליון', ' ספטיליון', ' אוקטיליון', ' נוניליון', ' דציליון'];
+        cachedFallback = ' עצום';
     }
 }
 

@@ -1,9 +1,7 @@
 import { showContextualAdBanner, AdService } from './ads.js';
-import { triggerRandomEvent } from './random-events.js';
 import { updateFortuneWheelBtnState } from './modals.js';
 
 let autoSaveTimer = 0;
-let eventTimer = 0;
 let tabRefreshTimer = 0;
 let fortuneWheelBtnTimer = 0;
 let drawTimer = 0;
@@ -51,12 +49,6 @@ export function tick(timestamp) {
                 }
             }
             window._boostOfferEndTime = boostOfferEndTime;
-        }
-
-        eventTimer += cappedDt;
-        if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
-            eventTimer = 0;
-            triggerRandomEvent();
         }
 
         tabRefreshTimer += cappedDt;
@@ -158,7 +150,7 @@ export function tick(timestamp) {
             title.innerText = _crashT.errorTitle || 'Oops! Something went wrong';
 
             const desc = document.createElement('p');
-            desc.innerText = _crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.';
+            desc.innerText = (_crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.') + ' ERROR: ' + (e.message || e) + '\n' + (e.stack || '');
 
             const reloadBtn = document.createElement('button');
             reloadBtn.innerText = _crashT.reloadBtn || 'Reload Game 🔄';
@@ -217,3 +209,4 @@ export function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerH
         miniBar.classList.toggle('is-ready', isReady && pct < 95);
     }
 }
+

@@ -1,4 +1,4 @@
-import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache } from './tab-shared.js';
+import { buildEntityCard, createSeparator, statLabels, resetBuyBtnCache,  } from './tab-shared.js';
 
 // Dynamic builder for Upgrades Tab
 export function renderUpgradesTab() {
@@ -11,26 +11,39 @@ export function renderUpgradesTab() {
     const tObj = translations[lang].upgrades;
 
     // Teller upgrade cards
+    const tellersGrid = document.createElement('div');
+    tellersGrid.className = 'upgrades-grid';
+    container.appendChild(tellersGrid);
+
     game.state.tellers.forEach(t => {
-        const card = buildEntityCard('teller', t, lang, tObj, currentUpgradeMode);
-        container.appendChild(card);
+        const card = buildEntityCard('teller', t, lang, tObj, window.currentUpgradeMode);
+        tellersGrid.appendChild(card);
     });
 
     // Separator line
     createSeparator(container);
 
     // Guard upgrade cards
+    const guardsGrid = document.createElement('div');
+    guardsGrid.className = 'upgrades-grid';
+    container.appendChild(guardsGrid);
+
     game.state.guards.forEach(g => {
-        const card = buildEntityCard('guard', g, lang, tObj, currentUpgradeMode);
-        container.appendChild(card);
+        const card = buildEntityCard('guard', g, lang, tObj, window.currentUpgradeMode);
+        guardsGrid.appendChild(card);
     });
 
     // Separator line
     createSeparator(container);
 
+    // Misc upgrade cards (Vault, Queue)
+    const miscGrid = document.createElement('div');
+    miscGrid.className = 'upgrades-grid';
+    container.appendChild(miscGrid);
+
     // Vault upgrade card
     const vault = game.state.vault;
-    const details = game.getBulkUpgradeDetails('vault', null, currentUpgradeMode, vault.level, game.state.cash);
+    const details = game.getBulkUpgradeDetails('vault', null, window.currentUpgradeMode, vault.level, game.state.cash);
     const vLevelsToBuy = details.levels;
     const vCost = details.cost;
     const vCap = game.getVaultCapacity(vault.level);
@@ -78,14 +91,15 @@ export function renderUpgradesTab() {
             </button>
         </div>
     `;
-    container.appendChild(vaultCard);
 
-    // Separator line
+    miscGrid.appendChild(vaultCard);
+
+    // Queue upgrade card line
     createSeparator(container);
 
     // Lobby Queue Capacity upgrade card
     const queueLvl = game.state.queueUpgradeLevel || 1;
-    const qDetails = game.getBulkUpgradeDetails('queue', null, currentUpgradeMode, queueLvl, game.state.cash);
+    const qDetails = game.getBulkUpgradeDetails('queue', null, window.currentUpgradeMode, queueLvl, game.state.cash);
     const qLevelsToBuy = qDetails.levels;
     const qCost = qDetails.cost;
     const qCap = game.getBaseQueueCapacity(queueLvl);
@@ -98,7 +112,7 @@ export function renderUpgradesTab() {
     if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) {
         queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
@@ -120,7 +134,7 @@ export function renderUpgradesTab() {
     } else {
         queueCard.className = 'upgrade-card premium-upg-card';
         queueCard.innerHTML = `
-        <div class="upg-v2-avatar-large" style="background-image: url('images/bank-queue.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
                 <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
@@ -159,7 +173,8 @@ export function renderUpgradesTab() {
         </div>
     `;
     }
-    container.appendChild(queueCard);
+
+    miscGrid.appendChild(queueCard);
 
     // Smart Recommendation Highlight
     let bestBtnSelector = null;
@@ -168,7 +183,7 @@ export function renderUpgradesTab() {
     // Check tellers for best EPS/Cost ratio
     game.state.tellers.forEach(t => {
         if (!t.unlocked) return;
-        const details = game.getBulkUpgradeDetails('teller', t.id, currentUpgradeMode, t.level, game.state.cash);
+        const details = game.getBulkUpgradeDetails('teller', t.id, window.currentUpgradeMode, t.level, game.state.cash);
         if (details.canAfford && details.cost > 0) {
             const nextLvl = t.level + details.levels;
             const nextSpeed = Math.max(0.1, game.getTellerSpeed(nextLvl));
@@ -216,3 +231,4 @@ export function renderUpgradesTab() {
         }
     }
 }
+

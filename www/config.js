@@ -11,8 +11,8 @@ const GAME_CONFIG = {
     TELLER_BASE_CAPACITY: 150,
     TELLER_CAPACITY_GROWTH: 1.08,
 
-    TELLER_BASE_UPGRADE_COST: 80,
-    TELLER_UPGRADE_COST_GROWTH: 1.15,
+    TELLER_BASE_UPGRADE_COST: 60,
+    TELLER_UPGRADE_COST_GROWTH: 1.13,
 
     // Guards Formulas
     GUARD_BASE_SPEED: 8.0,
@@ -24,17 +24,21 @@ const GAME_CONFIG = {
     GUARD_SPEED_GOLD_UPGRADE_FACTOR: 0.10, // Guard speed gold upgrade: -10% per level
 
     GUARD_BASE_CAPACITY: 250,
-    GUARD_CAPACITY_GROWTH: 1.09,
+    // Deliberately grows SLOWER than TELLER_CAPACITY_GROWTH (1.08). A static guard's
+    // per-trip capacity is meant to fall behind rising teller cash-holding capacity as the
+    // player levels tellers (which is cheap), so cash starts backing up at the tellers and
+    // upgrading guards becomes a real, felt need — not a purchase with no payoff.
+    GUARD_CAPACITY_GROWTH: 1.05,
     GUARD_AUTO_CAPACITY_FACTOR: 1.5, // Alon manager auto capacity multiplier (+50%)
 
-    GUARD_BASE_UPGRADE_COST: 180,
-    GUARD_UPGRADE_COST_GROWTH: 1.16,
+    GUARD_BASE_UPGRADE_COST: 130,
+    GUARD_UPGRADE_COST_GROWTH: 1.14,
 
     VAULT_BASE_CAPACITY: 1500,
     VAULT_CAPACITY_GROWTH: 1.10,
 
-    VAULT_BASE_UPGRADE_COST: 350,
-    VAULT_UPGRADE_COST_GROWTH: 1.17,
+    VAULT_BASE_UPGRADE_COST: 250,
+    VAULT_UPGRADE_COST_GROWTH: 1.14,
 
     // Queue Lobby Formulas
     QUEUE_BASE_CAPACITY: 5,
@@ -45,7 +49,6 @@ const GAME_CONFIG = {
     QUEUE_MAX_LEVEL: 6,
 
     // Timers & Intervals
-    EVENT_INTERVAL_SEC: 300,
     AUTO_SAVE_INTERVAL_SEC: 5.0,
     TAB_REFRESH_INTERVAL_SEC: 1.0,
 
@@ -74,7 +77,7 @@ const GAME_CONFIG = {
     ],
 
     TELLER_UNLOCK_COSTS: [0, 800, 20000, 600000, 18000000, 500000000, 12500000000, 300000000000],
-    GUARD_UNLOCK_COSTS: [0, 4000, 120000],
+    GUARD_UNLOCK_COSTS: [0, 2500, 70000],
     
     // Manager hire/upgrade costs — 3x the original values. Raising minCashToPrestige alone
     // barely slows progression (the economy snowballs past almost any threshold once its

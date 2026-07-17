@@ -582,6 +582,20 @@ class IdleBankGame {
         const cost = this.managerCosts[type];
         if (this.spendCash(cost)) {
             this.state.managers[type] = true;
+            if (!this.state.managerUpgrades) {
+                this.state.managerUpgrades = {
+                    customer: { level: 1, skill: null },
+                    finance: { level: 1, skill: null },
+                    operations: { level: 1, skill: null },
+                    service: { level: 1, skill: null },
+                    vip: { level: 1, skill: null },
+                    marketing: { level: 1, skill: null },
+                    accountant: { level: 1, skill: null }
+                };
+            }
+            if (!this.state.managerUpgrades[type]) {
+                this.state.managerUpgrades[type] = { level: 1, skill: null };
+            }
             this.missionsDirty = true;
             window.gameAudio.playUnlock();
             this.recalculateEps();
@@ -1359,12 +1373,16 @@ class IdleBankGame {
                 operations: { level: 1, skill: null },
                 service: { level: 1, skill: null },
                 vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null }
+                marketing: { level: 1, skill: null },
+                accountant: { level: 1, skill: null }
             };
         }
 
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr) return false;
+        let mgr = this.state.managerUpgrades[type];
+        if (!mgr) {
+            mgr = { level: 1, skill: null };
+            this.state.managerUpgrades[type] = mgr;
+        }
         if (mgr.level >= 5) return false;
         
         const costs = this.managerUpgradeCosts[type] || GAME_CONFIG.MANAGER_UPGRADE_COSTS_DEFAULT;
@@ -1382,9 +1400,22 @@ class IdleBankGame {
     }
 
     upgradeManagerBulk(type, mode) {
-        if (!this.state.managerUpgrades) return false;
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr) return false;
+        if (!this.state.managerUpgrades) {
+            this.state.managerUpgrades = {
+                customer: { level: 1, skill: null },
+                finance: { level: 1, skill: null },
+                operations: { level: 1, skill: null },
+                service: { level: 1, skill: null },
+                vip: { level: 1, skill: null },
+                marketing: { level: 1, skill: null },
+                accountant: { level: 1, skill: null }
+            };
+        }
+        let mgr = this.state.managerUpgrades[type];
+        if (!mgr) {
+            mgr = { level: 1, skill: null };
+            this.state.managerUpgrades[type] = mgr;
+        }
         if (mgr.level >= 5) return false;
 
         const details = this.getBulkUpgradeDetails('manager', type, mode, mgr.level, this.state.cash);

@@ -1,23 +1,42 @@
 /* ==============================================================
-   Premium Upgrades Redesign (V3 - Impressive Layout)
+   Premium Upgrades Redesign (V3 - Neon Banker Glassmorphism)
 ============================================================== */
 .upgrade-card.premium-upg-card {
     position: relative;
     border-radius: 24px;
-    background: #0a0e17;
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(139, 92, 246, 0.1);
+    background: #030814;
+    border: 2px solid rgba(74, 144, 226, 0.85); /* Brighter border */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 
+                0 0 25px rgba(74, 144, 226, 0.6), /* Stronger outer glow */
+                inset 0 0 40px rgba(74, 144, 226, 0.35), 
+                inset 0 1px 4px rgba(255, 255, 255, 0.5);
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    min-height: 260px;
+    min-height: 220px;
     display: flex;
+    align-items: stretch !important;
+    flex-shrink: 0;
+}
+
+/* Pseudo element for the double glowing border effect */
+.upgrade-card.premium-upg-card::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    border: 1px solid rgba(138, 190, 255, 0.4); /* Bright inner glow line */
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 3;
 }
 
 .upgrade-card.premium-upg-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(139, 92, 246, 0.15);
-    border-color: rgba(139, 92, 246, 0.7);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 1), 
+                0 0 30px rgba(74, 144, 226, 0.5),
+                inset 0 0 40px rgba(74, 144, 226, 0.4), 
+                inset 0 1px 3px rgba(255, 255, 255, 0.4);
+    border-color: rgba(74, 144, 226, 0.8);
 }
 
 .upgrade-card.premium-upg-card.locked-card {
@@ -25,105 +44,115 @@
     filter: saturate(0.6);
 }
 
-/* Avatar Large (D-shape on right) */
+/* Avatar Large (D-shape on right - square cut style for Neon) */
 .upg-v2-avatar-large {
     position: absolute;
     top: 0;
-    right: 0; /* In RTL, right is the start */
-    width: 45%;
+    right: 0;
+    width: 30%; /* Reduced to give content more room */
     height: 100%;
-    border-radius: 0 24px 24px 0;
-    /* Adding a curved mask or border radius on the inner side */
-    border-top-left-radius: 120px;
-    border-bottom-left-radius: 120px;
-    border-left: 2px solid rgba(223, 171, 41, 0.5);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     z-index: 1;
-    box-shadow: inset 10px 0 20px rgba(0,0,0,0.8);
+    border-radius: 0 24px 24px 0;
+    opacity: 1; /* Full opacity */
+    filter: contrast(1.15) saturate(1.1); /* Pop! Removed drop-shadow to fix overflow:hidden bug in WebKit */
+    box-shadow: -20px 0 35px rgba(0,0,0,0.95); /* Deep shadow to separate from text */
 }
 
 html[dir="ltr"] .upg-v2-avatar-large {
     right: auto;
     left: 0;
     border-radius: 24px 0 0 24px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 120px;
-    border-bottom-right-radius: 120px;
-    border-left: none;
-    border-right: 2px solid rgba(223, 171, 41, 0.5);
-    box-shadow: inset -10px 0 20px rgba(0,0,0,0.8);
+    box-shadow: 20px 0 35px rgba(0,0,0,0.95);
+    filter: contrast(1.15) saturate(1.1);
 }
 
 /* Content Overlay */
 .upg-v2-content-overlay {
     position: relative;
     z-index: 2;
-    padding: 1.5rem;
-    padding-inline-end: 48%; /* Push text area to 52% of the card to avoid avatar overlap */
+    padding: 0.75rem;
+    padding-inline-start: 29%; /* Push text area to left of avatar (avatar is 28%) */
     width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Aligns to right in RTL, left in LTR */
+    align-items: flex-start;
     text-align: right;
-    /* Gradient to ensure text is readable over the avatar image */
-    background: linear-gradient(90deg, rgba(10, 14, 23, 1) 40%, rgba(10, 14, 23, 0.9) 65%, rgba(10, 14, 23, 0) 100%);
+    /* Gradient stops at 72% so the right 28% (avatar) is 100% fully visible and clear! */
+    background: linear-gradient(90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.95) 60%, rgba(3, 8, 20, 0) 72%);
 }
 
 html[dir="ltr"] .upg-v2-content-overlay {
+    padding-inline-start: 0.75rem;
+    padding-inline-end: 29%;
     text-align: left;
-    background: linear-gradient(-90deg, rgba(10, 14, 23, 1) 40%, rgba(10, 14, 23, 0.9) 65%, rgba(10, 14, 23, 0) 100%);
+    background: linear-gradient(-90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.95) 60%, rgba(3, 8, 20, 0) 72%);
 }
 
 /* Header Row */
 .upg-v2-header-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap; /* Prevent overflow if title is too long */
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .upg-v2-main-title {
-    font-size: 2.2rem;
+    font-size: 1.8rem; /* Medium-large font */
     font-weight: 900;
     color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    text-shadow: 0 0 15px rgba(255,255,255,0.7), 0 3px 6px rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.bank-icon-title {
+    color: #dfab29;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    width: 28px;
+    height: 28px;
 }
 
 .upg-v2-badge {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(74, 222, 128, 0.4);
+    background: rgba(10, 30, 20, 0.9);
+    border: 2px solid #4ade80;
     color: #4ade80;
-    padding: 0.3rem 1rem;
+    padding: 0.2rem 1rem;
     border-radius: 20px;
-    font-weight: 800;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    font-weight: 900;
+    font-size: 0.9rem;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3), inset 0 0 10px rgba(74, 222, 128, 0.2);
     white-space: nowrap;
 }
 
 .upg-v2-desc-text {
-    font-size: 1.05rem;
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 1.5rem;
-    line-height: 1.4;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
 
-/* Stats Glass Box */
+/* Stats Glass Box - Neon Style */
 .upg-v2-stats-glass-box {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
-    gap: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
+    background: linear-gradient(180deg, rgba(15, 25, 45, 0.8), rgba(5, 12, 25, 0.9));
+    border: 1px solid rgba(74, 144, 226, 0.5);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 0.8rem;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.95), 0 5px 20px rgba(0,0,0,0.5);
     width: 100%;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    backdrop-filter: blur(5px);
+    box-sizing: border-box;
 }
 
 .upg-v2-stat {
@@ -132,165 +161,366 @@ html[dir="ltr"] .upg-v2-content-overlay {
     align-items: center;
     text-align: center;
     gap: 0.3rem;
+    flex: 1;
+    padding: 0.6rem 0.4rem;
+}
+
+.upg-v2-stat:not(:last-child) {
+    border-left: 1px solid rgba(255,255,255,0.15);
+}
+
+html[dir="ltr"] .upg-v2-stat:not(:last-child) {
+    border-left: none;
+    border-right: 1px solid rgba(255,255,255,0.15);
 }
 
 .upg-v2-stat-icon {
     color: #dfab29;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
+    filter: drop-shadow(0 0 8px rgba(223, 171, 41, 0.6)) drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+}
+
+.upg-v2-stat-icon svg {
+    width: 26px;
+    height: 26px;
 }
 
 .upg-v2-stat-label {
-    font-size: 0.9rem;
-    color: #94a3b8;
-    font-weight: 600;
-}
-
-.upg-v2-stat-val {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
+    color: #f8fafc;
     font-weight: 800;
-    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.2);
+    letter-spacing: 0.3px;
 }
 
-/* Split Buy Button */
+/* Stacked Values */
+.upg-v2-stat-val {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    margin-top: 0.2rem;
+}
+
+.val-current {
+    color: #ffffff;
+    text-shadow: 0 2px 5px rgba(0,0,0,1);
+}
+
+.val-arrow {
+    margin: -4px 0;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+    /* Removed rotation to match concept */
+}
+
+.val-next {
+    color: #4ade80;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(74, 222, 128, 0.4);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    padding: 0.1rem 0.6rem;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.05);
+}
+
+/* Neon Buy Button - Monolithic block */
 .upg-v2-buy-btn {
     display: flex;
     align-items: stretch;
-    background: transparent;
-    border: none;
-    padding: 0;
+    background: linear-gradient(160deg, #ffe066 0%, #d4af37 40%, #b8860b 80%, #8c6600 100%);
+    border: 2px solid #ffeb99;
+    border-radius: 14px;
+    padding: 0.4rem;
     margin: 0;
-    margin-top: auto; /* Pushes button to bottom if card grows */
+    margin-top: auto;
     cursor: pointer;
     width: 100%;
-    transition: transform 0.2s;
+    transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
     font-family: inherit;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.8), 
+                inset 0 2px 10px rgba(255,255,255,0.8), 
+                0 0 20px rgba(223, 171, 41, 0.4);
+    overflow: hidden;
 }
 
 .upg-v2-buy-btn:hover:not(.disabled) {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
+    transform: translateY(-3px);
+    filter: brightness(1.15);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.9), 
+                inset 0 2px 10px rgba(255,255,255,0.9), 
+                0 0 35px rgba(223, 171, 41, 0.6);
 }
 
 .upg-v2-buy-btn:active:not(.disabled) {
     transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8), 
+                inset 0 2px 5px rgba(255,255,255,0.6);
 }
 
 .upg-v2-btn-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.6rem;
+}
+
+.premium-cash-icon {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+}
+
+.upg-v2-btn-center {
     flex: 1;
-    background: linear-gradient(180deg, #ffe066 0%, #d4af37 45%, #b8860b 100%);
-    border: 1px solid #ffeb99;
-    border-radius: 12px;
-    padding: 0.75rem 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    position: relative;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.8);
-    text-align: right;
-}
-
-html[dir="ltr"] .upg-v2-btn-left {
-    text-align: left;
+    align-items: center;
+    padding: 0.4rem;
+    text-align: center;
 }
 
 .upg-v2-btn-lbl {
     font-size: 1.4rem;
     font-weight: 900;
-    color: #2b1f02;
+    color: #1a1200;
     text-shadow: 0 1px 1px rgba(255,255,255,0.4);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.4rem;
+    letter-spacing: 0.5px;
 }
 
 .upg-v2-btn-amount {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #0b4a1c;
+    font-weight: 900;
+    background: rgba(255,255,255,0.2);
+    padding: 0.1rem 0.5rem;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .upg-v2-btn-cost {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     font-weight: 900;
-    color: #0f172a;
+    color: #000000;
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 0.2rem;
-}
-
-.upg-v2-coin-icon {
-    stroke: #0f172a;
-}
-
-.upg-v2-btn-sub {
-    font-size: 0.8rem;
-    color: #4a380e;
-    margin-inline-start: 0.5rem;
+    margin-top: 0.1rem;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.5);
 }
 
 .upg-v2-btn-right {
-    background: linear-gradient(180deg, #1e2532 0%, #0b0f16 100%);
-    border: 1px solid #ffe066;
-    border-radius: 12px;
-    width: 60px;
-    margin-inline-start: 0.75rem; /* Space between buttons dynamically handled by inline-start */
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.1);
-    flex-shrink: 0;
+    padding: 0 0.8rem;
+    /* Removed border and background */
 }
 
-.upg-v2-btn-sparkles {
-    position: absolute;
-    top: 8px;
-    left: 12px;
-    font-size: 1.2rem;
-    opacity: 0.8;
+.dark-circle-arrow {
+    background: linear-gradient(135deg, #1e2532 0%, #0b0f16 100%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dfab29;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.4);
+    border: 2px solid #5a450b;
 }
 
-html[dir="ltr"] .upg-v2-btn-sparkles {
-    left: auto;
-    right: 12px;
+.dark-circle-arrow svg {
+    width: 20px;
+    height: 20px;
 }
 
 /* Disabled State */
-.upg-v2-buy-btn.disabled .upg-v2-btn-left {
+.upg-v2-buy-btn.disabled {
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     border-color: #334155;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.5);
 }
 
 .upg-v2-buy-btn.disabled .upg-v2-btn-lbl,
 .upg-v2-buy-btn.disabled .upg-v2-btn-cost {
     color: #64748b;
-    text-shadow: none;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
 }
 
-.upg-v2-buy-btn.disabled .upg-v2-coin-icon {
-    stroke: #64748b;
+.upg-v2-buy-btn.disabled .premium-cash-icon {
+    filter: grayscale(1) opacity(0.5);
 }
 
-.upg-v2-buy-btn.disabled .upg-v2-btn-sub {
-    color: #475569;
-}
-
-.upg-v2-buy-btn.disabled .upg-v2-btn-right {
+.upg-v2-buy-btn.disabled .dark-circle-arrow {
     background: #080b12;
+    color: #475569;
     border-color: #1e293b;
 }
 
-.upg-v2-buy-btn.disabled .upg-v2-btn-right svg {
-    stroke: #475569;
+
+/* ==============================================================
+   Gold Upgrade Card Overrides for V3
+============================================================== */
+.upgrade-card.premium-upg-card.gold-upgrade-card {
+    border: 2px solid #dfab29 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(223, 171, 41, 0.15), 0 0 15px rgba(223, 171, 41, 0.4) !important;
+    padding: 0 !important;
+    background: #0a0e17 !important;
 }
 
-/* Responsive */
-@media (max-width: 500px) {
-    .upg-v2-main-title { font-size: 1.8rem; }
-    .upg-v2-badge { font-size: 0.9rem; }
-    .upg-v2-desc-text { font-size: 0.95rem; }
-    .upg-v2-stats-glass-box { gap: 0.5rem; padding: 0.75rem; }
-    .upg-v2-stat-val { font-size: 1rem; }
-    .upg-v2-content-overlay { padding: 1rem; padding-inline-end: 45%; }
+.upgrade-card.premium-upg-card .recommended-badge {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important; /* Move to left to not cover avatar on right */
+    right: auto !important;
+    margin: 0 !important;
+    border-radius: 0 0 20px 0 !important;
+    box-shadow: 3px 3px 20px rgba(0,0,0,0.8) !important;
+    z-index: 10 !important;
+    font-size: 1.1rem !important;
+    padding: 0.5rem 1.5rem !important;
+    background: linear-gradient(135deg, #dfab29, #fceb9c, #d4af37) !important;
+    color: #3b2b00 !important;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.6) !important;
+    border-bottom: 2px solid #fff !important;
+    border-left: 2px solid #fff !important;
+    border-right: none !important;
+    letter-spacing: 0.5px;
+    font-weight: 900 !important;
 }
+
+html[dir="ltr"] .upgrade-card.premium-upg-card .recommended-badge {
+    left: auto !important;
+    right: 0 !important;
+    border-radius: 0 0 0 20px !important;
+    border-right: none !important;
+    border-left: 2px solid #fff !important;
+    box-shadow: -3px 3px 20px rgba(0,0,0,0.8) !important;
+}
+
+
+
+
+/* Upgrades Tab Grid */
+.upgrades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Responsive - Keep the premium asymmetric look but shrink it! */
+@media (max-width: 900px) {
+    .upgrades-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .upgrade-card.premium-upg-card {
+        min-height: 100px;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Keep the avatar visible but smaller */
+    .upg-v2-avatar-large {
+        width: 75px !important;
+        opacity: 1 !important;
+        filter: contrast(1.1) saturate(1.1) !important;
+        border-radius: 0 0 10px 0;
+        box-shadow: -4px 0 10px rgba(0,0,0,0.8);
+        object-fit: cover;
+        object-position: top; /* Prevents squeezing distortion */
+    }
+    
+    html[dir="ltr"] .upg-v2-avatar-large {
+        border-radius: 0 0 0 10px;
+        box-shadow: 4px 0 10px rgba(0,0,0,0.8);
+    }
+
+    /* Content Overlay leaves room for the 75px avatar */
+    .upg-v2-content-overlay { 
+        padding: 0.4rem; 
+        padding-inline-start: 82px !important; 
+        background: linear-gradient(90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.8) 75%, rgba(3, 8, 20, 0) 100%);
+        align-items: flex-start;
+        text-align: right;
+    }
+    
+    html[dir="ltr"] .upg-v2-content-overlay {
+        padding-inline-start: 0.4rem !important;
+        padding-inline-end: 82px !important;
+        background: linear-gradient(-90deg, rgba(3, 8, 20, 1) 40%, rgba(3, 8, 20, 0.8) 75%, rgba(3, 8, 20, 0) 100%);
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* Font sizes compact */
+    .upg-v2-main-title { font-size: 0.95rem; justify-content: flex-start; text-align: right; gap: 0.2rem; }
+    html[dir="ltr"] .upg-v2-main-title { text-align: left; }
+    .bank-icon-title { width: 14px; height: 14px; }
+    .upg-v2-header-row { justify-content: flex-start; margin-bottom: 0.2rem; }
+    .upg-v2-badge { font-size: 0.6rem; padding: 0.1rem 0.3rem; border-width: 1px; }
+    
+    /* Description text - 1 line with ellipsis on mobile */
+    .upg-v2-desc-text { 
+        font-size: 0.7rem; 
+        margin-bottom: 0.3rem; 
+        text-align: right; 
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        color: rgba(255,255,255,0.6);
+    }
+    html[dir="ltr"] .upg-v2-desc-text { text-align: left; }
+    
+    /* Stats box tighter - Horizontal stats values! */
+    .upg-v2-stats-glass-box { margin-bottom: 0.3rem; padding: 0.2rem; border-radius: 6px; flex-wrap: nowrap; }
+    .upg-v2-stat { padding: 0.1rem; gap: 0.1rem; }
+    .upg-v2-stat-icon svg { width: 14px; height: 14px; }
+    .upg-v2-stat-label { font-size: 0.65rem; color: #cbd5e1; margin-bottom: 0; }
+    .upg-v2-stat-val { 
+        font-size: 0.8rem; 
+        flex-direction: row; /* Horizontal! */
+        flex-wrap: wrap;
+        gap: 0.2rem;
+        margin-top: 0;
+    }
+    .val-arrow { font-size: 0.75rem; margin: 0; }
+    .val-next { padding: 0 0.3rem; border-radius: 4px; }
+    
+    /* Button */
+    .upg-v2-buy-btn { border-radius: 6px; padding: 0.2rem; border-width: 1px; min-height: 32px !important; height: auto !important; flex-wrap: nowrap; }
+    .upg-v2-btn-left { padding: 0 0.2rem; flex-shrink: 0; }
+    .upg-v2-btn-right { padding: 0 0.2rem; flex-shrink: 0; }
+    .upg-v2-btn-center { padding: 0.1rem; flex: 1; min-width: 0; }
+    .upg-v2-btn-lbl { font-size: 0.75rem; gap: 0.15rem; white-space: nowrap; }
+    .upg-v2-btn-cost { font-size: 0.8rem; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
+    .upg-v2-btn-amount { font-size: 0.65rem; padding: 0.1rem 0.2rem; }
+    .premium-cash-icon { width: 20px; height: 20px; }
+    .dark-circle-arrow { width: 16px; height: 16px; border-width: 1px; }
+    .dark-circle-arrow svg { width: 10px; height: 10px; }
+    /* Shrink the recommended badge on mobile */
+    .upgrade-card.premium-upg-card .recommended-badge {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.5rem !important;
+        border-width: 1px !important;
+    }
+}
+
+
+
+
+

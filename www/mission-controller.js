@@ -25,7 +25,7 @@ class MissionController {
             {
                 type: 'clients',
                 target: () => {
-                    const base = 50 + Math.floor(Math.random() * 51);
+                    const base = 35 + Math.floor(Math.random() * 36);
                     const branchMult = Math.pow(2.2, branchIndex);
                     const epsFactor = Math.max(1, Math.floor(Math.log10(Math.max(1, this.game.getEarningsPerSecond()))));
                     return Math.round(base * branchMult * (1 + 0.5 * epsFactor));
@@ -85,7 +85,7 @@ class MissionController {
             type: 'earn_eps',
             target: () => {
                 const currentEps = Math.max(this.game.getEarningsPerSecond(), 10);
-                return Math.round(currentEps * 1.5 + 50 * scale);
+                return Math.round(currentEps * 1.5 + 30 * scale);
             },
             reward: (t) => Math.round(referenceReward * 1.5)
         });
@@ -95,8 +95,8 @@ class MissionController {
             type: 'earn_cash',
             target: () => {
                 const eps = Math.max(this.game.getEarningsPerSecond(), 10);
-                const durationSeconds = 180 + Math.floor(Math.random() * 241); // 3 to 7 minutes of earnings
-                return Math.max(500, Math.round(eps * durationSeconds));
+                const durationSeconds = 120 + Math.floor(Math.random() * 181); // 2 to 5 minutes of earnings — eased for early game
+                return Math.max(350, Math.round(eps * durationSeconds));
             },
             // Reward is directly related to how long it takes to earn the cash, capped by diminishing factor
             reward: (t) => Math.round((t * 0.15) * diminishingFactor + referenceReward * 0.5)
@@ -122,8 +122,8 @@ class MissionController {
             type: 'spend_cash',
             target: () => {
                 const eps = Math.max(this.game.getEarningsPerSecond(), 10);
-                const durationSeconds = 180 + Math.floor(Math.random() * 301); // 3 to 8 minutes of earnings
-                return Math.max(500, Math.round(eps * durationSeconds));
+                const durationSeconds = 120 + Math.floor(Math.random() * 211); // 2 to 5.5 minutes of earnings — eased for early game
+                return Math.max(350, Math.round(eps * durationSeconds));
             },
             reward: (t) => Math.round((t * 0.15) * diminishingFactor + referenceReward * 0.5)
         });

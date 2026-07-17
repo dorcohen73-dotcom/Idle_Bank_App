@@ -1,7 +1,6 @@
 import { _getFocusableElements, trapFocus, releaseFocus, initFocusTrapObserver } from './focus-trap.js';
 import { AdService, playAd, formatTime, updateAdvDisplay, updateMuteButton, initSound, showContextualAdBanner } from './ads.js';
 import { applyLanguage, applyTheme } from './i18n-theme.js';
-import { triggerRandomEvent, handleCrowdEvent, handleSecurityEvent, handleRescueEvent, handleRushHoursEvent, handleInvestorEvent } from './random-events.js';
 import { triggerMilestoneConfetti, handlePurchaseFeedback, handleMissionRedirect } from './purchase-feedback.js';
 import {
     openPrestigeModal, openBoostModal, openAnalyticsModal, openWeeklyRewardModal, checkWeeklyReward,
@@ -637,7 +636,6 @@ export {
     _getFocusableElements, trapFocus, releaseFocus, initFocusTrapObserver,
     AdService, playAd, formatTime, updateAdvDisplay, updateMuteButton, initSound, showContextualAdBanner,
     applyLanguage, applyTheme,
-    triggerRandomEvent, handleCrowdEvent, handleSecurityEvent, handleRescueEvent, handleRushHoursEvent, handleInvestorEvent,
     triggerMilestoneConfetti, handlePurchaseFeedback, handleMissionRedirect,
     openPrestigeModal, openBoostModal, openAnalyticsModal, openWeeklyRewardModal, checkWeeklyReward,
     showOfflineEarningsModal, showLoginRewardModal, triggerPrestigeCeremony,
@@ -657,12 +655,6 @@ window.formatTime = formatTime;
 window.openPrestigeModal = openPrestigeModal;
 window.openBoostModal = openBoostModal;
 window.openAnalyticsModal = openAnalyticsModal;
-window.handleCrowdEvent = handleCrowdEvent;
-window.handleSecurityEvent = handleSecurityEvent;
-window.handleRescueEvent = handleRescueEvent;
-window.handleRushHoursEvent = handleRushHoursEvent;
-window.handleInvestorEvent = handleInvestorEvent;
-window.triggerRandomEvent = triggerRandomEvent;
 window.updateAdvDisplay = updateAdvDisplay;
 window.updateMuteButton = updateMuteButton;
 window.initSound = initSound;

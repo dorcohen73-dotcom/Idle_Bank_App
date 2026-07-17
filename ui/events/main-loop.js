@@ -1,9 +1,7 @@
 import { showContextualAdBanner, AdService } from './ads.js';
-import { triggerRandomEvent } from './random-events.js';
 import { updateFortuneWheelBtnState } from './modals.js';
 
 let autoSaveTimer = 0;
-let eventTimer = 0;
 let tabRefreshTimer = 0;
 let fortuneWheelBtnTimer = 0;
 let drawTimer = 0;
@@ -51,12 +49,6 @@ export function tick(timestamp) {
                 }
             }
             window._boostOfferEndTime = boostOfferEndTime;
-        }
-
-        eventTimer += cappedDt;
-        if (eventTimer >= GAME_CONFIG.EVENT_INTERVAL_SEC) {
-            eventTimer = 0;
-            triggerRandomEvent();
         }
 
         tabRefreshTimer += cappedDt;

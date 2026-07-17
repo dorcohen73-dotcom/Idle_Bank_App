@@ -4,6 +4,13 @@ let soundInitialized = false;
 let contextualBannerShown = false;
 let contextualOfferTimeout = null;
 
+// Flip to true for local/manual QA on a native build so ad requests use Google's public
+// test unit instead of the real one — repeatedly triggering the real unit from a dev
+// device risks AdMob flagging the account for invalid traffic. Set back to false before release.
+const AD_TESTING_MODE = false;
+const PROD_REWARDED_AD_UNIT_ID = "ca-app-pub-1189054329275307/1609550976";
+const TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+
 export var AdService = {
     _isShowing: false,
     lastWatchedAt: 0,
@@ -51,8 +58,8 @@ export var AdService = {
         if (!AdService.adMobAvailable) return;
         try {
             await window.Capacitor.Plugins.AdMob.prepareRewardVideoAd({
-                adId: "ca-app-pub-1189054329275307/1609550976",
-                isTesting: false
+                adId: AD_TESTING_MODE ? TEST_REWARDED_AD_UNIT_ID : PROD_REWARDED_AD_UNIT_ID,
+                isTesting: AD_TESTING_MODE
             });
         } catch (e) {
             console.error('Failed to prepare ad', e);
@@ -72,6 +79,10 @@ export var AdService = {
                 console.error("AdMob show failed, falling back to mock:", e);
                 AdService._isShowing = false;
                 AdService._currentCallback = null;
+                // Without this, one failed show() permanently starves every later ad this
+                // session — showRewardVideoAd consumes the prepared ad even on failure, and
+                // only rewardedVideoAdDismissed re-prepares otherwise.
+                AdService.prepareAd();
                 // Fall through to mock ad
             }
         }

@@ -49,7 +49,6 @@ const GAME_CONFIG = {
     QUEUE_MAX_LEVEL: 6,
 
     // Timers & Intervals
-    EVENT_INTERVAL_SEC: 300,
     AUTO_SAVE_INTERVAL_SEC: 5.0,
     TAB_REFRESH_INTERVAL_SEC: 1.0,
 
