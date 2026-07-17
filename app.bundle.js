@@ -3606,6 +3606,20 @@
     const grid = document.createElement("div");
     grid.className = "managers-grid";
     container.appendChild(grid);
+    managersKeys.sort((a, b) => {
+      const getCost = (type) => {
+        const mData = game.getManagerRenderData(type);
+        if (!mData) return Infinity;
+        if (!mData.isUnlocked) return mData.cost;
+        if (!mData.isHired) return mData.cost;
+        if (mData.level < 5) {
+          const details = game.getBulkUpgradeDetails("manager", type, window.currentUpgradeMode || "x1", mData.level, game.state.cash);
+          return details.cost;
+        }
+        return Infinity;
+      };
+      return getCost(a) - getCost(b);
+    });
     managersKeys.forEach((type) => {
       const config = managerConfigs[type];
       const mData = game.getManagerRenderData(type);
