@@ -925,7 +925,10 @@ class SaveManager {
     checkDailyLogin() {
         // Calendar-day comparison (local time): logging in at 23:00 and again at 08:00
         // the next morning now counts as a new day — the old 24h-window math missed it.
-        const now = Date.now();
+        // Anti-Cheat: use verified server time when available (same as offline earnings)
+        // so advancing the device clock forward and back can't be used to farm streak days —
+        // a fresh page load re-fetches real-world time regardless of the local clock.
+        const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
         const lastLogin = this.game.state.lastLoginDate || 0;
         const startOfDay = (t) => {
             const d = new Date(t);

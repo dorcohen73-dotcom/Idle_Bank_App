@@ -944,6 +944,7 @@ class IdleBankGame {
         this.tickTimer('tellerSpeedBoostTimer', dt, () => this.recalculateEps());
 
         const advBudget = this.state.advBudget || 0;
+        const wasAdvActive = this.state.advActive;
         if (advBudget > 0) {
             const costThisFrame = advBudget * dt / 60;
             if (this.state.cash >= costThisFrame) {
@@ -958,6 +959,9 @@ class IdleBankGame {
             }
         } else {
             this.state.advActive = false;
+        }
+        if (wasAdvActive !== this.state.advActive && this.economyManager) {
+            this.economyManager.cachedTotalMult = null;
         }
 
         // Spawning customers
