@@ -129,6 +129,13 @@ function initUIEvents() {
                 existingTabBtn.click();
             }
             syncBottomNav('daily');
+            
+            setTimeout(() => {
+                const achievementsContainer = document.getElementById('tab-achievements');
+                if (achievementsContainer) {
+                    achievementsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
         });
     }
     updateFortuneWheelBtnState();
