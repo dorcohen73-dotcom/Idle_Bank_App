@@ -4177,7 +4177,6 @@
       const isMax = currentLvl >= maxLvl;
       const canAfford = game.state.shares >= cost;
       const iconSrc = iconMapping[key];
-      desc = translations[lang].goldUpgradesDesc && translations[lang].goldUpgradesDesc[key] ? translations[lang].goldUpgradesDesc[key] : upgradeData.desc;
       let cleanTitle = upgradeData.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "").trim();
       goldCardsHtml += `
             <div class="gold-upgrade-card">
