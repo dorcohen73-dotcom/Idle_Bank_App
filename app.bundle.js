@@ -1151,7 +1151,7 @@
                     <div class="vip-progress-bar" id="vip-progress-bar"></div>
                 </div>
                 <div class="vip-actions">
-                    ${!AdService.isInCooldown() ? `
+                    ${!AdService.isInCooldown("short") ? `
                     <button class="vip-btn vip-serve-premium" id="vip-serve-ad"><span class="btn-icon">\u{1F3AC}</span> ${premiumText}</button>
                     ` : ""}
                     <button class="vip-btn vip-serve-cash" id="vip-serve-cash">${serveText}</button>
@@ -1217,7 +1217,7 @@
         }
         game.saveGame();
         draw();
-      });
+      }, "short");
     } else if (rewardType === "cash") {
       playAd(() => {
         let hourlyProfit = typeof game.getEarningsPerSecond === "function" ? game.getEarningsPerSecond() * 3600 : 0;
@@ -1231,7 +1231,7 @@
         }
         game.saveGame();
         draw();
-      });
+      }, "short");
     } else {
       game.saveGame();
       draw();
@@ -2128,7 +2128,7 @@
           if (cooldownEl) cooldownEl.style.display = "none";
           const hintEl2 = document.getElementById("fortune-spin-hint");
           if (hintEl2) hintEl2.style.display = "block";
-        });
+        }, "short");
       };
     }
     modal.classList.add("active");
@@ -2330,12 +2330,28 @@
   var TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
   var AdService = {
     _isShowing: false,
+    // Two independent cooldown pools so a big reward (prestige, weekly, offline-double,
+    // the boost offer) doesn't get shadowed by a small one (contextual banner, VIP visit,
+    // fortune wheel) sharing the same timer, or vice versa.
     lastWatchedAt: 0,
+    lastWatchedAtShort: 0,
     AD_OFFER_COOLDOWN_MS: 7 * 60 * 1e3,
+    AD_OFFER_COOLDOWN_SHORT_MS: 2.5 * 60 * 1e3,
     adMobAvailable: false,
     _currentCallback: null,
-    isInCooldown: function() {
+    _currentTier: "big",
+    isInCooldown: function(tier) {
+      if (tier === "short") {
+        return AdService.lastWatchedAtShort > 0 && Date.now() - AdService.lastWatchedAtShort < AdService.AD_OFFER_COOLDOWN_SHORT_MS;
+      }
       return AdService.lastWatchedAt > 0 && Date.now() - AdService.lastWatchedAt < AdService.AD_OFFER_COOLDOWN_MS;
+    },
+    _markWatched: function() {
+      if (AdService._currentTier === "short") {
+        AdService.lastWatchedAtShort = Date.now();
+      } else {
+        AdService.lastWatchedAt = Date.now();
+      }
     },
     initAdMob: async function() {
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob) {
@@ -2349,7 +2365,7 @@
               AdService._currentCallback();
               AdService._currentCallback = null;
             }
-            AdService.lastWatchedAt = Date.now();
+            AdService._markWatched();
             resetBoostOfferTimer();
           });
           window.Capacitor.Plugins.AdMob.addListener("rewardedVideoAdDismissed", () => {
@@ -2374,9 +2390,10 @@
         console.error("Failed to prepare ad", e);
       }
     },
-    show: async function(callback) {
+    show: async function(callback, tier) {
       if (AdService._isShowing) return;
       AdService._isShowing = true;
+      AdService._currentTier = tier === "short" ? "short" : "big";
       if (AdService.adMobAvailable) {
         try {
           AdService._currentCallback = callback;
@@ -2403,7 +2420,7 @@
         AdService._isShowing = false;
         removeOverlay();
         if (grantReward) {
-          AdService.lastWatchedAt = Date.now();
+          AdService._markWatched();
           resetBoostOfferTimer();
           if (callback) callback();
         }
@@ -2450,8 +2467,8 @@
     }
   };
   setTimeout(() => AdService.initAdMob(), 1e3);
-  function playAd(callback) {
-    AdService.show(callback);
+  function playAd(callback, tier) {
+    AdService.show(callback, tier);
   }
   function formatTime2(sec) {
     const hours = Math.floor(sec / 3600);
@@ -2505,7 +2522,7 @@
     }
   }
   function showContextualAdBanner() {
-    if (AdService.isInCooldown()) return;
+    if (AdService.isInCooldown("short")) return;
     if (game.state.boost2xTimeLeft > 0) return;
     if (document.querySelector(".modal-overlay.active")) return;
     if (contextualBannerShown) return;
@@ -2554,7 +2571,7 @@
         game.addBoost2x(2);
         draw();
         spawnFloating(tObj.boostActivatedMsg || "\u26A1 Boost x2 activated!", window.innerWidth / 2, window.innerHeight / 2, "gold");
-      });
+      }, "short");
     });
     document.getElementById("ctx-offer-no").addEventListener("click", () => {
       initSound2();

@@ -718,7 +718,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                     if (cooldownEl) cooldownEl.style.display = 'none';
                     const hintEl2 = document.getElementById('fortune-spin-hint');
                     if (hintEl2) hintEl2.style.display = 'block';
-                });
+                }, 'short');
             };
         }
 

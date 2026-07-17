@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>אימפריית הבנקים</title>
 
@@ -63,10 +63,9 @@
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- font-display:optional (not swap) — a native app shouldn't have its layout
-         reflow later because a webfont swapped in after the fact; if Heebo isn't
-         ready basically instantly it just stays on the fallback for this load. -->
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=optional" rel="stylesheet">
+    <!-- Google Fonts - Heebo -->
+    <!-- Swap ensures that if the user's connection is slow, they still see Arial, and it swaps to Heebo when loaded -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- Preload critical assets -->
     <link rel="preload" href="images/icon.png" as="image">
     <link rel="preload" href="images/nav_bank.png" as="image">
