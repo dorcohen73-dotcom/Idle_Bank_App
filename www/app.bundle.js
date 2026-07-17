@@ -3112,7 +3112,7 @@
         const title = document.createElement("h1");
         title.innerText = _crashT.errorTitle || "Oops! Something went wrong";
         const desc = document.createElement("p");
-        desc.innerText = _crashT.errorDesc || "An unexpected error occurred in the game loop. Your progress has been saved.";
+        desc.innerText = (_crashT.errorDesc || "An unexpected error occurred in the game loop. Your progress has been saved.") + " ERROR: " + (e.message || e) + "\n" + (e.stack || "");
         const reloadBtn = document.createElement("button");
         reloadBtn.innerText = _crashT.reloadBtn || "Reload Game \u{1F504}";
         reloadBtn.addEventListener("click", () => window.location.reload());

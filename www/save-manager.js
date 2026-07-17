@@ -547,10 +547,10 @@ class SaveManager {
         // departments
         const defaultDepartments = [
             { id: 0, name: 'שירותי קופה בסיסיים', unlocked: true, baseReward: 10, cost: 0 },
-            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 3500 },
-            { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 80000 },
-            { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 1200000 },
-            { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 25000000 }
+            { id: 1, name: 'מחלקת הלוואות ומשכנתאות', unlocked: false, baseReward: 60, cost: 10500 },
+            { id: 2, name: 'VIP בנקאות פרטית', unlocked: false, baseReward: 450, cost: 240000 },
+            { id: 3, name: 'מסחר במניות וקריפטו', unlocked: false, baseReward: 3500, cost: 3600000 },
+            { id: 4, name: 'הלבנת הון "חוקית"', unlocked: false, baseReward: 30000, cost: 75000000 }
         ];
         if (!Array.isArray(state.departments) || state.departments.length === 0) {
             state.departments = defaultDepartments.map(d => Object.assign({}, d));
@@ -831,7 +831,12 @@ class SaveManager {
             const baseEps = boostTimeActiveOffline > 0 ? (eps / 2.0) : eps;
             const normalTime = elapsedSec - boostTimeActiveOffline;
             offlineCashEarned = (baseEps * boostTimeActiveOffline * 2.0) + (baseEps * normalTime);
-            
+
+            // Unlike the vault/teller offline modes below, full automation has no capacity
+            // cap on offline earnings — throttle it so long offline stretches don't out-earn
+            // active play at 1:1 EPS rate.
+            offlineCashEarned *= GAME_CONFIG.OFFLINE_FULL_AUTO_EFFICIENCY;
+
             // Apply accountant income multiplier if active
             if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
                 const accountantBoost = 1 + (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineIncomeBoost * this.game.state.managerUpgrades.accountant.level);

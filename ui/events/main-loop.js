@@ -158,7 +158,7 @@ export function tick(timestamp) {
             title.innerText = _crashT.errorTitle || 'Oops! Something went wrong';
 
             const desc = document.createElement('p');
-            desc.innerText = _crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.';
+            desc.innerText = (_crashT.errorDesc || 'An unexpected error occurred in the game loop. Your progress has been saved.') + ' ERROR: ' + (e.message || e) + '\n' + (e.stack || '');
 
             const reloadBtn = document.createElement('button');
             reloadBtn.innerText = _crashT.reloadBtn || 'Reload Game 🔄';
@@ -217,3 +217,4 @@ export function updateVaultMiniBar(pct, isReady, cashStored, capacity, yieldPerH
         miniBar.classList.toggle('is-ready', isReady && pct < 95);
     }
 }
+

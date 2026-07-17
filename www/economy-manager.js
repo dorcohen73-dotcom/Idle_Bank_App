@@ -26,6 +26,19 @@ class EconomyManager {
         return Math.min(this.game.tellerUnlockCosts.length, 4 + branchIndex);
     }
 
+    // Unlock/upgrade cost scaling: branch multiplier keeps pace consistent across branches
+    // (branch N shouldn't clear N-times faster than branch 0 just because it starts with a
+    // bigger income multiplier). Prestige-shares multiplier does the same job across a
+    // player's *lifetime* — without it, a veteran sitting on a large banked shares multiplier
+    // (which can reach several thousand x at a maxed-out wallet) would blow through the exact
+    // same branch a brand-new player (shares = 0, multiplier = 1, fully unaffected) finds a
+    // normal challenge, and would keep accelerating further with every prestige. This keeps a
+    // given branch feeling like roughly the same amount of "real" progress regardless of how
+    // long someone has already played, while leaving new players completely untouched.
+    getCostScalingMultiplier() {
+        return this.getBranchMultiplier() * this.getPrestigeMultiplier();
+    }
+
     getTotalMultiplier() {
         if (this.cachedTotalMult !== null && this.cachedTotalMult !== undefined) {
             return this.cachedTotalMult;
@@ -123,7 +136,8 @@ class EconomyManager {
     }
 
     getTellerUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.TELLER_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.TELLER_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.TELLER_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.TELLER_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Guards Formulas
@@ -158,7 +172,8 @@ class EconomyManager {
     }
 
     getGuardUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.GUARD_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.GUARD_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.GUARD_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.GUARD_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Vault Formulas
@@ -176,7 +191,8 @@ class EconomyManager {
     }
 
     getVaultUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.VAULT_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.VAULT_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.VAULT_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.VAULT_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     // Queue Lobby Formulas
@@ -195,7 +211,8 @@ class EconomyManager {
     }
 
     getQueueUpgradeCost(level) {
-        return Math.round(GAME_CONFIG.QUEUE_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.QUEUE_UPGRADE_COST_GROWTH, level - 1));
+        const base = GAME_CONFIG.QUEUE_BASE_UPGRADE_COST * Math.pow(GAME_CONFIG.QUEUE_UPGRADE_COST_GROWTH, level - 1);
+        return Math.round(base * this.getCostScalingMultiplier());
     }
 
     getCumulativeUpgradeCost(type, startLevel, targetLevel) {
@@ -221,11 +238,11 @@ class EconomyManager {
         if (type === 'queue') return this.getQueueUpgradeCost(level);
         if (type === 'manager') {
             const costs = GAME_CONFIG.MANAGER_UPGRADE_COSTS[id] || GAME_CONFIG.MANAGER_UPGRADE_COSTS_DEFAULT;
-            let cost = costs[level] || 0;
+            let cost = (costs[level] || 0) * this.getCostScalingMultiplier();
             if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.managerDiscount) {
-                cost = Math.round(cost * (1 - 0.05 * this.game.state.goldUpgrades.managerDiscount)); // -5% per level
+                cost = cost * (1 - 0.05 * this.game.state.goldUpgrades.managerDiscount); // -5% per level
             }
-            return cost;
+            return Math.round(cost);
         }
         return 0;
     }

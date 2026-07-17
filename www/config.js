@@ -49,6 +49,18 @@ const GAME_CONFIG = {
     AUTO_SAVE_INTERVAL_SEC: 5.0,
     TAB_REFRESH_INTERVAL_SEC: 1.0,
 
+    // Offline earnings balance: "full automation" (operations+finance hired) earns offline
+    // cash uncapped by any vault/teller capacity, unlike the other two offline modes. This
+    // factor throttles that uncapped path so long offline sessions don't out-pace active play.
+    OFFLINE_FULL_AUTO_EFFICIENCY: 0.5,
+
+    // Mission reward balance: reward scales sub-linearly with the player's current EPS so
+    // rising income doesn't keep inflating mission payouts 1:1 (which fed a runaway
+    // buy-upgrades -> higher EPS -> bigger mission reward loop within a single branch).
+    // Tuned so referenceReward matches the old linear formula (~eps*300) around eps=10.
+    MISSION_REWARD_EPS_EXPONENT: 0.7,
+    MISSION_REWARD_SCALE: 600,
+
     // SVG Cache limits
     SVG_CACHE_MAX_SIZE: 200,
 
@@ -64,27 +76,31 @@ const GAME_CONFIG = {
     TELLER_UNLOCK_COSTS: [0, 800, 20000, 600000, 18000000, 500000000, 12500000000, 300000000000],
     GUARD_UNLOCK_COSTS: [0, 4000, 120000],
     
+    // Manager hire/upgrade costs — 3x the original values. Raising minCashToPrestige alone
+    // barely slows progression (the economy snowballs past almost any threshold once its
+    // content is bought out), but raising what it costs to buy through that content scales
+    // every branch's clear time proportionally, which is the lever that actually matters.
     MANAGER_COSTS: {
-        customer: 50,
-        operations: 5000,
-        finance: 100000,
-        accountant: 300000,
-        service: 1500000,
-        vip: 50000000,
-        marketing: 2000000000
+        customer: 150,
+        operations: 15000,
+        finance: 300000,
+        accountant: 900000,
+        service: 4500000,
+        vip: 150000000,
+        marketing: 6000000000
     },
 
     MANAGER_UPGRADE_COSTS: {
-        customer: [0, 300, 1000, 5000, 25000],
-        operations: [0, 15000, 50000, 180000, 600000],
-        finance: [0, 300000, 1000000, 3200000, 10000000],
-        accountant: [0, 800000, 2500000, 8000000, 25000000],
-        service: [0, 4500000, 15000000, 50000000, 150000000],
-        vip: [0, 150000000, 500000000, 1600000000, 5000000000],
-        marketing: [0, 6000000000, 20000000000, 60000000000, 200000000000]
+        customer: [0, 900, 3000, 15000, 75000],
+        operations: [0, 45000, 150000, 540000, 1800000],
+        finance: [0, 900000, 3000000, 9600000, 30000000],
+        accountant: [0, 2400000, 7500000, 24000000, 75000000],
+        service: [0, 13500000, 45000000, 150000000, 450000000],
+        vip: [0, 450000000, 1500000000, 4800000000, 15000000000],
+        marketing: [0, 18000000000, 60000000000, 180000000000, 600000000000]
     },
 
-    MANAGER_UPGRADE_COSTS_DEFAULT: [0, 15000, 80000, 400000, 2000000],
+    MANAGER_UPGRADE_COSTS_DEFAULT: [0, 45000, 240000, 1200000, 6000000],
     GOLD_UPGRADE_COSTS: { 
         startingCash: 5, 
         guardSpeed: 10, 
