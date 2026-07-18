@@ -34,7 +34,7 @@ class EconomyManager {
     // creep up mid-session with no player-facing trigger, which read as a bug rather than
     // progression.
     getCostScalingMultiplier() {
-        return this.getBranchMultiplier();
+        return 1;
     }
 
     getTotalMultiplier() {
@@ -122,7 +122,12 @@ class EconomyManager {
         if (!this._cachedTellerCap) this._cachedTellerCap = new Map();
         if (this._cachedTellerCap.has(level)) return this._cachedTellerCap.get(level);
 
-        let cap = Math.round(GAME_CONFIG.TELLER_BASE_CAPACITY * Math.pow(GAME_CONFIG.TELLER_CAPACITY_GROWTH, level - 1));
+        const speed = this.getTellerSpeed(level);
+        const baseRewardForTick = this.getCurrentBaseReward() || 10;
+        const finalRewardForTick = baseRewardForTick * (this.getTotalMultiplier() || 1);
+        
+        // 5 minutes of profit for this specific teller
+        let cap = (finalRewardForTick / speed) * 300;
 
         if (this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service) {
             const svcLvl = this.game.state.managerUpgrades.service.level || 1;
@@ -132,6 +137,12 @@ class EconomyManager {
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.tellerCapacityBoost) {
             cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.tellerCapacityBoost)); // +10% per level
         }
+
+        cap = Math.round(cap);
+
+        // Ensure it doesn't drop below the old base calculation in very early game
+        let oldBase = Math.round(GAME_CONFIG.TELLER_BASE_CAPACITY * Math.pow(GAME_CONFIG.TELLER_CAPACITY_GROWTH, level - 1));
+        cap = Math.max(cap, oldBase);
 
         this._cachedTellerCap.set(level, cap);
         return cap;
@@ -163,12 +174,26 @@ class EconomyManager {
     getGuardCapacity(level) {
         if (!this._cachedGuardCap) this._cachedGuardCap = new Map();
         if (this._cachedGuardCap.has(level)) return this._cachedGuardCap.get(level);
-        const baseCap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
-        let cap = (this.game.state.managers && this.game.state.managers.operations) ? Math.round(baseCap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR) : baseCap;
-        if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
-            const opsCapLvl = this.game.state.managerUpgrades.operations.level || 1;
-            cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.operations.guardCapBoost * opsCapLvl));
+        
+        // Use Global EPS to scale guard capacity (e.g. 60 seconds of Global EPS)
+        let cap = (this.game.cachedEps || 0) * 60;
+        
+        // If eps is 0 (game just started), fallback to old formula
+        if (cap === 0) {
+            cap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
+            cap = Math.round(cap * this.getTotalMultiplier());
         }
+
+        if (this.game.state.managers && this.game.state.managers.operations) {
+            cap = Math.round(cap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR);
+            if (this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {
+                const opsCapLvl = this.game.state.managerUpgrades.operations.level || 1;
+                cap = Math.round(cap * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.operations.guardCapBoost * opsCapLvl));
+            }
+        }
+        
+        cap = Math.round(cap);
+        
         this._cachedGuardCap.set(level, cap);
         return cap;
     }
@@ -180,13 +205,21 @@ class EconomyManager {
 
     // Vault Formulas
     getVaultCapacity(level) {
-        // H-05: cache vault capacity per level — invalidated in recalculateEps() and after upgrades
         if (this._cachedVaultCap.has(level)) return this._cachedVaultCap.get(level);
-        let cap = Math.round(GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1));
+        
+        // Use Global EPS to scale vault capacity (e.g. 60 minutes = 3600 seconds of Global EPS)
+        let cap = (this.game.cachedEps || 0) * 3600;
+        
+        if (cap === 0) {
+            cap = Math.round(GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1));
+            cap = Math.round(cap * this.getTotalMultiplier());
+        }
 
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.vaultCapacityBoost) {
             cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost)); // +10% per level
         }
+
+        cap = Math.round(cap);
 
         this._cachedVaultCap.set(level, cap);
         return cap;

@@ -2,6 +2,21 @@
 <html lang="he" dir="rtl" data-version="1.0.135">
 
 <head>
+    <script>
+        if (!localStorage.getItem('force_reload_v8')) {
+            localStorage.setItem('force_reload_v8', 'true');
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                    window.location.reload(true);
+                });
+            } else {
+                window.location.reload(true);
+            }
+        }
+    </script>
     <meta charset="UTF-8">
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
@@ -338,12 +353,6 @@
                         <!-- Dynamic tellers node cards inserted here -->
                     </div>
 
-                    <!-- Security Guard Transit Path -->
-                    <div class="security-path" id="security-path" role="button" tabindex="0" aria-label="שלח בלדר ידנית — לחץ לפעולה ידנית" title="לחץ כדי לשלוח את הבלדר ידנית">
-                        <span class="guard-status-text" id="guard-status-text">מאבטח ממתין בכספת...</span>
-                        <div class="guard-avatar" id="guard-avatar"></div>
-                        <div class="guard-load" id="guard-load"></div>
-                    </div>
 
                     <!-- Vault Zone -->
                     <div class="vault-zone">
@@ -805,14 +814,14 @@
         </div>
     </div>
 
-    <script src="config.js?v=20260717_1" defer></script>
-    <script src="locales.js?v=20260717_1" defer></script>
-    <script src="economy-manager.js?v=20260717_1" defer></script>
-    <script src="save-manager.js?v=20260717_1" defer></script>
-    <script src="mission-controller.js?v=20260717_1" defer></script>
-    <script src="achievement-controller.js?v=20260717_1" defer></script>
-    <script src="game.js?v=20260717_1" defer></script>
-    <script src="app.bundle.js?v=20260717_1" defer></script>
+    <script src="config.js?v=20260718_1" defer></script>
+    <script src="locales.js?v=20260718_1" defer></script>
+    <script src="economy-manager.js?v=20260718_1" defer></script>
+    <script src="save-manager.js?v=20260718_1" defer></script>
+    <script src="mission-controller.js?v=20260718_1" defer></script>
+    <script src="achievement-controller.js?v=20260718_1" defer></script>
+    <script src="game.js?v=20260718_1" defer></script>
+    <script src="app.bundle.js?v=20260718_1" defer></script>
     
 </body>
 

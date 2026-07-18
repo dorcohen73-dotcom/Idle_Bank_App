@@ -170,10 +170,8 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         window.DOM_CACHE.bulkSelector = document.getElementById('global-bulk-selector');
         window.DOM_CACHE.customerLine = document.getElementById('customer-line');
         window.DOM_CACHE.tellersZone = document.getElementById('tellers-zone');
-        window.DOM_CACHE.securityPath = document.getElementById('security-path');
-        window.DOM_CACHE.guardAvatar = document.getElementById('guard-avatar');
-        window.DOM_CACHE.guardStatus = document.getElementById('guard-status-text');
-        window.DOM_CACHE.guardLoad = document.getElementById('guard-load');
+
+
         window.DOM_CACHE.vaultGraphic = document.getElementById('vault-graphic');
         window.DOM_CACHE.vaultFill = document.getElementById('vault-fill');
         window.DOM_CACHE.vaultStats = document.getElementById('vault-stats');

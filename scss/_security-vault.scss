@@ -1,34 +1,3 @@
-/* Guard Transit Path Visual */
-.security-path {
-    background: linear-gradient(90deg, rgba(20, 26, 38, 0.9) 0%, rgba(12, 16, 24, 0.95) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 14px;
-    padding: 0.6rem 1.2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
-    transition: var(--transition-prop);
-}
-
-.security-path:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(59, 130, 246, 0.25);
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
-}
-
-/* Hide old static guard elements */
-.guard-avatar, .guard-load {
-    display: none !important;
-}
-
-.guard-status-text {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-right: 2.6rem;
-}
 
 /* Parallel Guards (Couriers) styling */
 .guard-runner {

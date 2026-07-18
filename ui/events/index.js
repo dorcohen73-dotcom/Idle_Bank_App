@@ -504,9 +504,12 @@ function initUIEvents() {
         });
     }
 
-    if (DOM_CACHE.securityPath) {
-        DOM_CACHE.securityPath.addEventListener('click', () => {
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+        vaultGraphicEl.addEventListener('click', () => {
             initSound();
+            
+            // Try to trigger courier
             for (let i = 0; i < game.state.guards.length; i++) {
                 const g = game.state.guards[i];
                 if (g.unlocked && g.state === 'idle') {
@@ -515,23 +518,16 @@ function initUIEvents() {
                     }
                 }
             }
+            
+            // Also act as vault empty button
+            if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
         });
-        // Keyboard support for non-button interactive div
-        DOM_CACHE.securityPath.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                DOM_CACHE.securityPath.click();
-            }
-        });
-    }
 
-    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
-    if (vaultGraphicEl) {
         // Keyboard support for non-button interactive div
         vaultGraphicEl.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
+                vaultGraphicEl.click();
             }
         });
     }

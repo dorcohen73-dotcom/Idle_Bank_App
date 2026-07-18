@@ -515,60 +515,142 @@
   }
 
   // ui/draw/security.js
-  var lastGuardStatusText = "";
+  var anchorCache = null;
+  var lastCacheTime = 0;
+  function getCourierPos(segmentPosition, isMovingToVault = false, lastTellerIdx = -1) {
+    const now = Date.now();
+    if (!anchorCache || now - lastCacheTime > 2e3) {
+      const floorEl2 = document.getElementById("bank-floor-section");
+      if (floorEl2) {
+        const floorRect2 = floorEl2.getBoundingClientRect();
+        const points2 = [];
+        const fallback = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+        const tellerEls = document.querySelectorAll(".teller-counter");
+        tellerEls.forEach((el, idx) => {
+          const rect = el.getBoundingClientRect();
+          points2.push({
+            val: fallback[idx] || 0.9,
+            x: rect.left - floorRect2.left + rect.width / 2,
+            y: rect.top - floorRect2.top + rect.height / 2 + 40
+            // Offset slightly below teller desk
+          });
+        });
+        points2.sort((a, b) => a.val - b.val);
+        anchorCache = points2;
+        lastCacheTime = now;
+      }
+    }
+    const floorEl = document.getElementById("bank-floor-section");
+    if (!floorEl || !anchorCache || anchorCache.length === 0) return { x: 0, y: 0 };
+    let vaultEl = document.getElementById("vault-graphic");
+    if (window.innerWidth <= 768) {
+      const miniVault = document.getElementById("vault-mini-icon");
+      if (miniVault && miniVault.offsetParent !== null) vaultEl = miniVault;
+    }
+    const floorRect = floorEl.getBoundingClientRect();
+    const vaultRect = vaultEl ? vaultEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+    const dynamicVault = {
+      val: 0,
+      x: vaultRect.left - floorRect.left + vaultRect.width / 2,
+      y: vaultRect.top - floorRect.top + vaultRect.height / 2
+    };
+    const points = [dynamicVault, ...anchorCache];
+    if (isMovingToVault && lastTellerIdx >= 0 && points.length > 1) {
+      const vault = points[0];
+      const startPoint = points[lastTellerIdx + 1] || points[points.length - 1];
+      const totalDist = startPoint.val - vault.val;
+      let t = 0;
+      if (totalDist > 0) {
+        t = (startPoint.val - segmentPosition) / totalDist;
+      }
+      t = Math.max(0, Math.min(1, t));
+      return {
+        x: startPoint.x + t * (vault.x - startPoint.x),
+        y: startPoint.y + t * (vault.y - startPoint.y)
+      };
+    }
+    if (segmentPosition <= points[0].val) return { x: points[0].x, y: points[0].y };
+    if (segmentPosition >= points[points.length - 1].val) return { x: points[points.length - 1].x, y: points[points.length - 1].y };
+    for (let i = 0; i < points.length - 1; i++) {
+      if (segmentPosition >= points[i].val && segmentPosition <= points[i + 1].val) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        let t = (segmentPosition - p1.val) / (p2.val - p1.val);
+        if (Math.abs(p1.y - p2.y) < 60) {
+          return {
+            x: p1.x + t * (p2.x - p1.x),
+            y: p1.y + t * (p2.y - p1.y)
+          };
+        }
+        let aisleY;
+        if (p1.val === 0 || p2.val === 0) {
+          aisleY = p1.val === 0 ? p1.y : p2.y;
+        } else {
+          aisleY = (p1.y + p2.y) / 2;
+        }
+        const dist1 = Math.abs(aisleY - p1.y);
+        const dist2 = Math.abs(p2.x - p1.x);
+        const dist3 = Math.abs(p2.y - aisleY);
+        const totalDist = dist1 + dist2 + dist3;
+        if (totalDist === 0) return { x: p1.x, y: p1.y };
+        const t1 = dist1 / totalDist;
+        const t2 = dist2 / totalDist;
+        if (t <= t1) {
+          const subT = t1 === 0 ? 0 : t / t1;
+          return { x: p1.x, y: p1.y + subT * (aisleY - p1.y) };
+        } else if (t <= t1 + t2) {
+          const subT = t2 === 0 ? 0 : (t - t1) / t2;
+          return { x: p1.x + subT * (p2.x - p1.x), y: aisleY };
+        } else {
+          const t3 = 1 - t1 - t2;
+          const subT = t3 <= 0 ? 0 : (t - t1 - t2) / t3;
+          return { x: p2.x, y: aisleY + subT * (p2.y - aisleY) };
+        }
+      }
+    }
+    return { x: 0, y: 0 };
+  }
   function updateGuardsDisplay(lang) {
     const unlockedGuards = game.state.guards.filter((g) => g.unlocked);
+    const bankFloor = document.getElementById("bank-floor-section");
+    if (!bankFloor) return;
     if (unlockedGuards.length > 0) {
-      DOM_CACHE.securityPath.style.display = "flex";
-      if (DOM_CACHE.guardAvatar) DOM_CACHE.guardAvatar.style.display = "none";
-      if (DOM_CACHE.guardLoad) DOM_CACHE.guardLoad.style.display = "none";
       const currentGuardIds = unlockedGuards.map((g) => g.id.toString());
-      const existingRunners = Array.from(DOM_CACHE.securityPath.querySelectorAll(".guard-runner"));
+      const existingRunners = Array.from(bankFloor.querySelectorAll(".guard-runner"));
       existingRunners.forEach((node) => {
         const gid = node.getAttribute("data-guard-id");
         if (!currentGuardIds.includes(gid)) {
-          DOM_CACHE.securityPath.removeChild(node);
+          bankFloor.removeChild(node);
         }
       });
       unlockedGuards.forEach((g) => {
         const gData = game.getGuardRenderData(g.id);
         if (!gData) return;
-        let runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
+        let runner = bankFloor.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
         if (!runner) {
           runner = document.createElement("div");
           runner.className = "guard-runner";
-          runner.setAttribute("data-guard-id", gData.id);
-          runner.style.willChange = "transform";
+          runner.setAttribute("data-guard-id", gData.id.toString());
+          runner.style.zIndex = "310";
+          runner.style.willChange = "transform, left, top";
+          runner.style.position = "absolute";
           const avatarEl = document.createElement("div");
           avatarEl.className = "guard-runner-avatar";
           runner.appendChild(avatarEl);
           const loadEl2 = document.createElement("div");
           loadEl2.className = "guard-runner-load";
           runner.appendChild(loadEl2);
-          DOM_CACHE.securityPath.appendChild(runner);
+          bankFloor.appendChild(runner);
         }
-        let visualPosition = gData.position;
         const isMovingToTeller = gData.state.startsWith("moving_to_teller_");
         const isCollecting = gData.state.startsWith("collecting_from_teller_");
-        if (isMovingToTeller) {
-          visualPosition = Math.max(0, gData.position - gData.id * 0.07);
-        } else if (gData.state === "moving_to_vault") {
-          visualPosition = Math.min(1, gData.position + gData.id * 0.07);
-        } else if (gData.state === "idle" || gData.state === "depositing") {
-          visualPosition = gData.position + gData.id * 0.04;
-        } else if (isCollecting) {
-          visualPosition = gData.position - gData.id * 0.04;
-        }
-        const percentRight = 10 + visualPosition * 75;
-        const isLtr = document.documentElement.dir === "ltr";
-        if (isLtr) {
-          runner.style.right = "";
-          runner.style.left = `${percentRight}%`;
-        } else {
-          runner.style.left = "";
-          runner.style.right = `${percentRight}%`;
-        }
-        runner.style.top = `calc(50% + ${(gData.id - 1) * 12}px)`;
+        const isMovingToVault = gData.state === "moving_to_vault";
+        const pos = getCourierPos(gData.position, isMovingToVault, gData.lastCollectedTellerIndex);
+        const offsetX = gData.id * 10;
+        const offsetY = gData.id * 10;
+        runner.style.left = `${pos.x + offsetX}px`;
+        runner.style.top = `${pos.y + offsetY}px`;
+        runner.style.transform = `translate(-50%, -50%)`;
         runner.className = "guard-runner";
         runner.classList.add(`state-${gData.state}`);
         if (isMovingToTeller) runner.classList.add("state-moving_to_tellers");
@@ -585,39 +667,9 @@
           loadEl.style.display = gData.loadedCash > 0 ? "block" : "none";
         }
       });
-      const firstMoving = unlockedGuards.find((g) => {
-        const gData = game.getGuardRenderData(g.id);
-        return gData && gData.state !== "idle";
-      });
-      const activeGuard = firstMoving || unlockedGuards[0];
-      const activeData = activeGuard ? game.getGuardRenderData(activeGuard.id) : null;
-      const tObjGuard = translations[lang].guardStates;
-      if (DOM_CACHE.guardStatus && activeData) {
-        const unlockedCount = unlockedGuards.length;
-        const totalCount = game.state.guards.length;
-        const tObjLang = translations[lang];
-        const courierLabel = unlockedCount > 1 ? tObjLang.guardsLabel || "Couriers" : tObjLang.guardLabel || "Courier";
-        let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
-        if (lang === "he") {
-          stateText = stateText.replace(/^(בלדר|שומר)\s+/, "");
-        } else if (lang === "en") {
-          stateText = stateText.replace(/^Guard\s+/, "");
-        } else if (lang === "es") {
-          stateText = stateText.replace(/^Guardia\s+/, "");
-        } else if (lang === "ru") {
-          stateText = stateText.replace(/^(Охранник|Инкассатор)\s+/, "");
-        }
-        if (lang === "en" || lang === "es") {
-          stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
-        }
-        const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
-        if (lastGuardStatusText !== newGuardStatusText) {
-          DOM_CACHE.guardStatus.innerText = newGuardStatusText;
-          lastGuardStatusText = newGuardStatusText;
-        }
-      }
     } else {
-      DOM_CACHE.securityPath.style.display = "none";
+      const existingRunners = Array.from(bankFloor.querySelectorAll(".guard-runner"));
+      existingRunners.forEach((node) => bankFloor.removeChild(node));
     }
   }
 
@@ -2671,10 +2723,6 @@
       if (typeof window.renderAchievementsTab === "function") window.renderAchievementsTab();
     }
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
-    if (DOM_CACHE.securityPath) {
-      DOM_CACHE.securityPath.title = tObj.tooltips.guard;
-      DOM_CACHE.securityPath.setAttribute("aria-label", tObj.tooltips.guard);
-    }
     if (DOM_CACHE.vaultGraphic) {
       DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
       DOM_CACHE.vaultGraphic.setAttribute("aria-label", tObj.tooltips.vault);
@@ -3145,7 +3193,13 @@
       }
       const canBuy = details.canAfford;
       card.className = "upgrade-card premium-upg-card";
-      const eps = capacity / speed;
+      let eps = 0;
+      if (type === "teller") {
+        const reward = game.getCurrentBaseReward() * game.getTotalMultiplier();
+        eps = reward / speed;
+      } else {
+        eps = capacity / speed;
+      }
       card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
             <div class="upg-v2-content-overlay">
@@ -5372,8 +5426,9 @@
         }
       });
     }
-    if (DOM_CACHE.securityPath) {
-      DOM_CACHE.securityPath.addEventListener("click", () => {
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+      vaultGraphicEl.addEventListener("click", () => {
         initSound2();
         for (let i = 0; i < game.state.guards.length; i++) {
           const g = game.state.guards[i];
@@ -5383,20 +5438,12 @@
             }
           }
         }
+        if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
       });
-      DOM_CACHE.securityPath.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          DOM_CACHE.securityPath.click();
-        }
-      });
-    }
-    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
-    if (vaultGraphicEl) {
       vaultGraphicEl.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
+          vaultGraphicEl.click();
         }
       });
     }
@@ -5673,10 +5720,6 @@ ${stack}` : String(message);
         window.DOM_CACHE.bulkSelector = document.getElementById("global-bulk-selector");
         window.DOM_CACHE.customerLine = document.getElementById("customer-line");
         window.DOM_CACHE.tellersZone = document.getElementById("tellers-zone");
-        window.DOM_CACHE.securityPath = document.getElementById("security-path");
-        window.DOM_CACHE.guardAvatar = document.getElementById("guard-avatar");
-        window.DOM_CACHE.guardStatus = document.getElementById("guard-status-text");
-        window.DOM_CACHE.guardLoad = document.getElementById("guard-load");
         window.DOM_CACHE.vaultGraphic = document.getElementById("vault-graphic");
         window.DOM_CACHE.vaultFill = document.getElementById("vault-fill");
         window.DOM_CACHE.vaultStats = document.getElementById("vault-stats");

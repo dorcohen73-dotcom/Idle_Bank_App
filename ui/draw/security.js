@@ -1,25 +1,139 @@
 import { formatMoney } from './format.js';
 
-let lastGuardStatusText = '';
+let anchorCache = null;
+let lastCacheTime = 0;
 
-// Per-frame refresh of the security guard runners (position/state) and the
-// courier status label.
+function getCourierPos(segmentPosition, isMovingToVault = false, lastTellerIdx = -1) {
+    const now = Date.now();
+    if (!anchorCache || now - lastCacheTime > 2000) {
+        const floorEl = document.getElementById('bank-floor-section');
+        if (floorEl) {
+            const floorRect = floorEl.getBoundingClientRect();
+            const points = [];
+            
+            // Teller anchors: val 0.1, 0.2, 0.3, ... 0.8
+            const fallback = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+            const tellerEls = document.querySelectorAll('.teller-counter');
+            tellerEls.forEach((el, idx) => {
+                const rect = el.getBoundingClientRect();
+                points.push({
+                    val: fallback[idx] || 0.9,
+                    x: rect.left - floorRect.left + rect.width / 2,
+                    y: rect.top - floorRect.top + rect.height / 2 + 40 // Offset slightly below teller desk
+                });
+            });
+            
+            points.sort((a,b) => a.val - b.val);
+            anchorCache = points;
+            lastCacheTime = now;
+        }
+    }
+    
+    const floorEl = document.getElementById('bank-floor-section');
+    if (!floorEl || !anchorCache || anchorCache.length === 0) return {x: 0, y: 0};
+    
+    // Dynamically calculate vault position every frame because on mobile it may be fixed/sticky
+    let vaultEl = document.getElementById('vault-graphic');
+    if (window.innerWidth <= 768) {
+        const miniVault = document.getElementById('vault-mini-icon');
+        if (miniVault && miniVault.offsetParent !== null) vaultEl = miniVault;
+    }
+    
+    const floorRect = floorEl.getBoundingClientRect();
+    const vaultRect = vaultEl ? vaultEl.getBoundingClientRect() : {left: 0, top: 0, width: 0, height: 0};
+    const dynamicVault = {
+        val: 0.0,
+        x: vaultRect.left - floorRect.left + (vaultRect.width / 2),
+        y: vaultRect.top - floorRect.top + (vaultRect.height / 2)
+    };
+
+    const points = [dynamicVault, ...anchorCache];
+    
+    if (isMovingToVault && lastTellerIdx >= 0 && points.length > 1) {
+        const vault = points[0];
+        // lastTellerIdx is 0-indexed, but points[0] is vault. So points[lastTellerIdx + 1] is the teller.
+        const startPoint = points[lastTellerIdx + 1] || points[points.length - 1];
+        
+        const totalDist = startPoint.val - vault.val;
+        let t = 0;
+        if (totalDist > 0) {
+            t = (startPoint.val - segmentPosition) / totalDist;
+        }
+        t = Math.max(0, Math.min(1, t));
+        
+        return {
+            x: startPoint.x + t * (vault.x - startPoint.x),
+            y: startPoint.y + t * (vault.y - startPoint.y)
+        };
+    }
+    
+    if (segmentPosition <= points[0].val) return {x: points[0].x, y: points[0].y};
+    if (segmentPosition >= points[points.length-1].val) return {x: points[points.length-1].x, y: points[points.length-1].y};
+    
+    for (let i = 0; i < points.length - 1; i++) {
+        if (segmentPosition >= points[i].val && segmentPosition <= points[i+1].val) {
+            const p1 = points[i];
+            const p2 = points[i+1];
+            let t = (segmentPosition - p1.val) / (p2.val - p1.val);
+            
+            // Check if they are on the same vertical row or close to it
+            if (Math.abs(p1.y - p2.y) < 60) {
+                return {
+                    x: p1.x + t * (p2.x - p1.x),
+                    y: p1.y + t * (p2.y - p1.y)
+                };
+            }
+            
+            // Manhattan routing with an aisle
+            let aisleY;
+            if (p1.val === 0.0 || p2.val === 0.0) {
+                // If moving from/to vault, use the vault's Y as the main aisle
+                aisleY = (p1.val === 0.0) ? p1.y : p2.y;
+            } else {
+                // Between two teller rows, aisle is in the middle
+                aisleY = (p1.y + p2.y) / 2;
+            }
+            
+            const dist1 = Math.abs(aisleY - p1.y);
+            const dist2 = Math.abs(p2.x - p1.x);
+            const dist3 = Math.abs(p2.y - aisleY);
+            const totalDist = dist1 + dist2 + dist3;
+            
+            if (totalDist === 0) return {x: p1.x, y: p1.y};
+            
+            const t1 = dist1 / totalDist;
+            const t2 = dist2 / totalDist;
+            
+            if (t <= t1) {
+                const subT = t1 === 0 ? 0 : t / t1;
+                return { x: p1.x, y: p1.y + subT * (aisleY - p1.y) };
+            } else if (t <= t1 + t2) {
+                const subT = t2 === 0 ? 0 : (t - t1) / t2;
+                return { x: p1.x + subT * (p2.x - p1.x), y: aisleY };
+            } else {
+                const t3 = 1 - t1 - t2;
+                const subT = t3 <= 0 ? 0 : (t - t1 - t2) / t3;
+                return { x: p2.x, y: aisleY + subT * (p2.y - aisleY) };
+            }
+        }
+    }
+    return {x: 0, y: 0};
+}
+
+// Per-frame refresh of the security guard runners
 export function updateGuardsDisplay(lang) {
     const unlockedGuards = game.state.guards.filter(g => g.unlocked);
+    const bankFloor = document.getElementById('bank-floor-section');
+    if (!bankFloor) return;
+
     if (unlockedGuards.length > 0) {
-        DOM_CACHE.securityPath.style.display = 'flex';
-
-        // Hide old static avatar and load
-        if (DOM_CACHE.guardAvatar) DOM_CACHE.guardAvatar.style.display = 'none';
-        if (DOM_CACHE.guardLoad) DOM_CACHE.guardLoad.style.display = 'none';
-
         // Reconciliation: remove extra guard-runner elements
         const currentGuardIds = unlockedGuards.map(g => g.id.toString());
-        const existingRunners = Array.from(DOM_CACHE.securityPath.querySelectorAll('.guard-runner'));
+        const existingRunners = Array.from(bankFloor.querySelectorAll('.guard-runner'));
         existingRunners.forEach(node => {
             const gid = node.getAttribute('data-guard-id');
             if (!currentGuardIds.includes(gid)) {
-                DOM_CACHE.securityPath.removeChild(node);
+                bankFloor.removeChild(node);
             }
         });
 
@@ -28,51 +142,40 @@ export function updateGuardsDisplay(lang) {
             const gData = game.getGuardRenderData(g.id);
             if (!gData) return;
 
-            let runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
+            let runner = bankFloor.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
             if (!runner) {
                 runner = document.createElement('div');
                 runner.className = 'guard-runner';
-                runner.setAttribute('data-guard-id', gData.id);
-                runner.style.willChange = 'transform';
-
+                runner.setAttribute('data-guard-id', gData.id.toString());
+                runner.style.zIndex = '310';
+                runner.style.willChange = 'transform, left, top';
+                runner.style.position = 'absolute';
+                
                 const avatarEl = document.createElement('div');
                 avatarEl.className = 'guard-runner-avatar';
-
                 runner.appendChild(avatarEl);
 
                 const loadEl = document.createElement('div');
                 loadEl.className = 'guard-runner-load';
                 runner.appendChild(loadEl);
 
-                DOM_CACHE.securityPath.appendChild(runner);
+                bankFloor.appendChild(runner);
             }
 
-            // Stagger position and height to create a convoy/row effect so guards don't overlap
-            let visualPosition = gData.position;
             const isMovingToTeller = gData.state.startsWith('moving_to_teller_');
             const isCollecting = gData.state.startsWith('collecting_from_teller_');
-
-            if (isMovingToTeller) {
-                visualPosition = Math.max(0, gData.position - (gData.id * 0.07));
-            } else if (gData.state === 'moving_to_vault') {
-                visualPosition = Math.min(1.0, gData.position + (gData.id * 0.07));
-            } else if (gData.state === 'idle' || gData.state === 'depositing') {
-                visualPosition = gData.position + (gData.id * 0.04);
-            } else if (isCollecting) {
-                visualPosition = gData.position - (gData.id * 0.04);
-            }
-
-            const percentRight = 10 + (visualPosition * 75);
-            const isLtr = document.documentElement.dir === 'ltr';
-            if (isLtr) {
-                runner.style.right = '';
-                runner.style.left = `${percentRight}%`;
-            } else {
-                runner.style.left = '';
-                runner.style.right = `${percentRight}%`;
-            }
-            // Vertical offset to avoid overlapping
-            runner.style.top = `calc(50% + ${(gData.id - 1) * 12}px)`;
+            
+            const isMovingToVault = gData.state === 'moving_to_vault';
+            
+            const pos = getCourierPos(gData.position, isMovingToVault, gData.lastCollectedTellerIndex);
+            
+            // Stagger position so guards don't exactly overlap
+            const offsetX = (gData.id * 10);
+            const offsetY = (gData.id * 10);
+            
+            runner.style.left = `${pos.x + offsetX}px`;
+            runner.style.top = `${pos.y + offsetY}px`;
+            runner.style.transform = `translate(-50%, -50%)`;
 
             // Clean previous state and direction classes
             runner.className = 'guard-runner';
@@ -80,15 +183,15 @@ export function updateGuardsDisplay(lang) {
             if (isMovingToTeller) runner.classList.add('state-moving_to_tellers');
             if (isCollecting) runner.classList.add('state-collecting');
 
+            // Figure out facing direction: if X is moving left or right
+            // We can infer direction from previous position or just look at state
             if (isMovingToTeller) {
                 runner.classList.add('moving-left');
             } else if (gData.state === 'moving_to_vault') {
                 runner.classList.add('moving-right');
             }
 
-            // Avatar text intentionally not cleared to preserve emoji fallback
-
-            // Update load label bubble above
+            // Update load label bubble
             const loadEl = runner.querySelector('.guard-runner-load');
             const loadText = gData.loadedCash > 0 ? formatMoney(gData.loadedCash) : '';
             if (loadEl.innerText !== loadText) {
@@ -97,50 +200,9 @@ export function updateGuardsDisplay(lang) {
             }
         });
 
-        // Update security status label based on the active runner
-        const firstMoving = unlockedGuards.find(g => {
-            const gData = game.getGuardRenderData(g.id);
-            return gData && gData.state !== 'idle';
-        });
-        const activeGuard = firstMoving || unlockedGuards[0];
-        const activeData = activeGuard ? game.getGuardRenderData(activeGuard.id) : null;
-        const tObjGuard = translations[lang].guardStates;
-        if (DOM_CACHE.guardStatus && activeData) {
-            const unlockedCount = unlockedGuards.length;
-            const totalCount = game.state.guards.length;
-
-            // Map the language-specific singular/plural label (from locales.js)
-            const tObjLang = translations[lang];
-            const courierLabel = unlockedCount > 1
-                ? (tObjLang.guardsLabel || "Couriers")
-                : (tObjLang.guardLabel || "Courier");
-
-            // Get raw state text
-            let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
-
-            // Clean up redundant subjects if they exist at the beginning of the translation state text
-            if (lang === 'he') {
-                stateText = stateText.replace(/^(בלדר|שומר)\s+/, '');
-            } else if (lang === 'en') {
-                stateText = stateText.replace(/^Guard\s+/, '');
-            } else if (lang === 'es') {
-                stateText = stateText.replace(/^Guardia\s+/, '');
-            } else if (lang === 'ru') {
-                stateText = stateText.replace(/^(Охранник|Инкассатор)\s+/, '');
-            }
-
-            // Capitalize first letter if necessary (English/Spanish)
-            if (lang === 'en' || lang === 'es') {
-                stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
-            }
-
-            const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
-            if (lastGuardStatusText !== newGuardStatusText) {
-                DOM_CACHE.guardStatus.innerText = newGuardStatusText;
-                lastGuardStatusText = newGuardStatusText;
-            }
-        }
     } else {
-        DOM_CACHE.securityPath.style.display = 'none';
+        // Cleanup if no guards
+        const existingRunners = Array.from(bankFloor.querySelectorAll('.guard-runner'));
+        existingRunners.forEach(node => bankFloor.removeChild(node));
     }
 }

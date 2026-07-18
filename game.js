@@ -242,11 +242,13 @@ class IdleBankGame {
     }
 
     getTellerSpeed(level) {
-        return this.economyManager.getTellerSpeed(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerSpeed(lvl);
     }
 
     getTellerCapacity(level) {
-        return this.economyManager.getTellerCapacity(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerCapacity(lvl);
     }
 
     getEventBonusMultiplier() {
@@ -256,7 +258,8 @@ class IdleBankGame {
     }
 
     getTellerUpgradeCost(level) {
-        return this.economyManager.getTellerUpgradeCost(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerUpgradeCost(lvl);
     }
 
     getGuardSpeed(level) {
@@ -264,23 +267,28 @@ class IdleBankGame {
     }
 
     getGuardCapacity(level) {
-        return this.economyManager.getGuardCapacity(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getGuardCapacity(lvl);
     }
 
     getGuardUpgradeCost(level) {
-        return this.economyManager.getGuardUpgradeCost(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getGuardUpgradeCost(lvl);
     }
 
     getVaultCapacity(level) {
-        return this.economyManager.getVaultCapacity(level);
+        const lvl = level !== undefined ? level : (this.state.vault.level || 1);
+        return this.economyManager.getVaultCapacity(lvl);
     }
 
     getVaultUpgradeCost(level) {
-        return this.economyManager.getVaultUpgradeCost(level);
+        const lvl = level !== undefined ? level : (this.state.vault.level || 1);
+        return this.economyManager.getVaultUpgradeCost(lvl);
     }
 
     getQueueCapacity(level) {
-        return this.economyManager.getQueueCapacity(level);
+        const lvl = level !== undefined ? level : (this.state.queueUpgradeLevel || 1);
+        return this.economyManager.getQueueCapacity(lvl);
     }
 
     getBaseQueueCapacity(level) {
@@ -395,7 +403,13 @@ class IdleBankGame {
         const branch = this.state.currentBranch || 0;
         const branchMaxBudget = 1000 * Math.pow(10, branch);
         const floorBudget = 100 * Math.pow(10, branch);
-        const epsBasis = this.getEarningsPerSecond() * 60 * 1.5;
+        let epsBasis = this.getEarningsPerSecond() * 60 * 0.4;
+        
+        if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades && this.state.managerUpgrades.marketing) {
+            const mktLvl = this.state.managerUpgrades.marketing.level || 1;
+            epsBasis = epsBasis * (1 - (0.10 * mktLvl));
+        }
+        
         return Math.min(branchMaxBudget, Math.max(floorBudget, epsBasis));
     }
 
@@ -1023,10 +1037,15 @@ class IdleBankGame {
         }
 
         if (this.customerSpawnTimer >= spawnInterval) {
-            this.customerSpawnTimer = 0;
             const maxQueue = this.getQueueCapacity(this.state.queueUpgradeLevel || 1);
-            if (this.customerQueue.length < maxQueue) {
-                let type = 'normal';
+            let spawnedAny = false;
+            
+            while (this.customerSpawnTimer >= spawnInterval) {
+                if (this.customerQueue.length < maxQueue) {
+                    this.customerSpawnTimer -= spawnInterval;
+                    spawnedAny = true;
+                    
+                    let type = 'normal';
                 const rand = Math.random();
                 
                 let vipThreshold = 0.95;
@@ -1048,6 +1067,9 @@ class IdleBankGame {
                 this.customerCounter++;
                 this.customerQueue.push({ id: 'c_' + this.customerCounter, type, seed: Math.floor(Math.random() * 1000) });
             } else {
+                // Queue is full. Prevent infinite timer accumulation.
+                this.customerSpawnTimer = 0;
+                
                 // Queue is full - Marketing bounce mechanic
                 if (this.state.advActive && advBudget > 0 && typeof window !== 'undefined' && window.UI && typeof window.UI.spawnFloating === 'function') {
                     const now = Date.now();
@@ -1060,22 +1082,44 @@ class IdleBankGame {
                         window.UI.spawnFloating(leftText, doorX + (Math.random() * 40 - 20), doorY + (Math.random() * 20 - 10), 'red', '1.1rem');
                     }
                 }
+                break;
             }
+        }
         }
 
         // Automating Teller actions
         let checkedCount = 0;
-        let tellerIndex = this.lastTellerOffset;
+        let tellerIndex = this.lastTellerOffset || 0;
         let assignedCount = 0;
         
         while (checkedCount < this.state.tellers.length && assignedCount < this.customerQueue.length) {
             const t = this.state.tellers[tellerIndex];
+            
+            if (!t) {
+                tellerIndex = (tellerIndex + 1) % this.state.tellers.length;
+                checkedCount++;
+                continue;
+            }
+            
+            // EMERGENCY: Aggressive NaN prevention
+            if (isNaN(t.cashStored) || t.cashStored === null || t.cashStored === undefined) {
+                t.cashStored = 0;
+            }
+            if (isNaN(t.processingTimeLeft)) {
+                t.processingTimeLeft = 0;
+            }
+
             if (t.unlocked && !t.isProcessing && t.cashStored < this.getTellerCapacity(t.level)) {
                 const client = this.customerQueue[assignedCount];
+                if (!client) {
+                    // Heal corrupt queue entry
+                    this.customerQueue.splice(assignedCount, 1);
+                    continue; // Skip teller advance, retry same assignedCount
+                }
                 t.isProcessing = true;
-                t.customerType = client.type;
+                t.customerType = client.type || 'normal';
                 t.customerSeed = client.seed !== undefined ? client.seed : Math.floor(Math.random() * 1000);
-                t.processingTimeLeft = this.getTellerSpeed(t.level);
+                t.processingTimeLeft = this.getTellerSpeed(t.level) || 0.05;
                 assignedCount++;
                 tellerIndex = (tellerIndex + 1) % this.state.tellers.length;
             } else {
@@ -1088,8 +1132,9 @@ class IdleBankGame {
             this.customerQueue = this.customerQueue.slice(assignedCount);
         }
 
-        const baseRewardForTick = this.getCurrentBaseReward();
-        const finalRewardForTick = baseRewardForTick * this.getTotalMultiplier();
+        const baseRewardForTick = this.getCurrentBaseReward() || 10;
+        let finalRewardForTick = baseRewardForTick * (this.getTotalMultiplier() || 1);
+        if (isNaN(finalRewardForTick)) finalRewardForTick = 10;
 
         // Updating Teller processing timers
         let _tickVipCount = 0;
@@ -1120,9 +1165,19 @@ class IdleBankGame {
                         });
                     }
 
-                    t.cashStored = Math.round((t.cashStored + finalRewardForTick + Number.EPSILON) * 100) / 100;
+                    let thisTickReward = finalRewardForTick;
+                    if (t.customerType === 'vip') {
+                        thisTickReward *= 3.0;
+                    } else if (t.customerType === 'rich') {
+                        thisTickReward *= 1.8;
+                    }
 
-                    const cap = this.getTellerCapacity(t.level);
+                    this.state.totalIncome += thisTickReward;
+                    
+                    if (isNaN(t.cashStored)) t.cashStored = 0;
+                    t.cashStored = Math.round((t.cashStored + thisTickReward + Number.EPSILON) * 100) / 100;
+
+                    const cap = this.getTellerCapacity(t.level) || 150;
                     if (t.cashStored > cap) {
                         t.cashStored = cap;
                     }
@@ -1239,23 +1294,29 @@ class IdleBankGame {
                     // Remove this teller from the visit queue
                     g.tellerVisitQueue = g.tellerVisitQueue.filter(idx => idx !== ti);
 
-                    // Find next teller in order (1, 2, 3...)
-                    let nextTi = -1;
-                    for (let i = ti + 1; i < this.state.tellers.length; i++) {
-                        const t = this.state.tellers[i];
-                        if (t && t.unlocked) {
-                            nextTi = i;
-                            break;
-                        }
-                    }
-
-                    if (nextTi >= 0) {
-                        g.targetTellerIndex = nextTi;
-                        g.state = 'moving_to_teller_' + nextTi;
-                    } else {
-                        // Done collecting — head to vault
+                    // Check if capacity is already full
+                    if (g.carriedAmount >= capacity) {
                         g.tellerVisitQueue = [];
                         g.state = 'moving_to_vault';
+                    } else {
+                        // Find next teller in order (1, 2, 3...)
+                        let nextTi = -1;
+                        for (let i = ti + 1; i < this.state.tellers.length; i++) {
+                            const t = this.state.tellers[i];
+                            if (t && t.unlocked) {
+                                nextTi = i;
+                                break;
+                            }
+                        }
+
+                        if (nextTi >= 0) {
+                            g.targetTellerIndex = nextTi;
+                            g.state = 'moving_to_teller_' + nextTi;
+                        } else {
+                            // Done collecting — head to vault
+                            g.tellerVisitQueue = [];
+                            g.state = 'moving_to_vault';
+                        }
                     }
                     // Sync loadedCash for UI / save compatibility
                     g.loadedCash = g.carriedAmount;

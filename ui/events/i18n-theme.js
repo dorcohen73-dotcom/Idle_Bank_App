@@ -162,10 +162,7 @@ export function applyLanguage(lang) {
     }
 
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
-    if (DOM_CACHE.securityPath) {
-        DOM_CACHE.securityPath.title = tObj.tooltips.guard;
-        DOM_CACHE.securityPath.setAttribute('aria-label', tObj.tooltips.guard);
-    }
+
     if (DOM_CACHE.vaultGraphic) {
         DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
         DOM_CACHE.vaultGraphic.setAttribute('aria-label', tObj.tooltips.vault);
