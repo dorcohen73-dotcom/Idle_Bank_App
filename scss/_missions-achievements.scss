@@ -549,13 +549,16 @@
 /* Green claim reward button with glowing neon green aura */
 #tab-missions .claim-reward-btn {
     width: 100%;
-    height: 46px; /* Reduced from 56px */
-    border-radius: 12px;
-    border: 1px solid #D4AF37; /* Thin gold border */
-    background: linear-gradient(to bottom, #195431, #0a2614); /* Deep emerald luxury gradient */
-    color: #ffffff;
-    font-size: 1rem; /* Increased font size for CTA */
-    font-weight: 800; /* High boldness */
+    height: 52px;
+    border-radius: 16px;
+    border: 1px solid rgba(223, 171, 41, 0.5); /* Gold rim */
+    background: linear-gradient(180deg, #1e5c36 0%, #0d3b1e 100%) !important; /* Rich glossy green */
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    color: #ffffff !important;
+    font-size: 1.25rem !important; 
+    font-weight: 900 !important; 
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -564,18 +567,19 @@
     gap: 2px;
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
-        0 4px 15px rgba(25, 84, 49, 0.4), /* CTA glowing aura */
-        inset 0 2px 4px rgba(255, 255, 255, 0.2), /* Inner top highlight */
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5); /* Inner bottom shadow */
+        0 8px 25px rgba(13, 59, 30, 0.8), 
+        inset 0 2px 5px rgba(255, 255, 255, 0.3), 
+        inset 0 -3px 6px rgba(0, 0, 0, 0.6) !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    filter: none !important; /* remove crazy drop-shadows from text clipping global */
 }
 
 #tab-missions .claim-reward-btn:hover {
-    background: linear-gradient(to bottom, #216a3e, #0c2f19);
+    background: linear-gradient(to bottom, #216a3e, #0c2f19) !important;
     box-shadow: 
-        0 6px 20px rgba(0, 0, 0, 0.8), 
+        0 6px 25px rgba(0, 0, 0, 0.9), 
         inset 0 2px 4px rgba(255, 255, 255, 0.3),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+        inset 0 -2px 4px rgba(0, 0, 0, 0.6) !important;
     transform: scale(1.03);
 }
 
@@ -591,10 +595,18 @@
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-@keyframes pulse-claim {
-    0% { transform: scale(1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
-    50% { transform: scale(1.04); box-shadow: 0 0 20px rgba(34, 197, 94, 0.75); }
-    100% { transform: scale(1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
+@keyframes ready-to-claim-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 2px 5px rgba(255,255,255,0.4) !important; }
+    50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(16, 185, 129, 1), 0 0 20px rgba(52, 211, 153, 0.9), inset 0 2px 8px rgba(255,255,255,0.9) !important; border-color: rgba(255, 255, 255, 1); filter: brightness(1.2); }
+    100% { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 2px 5px rgba(255,255,255,0.4) !important; }
+}
+
+#tab-missions .mission-card.completed .claim-reward-btn {
+    animation: ready-to-claim-pulse 1.2s infinite ease-in-out;
+    background: linear-gradient(180deg, #065f46 0%, #064e3b 100%) !important; /* Dark emerald metallic green */
+    border: 1px solid rgba(250, 204, 21, 0.8);
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 /* Grey in-progress display box */
@@ -635,22 +647,26 @@
 /* Left Side: Circular Image illustration */
 #tab-missions .mission-image-box {
     grid-area: image;
-    width: 80px; /* Larger icon */
-    height: 80px;
+    width: 115px; /* Super Massive icon to match AI */
+    height: 115px;
     border-radius: 50%;
-    border: 2px solid #D4AF37; /* Sharp gold ring */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6); /* Downward dark shadow for depth */
+    border: 4px solid rgba(223, 171, 41, 0.9); /* Thicker gold ring */
+    box-shadow: 
+        0 0 25px rgba(223, 171, 41, 0.5), /* Outer glow */
+        inset 0 0 20px rgba(223, 171, 41, 0.8), /* Inner glow */
+        0 10px 25px rgba(0,0,0,0.9); /* Depth shadow */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    background: transparent;
+    background: #000;
     padding: 0;
     overflow: hidden;
+    clip-path: circle(50% at 50% 50%);
 }
 
 #tab-missions .mission-image-glow {
-    display: none; /* Removed excess background ring */
+    display: none; 
 }
 
 #tab-missions .mission-illustration {
@@ -658,14 +674,16 @@
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
+    border: none;
     margin: 0;
     display: block;
     z-index: 2;
+    transform: scale(1.85); /* Increased massively to hide baked-in borders of the original PNG */
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #tab-missions .mission-card:hover .mission-illustration {
-    transform: scale(1.08);
+    transform: scale(1.95);
 }
 
 /* Advertising Campaign Budget Control */
@@ -787,5 +805,55 @@
     .bank-floor, .control-panel, header, .teller-counter {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
+    }
+}
+
+/* Mobile Responsiveness for Missions */
+@media (max-width: 650px) {
+    #tab-missions .mission-card {
+        padding: 2.25rem 0.5rem 0.75rem 0.5rem;
+        grid-template-columns: 110px 1fr 56px;
+        grid-template-areas: 
+            "image content circle"
+            "action action action";
+        gap: 0.5rem;
+    }
+    
+    #tab-missions .mission-image-box {
+        width: 110px;
+        height: 110px;
+        border-width: 4px;
+        margin: 0;
+    }
+    
+    #tab-missions .mission-circle-progress {
+        width: 56px;
+        height: 56px;
+        margin: 0;
+    }
+    
+    #tab-missions .mission-circle-progress svg {
+        width: 56px;
+        height: 56px;
+    }
+
+    #tab-missions .progress-text-overlay {
+        font-size: 0.65rem;
+        letter-spacing: -0.3px;
+        white-space: nowrap;
+    }
+
+    #tab-missions .mission-circle-progress .circle-text {
+        font-size: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+
+    #tab-missions .mission-card .mission-title {
+        font-size: 1.05rem;
+    }
+
+    #tab-missions .mission-action-zone {
+        margin-top: 0.25rem;
+        margin-bottom: 4px;
     }
 }

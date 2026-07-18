@@ -147,9 +147,9 @@ export function renderMissionsTab() {
                 </div>
             </div>
             <div class="mission-circle-progress">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
-                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                <svg width="84" height="84" viewBox="0 0 84 84">
+                    <circle class="circle-bg" cx="42" cy="42" r="32" stroke-width="10" fill="none" />
+                    <circle class="circle-value" cx="42" cy="42" r="32" stroke-width="10" fill="none" stroke-dasharray="${2 * Math.PI * 32}" stroke-dashoffset="${2 * Math.PI * 32 - (percent / 100) * (2 * Math.PI * 32)}" />
                 </svg>
                 <div class="circle-text">${Math.round(percent)}%</div>
             </div>
@@ -218,7 +218,7 @@ export function updateMissionsTabProgress() {
                 const newText = pStr + ' / ' + tStr;
                 if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
             }
-            const circleRadius = 24;
+            const circleRadius = 32;
             const circleCircumference = 2 * Math.PI * circleRadius;
             const strokeDashoffset = circleCircumference - (percent / 100) * circleCircumference;
             const circleValue = card.querySelector('.circle-value');

@@ -167,12 +167,7 @@
    MOBILE TABS REFINEMENTS
    =================================================== */
 @media (max-width: 500px) {
-    /* Missions */
-    #tab-missions .mission-card { padding: 12px 10px !important; margin-bottom: 12px !important; }
-    #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
-    #tab-missions .mission-title { font-size: 1.1rem !important; }
-    #tab-missions .mission-desc { font-size: 0.8rem !important; }
-    #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
+    /* Missions handled gracefully in _missions-achievements.scss */
 
     /* Daily */
     .daily-challenge-card { padding: 12px !important; }
@@ -345,12 +340,7 @@
     #tab-achievements .claim-achievement-btn { min-width: 110px !important; padding: 0.4rem 1rem !important; font-size: 0.85rem !important; height: 38px !important; }
     #tab-achievements .mission-circle-progress { transform: scale(0.75) !important; transform-origin: left center !important; }
 
-    /* Missions */
-    #tab-missions .mission-card { padding: 36px 10px 12px 10px !important; margin-bottom: 12px !important; gap: 0.8rem !important; }
-    #tab-missions .mission-image-box { width: 50px !important; height: 50px !important; }
-    #tab-missions .mission-title { font-size: 1.1rem !important; }
-    #tab-missions .mission-desc { font-size: 0.8rem !important; }
-    #tab-missions .mission-action-zone .buy-btn { padding: 6px !important; font-size: 0.9rem !important; }
+    /* Missions handled gracefully in _missions-achievements.scss */
 
     /* Daily */
     .daily-challenge-card { padding: 12px !important; }
@@ -369,12 +359,7 @@
    ULTRA-SMALL MOBILE MODE (Older Phones)
    =================================================== */
 @media (max-width: 380px) {
-    /* Missions */
-    #tab-missions .mission-card { padding: 32px 10px 10px 10px !important; margin-bottom: 8px !important; gap: 0.5rem !important; }
-    #tab-missions .mission-image-box { width: 40px !important; height: 40px !important; }
-    #tab-missions .mission-title { font-size: 0.95rem !important; }
-    #tab-missions .mission-desc { font-size: 0.75rem !important; }
-    #tab-missions .mission-action-zone .buy-btn { padding: 4px !important; font-size: 0.8rem !important; }
+    /* Missions handled gracefully in _missions-achievements.scss */
 
     /* Daily */
     .daily-challenge-card { padding: 10px !important; }
