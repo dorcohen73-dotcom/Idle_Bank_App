@@ -158,7 +158,7 @@ class IdleBankGame {
             queueUpgradeLevel: 1,
 
             lastSaveTime: Date.now(),
-            lastWeeklyReward: 0,
+            lastWeeklyReward: Date.now(),
 
             // Fortune Wheel
             lastSpinTime: 0,
