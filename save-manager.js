@@ -48,20 +48,39 @@ class SaveManager {
             }
         }
 
-        // External CORS-enabled time API fallback (primary source on the native app)
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-store', signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && typeof data.unixtime === 'number' && isFinite(data.unixtime)) {
-                    return data.unixtime * 1000;
+        // External CORS-enabled time API fallbacks (primary source on the native app).
+        // worldtimeapi.org has a history of outages, so a second independent provider
+        // is tried before giving up and falling back to unverified local time.
+        const timeApis = [
+            {
+                url: 'https://worldtimeapi.org/api/timezone/Etc/UTC',
+                parse: (data) => (data && typeof data.unixtime === 'number' && isFinite(data.unixtime))
+                    ? data.unixtime * 1000 : null
+            },
+            {
+                url: 'https://timeapi.io/api/Time/current/zone?timeZone=UTC',
+                parse: (data) => {
+                    if (!data || typeof data.dateTime !== 'string') return null;
+                    // dateTime arrives without a timezone suffix but is UTC by request —
+                    // append 'Z' so Date.parse doesn't interpret it as local time.
+                    const ms = Date.parse(data.dateTime.endsWith('Z') ? data.dateTime : data.dateTime + 'Z');
+                    return isFinite(ms) ? ms : null;
                 }
+            },
+        ];
+        for (const api of timeApis) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const res = await fetch(api.url, { cache: 'no-store', signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                    const t = api.parse(await res.json());
+                    if (t !== null) return t;
+                }
+            } catch {
+                // this provider failed — try the next one
             }
-        } catch {
-            // external time fetch failed — will use unverified local time
         }
         return null;
     }
