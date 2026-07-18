@@ -29,7 +29,7 @@ global.document = {
 // browser loads them as separate <script> tags sharing the same top-level
 // lexical scope. Order matches index.html (game.js depends on GAME_CONFIG,
 // EconomyManager, SaveManager and MissionController from the earlier scripts).
-const scriptOrder = ['config.js', 'locales.js', 'economy-manager.js', 'save-manager.js', 'mission-controller.js', 'achievement-controller.js', 'guard-controller.js', 'customer-flow-controller.js', 'game.js'];
+const scriptOrder = ['config.js', 'locales.js', 'economy-manager.js', 'save-manager.js', 'mission-controller.js', 'achievement-controller.js', 'guard-controller.js', 'customer-flow-controller.js', 'prestige-controller.js', 'game.js'];
 const combinedCode = scriptOrder
     .map(file => fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'))
     .join('\n');

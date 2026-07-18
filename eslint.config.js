@@ -7,7 +7,7 @@ const globals = require('globals');
 const sharedGameGlobals = [
     'AchievementController', 'AdService', 'AudioEngine', 'DOM_CACHE', 'DailyChallengeController', 'EconomyManager',
     'NotificationQueue',
-    'CustomerFlowController', 'GAME_CONFIG', 'GuardController', 'IdleBankGame', 'MissionController', 'SaveManager',
+    'CustomerFlowController', 'GAME_CONFIG', 'GuardController', 'IdleBankGame', 'MissionController', 'PrestigeController', 'SaveManager',
     '_boostOfferEndTime', '_footerFlavorInterval', '_vipBannerRetryTimeout',
     'activeCoins', 'animateCoins', 'applyLanguage', 'applyTheme',
     'checkPrestigeTip', 'clearActiveCoins', 'completeTutorial',

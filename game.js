@@ -29,6 +29,7 @@ class IdleBankGame {
         this.achievementController = new AchievementController(this);
         this.guardController = new GuardController(this);
         this.customerFlowController = new CustomerFlowController(this);
+        this.prestigeController = new PrestigeController(this);
 
         // Load state
         this.loadGame();
@@ -671,238 +672,19 @@ class IdleBankGame {
     }
 
     calculateTotalAssets() {
-        let total = 0;
-        if (this.state.tellers) {
-            this.state.tellers.forEach(t => {
-                if (t.unlocked) total += t.level;
-            });
-        }
-        if (this.state.guards) {
-            this.state.guards.forEach(g => {
-                if (g.unlocked) total += g.level;
-            });
-        }
-        if (this.state.vault) {
-            total += this.state.vault.level || 1;
-        }
-        total += this.state.queueUpgradeLevel || 1;
-        if (this.state.departments) {
-            this.state.departments.forEach(d => {
-                if (d.unlocked) total += 5;
-            });
-        }
-        if (this.state.managers) {
-            Object.keys(this.state.managers).forEach(k => {
-                if (k !== 'operations' && this.state.managers[k]) {
-                    total += 5;
-                }
-            });
-        }
-        return total;
+        return this.prestigeController.calculateTotalAssets();
     }
 
     calculatePrestigeShares() {
-        // H-06: cache result — invalidate only when lifetimeCash or shares change
-        const lifetimeCash = this.state.lifetimeCash || 2000;
-        
-        // Ensure stats object exists
-        if (!this.state.stats) this.state.stats = {};
-        
-        const vipHired = !!(this.state.managers && this.state.managers.vip);
-        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
-        
-        // Smarter Scaling Formula: grows reasonably but very hard to hit the 10k cap instantly in late game
-        let rawGain = 1500 * Math.pow(lifetimeCash / 1000000000, 0.22);
-        
-        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
-        }
-
-        // Initialize claimedPrestigeShares for existing players to prevent sudden infinite shares
-        // We set it such that they get exactly 800 base shares right now to "un-stick" them from 0.
-        if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             this.state.stats.claimedPrestigeShares = Math.max(0, Math.floor(rawGain) - 800);
-        }
-        
-        const claimedShares = this.state.stats.claimedPrestigeShares;
-        
-        const cacheKey = `${lifetimeCash}:${claimedShares}:${vipHired}:${vipLvl}`;
-        if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
-            return this._cachedPrestigeShares;
-        }
-        
-        let gain = Math.floor(rawGain) - claimedShares;
-        
-        // Reverted cap to 10,000 per user request
-        const result = Math.min(10000, Math.max(0, gain));
-        this._cachedPrestigeSharesKey = cacheKey;
-        this._cachedPrestigeShares = result;
-        return result;
+        return this.prestigeController.calculatePrestigeShares();
     }
 
     getDailyLoginReward(streak) {
-        const eps = this.getEarningsPerSecond();
-        if (streak >= 30) return { type: 'shares', value: 10 };
-        if (streak >= 14) return { type: 'shares', value: 3 };
-        if (streak >= 7)  return { type: 'shares', value: 1 };
-        if (streak >= 5)  return { type: 'boost', value: 1800 };
-        if (streak >= 3)  return { type: 'gold', value: 1 };
-        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
-        return { type: 'cash', value: Math.max(180, eps * 300) };
+        return this.prestigeController.getDailyLoginReward(streak);
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
-        this.isResetting = true;
-        let baseSharesGained = this.calculatePrestigeShares();
-        let sharesGained = baseSharesGained;
-        
-        if (doubleShares) {
-            // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
-            sharesGained *= 3;
-            // CAP: reverted to 10000 per user request
-            sharesGained = Math.min(10000, sharesGained);
-        }
-        if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
-            this.isResetting = false;
-            return false;
-        }
-
-        // Apply Prestige — total wallet shares capped at 100,000 (reverted)
-        this.state.shares = Math.min(100000, (this.state.shares || 0) + sharesGained);
-        
-        // IMPORTANT: Increment claimedPrestigeShares by the BASE amount, NOT the ad-boosted amount
-        if (!this.state.stats) this.state.stats = {};
-        if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             // Fallback initialization just in case calculatePrestigeShares didn't do it
-             this.state.stats.claimedPrestigeShares = Math.max(0, (this.state.shares || 0) - sharesGained);
-        }
-        this.state.stats.claimedPrestigeShares += baseSharesGained;
-
-        this.state.currentBranch = targetBranchIndex;
-        this.state.maxBranchUnlocked = Math.max(this.state.maxBranchUnlocked || 0, targetBranchIndex);
-        
-        // Reset cash based on starting cash options in GAME_CONFIG
-        const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
-        const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
-
-        // Branch Welcome Bonus: isNewBranch checked before reset, amount computed after recalculateEps
-        const isNewBranch = !this.state.visitedBranches || !this.state.visitedBranches.includes(targetBranchIndex);
-
-        const savedShares = this.state.shares;
-        const savedMaxBranch = this.state.maxBranchUnlocked;
-        const savedGoldUpgrades = this.state.goldUpgrades;
-        const savedLanguage = this.state.language;
-        const savedStats = this.state.stats;
-        const savedMissionsCompleted = this.state.missionsCompleted;
-        const savedLastWeeklyReward = this.state.lastWeeklyReward;
-        const savedLastSpinTime = this.state.lastSpinTime;
-        const savedLastAdSpinTime = this.state.lastAdSpinTime || 0;
-        const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
-        const savedLoginDate = this.state.lastLoginDate || 0;
-        const savedLoginStreak = this.state.loginStreak || 0;
-        const savedPendingLoginReward = this.state.pendingLoginReward || null;
-        const savedBoost2xUsedEver = this.state.boost2xUsedEver || false;
-        const savedBoost2xTimeLeft = this.state.boost2xTimeLeft || 0;
-        const savedDailyChallenges = this.state.dailyChallenges;
-        const savedLastDailyReset = this.state.lastDailyReset;
-        const savedMigrations = this.state.migrations ? Object.assign({}, this.state.migrations) : {};
-        const savedTutorialCompleted = this.state.tutorialCompleted || false;
-        const savedTutorialStep = this.state.tutorialStep || 0;
-        const savedDiscoveredTips = this.state.discoveredTips ? Object.assign({}, this.state.discoveredTips) : {};
-
-        if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
-        this.initDefaultState();
-
-        this.state.shares = savedShares;
-        this.state.currentBranch = targetBranchIndex;
-        this.state.maxBranchUnlocked = savedMaxBranch;
-        this.state.goldUpgrades = savedGoldUpgrades;
-        this.state.language = savedLanguage;
-        this.state.stats = savedStats;
-        this.state.missionsCompleted = savedMissionsCompleted;
-        this.state.lastWeeklyReward = savedLastWeeklyReward;
-        this.state.lastSpinTime = savedLastSpinTime;
-        this.state.lastAdSpinTime = savedLastAdSpinTime;
-        this.state.lastLoginDate = savedLoginDate;
-        this.state.loginStreak = savedLoginStreak;
-        this.state.pendingLoginReward = savedPendingLoginReward;
-        this.state.boost2xUsedEver = savedBoost2xUsedEver;
-        this.state.boost2xTimeLeft = savedBoost2xTimeLeft;
-        this.state.dailyChallenges = savedDailyChallenges;
-        this.state.lastDailyReset = savedLastDailyReset;
-        this.state.migrations = savedMigrations;
-        this.state.tutorialCompleted = savedTutorialCompleted;
-        this.state.tutorialStep = savedTutorialStep;
-        this.state.discoveredTips = savedDiscoveredTips;
-
-        // Restore visitedBranches and add targetBranch if new
-        if (!savedVisitedBranches.includes(targetBranchIndex)) {
-            savedVisitedBranches.push(targetBranchIndex);
-        }
-        this.state.visitedBranches = savedVisitedBranches;
-
-        // Auto-discover all basic tutorial tips to prevent them from showing after prestige
-        this.state.discoveredTips.start = true;
-        this.state.discoveredTips.vault = true;
-        this.state.discoveredTips.guard = true;
-        this.state.discoveredTips.dept = true;
-        this.state.discoveredTips.manager = true;
-        this.state.discoveredTips.prestige = true;
-
-        // Reset cash based on starting cash options in GAME_CONFIG
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
-        this.state.lifetimeCash = this.state.cash;
-
-        // Generate initial missions
-        this.state.missions = [];
-        for (let i = 0; i < 5; i++) {
-            this.state.missions.push(this.generateMission());
-        }
-        
-        this.sanitizeQueueAndTellers();
-        this.customerSpawnTimer = 0;
-        
-        // Spawn 3 initial customers immediately
-        for (let i = 0; i < 3; i++) {
-            this.customerCounter++;
-            this.customerQueue.push({ id: 'c_' + this.customerCounter, type: 'normal', seed: Math.floor(Math.random() * 1000) });
-        }
-        
-        window.gameAudio.playUnlock();
-        this.recalculateEps();
-
-        // Branch Welcome Bonus: computed here so EPS reflects the new branch
-        const welcomeBonusCash = isNewBranch ? (this.getEarningsPerSecond() * 60) : 0;
-        if (isNewBranch && welcomeBonusCash > 0) {
-            this.state.cash = Math.round((this.state.cash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
-            this.state.lifetimeCash = Math.round((this.state.lifetimeCash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
-            if (typeof window.showToast === 'function') {
-                const lang = this.state.language || 'en';
-                const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
-                const branchName = (tObj && tObj.branches && tObj.branches.names && tObj.branches.names[targetBranchIndex])
-                    ? tObj.branches.names[targetBranchIndex]
-                    : (this.branches && this.branches[targetBranchIndex] ? this.branches[targetBranchIndex].name : ('Branch ' + targetBranchIndex));
-                const amt = Math.round(welcomeBonusCash).toLocaleString();
-                const msg = (tObj && typeof tObj.welcomeBonusMsg === 'function')
-                    ? tObj.welcomeBonusMsg(branchName, amt)
-                    : ('Welcome to ' + branchName + '! You received $' + amt + ' as an opening gift.');
-                window.showToast(msg, 'success');
-            }
-        }
-
-        // Rebase daily_earn_cash so progress earned before prestige survives.
-        // Accumulated progress is banked in baseProgress (always >= 0) instead of encoding it
-        // as a negative startProgress, which validateAndHealState() would clamp back to 0.
-        this.state.dailyChallenges.forEach(c => {
-            if (c.completed || c.claimed || c.type !== 'daily_earn_cash') return;
-            c.baseProgress = (c.baseProgress || 0) + (c.progress || 0);
-            c.startProgress = this.state.lifetimeCash;
-        });
-
-        this.isResetting = false;
-        this.saveGame(true); // Force save immediately during prestige
-        return true;
+        return this.prestigeController.prestige(targetBranchIndex, doubleShares, bypassCashCheck);
     }
 
     triggerGuard(id) {
@@ -1184,17 +966,7 @@ class IdleBankGame {
     }
 
     travelToBranch(branchIndex) {
-        if (branchIndex < this.state.currentBranch) {
-            console.warn("Traveling back to older branches is disabled.");
-            return;
-        }
-        this.state.currentBranch = branchIndex;
-        this.state.missions = [];
-        this.ensureTellersCount();
-        this.checkMissions();
-        this.sanitizeQueueAndTellers();
-        this.recalculateEps();
-        this.saveGame(true); // Force save on travel
+        return this.prestigeController.travelToBranch(branchIndex);
     }
 
     upgradeManagerLevelDirectly(type, level) {

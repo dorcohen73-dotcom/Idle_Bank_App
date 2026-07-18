@@ -20,7 +20,7 @@ global.window = {
 };
 global.document = { querySelector: () => null };
 
-const scriptOrder = ['config.js', 'locales.js', 'economy-manager.js', 'save-manager.js', 'mission-controller.js', 'achievement-controller.js', 'guard-controller.js', 'customer-flow-controller.js', 'game.js'];
+const scriptOrder = ['config.js', 'locales.js', 'economy-manager.js', 'save-manager.js', 'mission-controller.js', 'achievement-controller.js', 'guard-controller.js', 'customer-flow-controller.js', 'prestige-controller.js', 'game.js'];
 const combinedCode = scriptOrder
     .map(file => fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'))
     .join('\n');
