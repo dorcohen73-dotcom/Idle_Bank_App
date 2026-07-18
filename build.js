@@ -6,7 +6,15 @@ if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true });
 fs.mkdirSync(dest);
 
 // Folders and files to exclude from the www build folder
-const exclude = ['node_modules', 'android', 'www', '.git', '.netlify', 'tests', 'agents-library', 'tools', 'marketing', '.claude'];
+const exclude = ['node_modules', 'android', 'www', '.git', '.netlify', 'tests', 'agents-library', 'tools', 'marketing', '.claude', '.idea', 'scratch', 'playwright-report', 'test-results', 'scss'];
+
+// Dev/tooling files that must never ship inside the app package
+const excludeFiles = new Set([
+    'package.json', 'package-lock.json', 'build.js', 'capacitor.config.json',
+    'eslint.config.js', 'vitest.config.js', 'playwright.config.js',
+    'claude_context.md', '.gitignore', 'build_aab.ps1',
+]);
+const excludeExtensions = new Set(['.ps1', '.md']);
 
 function copyRecursiveSync(src, destPath) {
     const exists = fs.existsSync(src);
@@ -24,8 +32,8 @@ function copyRecursiveSync(src, destPath) {
     } else {
         // Exclude specific files from being copied
         const filename = path.basename(src);
-        if (filename === 'package.json' || filename === 'package-lock.json' || filename === 'build.js' || filename === 'capacitor.config.json' || filename === 'eslint.config.js') return;
-        
+        if (excludeFiles.has(filename) || excludeExtensions.has(path.extname(filename))) return;
+
         fs.copyFileSync(src, destPath);
     }
 }

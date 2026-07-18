@@ -8,3 +8,9 @@ scratch/
 תמונות_גיבוי/
 test_screenshot.png
 *גל*.md
+
+# Generated test/build artifacts
+playwright-report/
+test-results/
+diff.txt
+.idea/
