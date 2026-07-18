@@ -63,7 +63,7 @@ export const statLabels = {
         hireBtn: "גיוס",
         upgradeBtn: "שדרג",
         activeLabel: "פעיל",
-        totalYield: "תגמול כולל",
+        totalYield: "רווח לשנייה",
         totalUpgrade: 'סה"כ שדרוג',
         unlockCost: "עלות פתיחה",
         autoText: "אוטומטי",
