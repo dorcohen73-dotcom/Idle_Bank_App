@@ -4,7 +4,7 @@ Vanilla-JS idle/tycoon game shipped as a PWA (web) and an Android app via Capaci
 
 ## Architecture
 
-- **Core scripts** load as plain `<script defer>` tags in `index.html`, sharing one top-level scope. Order matters: `config.js → locales.js → economy-manager.js → save-manager.js → mission-controller.js → achievement-controller.js → game.js`.
+- **Core scripts** load as plain `<script defer>` tags in `index.html`, sharing one top-level scope. Order matters: `config.js → locales.js → economy-manager.js → save-manager.js → mission-controller.js → achievement-controller.js → guard-controller.js → game.js`.
 - **UI** is an ES-module graph (`app.js → ui/draw|events|tabs/*`) bundled into `app.bundle.js` by `tools/bundle.js` (esbuild, IIFE so `file://` works). Never edit `app.bundle.js` by hand.
 - **Styles**: `scss/` compiles to `style.css` via `tools/build-css.js`. Never edit `style.css` directly.
 - `game.js` — `IdleBankGame` class: state, tick loop `update(dt)`, guard state machine (`idle → moving_to_teller_N → collecting_from_teller_N → moving_to_vault → depositing`), prestige.
