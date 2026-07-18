@@ -39,6 +39,19 @@ export function formatMoney(num, noDecimals = false) {
     return '$' + fastFormat(val, cachedLang) + suffix;
 }
 
+export function formatNumberCompact(num, noDecimals = false) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+    if (num < 1000) {
+        return fastFormat(Math.floor(num), 'en');
+    }
+    const englishSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+    const i = Math.floor(Math.log10(num) / 3);
+    const suffix = englishSuffixes[i] !== undefined ? englishSuffixes[i] : ' monstrous';
+    const rawVal = num / Math.pow(10, i * 3);
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return fastFormat(val, 'en') + suffix;
+}
+
 export function getClientSVG(type, seed) {
     if (seed === undefined || seed === null || isNaN(seed)) {
         seed = 0;

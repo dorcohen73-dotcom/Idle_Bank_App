@@ -181,7 +181,7 @@
                     <button class="sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה"
                         aria-label="דוח ביצועים ואנליטיקה"><span aria-hidden="true">📊</span></button>
                     <button class="boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
-                        aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span> BOOST x2</button>
+                        aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span></button>
                     <button class="sound-toggle-btn header-daily-btn" id="header-daily-btn" data-tab="daily" title="הישגים"
                         aria-label="הישגים"><span aria-hidden="true">🏆</span></button>
                     <button class="sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn"
@@ -198,12 +198,12 @@
 
                 <!-- HERO: Cash Card — dominant element -->
                 <div class="premium-card cash-hero-card" id="stat-cash">
+                    <img src="images/3d-cash-stack.png" class="hero-side-img" alt="" aria-hidden="true">
                     <div class="cash-card-shimmer"></div>
                     <div class="cash-card-bg-ring"></div>
                     <div class="cash-card-content">
                         <div class="cash-card-top">
                             <span class="cash-label" id="label-cash">יתרת מזומנים</span>
-                            <span class="cash-live-badge" id="cash-live-badge">● LIVE</span>
                         </div>
                         <div class="cash-amount" id="cash-value" aria-live="polite" aria-atomic="true" aria-label="יתרת מזומנים">$0</div>
                         <div class="cash-eps" id="eps-value-container">
@@ -218,24 +218,31 @@
                 <div class="secondary-cards-grid">
 
                     <div class="premium-card secondary-card gold-shares-card" id="stat-shares">
+                        <img src="images/gold-bars.png" class="secondary-side-img" alt="" aria-hidden="true">
                         <div class="secondary-card-accent"></div>
-                        <div class="secondary-card-top">
-                            <span class="secondary-icon">⭐</span>
-                            <span class="secondary-label" id="label-shares">מניות זהב</span>
+                        <div class="secondary-card-content">
+                            <div class="secondary-card-top">
+                                <span class="secondary-icon">⭐</span>
+                                <span class="secondary-label" id="label-shares">מניות זהב</span>
+                            </div>
+                            <div class="secondary-value" id="shares-value">0</div>
+                            <div id="prestige-preview-label" class="prestige-hint-text"></div>
                         </div>
-                        <div class="secondary-value" id="shares-value">0</div>
-                        <div id="prestige-preview-label" class="prestige-hint-text"></div>
                     </div>
 
                     <div class="premium-card secondary-card multiplier-card">
+                        <img src="images/3d-rocket-purple.png" class="secondary-side-img boost-img" alt="" aria-hidden="true">
                         <div class="secondary-card-accent multiplier-accent"></div>
-                        <div class="secondary-card-top">
-                            <span class="secondary-icon">✨</span>
-                            <span class="secondary-label" id="double-income-label">הכפלת הכנסה</span>
+                        <div class="secondary-card-content">
+                            <div class="secondary-card-top">
+                                <span class="secondary-icon">✨</span>
+                                <span class="secondary-label" id="double-income-label">הכפלת הכנסה</span>
+                            </div>
+                            <div class="secondary-value multiplier-value-wrap" id="multiplier-value-container">
+                                <div id="multiplier-value" class="huge-multiplier">1.0x</div>
+                                <div id="label-multiplier" class="small-multiplier-label">מכפיל</div>
+                            </div>
                         </div>
-                        <span class="secondary-value multiplier-value-wrap" id="multiplier-value-container">
-                            <span id="label-multiplier">מכפיל</span>: <span id="multiplier-value">1.0x</span>
-                        </span>
                     </div>
 
                 </div>
@@ -246,10 +253,9 @@
                 <div class="vault-mini-bar" id="vault-mini-bar">
                     <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
                     <div class="vault-mini-top">
-                        <img class="vault-mini-icon" id="vault-mini-icon" src="images/vault-door.png" alt="כספת">
+                        <img class="vault-mini-icon" id="vault-mini-icon" src="images/icon.png" alt="כספת">
                         <div class="vault-mini-name-col">
                             <span class="vault-mini-label" id="vault-mini-label">כספת</span>
-                            <span class="vault-mini-level" id="vault-mini-level">Lv.1</span>
                         </div>
                         <div class="vault-mini-spacer"></div>
                         <div class="vault-mini-amounts">

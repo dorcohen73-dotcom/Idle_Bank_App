@@ -37,6 +37,18 @@
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
     return "$" + fastFormat(val, cachedLang) + suffix;
   }
+  function formatNumberCompact(num, noDecimals = false) {
+    if (num === null || num === void 0 || isNaN(num)) return "0";
+    if (num < 1e3) {
+      return fastFormat(Math.floor(num), "en");
+    }
+    const englishSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+    const i = Math.floor(Math.log10(num) / 3);
+    const suffix = englishSuffixes[i] !== void 0 ? englishSuffixes[i] : " monstrous";
+    const rawVal = num / Math.pow(10, i * 3);
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return fastFormat(val, "en") + suffix;
+  }
   function getClientSVG(type, seed) {
     if (seed === void 0 || seed === null || isNaN(seed)) {
       seed = 0;
@@ -745,12 +757,12 @@
     }
     if (game.state.shares !== lastShares || lang !== lastLang) {
       lastShares = game.state.shares;
-      DOM_CACHE.shares.innerText = game.state.shares.toLocaleString();
+      DOM_CACHE.shares.innerText = formatNumberCompact(game.state.shares, true);
     }
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
       lastMultiplier = mult;
-      DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + "x";
+      DOM_CACHE.multiplier.innerText = formatNumberCompact(mult) + "x";
     }
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
       lastBranch = game.state.currentBranch;

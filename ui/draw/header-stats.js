@@ -1,4 +1,4 @@
-import { formatMoney, fastFormat, cachedLang } from './format.js';
+import { formatMoney, fastFormat, formatNumberCompact, cachedLang } from './format.js';
 
 let lastCash = -1;
 let lastEps = -1;
@@ -23,13 +23,13 @@ export function updateHeaderStats(lang, tObj) {
 
     if (game.state.shares !== lastShares || lang !== lastLang) {
         lastShares = game.state.shares;
-        DOM_CACHE.shares.innerText = game.state.shares.toLocaleString();
+        DOM_CACHE.shares.innerText = formatNumberCompact(game.state.shares, true);
     }
 
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
         lastMultiplier = mult;
-        DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + 'x';
+        DOM_CACHE.multiplier.innerText = formatNumberCompact(mult) + 'x';
     }
 
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {

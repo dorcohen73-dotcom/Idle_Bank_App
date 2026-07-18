@@ -75,6 +75,9 @@ header {
     padding: 1rem 1.25rem !important;
     display: flex !important;
     flex-direction: column !important;
+    max-width: 100% !important; /* Allow full expansion on desktop */
+    margin: 0 auto !important;
+    width: 100% !important;
     gap: 0.85rem !important;
     align-items: stretch !important;
     box-shadow:
@@ -89,6 +92,7 @@ header {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 /* ── Dashboard grid ──
@@ -102,20 +106,65 @@ header {
     gap: 0.65rem;
 }
 
-@media (min-width: 560px) {
+@media (min-width: 650px) {
     .luxury-dashboard {
-        grid-template-columns: 3fr 2fr;
+        grid-template-columns: 1.6fr 1.1fr;
         grid-template-rows: 1fr;
     }
     .secondary-cards-grid {
-        grid-template-columns: 1fr !important;
-        grid-template-rows: 1fr 1fr !important;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 0.65rem;
     }
-}
+    .secondary-card {
+        height: 100%;
+    }
 
-@media (min-width: 900px) {
-    .luxury-dashboard {
-        grid-template-columns: 5fr 3fr;
+    .luxury-topbar {
+        min-height: 60px;
+    }
+
+    .brand-title h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Center group content on wide desktop cards */
+    .cash-hero-card {
+        flex-direction: row-reverse !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 2rem;
+    }
+    .cash-hero-card .hero-side-img {
+        position: relative;
+        transform: none;
+        max-height: 120px;
+    }
+    .cash-hero-card .cash-card-content {
+        padding-left: 0;
+        align-items: flex-start;
+    }
+
+    .secondary-card {
+        flex-direction: row-reverse !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 1rem;
+    }
+    .secondary-card .secondary-side-img {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        max-height: 90px;
+        min-width: 70px;
+    }
+    .secondary-card .secondary-card-content, 
+    .secondary-card .secondary-value,
+    .secondary-card .secondary-card-top {
+        padding-left: 0;
+        z-index: 2;
     }
 }
 
@@ -150,13 +199,13 @@ header {
    HERO CASH CARD
    ════════════════════════════════ */
 .cash-hero-card {
-    min-height: 108px;
+    min-height: 115px; /* Increased height */
     padding: 1.2rem 1.5rem;
-    border-color: rgba(16, 185, 129, 0.22);
+    border-color: rgba(52, 211, 153, 0.5); /* Crisp, brighter green border */
     box-shadow:
         0 6px 32px rgba(0, 0, 0, 0.45),
-        0 0 48px rgba(16, 185, 129, 0.07),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        0 0 48px rgba(16, 185, 129, 0.15),
+        inset 0 0 30px rgba(16, 185, 129, 0.15); /* Stronger inner green glow */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -167,8 +216,8 @@ header {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse at 90% 10%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
-        radial-gradient(ellipse at 10% 90%, rgba(5, 150, 105, 0.06) 0%, transparent 50%);
+        radial-gradient(circle at 10% 60%, rgba(16, 185, 129, 0.25) 0%, transparent 50%), /* Glow directly behind money stack */
+        radial-gradient(ellipse at 90% 10%, rgba(16, 185, 129, 0.10) 0%, transparent 55%);
     pointer-events: none;
 }
 
@@ -241,13 +290,52 @@ header {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    padding-left: 100px; /* Protect text from left image */
 }
 
 /* Top row: label + live badge */
 .cash-card-top {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 0.5rem;
+}
+
+/* Add styles for 3D Side Images - Contained version */
+.hero-side-img {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    max-height: 160px;
+    z-index: 0;
+    pointer-events: none;
+    object-fit: contain;
+    filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.8)) brightness(1.15); /* Stronger aura */
+    mix-blend-mode: lighten;
+    -webkit-mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 70%, transparent 100%);
+    mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 70%, transparent 100%);
+}
+
+.secondary-side-img {
+    position: absolute;
+    left: 2%;
+    bottom: 5%;
+    height: 90%; 
+    max-height: 85px;
+    max-width: 85px; 
+    object-fit: contain;
+    object-position: center;
+    z-index: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 0 12px rgba(223, 171, 41, 0.5)) brightness(1.15); /* Golden aura */
+    mix-blend-mode: lighten;
+    -webkit-mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 75%, transparent 100%);
+    mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 75%, transparent 100%);
+}
+
+.secondary-side-img.boost-img {
+    filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.6)) brightness(1.15); /* Purple aura */
 }
 
 .cash-label {
@@ -324,23 +412,38 @@ header {
 /* ── Single secondary card ── */
 .secondary-card {
     padding: 0.9rem 1rem;
-    border-color: rgba(223, 171, 41, 0.14);
+    border-color: rgba(255, 204, 77, 0.4); /* Brighter gold border */
     box-shadow:
         0 4px 22px rgba(0, 0, 0, 0.35),
-        0 0 32px rgba(223, 171, 41, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        0 0 32px rgba(223, 171, 41, 0.15),
+        inset 0 0 24px rgba(223, 171, 41, 0.12); /* Inner gold glow */
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start; /* Strictly align text to right in RTL */
     gap: 0.18rem;
-    min-height: 80px;
+    min-height: 90px; /* Taller card */
+}
+
+.secondary-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 100px; /* Protect text from left image */
+}
+
+/* Fix gold shares image white corners specifically */
+.gold-shares-card .secondary-side-img {
+    border-radius: 24px;
 }
 
 .secondary-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 85% 5%, rgba(223, 171, 41, 0.07) 0%, transparent 55%);
+    background: 
+        radial-gradient(circle at 10% 50%, rgba(223, 171, 41, 0.25) 0%, transparent 55%), /* Glow behind gold */
+        radial-gradient(ellipse at 85% 5%, rgba(223, 171, 41, 0.15) 0%, transparent 65%);
     pointer-events: none;
 }
 
@@ -361,13 +464,35 @@ header {
     left: 10%;
     right: 10%;
     height: 1.5px;
-    background: linear-gradient(90deg, transparent, rgba(223, 171, 41, 0.7), transparent);
+    background: linear-gradient(90deg, transparent, rgba(223, 171, 41, 0.9), transparent);
     border-radius: 0 0 2px 2px;
 }
 
-.multiplier-accent {
-    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.65), transparent);
+/* Multiplier Specific Styling (Purple/Blue) */
+.multiplier-card {
+    border-color: rgba(180, 140, 255, 0.45); /* Brighter purple border */
+    box-shadow:
+        0 4px 22px rgba(0, 0, 0, 0.35),
+        0 0 32px rgba(167, 139, 250, 0.15),
+        inset 0 0 24px rgba(167, 139, 250, 0.12); /* Inner purple glow */
 }
+.multiplier-card::before {
+    background: 
+        radial-gradient(circle at 10% 50%, rgba(167, 139, 250, 0.25) 0%, transparent 55%), /* Glow behind rocket */
+        radial-gradient(ellipse at 85% 5%, rgba(147, 51, 234, 0.18) 0%, transparent 65%);
+}
+.multiplier-card:hover {
+    border-color: rgba(147, 51, 234, 0.45);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 50px rgba(147, 51, 234, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.multiplier-card .secondary-card-accent {
+    background: linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.9), transparent);
+}
+
+
 
 /* Icon + label row */
 .secondary-card-top {
@@ -379,22 +504,23 @@ header {
 }
 
 .secondary-icon {
-    font-size: 0.85rem;
+    font-size: 1rem;
     filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.55));
     line-height: 1;
 }
 
 .secondary-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.05em;
 }
 
 /* Main value in secondary card */
 .secondary-value {
-    font-size: 1.45rem;
+    font-size: 1.4rem; /* Smaller font to fit */
     font-weight: 800;
     font-family: 'Outfit', sans-serif;
     color: var(--primary-gold);
@@ -405,26 +531,29 @@ header {
     display: block;
 }
 
-/* Multiplier card colour override */
-.multiplier-card .secondary-value,
-.multiplier-value-wrap {
-    color: #c4b5fd !important;
-    text-shadow: 0 0 22px rgba(167, 139, 250, 0.32) !important;
-    font-size: 1.2rem !important;
+/* Multiplier card text override to match AI */
+.multiplier-card .secondary-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
 }
 
-.multiplier-card::before {
-    background: radial-gradient(ellipse at 85% 5%, rgba(167, 139, 250, 0.07) 0%, transparent 55%) !important;
+.huge-multiplier {
+    font-size: 1.5rem; /* Smaller multiplier to fit */
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    color: #eaddff; /* Even brighter purple */
+    text-shadow: 0 0 22px rgba(167, 139, 250, 0.5);
+    line-height: 1;
+    white-space: nowrap;
+    letter-spacing: -0.02em; /* Condense slightly */
 }
 
-@media (hover: hover) {
-  .multiplier-card:hover {
-    border-color: rgba(167, 139, 250, 0.28) !important;
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.45),
-        0 0 50px rgba(167, 139, 250, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  }
+.small-multiplier-label {
+    font-size: 0.85rem;
+    color: rgba(196, 181, 253, 0.8);
+    font-weight: 500;
 }
 
 /* Prestige hint under shares value */
@@ -449,6 +578,15 @@ header {
         flex-direction: column !important;
         justify-content: flex-start !important;
         align-items: stretch !important;
+    }
+
+    .luxury-topbar {
+        /* Let space-between handle it on single line, but force buttons left if wrapped */
+    }
+
+    .header-buttons-row {
+        order: 1 !important;
+        margin-inline-start: auto !important; /* Forces buttons to left side in RTL */
     }
 
     /* פורטרייט: שורה 1 cash רוחב מלא, שורה 2 secondary זה לצד זה */
@@ -524,12 +662,15 @@ header {
     }
 
     .brand-section {
-        flex: 1 1 auto !important;
-        min-width: 0 !important;
+        order: 2 !important;
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        margin-top: 0.1rem;
+        justify-content: center !important;
     }
 
     .brand-title h1 {
-        font-size: 0.9rem !important;
+        font-size: 1.15rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;

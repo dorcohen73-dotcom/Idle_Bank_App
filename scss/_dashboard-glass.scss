@@ -277,11 +277,12 @@
     gap: 0.5rem !important;
     position: relative !important;
     z-index: 1 !important;
+    flex-wrap: nowrap !important; /* Keep everything on one line */
   }
 
   .vault-mini-icon {
-    width: 40px !important;
-    height: 40px !important;
+    width: 90px !important;
+    height: 90px !important;
     border-radius: 50% !important;
     object-fit: cover !important;
     border: 2px solid rgba(223,171,41,0.6) !important;
@@ -303,7 +304,7 @@
   }
 
   .vault-mini-label {
-    font-size: 0.82rem !important;
+    font-size: 0.95rem !important;
     font-weight: 800 !important;
     color: #dfab29 !important;
     letter-spacing: 0.5px !important;
@@ -802,8 +803,11 @@
     border-radius: 14px !important;
   }
   .vault-mini-icon {
-    width: 34px !important;
-    height: 34px !important;
+    width: 65px !important;
+    height: 65px !important;
+  }
+  .vault-mini-label {
+    font-size: 1.15rem !important;
   }
   .vault-mini-stored-val {
     font-size: 1.35rem !important;
