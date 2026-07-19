@@ -16,13 +16,14 @@ const androidPublicDir = path.join(projectRoot, 'android', 'app', 'src', 'main',
 
 const excludedDirs = new Set([
   'node_modules', 'android', 'www', '.git', '.netlify', 'tests',
-  'agents-library', 'tools', 'marketing', '.claude', '.vscode',
+  'agents-library', 'tools', 'marketing', '.claude', '.vscode', '.idea',
+  'scratch', 'playwright-report', 'test-results', 'scss'
 ]);
 
 const excludedFiles = new Set([
   'build.js', 'capacitor.config.json', 'eslint.config.js',
   'package.json', 'package-lock.json',
-  'test.js', 'test2.js', 'test3.js',
+  'test.js', 'test2.js', 'test3.js', 'playwright.config.js', 'vitest.config.js',
 ]);
 
 const includedExtensions = new Set(['.js', '.css', '.html']);

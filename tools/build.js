@@ -83,6 +83,17 @@ try {
 
   fs.writeFileSync(swPath, updatedSwContent, 'utf8');
   console.log('Successfully updated sw.js with the new CACHE_NAME!');
+
+  // Read and update index.html version tags
+  const indexPath = path.join(projectRoot, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    let indexHtml = fs.readFileSync(indexPath, 'utf8');
+    // Bump version for style.css and app.bundle.js
+    indexHtml = indexHtml.replace(/(href="style\.css\?v=)[^"]+(")/g, `$1${md5Hash}$2`);
+    indexHtml = indexHtml.replace(/(src="app\.bundle\.js\?v=)[^"]+(")/g, `$1${md5Hash}$2`);
+    fs.writeFileSync(indexPath, indexHtml, 'utf8');
+    console.log('Successfully updated index.html cache-buster tags!');
+  }
 } catch (error) {
   console.error('Build failed:', error);
   process.exit(1);

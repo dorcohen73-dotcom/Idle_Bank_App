@@ -14,7 +14,7 @@ const excludeFiles = new Set([
     'eslint.config.js', 'vitest.config.js', 'playwright.config.js',
     'claude_context.md', '.gitignore', 'build_aab.ps1',
 ]);
-const excludeExtensions = new Set(['.ps1', '.md']);
+const excludeExtensions = new Set(['.ps1', '.md', '.bat']);
 
 function copyRecursiveSync(src, destPath) {
     const exists = fs.existsSync(src);
