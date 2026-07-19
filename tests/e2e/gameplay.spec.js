@@ -80,4 +80,58 @@ test.describe('Idle Bank Empire - Basic E2E Gameplay', () => {
     // Here we just assert the game loads without crashing
     expect(reloadedCashText).not.toBe('');
   });
+
+  test('should render completed mission card without claim button overflowing', async ({ page }) => {
+    await page.goto('/');
+
+    // Wait for initialization
+    await expect(page.locator('#splash-screen')).toBeHidden({ timeout: 15000 });
+    const gdprBtn = page.locator('#gdpr-accept-btn');
+    if (await gdprBtn.isVisible()) { await gdprBtn.click(); }
+    const langModal = page.locator('#lang-modal');
+    if (await langModal.isVisible()) {
+      const enBtn = page.locator('.lang-option-card[data-lang="en"]');
+      if (await enBtn.isVisible()) await enBtn.click();
+    }
+    await page.waitForTimeout(1000);
+
+    // Force complete a mission via page.evaluate
+    await page.evaluate(() => {
+      window.game.state.missions = [{
+        id: 'test_mission',
+        description: 'Test Mission',
+        type: 'build',
+        target: 1,
+        progress: 1,
+        completed: true,
+        rewardCash: 5000
+      }];
+      window.game.saveGame();
+      if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
+    });
+
+    // Go to missions tab to render the completed mission
+    await page.locator('.tab-btn[data-tab="missions"]').click();
+    await expect(page.locator('#tab-missions')).toBeVisible();
+    await page.waitForTimeout(500); // Give it time to render
+
+    const missionCard = page.locator('.mission-card.completed').first();
+    await expect(missionCard).toBeVisible();
+
+    const claimBtn = missionCard.locator('.claim-reward-btn');
+    await expect(claimBtn).toBeVisible();
+
+    // Validate bounding boxes to ensure no overflow
+    const cardBox = await missionCard.boundingBox();
+    const btnBox = await claimBtn.boundingBox();
+
+    expect(cardBox).not.toBeNull();
+    expect(btnBox).not.toBeNull();
+
+    // Button should be fully contained within the card's vertical and horizontal boundaries
+    expect(btnBox.y).toBeGreaterThanOrEqual(cardBox.y);
+    expect(btnBox.y + btnBox.height).toBeLessThanOrEqual(cardBox.y + cardBox.height);
+    expect(btnBox.x).toBeGreaterThanOrEqual(cardBox.x);
+    expect(btnBox.x + btnBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width);
+  });
 });
