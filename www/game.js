@@ -406,7 +406,8 @@ class IdleBankGame {
     getAdMaxBudget() {
         const branch = this.state.currentBranch || 0;
         const branchMaxBudget = 1000 * Math.pow(10, branch);
-        const floorBudget = 100 * Math.pow(10, branch);
+        
+        // Base budget organically scales with EPS, which is driven entirely by Teller levels/speeds
         let epsBasis = this.getEarningsPerSecond() * 60 * 0.4;
         
         if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades && this.state.managerUpgrades.marketing) {
@@ -414,7 +415,9 @@ class IdleBankGame {
             epsBasis = epsBasis * (1 - (0.10 * mktLvl));
         }
         
-        return Math.min(branchMaxBudget, Math.max(floorBudget, epsBasis));
+        // Use a static $100 floor rather than one tied to branch, so right after a prestige
+        // (when teller levels reset and EPS is tiny) the campaign remains affordable.
+        return Math.min(branchMaxBudget, Math.max(100, epsBasis));
     }
 
     spendCash(amount) {
