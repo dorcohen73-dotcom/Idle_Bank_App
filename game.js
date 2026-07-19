@@ -30,6 +30,7 @@ class IdleBankGame {
         this.guardController = new GuardController(this);
         this.customerFlowController = new CustomerFlowController(this);
         this.prestigeController = new PrestigeController(this);
+        this.shopController = new ShopController(this);
 
         // Load state
         this.loadGame();
@@ -431,209 +432,59 @@ class IdleBankGame {
 
     // --- GAME ACTIONS ---
     upgradeEntity(type, id) {
-        let entity, cost, statsKey;
-        if (type === 'teller') {
-            entity = this.state.tellers[id];
-            if (!entity || !entity.unlocked) return false;
-            cost = this.getTellerUpgradeCost(entity.level);
-            statsKey = 'tellerUpgrades';
-        } else if (type === 'guard') {
-            entity = this.state.guards[id];
-            if (!entity || !entity.unlocked) return false;
-            cost = this.getGuardUpgradeCost(entity.level);
-            statsKey = 'guardUpgrades';
-        } else if (type === 'vault') {
-            entity = this.state.vault;
-            cost = this.getVaultUpgradeCost(entity.level);
-            statsKey = 'vaultUpgrades';
-        } else {
-            return false;
-        }
-
-        if (this.spendCash(cost)) {
-            entity.level++;
-            this.state.stats[statsKey]++;
-            this.missionsDirty = true;
-            window.gameAudio.playClick();
-            if (type === 'teller') {
-                this.recalculateEps();
-            } else if (type === 'vault' && this.economyManager) {
-                this.economyManager._cachedVaultCap = new Map();
-            }
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeEntity(type, id);
     }
 
     upgradeEntityBulk(type, id, mode) {
-        let entity, statsKey;
-        if (type === 'teller') {
-            entity = this.state.tellers[id];
-            if (!entity || !entity.unlocked) return false;
-            statsKey = 'tellerUpgrades';
-        } else if (type === 'guard') {
-            entity = this.state.guards[id];
-            if (!entity || !entity.unlocked) return false;
-            statsKey = 'guardUpgrades';
-        } else if (type === 'vault') {
-            entity = this.state.vault;
-            statsKey = 'vaultUpgrades';
-        } else {
-            return false;
-        }
-
-        const details = this.getBulkUpgradeDetails(type, id, mode, entity.level, this.state.cash);
-        if (details.canAfford && details.levels > 0) {
-            if (this.spendCash(details.cost)) {
-                entity.level += details.levels;
-                this.state.stats[statsKey] += details.levels;
-                this.missionsDirty = true;
-                window.gameAudio.playClick();
-                if (type === 'teller') {
-                    this.recalculateEps();
-                } else if (type === 'vault' && this.economyManager) {
-                    this.economyManager._cachedVaultCap = new Map();
-                }
-                this.saveGame();
-                return true;
-            }
-        }
-        return false;
+        return this.shopController.upgradeEntityBulk(type, id, mode);
     }
 
     upgradeTeller(id) {
-        return this.upgradeEntity('teller', id);
+        return this.shopController.upgradeTeller(id);
     }
 
     unlockTeller(id) {
-        const teller = this.state.tellers[id];
-        if (!teller || teller.unlocked) return false;
-
-        const cost = this.tellerUnlockCosts[id];
-        if (this.spendCash(cost)) {
-            teller.unlocked = true;
-            this.missionsDirty = true;
-            teller.level = 1;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockTeller(id);
     }
 
     upgradeGuard(id) {
-        return this.upgradeEntity('guard', id);
+        return this.shopController.upgradeGuard(id);
     }
 
     unlockGuard(id) {
-        const guard = this.state.guards[id];
-        if (!guard || guard.unlocked) return false;
-
-        const cost = this.guardUnlockCosts[id];
-        if (this.spendCash(cost)) {
-            guard.unlocked = true;
-            this.missionsDirty = true;
-            guard.level = 1;
-            window.gameAudio.playUnlock();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockGuard(id);
     }
 
     upgradeVault() {
-        return this.upgradeEntity('vault');
+        return this.shopController.upgradeVault();
     }
 
     upgradeQueue() {
-        const level = this.state.queueUpgradeLevel || 1;
-        if (level >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
-
-        const cost = this.getQueueUpgradeCost(level);
-        if (this.spendCash(cost)) {
-            this.state.queueUpgradeLevel = level + 1;
-            this.missionsDirty = true;
-            window.gameAudio.playClick();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeQueue();
     }
 
     upgradeTellerBulk(id, mode) {
-        return this.upgradeEntityBulk('teller', id, mode);
+        return this.shopController.upgradeTellerBulk(id, mode);
     }
 
     upgradeGuardBulk(id, mode) {
-        return this.upgradeEntityBulk('guard', id, mode);
+        return this.shopController.upgradeGuardBulk(id, mode);
     }
 
     upgradeVaultBulk(mode) {
-        return this.upgradeEntityBulk('vault', null, mode);
+        return this.shopController.upgradeVaultBulk(mode);
     }
 
     upgradeQueueBulk(mode) {
-        const queueLvl = this.state.queueUpgradeLevel || 1;
-        if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
-
-        const details = this.getBulkUpgradeDetails('queue', null, mode, queueLvl, this.state.cash);
-        if (details.canAfford && details.levels > 0) {
-            if (this.spendCash(details.cost)) {
-                this.state.queueUpgradeLevel += details.levels;
-                this.missionsDirty = true;
-                window.gameAudio.playClick();
-                this.saveGame();
-                return true;
-            }
-        }
-        return false;
+        return this.shopController.upgradeQueueBulk(mode);
     }
 
     hireManager(type) {
-        if (!this.isManagerUnlocked(type)) return false;
-        if (this.state.managers[type]) return false;
-
-        const cost = this.managerCosts[type];
-        if (this.spendCash(cost)) {
-            this.state.managers[type] = true;
-            if (!this.state.managerUpgrades) {
-                this.state.managerUpgrades = {
-                    customer: { level: 1, skill: null },
-                    finance: { level: 1, skill: null },
-                    operations: { level: 1, skill: null },
-                    service: { level: 1, skill: null },
-                    vip: { level: 1, skill: null },
-                    marketing: { level: 1, skill: null },
-                    accountant: { level: 1, skill: null }
-                };
-            }
-            if (!this.state.managerUpgrades[type]) {
-                this.state.managerUpgrades[type] = { level: 1, skill: null };
-            }
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.hireManager(type);
     }
 
     unlockDepartment(id) {
-        const dept = this.state.departments.find(d => d.id === id);
-        if (!dept || dept.unlocked) return false;
-
-        if (this.spendCash(this.getDepartmentUnlockCost(dept))) {
-            dept.unlocked = true;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockDepartment(id);
     }
 
     clickTeller(id) {
@@ -776,147 +627,25 @@ class IdleBankGame {
     }
 
     buyGoldUpgrade(type) {
-        if (!this.state.goldUpgrades || typeof this.state.goldUpgrades.managerDiscount === 'undefined') {
-            this.state.goldUpgrades = Object.assign({
-                startingCash: 0, guardSpeed: 0, premiumYield: 0, shareEfficiency: 0,
-                offlineEarnings: 0, tellerCapacityBoost: 0, vaultCapacityBoost: 0,
-                eventBonus: 0, managerDiscount: 0
-            }, this.state.goldUpgrades || {});
-        }
-        
-        const currentLvl = this.state.goldUpgrades[type] || 0;
-        let maxLvl = 5;
-        if (type === 'startingCash') maxLvl = 4;
-        else if (type === 'shareEfficiency') maxLvl = 4;
-        else if (type === 'managerDiscount') maxLvl = 4;
-
-        if (currentLvl >= maxLvl) return false;
-        
-        const cost = this.getGoldUpgradeCost(type);
-        if (this.state.shares >= cost) {
-            this.state.shares -= cost;
-            this.state.goldUpgrades[type]++;
-            if ((type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') && this.economyManager) {
-                this.economyManager._cachedVaultCap = new Map();
-                this.economyManager._cachedTellerCap = null;
-            }
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.buyGoldUpgrade(type);
     }
 
     upgradeManager(type) {
-        if (!this.state.managerUpgrades) {
-            // CRIT-9: Initialize managerUpgrades fallback with the correct manager keys instead of tellers/guards/vault
-            this.state.managerUpgrades = {
-                customer: { level: 1, skill: null },
-                finance: { level: 1, skill: null },
-                operations: { level: 1, skill: null },
-                service: { level: 1, skill: null },
-                vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null },
-                accountant: { level: 1, skill: null }
-            };
-        }
-
-        let mgr = this.state.managerUpgrades[type];
-        if (!mgr) {
-            mgr = { level: 1, skill: null };
-            this.state.managerUpgrades[type] = mgr;
-        }
-        if (mgr.level >= 5) return false;
-        
-        const costs = this.managerUpgradeCosts[type] || GAME_CONFIG.MANAGER_UPGRADE_COSTS_DEFAULT;
-        const cost = costs[mgr.level] || 100000;
-        
-        if (this.spendCash(cost)) {
-            mgr.level++;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeManager(type);
     }
 
     upgradeManagerBulk(type, mode) {
-        if (!this.state.managerUpgrades) {
-            this.state.managerUpgrades = {
-                customer: { level: 1, skill: null },
-                finance: { level: 1, skill: null },
-                operations: { level: 1, skill: null },
-                service: { level: 1, skill: null },
-                vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null },
-                accountant: { level: 1, skill: null }
-            };
-        }
-        let mgr = this.state.managerUpgrades[type];
-        if (!mgr) {
-            mgr = { level: 1, skill: null };
-            this.state.managerUpgrades[type] = mgr;
-        }
-        if (mgr.level >= 5) return false;
-
-        const details = this.getBulkUpgradeDetails('manager', type, mode, mgr.level, this.state.cash);
-        if (details.canAfford && details.levels > 0 && this.spendCash(details.cost)) {
-            mgr.level += details.levels;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeManagerBulk(type, mode);
     }
 
     selectManagerSkill(type, skill) {
-        if (!this.state.managerUpgrades) return false;
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr) return false;
-        
-        if (mgr.skill === skill) {
-            return false;
-        } else {
-            mgr.skill = skill;
-        }
-        window.gameAudio.playClick();
-        this.recalculateEps();
-        this.saveGame();
-        return true;
+        return this.shopController.selectManagerSkill(type, skill);
     }
 
     resetManagerSkill(type, free = false) {
-        if (!this.state.managerUpgrades) return false;
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr || !mgr.skill) return false;
-        
-        const cost = 5000;
-        if (free || this.spendCash(cost)) {
-            mgr.skill = null;
-            window.gameAudio.playClick();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.resetManagerSkill(type, free);
     }
 
-    addBoost2x(hours) {
-        const secondsToAdd = hours * 3600;
-        const maxSeconds = 8 * 3600;
-        this.state.boost2xTimeLeft = Math.min(maxSeconds, (this.state.boost2xTimeLeft || 0) + secondsToAdd);
-        if (this.economyManager) this.economyManager.cachedTotalMult = null;
-        window.gameAudio.playUnlock();
-        this.saveGame();
-        return true;
-    }
-
-    // --- ENCAPSULATION API METHODS FOR MVC COMPLIANCE ---
     addCash(amount) {
         const prev = this.state.lifetimeCash;
         this.state.cash = Math.round((this.state.cash + amount + Number.EPSILON) * 100) / 100;

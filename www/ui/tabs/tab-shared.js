@@ -63,7 +63,7 @@ export const statLabels = {
         hireBtn: "גיוס",
         upgradeBtn: "שדרג",
         activeLabel: "פעיל",
-        totalYield: "תגמול כולל",
+        totalYield: "רווח לשנייה",
         totalUpgrade: 'סה"כ שדרוג',
         unlockCost: "עלות פתיחה",
         autoText: "אוטומטי",
@@ -203,7 +203,13 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const canBuy = details.canAfford;
 
         card.className = 'upgrade-card premium-upg-card';
-        const eps = capacity / speed;
+        let eps = 0;
+        if (type === 'teller') {
+            const reward = game.getCurrentBaseReward() * game.getTotalMultiplier();
+            eps = reward / speed;
+        } else {
+            eps = capacity / speed;
+        }
         
         card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>

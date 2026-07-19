@@ -6,13 +6,13 @@ export let cachedLang = 'he';
 export function updateCachedSuffixes(lang) {
     cachedLang = lang || 'en';
     if (cachedLang === 'en') {
-        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
+        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
         cachedFallback = ' monstrous';
     } else if (cachedLang === 'es') {
-        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
+        cachedSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
         cachedFallback = ' monstruoso';
     } else if (cachedLang === 'ru') {
-        cachedSuffixes = ['', ' тыс.', ' млн', ' млрд', ' трлн', ' квдрлн'];
+        cachedSuffixes = ['', ' тыс.', ' млн', ' млрд', ' трлн', ' квдрлн', ' квинт.', ' секст.', ' септ.', ' окт.', ' нон.', ' дец.'];
         cachedFallback = ' огромное';
     } else {
         cachedSuffixes = ['', ' אלף', ' מיליון', ' מיליארד', ' טריליון', ' קוודריליון', ' קווינטיליון', ' סקסטיליון', ' ספטיליון', ' אוקטיליון', ' נוניליון', ' דציליון'];
@@ -37,6 +37,19 @@ export function formatMoney(num, noDecimals = false) {
     const rawVal = num / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
     return '$' + fastFormat(val, cachedLang) + suffix;
+}
+
+export function formatNumberCompact(num, noDecimals = false) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+    if (num < 1000) {
+        return fastFormat(Math.floor(num), 'en');
+    }
+    const englishSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+    const i = Math.floor(Math.log10(num) / 3);
+    const suffix = englishSuffixes[i] !== undefined ? englishSuffixes[i] : ' monstrous';
+    const rawVal = num / Math.pow(10, i * 3);
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return fastFormat(val, 'en') + suffix;
 }
 
 export function getClientSVG(type, seed) {

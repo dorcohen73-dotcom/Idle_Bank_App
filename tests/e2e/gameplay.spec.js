@@ -2,6 +2,11 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Idle Bank Empire - Basic E2E Gameplay', () => {
   test('should load the game, gather initial cash, and save state', async ({ page }) => {
+    page.on('console', msg => console.log('BROWSER CONSOLE:', msg.text()));
+    page.on('pageerror', err => console.log('BROWSER ERROR:', err.message));
+    page.on('response', response => {
+      if(response.status() === 404) console.log('404 URL:', response.url());
+    });
     // 1. Load the game
     await page.goto('/');
 

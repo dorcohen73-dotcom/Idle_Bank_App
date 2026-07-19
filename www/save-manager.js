@@ -48,20 +48,39 @@ class SaveManager {
             }
         }
 
-        // External CORS-enabled time API fallback (primary source on the native app)
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-store', signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && typeof data.unixtime === 'number' && isFinite(data.unixtime)) {
-                    return data.unixtime * 1000;
+        // External CORS-enabled time API fallbacks (primary source on the native app).
+        // worldtimeapi.org has a history of outages, so a second independent provider
+        // is tried before giving up and falling back to unverified local time.
+        const timeApis = [
+            {
+                url: 'https://worldtimeapi.org/api/timezone/Etc/UTC',
+                parse: (data) => (data && typeof data.unixtime === 'number' && isFinite(data.unixtime))
+                    ? data.unixtime * 1000 : null
+            },
+            {
+                url: 'https://timeapi.io/api/Time/current/zone?timeZone=UTC',
+                parse: (data) => {
+                    if (!data || typeof data.dateTime !== 'string') return null;
+                    // dateTime arrives without a timezone suffix but is UTC by request —
+                    // append 'Z' so Date.parse doesn't interpret it as local time.
+                    const ms = Date.parse(data.dateTime.endsWith('Z') ? data.dateTime : data.dateTime + 'Z');
+                    return isFinite(ms) ? ms : null;
                 }
+            },
+        ];
+        for (const api of timeApis) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const res = await fetch(api.url, { cache: 'no-store', signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                    const t = api.parse(await res.json());
+                    if (t !== null) return t;
+                }
+            } catch {
+                // this provider failed — try the next one
             }
-        } catch {
-            // external time fetch failed — will use unverified local time
         }
         return null;
     }
@@ -256,7 +275,7 @@ class SaveManager {
 
         // Timers
         if (!isNum(state.boost2xTimeLeft) || state.boost2xTimeLeft < 0) state.boost2xTimeLeft = 0;
-        if (!isNum(state.lastWeeklyReward) || state.lastWeeklyReward < 0) state.lastWeeklyReward = 0;
+        if (!isNum(state.lastWeeklyReward) || state.lastWeeklyReward < 0) state.lastWeeklyReward = Date.now();
         if (!isNum(state.tellerSpeedBoostTimer) || state.tellerSpeedBoostTimer < 0) state.tellerSpeedBoostTimer = 0;
         if (!isNum(state.tellerSpeedBoostFactor) || state.tellerSpeedBoostFactor < 1) state.tellerSpeedBoostFactor = 1;
         if (!isNum(state.advBudget) || state.advBudget < 0) state.advBudget = 0;
@@ -925,7 +944,10 @@ class SaveManager {
     checkDailyLogin() {
         // Calendar-day comparison (local time): logging in at 23:00 and again at 08:00
         // the next morning now counts as a new day — the old 24h-window math missed it.
-        const now = Date.now();
+        // Anti-Cheat: use verified server time when available (same as offline earnings)
+        // so advancing the device clock forward and back can't be used to farm streak days —
+        // a fresh page load re-fetches real-world time regardless of the local clock.
+        const now = this.isServerTimeVerified ? (Date.now() + this.serverTimeOffset) : Date.now();
         const lastLogin = this.game.state.lastLoginDate || 0;
         const startOfDay = (t) => {
             const d = new Date(t);

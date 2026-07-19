@@ -1,4 +1,5 @@
 let _focusTrapHandlers = new Map();
+let _previouslyFocused = new Map();
 
 export function _getFocusableElements(container) {
     return Array.from(container.querySelectorAll(
@@ -8,6 +9,9 @@ export function _getFocusableElements(container) {
 
 export function trapFocus(modal) {
     if (_focusTrapHandlers.has(modal)) return; // already trapped
+    if (document.activeElement && document.activeElement !== document.body) {
+        _previouslyFocused.set(modal, document.activeElement);
+    }
     const handler = function(e) {
         if (e.key !== 'Tab') return;
         const focusable = _getFocusableElements(modal);
@@ -38,6 +42,12 @@ export function releaseFocus(modal) {
     if (!handler) return;
     modal.removeEventListener('keydown', handler);
     _focusTrapHandlers.delete(modal);
+
+    const toRestore = _previouslyFocused.get(modal);
+    _previouslyFocused.delete(modal);
+    if (toRestore && document.body.contains(toRestore) && typeof toRestore.focus === 'function') {
+        toRestore.focus();
+    }
 }
 
 export function initFocusTrapObserver() {

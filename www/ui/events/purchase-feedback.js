@@ -152,11 +152,14 @@ export function handleMissionRedirect(missionType, targetId) {
             selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
             break;
         case 'hire_managers':
-        case 'upgrade_managers':
         case 'manager_hire':
         case 'all_managers':
             tabName = 'managers';
-            selector = '.buy-mgr-btn, .upgrade-mgr-btn';
+            selector = '.buy-mgr-btn';
+            break;
+        case 'upgrade_managers':
+            tabName = 'managers';
+            selector = '.upgrade-mgr-btn';
             break;
         case 'unlock_departments':
         case 'department_unlock':
@@ -177,7 +180,7 @@ export function handleMissionRedirect(missionType, targetId) {
             break;
         case 'department_grind':
             tabName = 'managers';
-            selector = `.upgrade-mgr-btn[data-type="${targetId}"], .buy-mgr-btn[data-type="${targetId}"]`;
+            selector = `.upgrade-mgr-btn[data-mgr-type="${targetId}"], .buy-mgr-btn[data-mgr="${targetId}"]`;
             break;
         case 'missions_veteran':
             tabName = 'missions';

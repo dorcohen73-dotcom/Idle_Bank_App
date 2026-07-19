@@ -3,11 +3,17 @@ export function showToast(message, type = 'info') {
     if (!container) {
         container = document.createElement('div');
         container.id = 'toast-container';
+        container.setAttribute('role', 'status');
+        container.setAttribute('aria-live', 'polite');
         document.body.appendChild(container);
     }
     const toast = document.createElement('div');
     toast.className = `custom-toast toast-${type}`;
     toast.innerText = message;
+    if (type === 'danger') {
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+    }
     
     container.appendChild(toast);
     

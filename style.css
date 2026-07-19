@@ -3008,11 +3008,10 @@ footer {
   border: 1px solid rgba(223, 171, 41, 0.6); /* Glowing gold border */
   border-radius: 24px;
   padding: 2.25rem 1.25rem 1.25rem 1.25rem; /* Increased top padding to prevent badge overlap */
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "image content circle" "action action action";
-  gap: 1.8rem; /* Increased gap to let elements breathe */
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   position: relative;
   min-height: 140px;
@@ -3021,6 +3020,14 @@ footer {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(212, 175, 55, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.1), inset 0 2px 15px rgba(0, 0, 0, 0.6); /* Inner shadow for depth */
   direction: ltr; /* LTR for layout: image left, circle right */
   margin-bottom: 1.2rem;
+}
+
+#tab-missions .mission-card-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "image content circle";
+  gap: 1.8rem;
+  align-items: center;
 }
 
 #tab-missions .mission-card:hover {
@@ -3491,7 +3498,6 @@ footer {
 
 /* Action Zone (Left side) */
 #tab-missions .mission-action-zone {
-  grid-area: action;
   width: 100%;
   display: flex;
   align-items: center;
@@ -3765,8 +3771,10 @@ footer {
 @media (max-width: 650px) {
   #tab-missions .mission-card {
     padding: 2.25rem 0.5rem 0.75rem 0.5rem;
+  }
+  #tab-missions .mission-card-top {
     grid-template-columns: 110px 1fr 56px;
-    grid-template-areas: "image content circle" "action action action";
+    grid-template-areas: "image content circle";
     gap: 0.5rem;
   }
   #tab-missions .mission-image-box {

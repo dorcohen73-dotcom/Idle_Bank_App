@@ -7,13 +7,13 @@
   function updateCachedSuffixes2(lang) {
     cachedLang = lang || "en";
     if (cachedLang === "en") {
-      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
       cachedFallback = " monstrous";
     } else if (cachedLang === "es") {
-      cachedSuffixes = ["", "K", "M", "B", "T", "Q"];
+      cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
       cachedFallback = " monstruoso";
     } else if (cachedLang === "ru") {
-      cachedSuffixes = ["", " \u0442\u044B\u0441.", " \u043C\u043B\u043D", " \u043C\u043B\u0440\u0434", " \u0442\u0440\u043B\u043D", " \u043A\u0432\u0434\u0440\u043B\u043D"];
+      cachedSuffixes = ["", " \u0442\u044B\u0441.", " \u043C\u043B\u043D", " \u043C\u043B\u0440\u0434", " \u0442\u0440\u043B\u043D", " \u043A\u0432\u0434\u0440\u043B\u043D", " \u043A\u0432\u0438\u043D\u0442.", " \u0441\u0435\u043A\u0441\u0442.", " \u0441\u0435\u043F\u0442.", " \u043E\u043A\u0442.", " \u043D\u043E\u043D.", " \u0434\u0435\u0446."];
       cachedFallback = " \u043E\u0433\u0440\u043E\u043C\u043D\u043E\u0435";
     } else {
       cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
@@ -36,6 +36,18 @@
     const rawVal = num / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
     return "$" + fastFormat(val, cachedLang) + suffix;
+  }
+  function formatNumberCompact(num, noDecimals = false) {
+    if (num === null || num === void 0 || isNaN(num)) return "0";
+    if (num < 1e3) {
+      return fastFormat(Math.floor(num), "en");
+    }
+    const englishSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+    const i = Math.floor(Math.log10(num) / 3);
+    const suffix = englishSuffixes[i] !== void 0 ? englishSuffixes[i] : " monstrous";
+    const rawVal = num / Math.pow(10, i * 3);
+    const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
+    return fastFormat(val, "en") + suffix;
   }
   function getClientSVG(type, seed) {
     if (seed === void 0 || seed === null || isNaN(seed)) {
@@ -90,11 +102,17 @@
     if (!container) {
       container = document.createElement("div");
       container.id = "toast-container";
+      container.setAttribute("role", "status");
+      container.setAttribute("aria-live", "polite");
       document.body.appendChild(container);
     }
     const toast = document.createElement("div");
     toast.className = `custom-toast toast-${type}`;
     toast.innerText = message;
+    if (type === "danger") {
+      toast.setAttribute("role", "alert");
+      toast.setAttribute("aria-live", "assertive");
+    }
     container.appendChild(toast);
     setTimeout(() => {
       toast.classList.add("show");
@@ -107,16 +125,6 @@
 
   // ui/draw/animations.js
   var activeCoins = [];
-  function getVaultTargetRect() {
-    let targetEl = DOM_CACHE.vaultGraphic;
-    if (window.innerWidth <= 768) {
-      const miniIcon = document.querySelector(".vault-mini-icon");
-      if (miniIcon && window.getComputedStyle(miniIcon).display !== "none") {
-        targetEl = miniIcon;
-      }
-    }
-    return targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, x: 0, y: 0 };
-  }
   var floatingTextPool = [];
   var FLOATING_POOL_SIZE = 40;
   var activeFloatingText = [];
@@ -310,7 +318,7 @@
       });
     }
   }
-  function animateCoins2() {
+  function animateCoins() {
   }
 
   // ui/draw/bank-floor.js
@@ -374,8 +382,6 @@
           const collected = game.collectTellerCash(t.id);
           if (collected > 0) {
             const rectBtn = collectBtn.getBoundingClientRect();
-            const rectVault = getVaultTargetRect();
-            animateCoins2(rectBtn, rectVault, 6, "coin");
             spawnFloating2("+" + formatMoney2(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
           }
         });
@@ -509,62 +515,142 @@
   }
 
   // ui/draw/security.js
-  var _guardAnimTriggers = [];
-  var prevGuardStates = {};
-  var lastGuardStatusText = "";
+  var anchorCache = null;
+  var lastCacheTime = 0;
+  function getCourierPos(segmentPosition, isMovingToVault = false, lastTellerIdx = -1) {
+    const now = Date.now();
+    if (!anchorCache || now - lastCacheTime > 2e3) {
+      const floorEl2 = document.getElementById("bank-floor-section");
+      if (floorEl2) {
+        const floorRect2 = floorEl2.getBoundingClientRect();
+        const points2 = [];
+        const fallback = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+        const tellerEls = document.querySelectorAll(".teller-counter");
+        tellerEls.forEach((el, idx) => {
+          const rect = el.getBoundingClientRect();
+          points2.push({
+            val: fallback[idx] || 0.9,
+            x: rect.left - floorRect2.left + rect.width / 2,
+            y: rect.top - floorRect2.top + rect.height / 2 + 40
+            // Offset slightly below teller desk
+          });
+        });
+        points2.sort((a, b) => a.val - b.val);
+        anchorCache = points2;
+        lastCacheTime = now;
+      }
+    }
+    const floorEl = document.getElementById("bank-floor-section");
+    if (!floorEl || !anchorCache || anchorCache.length === 0) return { x: 0, y: 0 };
+    let vaultEl = document.getElementById("vault-graphic");
+    if (window.innerWidth <= 768) {
+      const miniVault = document.getElementById("vault-mini-icon");
+      if (miniVault && miniVault.offsetParent !== null) vaultEl = miniVault;
+    }
+    const floorRect = floorEl.getBoundingClientRect();
+    const vaultRect = vaultEl ? vaultEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+    const dynamicVault = {
+      val: 0,
+      x: vaultRect.left - floorRect.left + vaultRect.width / 2,
+      y: vaultRect.top - floorRect.top + vaultRect.height / 2
+    };
+    const points = [dynamicVault, ...anchorCache];
+    if (isMovingToVault && lastTellerIdx >= 0 && points.length > 1) {
+      const vault = points[0];
+      const startPoint = points[lastTellerIdx + 1] || points[points.length - 1];
+      const totalDist = startPoint.val - vault.val;
+      let t = 0;
+      if (totalDist > 0) {
+        t = (startPoint.val - segmentPosition) / totalDist;
+      }
+      t = Math.max(0, Math.min(1, t));
+      return {
+        x: startPoint.x + t * (vault.x - startPoint.x),
+        y: startPoint.y + t * (vault.y - startPoint.y)
+      };
+    }
+    if (segmentPosition <= points[0].val) return { x: points[0].x, y: points[0].y };
+    if (segmentPosition >= points[points.length - 1].val) return { x: points[points.length - 1].x, y: points[points.length - 1].y };
+    for (let i = 0; i < points.length - 1; i++) {
+      if (segmentPosition >= points[i].val && segmentPosition <= points[i + 1].val) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        let t = (segmentPosition - p1.val) / (p2.val - p1.val);
+        if (Math.abs(p1.y - p2.y) < 60) {
+          return {
+            x: p1.x + t * (p2.x - p1.x),
+            y: p1.y + t * (p2.y - p1.y)
+          };
+        }
+        let aisleY;
+        if (p1.val === 0 || p2.val === 0) {
+          aisleY = p1.val === 0 ? p1.y : p2.y;
+        } else {
+          aisleY = (p1.y + p2.y) / 2;
+        }
+        const dist1 = Math.abs(aisleY - p1.y);
+        const dist2 = Math.abs(p2.x - p1.x);
+        const dist3 = Math.abs(p2.y - aisleY);
+        const totalDist = dist1 + dist2 + dist3;
+        if (totalDist === 0) return { x: p1.x, y: p1.y };
+        const t1 = dist1 / totalDist;
+        const t2 = dist2 / totalDist;
+        if (t <= t1) {
+          const subT = t1 === 0 ? 0 : t / t1;
+          return { x: p1.x, y: p1.y + subT * (aisleY - p1.y) };
+        } else if (t <= t1 + t2) {
+          const subT = t2 === 0 ? 0 : (t - t1) / t2;
+          return { x: p1.x + subT * (p2.x - p1.x), y: aisleY };
+        } else {
+          const t3 = 1 - t1 - t2;
+          const subT = t3 <= 0 ? 0 : (t - t1 - t2) / t3;
+          return { x: p2.x, y: aisleY + subT * (p2.y - aisleY) };
+        }
+      }
+    }
+    return { x: 0, y: 0 };
+  }
   function updateGuardsDisplay(lang) {
     const unlockedGuards = game.state.guards.filter((g) => g.unlocked);
+    const bankFloor = document.getElementById("bank-floor-section");
+    if (!bankFloor) return;
     if (unlockedGuards.length > 0) {
-      DOM_CACHE.securityPath.style.display = "flex";
-      if (DOM_CACHE.guardAvatar) DOM_CACHE.guardAvatar.style.display = "none";
-      if (DOM_CACHE.guardLoad) DOM_CACHE.guardLoad.style.display = "none";
       const currentGuardIds = unlockedGuards.map((g) => g.id.toString());
-      const existingRunners = Array.from(DOM_CACHE.securityPath.querySelectorAll(".guard-runner"));
+      const existingRunners = Array.from(bankFloor.querySelectorAll(".guard-runner"));
       existingRunners.forEach((node) => {
         const gid = node.getAttribute("data-guard-id");
         if (!currentGuardIds.includes(gid)) {
-          DOM_CACHE.securityPath.removeChild(node);
+          bankFloor.removeChild(node);
         }
       });
       unlockedGuards.forEach((g) => {
         const gData = game.getGuardRenderData(g.id);
         if (!gData) return;
-        let runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
+        let runner = bankFloor.querySelector(`.guard-runner[data-guard-id="${gData.id}"]`);
         if (!runner) {
           runner = document.createElement("div");
           runner.className = "guard-runner";
-          runner.setAttribute("data-guard-id", gData.id);
-          runner.style.willChange = "transform";
+          runner.setAttribute("data-guard-id", gData.id.toString());
+          runner.style.zIndex = "310";
+          runner.style.willChange = "transform, left, top";
+          runner.style.position = "absolute";
           const avatarEl = document.createElement("div");
           avatarEl.className = "guard-runner-avatar";
           runner.appendChild(avatarEl);
           const loadEl2 = document.createElement("div");
           loadEl2.className = "guard-runner-load";
           runner.appendChild(loadEl2);
-          DOM_CACHE.securityPath.appendChild(runner);
+          bankFloor.appendChild(runner);
         }
-        let visualPosition = gData.position;
         const isMovingToTeller = gData.state.startsWith("moving_to_teller_");
         const isCollecting = gData.state.startsWith("collecting_from_teller_");
-        if (isMovingToTeller) {
-          visualPosition = Math.max(0, gData.position - gData.id * 0.07);
-        } else if (gData.state === "moving_to_vault") {
-          visualPosition = Math.min(1, gData.position + gData.id * 0.07);
-        } else if (gData.state === "idle" || gData.state === "depositing") {
-          visualPosition = gData.position + gData.id * 0.04;
-        } else if (isCollecting) {
-          visualPosition = gData.position - gData.id * 0.04;
-        }
-        const percentRight = 10 + visualPosition * 75;
-        const isLtr = document.documentElement.dir === "ltr";
-        if (isLtr) {
-          runner.style.right = "";
-          runner.style.left = `${percentRight}%`;
-        } else {
-          runner.style.left = "";
-          runner.style.right = `${percentRight}%`;
-        }
-        runner.style.top = `calc(50% + ${(gData.id - 1) * 12}px)`;
+        const isMovingToVault = gData.state === "moving_to_vault";
+        const pos = getCourierPos(gData.position, isMovingToVault, gData.lastCollectedTellerIndex);
+        const offsetX = gData.id * 10;
+        const offsetY = gData.id * 10;
+        runner.style.left = `${pos.x + offsetX}px`;
+        runner.style.top = `${pos.y + offsetY}px`;
+        runner.style.transform = `translate(-50%, -50%)`;
         runner.className = "guard-runner";
         runner.classList.add(`state-${gData.state}`);
         if (isMovingToTeller) runner.classList.add("state-moving_to_tellers");
@@ -581,113 +667,9 @@
           loadEl.style.display = gData.loadedCash > 0 ? "block" : "none";
         }
       });
-      const firstMoving = unlockedGuards.find((g) => {
-        const gData = game.getGuardRenderData(g.id);
-        return gData && gData.state !== "idle";
-      });
-      const activeGuard = firstMoving || unlockedGuards[0];
-      const activeData = activeGuard ? game.getGuardRenderData(activeGuard.id) : null;
-      const tObjGuard = translations[lang].guardStates;
-      if (DOM_CACHE.guardStatus && activeData) {
-        const unlockedCount = unlockedGuards.length;
-        const totalCount = game.state.guards.length;
-        const tObjLang = translations[lang];
-        const courierLabel = unlockedCount > 1 ? tObjLang.guardsLabel || "Couriers" : tObjLang.guardLabel || "Courier";
-        let stateText = tObjGuard[activeData.state] || tObjGuard.idle;
-        if (lang === "he") {
-          stateText = stateText.replace(/^(בלדר|שומר)\s+/, "");
-        } else if (lang === "en") {
-          stateText = stateText.replace(/^Guard\s+/, "");
-        } else if (lang === "es") {
-          stateText = stateText.replace(/^Guardia\s+/, "");
-        } else if (lang === "ru") {
-          stateText = stateText.replace(/^(Охранник|Инкассатор)\s+/, "");
-        }
-        if (lang === "en" || lang === "es") {
-          stateText = stateText.charAt(0).toUpperCase() + stateText.slice(1);
-        }
-        const newGuardStatusText = `${courierLabel} (${unlockedCount}/${totalCount}): ${stateText}`;
-        if (lastGuardStatusText !== newGuardStatusText) {
-          DOM_CACHE.guardStatus.innerText = newGuardStatusText;
-          lastGuardStatusText = newGuardStatusText;
-        }
-      }
     } else {
-      DOM_CACHE.securityPath.style.display = "none";
-    }
-    _guardAnimTriggers.length = 0;
-    game.state.guards.forEach((g, idx) => {
-      if (!g.unlocked) return;
-      const gData = game.getGuardRenderData(g.id);
-      if (!gData) return;
-      const prevState = prevGuardStates[idx];
-      if (prevState !== gData.state) {
-        _guardAnimTriggers.push({
-          g,
-          gData,
-          idx,
-          prevState
-        });
-      }
-    });
-    if (_guardAnimTriggers.length > 0) {
-      const reads = [];
-      _guardAnimTriggers.forEach((item) => {
-        const { g, gData, prevState } = item;
-        const prevIsMoving = prevState && prevState.startsWith("moving_to_teller_");
-        const currIsCollecting = gData.state.startsWith("collecting_from_teller_");
-        if (prevIsMoving && currIsCollecting) {
-          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
-          const tellerRects = [];
-          game.state.tellers.forEach((t) => {
-            const tData = game.getTellerRenderData(t.id);
-            if (tData && tData.unlocked && tData.cashStored > 0) {
-              const tCache = TELLER_DOM_CACHE[t.id];
-              const tNode = tCache ? tCache.node : null;
-              if (tNode) {
-                tellerRects.push({
-                  node: tNode
-                });
-              }
-            }
-          });
-          reads.push({
-            type: "collecting",
-            g,
-            rectGuard,
-            tellers: tellerRects.map((tInfo) => ({
-              rect: tInfo.node.getBoundingClientRect()
-            }))
-          });
-        } else if (prevState === "moving_to_vault" && gData.state === "depositing") {
-          const runner = DOM_CACHE.securityPath.querySelector(`.guard-runner[data-guard-id="${g.id}"]`);
-          const rectGuard = runner ? runner.getBoundingClientRect() : DOM_CACHE.guardAvatar ? DOM_CACHE.guardAvatar.getBoundingClientRect() : null;
-          const rectVault = getVaultTargetRect();
-          reads.push({
-            type: "depositing",
-            g,
-            rectGuard,
-            rectVault
-          });
-        }
-      });
-      reads.forEach((read) => {
-        if (read.type === "collecting") {
-          if (read.rectGuard) {
-            read.tellers.forEach((tInfo) => {
-              animateCoins2(tInfo.rect, read.rectGuard, 4, "coin");
-            });
-          }
-        } else if (read.type === "depositing") {
-          if (read.rectGuard && read.rectVault) {
-            animateCoins2(read.rectGuard, read.rectVault, 6, "coin");
-          }
-        }
-      });
-      _guardAnimTriggers.forEach((item) => {
-        prevGuardStates[item.idx] = item.gData.state;
-      });
+      const existingRunners = Array.from(bankFloor.querySelectorAll(".guard-runner"));
+      existingRunners.forEach((node) => bankFloor.removeChild(node));
     }
   }
 
@@ -827,12 +809,12 @@
     }
     if (game.state.shares !== lastShares || lang !== lastLang) {
       lastShares = game.state.shares;
-      DOM_CACHE.shares.innerText = game.state.shares.toLocaleString();
+      DOM_CACHE.shares.innerText = formatNumberCompact(game.state.shares, true);
     }
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
       lastMultiplier = mult;
-      DOM_CACHE.multiplier.innerText = fastFormat(parseFloat(mult.toFixed(1)), cachedLang) + "x";
+      DOM_CACHE.multiplier.innerText = formatNumberCompact(mult) + "x";
     }
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
       lastBranch = game.state.currentBranch;
@@ -1051,7 +1033,7 @@
   window.spawnFloating = spawnFloating2;
   window.updateFloatingText = updateFloatingText2;
   window.updateActiveCoins = updateActiveCoins2;
-  window.animateCoins = animateCoins2;
+  window.animateCoins = animateCoins;
   window.spawnParticles = spawnParticles2;
   window.initCoinPool = initCoinPool2;
   window.rebuildTellersDOM = rebuildTellersDOM2;
@@ -1061,6 +1043,7 @@
 
   // ui/events/focus-trap.js
   var _focusTrapHandlers = /* @__PURE__ */ new Map();
+  var _previouslyFocused = /* @__PURE__ */ new Map();
   function _getFocusableElements(container) {
     return Array.from(container.querySelectorAll(
       'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -1068,6 +1051,9 @@
   }
   function trapFocus(modal) {
     if (_focusTrapHandlers.has(modal)) return;
+    if (document.activeElement && document.activeElement !== document.body) {
+      _previouslyFocused.set(modal, document.activeElement);
+    }
     const handler = function(e) {
       if (e.key !== "Tab") return;
       const focusable2 = _getFocusableElements(modal);
@@ -1096,6 +1082,11 @@
     if (!handler) return;
     modal.removeEventListener("keydown", handler);
     _focusTrapHandlers.delete(modal);
+    const toRestore = _previouslyFocused.get(modal);
+    _previouslyFocused.delete(modal);
+    if (toRestore && document.body.contains(toRestore) && typeof toRestore.focus === "function") {
+      toRestore.focus();
+    }
   }
   function initFocusTrapObserver() {
     const modals = document.querySelectorAll(".modal-overlay");
@@ -1210,6 +1201,7 @@
         let prestigeAmount = typeof game.calculatePrestigeShares === "function" ? game.calculatePrestigeShares() : 10;
         let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.3));
         game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1e9);
+        if (game.economyManager) game.economyManager.cachedTotalMult = null;
         const msg = `\u2B50 ${shareReward} VIP Shares \u2B50`;
         spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "gold");
         for (let i = 0; i < 20; i++) {
@@ -1560,6 +1552,10 @@
     iconEl.innerText = "\u26A1";
     titleEl.innerText = tObj.boostModalTitle;
     textEl.innerText = tObj.boostModalText;
+    const cashValEl = document.getElementById("event-cash-val");
+    if (cashValEl) {
+      cashValEl.innerText = formatMoney(game.state.cash);
+    }
     container.innerHTML = "";
     const _boostEps = game.getEarningsPerSecond() || 0;
     const _projectedEarnings = Math.floor(_boostEps * 4 * 3600);
@@ -2051,6 +2047,7 @@
             let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.5)));
             sharesAmount = Math.min(1e4, sharesAmount);
             game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 1e5);
+            if (game.economyManager) game.economyManager.cachedTotalMult = null;
             const sharesLabel = `+${sharesAmount}`;
             prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || "Gold Shares"}`;
             const icon = prize.type === "gold" ? "\u{1F947}" : "\u{1F4C8}";
@@ -2726,10 +2723,6 @@
       if (typeof window.renderAchievementsTab === "function") window.renderAchievementsTab();
     }
     if (DOM_CACHE.labelAdvControl) DOM_CACHE.labelAdvControl.title = tObj.tooltips.adv;
-    if (DOM_CACHE.securityPath) {
-      DOM_CACHE.securityPath.title = tObj.tooltips.guard;
-      DOM_CACHE.securityPath.setAttribute("aria-label", tObj.tooltips.guard);
-    }
     if (DOM_CACHE.vaultGraphic) {
       DOM_CACHE.vaultGraphic.title = tObj.tooltips.vault;
       DOM_CACHE.vaultGraphic.setAttribute("aria-label", tObj.tooltips.vault);
@@ -2961,11 +2954,14 @@
         selector = '.buy-btn[data-type="teller"][data-id="0"], .buy-btn[data-action="unlock-teller"][data-id="0"]';
         break;
       case "hire_managers":
-      case "upgrade_managers":
       case "manager_hire":
       case "all_managers":
         tabName = "managers";
-        selector = ".buy-mgr-btn, .upgrade-mgr-btn";
+        selector = ".buy-mgr-btn";
+        break;
+      case "upgrade_managers":
+        tabName = "managers";
+        selector = ".upgrade-mgr-btn";
         break;
       case "unlock_departments":
       case "department_unlock":
@@ -2986,7 +2982,7 @@
         break;
       case "department_grind":
         tabName = "managers";
-        selector = `.upgrade-mgr-btn[data-type="${targetId}"], .buy-mgr-btn[data-type="${targetId}"]`;
+        selector = `.upgrade-mgr-btn[data-mgr-type="${targetId}"], .buy-mgr-btn[data-mgr="${targetId}"]`;
         break;
       case "missions_veteran":
         tabName = "missions";
@@ -3064,7 +3060,7 @@
       hireBtn: "\u05D2\u05D9\u05D5\u05E1",
       upgradeBtn: "\u05E9\u05D3\u05E8\u05D2",
       activeLabel: "\u05E4\u05E2\u05D9\u05DC",
-      totalYield: "\u05EA\u05D2\u05DE\u05D5\u05DC \u05DB\u05D5\u05DC\u05DC",
+      totalYield: "\u05E8\u05D5\u05D5\u05D7 \u05DC\u05E9\u05E0\u05D9\u05D9\u05D4",
       totalUpgrade: '\u05E1\u05D4"\u05DB \u05E9\u05D3\u05E8\u05D5\u05D2',
       unlockCost: "\u05E2\u05DC\u05D5\u05EA \u05E4\u05EA\u05D9\u05D7\u05D4",
       autoText: "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9",
@@ -3197,7 +3193,13 @@
       }
       const canBuy = details.canAfford;
       card.className = "upgrade-card premium-upg-card";
-      const eps = capacity / speed;
+      let eps = 0;
+      if (type === "teller") {
+        const reward = game.getCurrentBaseReward() * game.getTotalMultiplier();
+        eps = reward / speed;
+      } else {
+        eps = capacity / speed;
+      }
       card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
             <div class="upg-v2-content-overlay">
@@ -3602,6 +3604,20 @@
     const grid = document.createElement("div");
     grid.className = "managers-grid";
     container.appendChild(grid);
+    managersKeys.sort((a, b) => {
+      const getCost = (type) => {
+        const mData = game.getManagerRenderData(type);
+        if (!mData) return Infinity;
+        if (!mData.isUnlocked) return mData.cost;
+        if (!mData.isHired) return mData.cost;
+        if (mData.level < 5) {
+          const details = game.getBulkUpgradeDetails("manager", type, window.currentUpgradeMode || "x1", mData.level, game.state.cash);
+          return details.cost;
+        }
+        return Infinity;
+      };
+      return getCost(a) - getCost(b);
+    });
     managersKeys.forEach((type) => {
       const config = managerConfigs[type];
       const mData = game.getManagerRenderData(type);
@@ -4090,7 +4106,7 @@
         try {
           const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
           if (!currentCanPrestige) {
-            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.notEnoughCashToast, "danger");
             return;
           }
           initSound();
@@ -4098,7 +4114,7 @@
           openPrestigeModal(target);
         } catch (err) {
           console.error("[Prestige branch button] click failed:", err);
-          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.screenErrorToast + ": " + err.message, "danger");
           if (typeof reportCrash === "function") reportCrash("branch prestige btn click: " + err.message, err.stack);
         }
       });
@@ -4109,7 +4125,7 @@
         try {
           const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
           if (!currentCanPrestige) {
-            if (typeof showToast === "function") showToast("\u05E2\u05D3\u05D9\u05D9\u05DF \u05D0\u05D9\u05DF \u05DE\u05E1\u05E4\u05D9\u05E7 \u05DB\u05E1\u05E3 \u05DB\u05D3\u05D9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05E1\u05E0\u05D9\u05E3", "danger");
+            if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.notEnoughCashToast, "danger");
             return;
           }
           initSound();
@@ -4125,7 +4141,7 @@
           openPrestigeModal(targetBranch);
         } catch (err) {
           console.error("[Main prestige button] click failed:", err);
-          if (typeof showToast === "function") showToast("\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DE\u05E1\u05DA: " + err.message, "danger");
+          if (typeof showToast === "function") showToast(translations[game.state.language || "en"].branches.screenErrorToast + ": " + err.message, "danger");
           if (typeof reportCrash === "function") reportCrash("main prestige btn click: " + err.message, err.stack);
         }
       });
@@ -4192,7 +4208,7 @@
                         </span>
                         ${isMax ? `
                             <div class="gold-max-reached-btn">
-                                \u{1F451} \u05DE\u05D9\u05E8\u05D1\u05D9
+                                \u{1F451} ${translations[lang].maxLevel}
                             </div>
                         ` : `
                             <button class="buy-btn ${canAfford ? "" : "disabled"} buy-gold-btn" data-gold-up="${key}" ${canAfford ? "" : "disabled"}>
@@ -4303,6 +4319,7 @@
     sortedMissions.forEach((m) => {
       const card = document.createElement("div");
       card.className = `mission-card ${m.completed ? "completed" : ""}`;
+      card.setAttribute("data-mission-id", m.id);
       const targetVal = m.target || 1;
       const progressVal = m.progress || 0;
       const percent = Math.min(100, progressVal / targetVal * 100);
@@ -4384,34 +4401,36 @@
             <div class="mission-reward-badge">
                 ${rewardBadgeHtml}
             </div>
-            ${actionZoneHtml}
-            <div class="mission-image-box">
-                <div class="mission-image-glow"></div>
-                <img class="mission-illustration" src="${imgSrc}" alt="" />
-            </div>
-            <div class="mission-content-middle">
-                <div class="mission-details">
-                    <div class="mission-title">${title}</div>
-                    <div class="mission-desc">${progressDesc}</div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="${imgSrc}" alt="" />
                 </div>
-                <div class="mission-progress-row">
-                    <div class="mission-progress-outer">
-                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
-                        <div class="progress-text-overlay">
-                            ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                            /
-                            ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">${title}</div>
+                        <div class="mission-desc">${progressDesc}</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                            <div class="progress-text-overlay">
+                                ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                                /
+                                ${["earn_eps", "accumulate_cash", "earn_cash", "boost_run"].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                        <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                    </svg>
+                    <div class="circle-text">${Math.round(percent)}%</div>
+                </div>
             </div>
-            <div class="mission-circle-progress">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
-                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
-                </svg>
-                <div class="circle-text">${Math.round(percent)}%</div>
-            </div>
+            ${actionZoneHtml}
         `;
       card.addEventListener("click", (e) => {
         if (e.target.closest(".claim-reward-btn")) {
@@ -4437,15 +4456,8 @@
           btn.disabled = true;
           const rectBtn = btn.getBoundingClientRect();
           if (collected.type === "cash") {
-            const rectCashBox = document.getElementById("stat-cash").getBoundingClientRect();
-            animateCoins(rectBtn, rectCashBox, 10, "cash_silent");
             spawnFloating("+" + formatMoney(collected.amount), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", "2.2rem");
           } else {
-            const rectSharesBox = document.getElementById("stat-shares");
-            if (rectSharesBox) {
-              const rectShares = rectSharesBox.getBoundingClientRect();
-              animateCoins(rectBtn, rectShares, collected.amount, "gold");
-            }
             const lang2 = game.state && game.state.language || "en";
             const shareLbl = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
             spawnFloating("+" + collected.amount + " " + shareLbl + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
@@ -4478,7 +4490,7 @@
           const newText = pStr + " / " + tStr;
           if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
         }
-        const circleRadius = 24;
+        const circleRadius = 32;
         const circleCircumference = 2 * Math.PI * circleRadius;
         const strokeDashoffset = circleCircumference - percent / 100 * circleCircumference;
         const circleValue = card.querySelector(".circle-value");
@@ -4500,11 +4512,8 @@
 
   // ui/tabs/achievements-tab.js
   function playAchievementUnlockFeedback(achievement) {
-    const targetEl = document.getElementById("eps-value-container") || document.getElementById("stat-cash");
-    const toRect = targetEl ? targetEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
     const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
     const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
-    animateCoins(fromRect, toRect, 8, "gold");
     spawnFloating("\u{1F3C6} +" + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "") + "%", fromRect.left + fromRect.width / 2, fromRect.top, "gold", "2.2rem");
     if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
       window.gameAudio.playUnlock();
@@ -4613,10 +4622,6 @@
         if (collected && collected.type !== "none" && collected.amount > 0) {
           btn.disabled = true;
           const rectBtn = btn.getBoundingClientRect();
-          const rectSharesBox = document.getElementById("stat-shares");
-          if (rectSharesBox) {
-            animateCoins(rectBtn, rectSharesBox.getBoundingClientRect(), collected.amount, "gold");
-          }
           const lang2 = game.state && game.state.language || "en";
           const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
           spawnFloating("+" + collected.amount + " " + shareLbl2 + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
@@ -5077,13 +5082,19 @@
         initSound2();
         try {
           navigator.vibrate && navigator.vibrate(5);
-        } catch {
+        } catch (e) {
         }
         const existingTabBtn = document.querySelector('.tab-btn[data-tab="daily"]');
         if (existingTabBtn) {
           existingTabBtn.click();
         }
         syncBottomNav("daily");
+        setTimeout(() => {
+          const achievementsContainer = document.getElementById("tab-achievements");
+          if (achievementsContainer) {
+            achievementsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 100);
       });
     }
     updateFortuneWheelBtnState();
@@ -5196,7 +5207,7 @@
       btn.addEventListener("click", () => {
         try {
           navigator.vibrate && navigator.vibrate(5);
-        } catch {
+        } catch (e) {
         }
         const tab = btn.dataset.tab;
         const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
@@ -5211,7 +5222,7 @@
       vaultMiniBtn.addEventListener("click", () => {
         try {
           navigator.vibrate && navigator.vibrate([8, 30, 8]);
-        } catch {
+        } catch (e) {
         }
         const mainVaultBtn = document.getElementById("collect-vault-btn");
         if (mainVaultBtn) mainVaultBtn.click();
@@ -5242,7 +5253,7 @@
         initSound2();
         try {
           navigator.vibrate && navigator.vibrate(12);
-        } catch {
+        } catch (e2) {
         }
         const type = btn.getAttribute("data-type");
         const id = parseInt(btn.getAttribute("data-id"));
@@ -5398,9 +5409,6 @@
         const collected = game.collectVault();
         if (collected > 0) {
           const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
-          const elStatCash = document.getElementById("stat-cash");
-          const rectCashBox = elStatCash ? elStatCash.getBoundingClientRect() : { left: window.innerWidth / 2, top: 20, width: 0, height: 0 };
-          animateCoins(rectBtn, rectCashBox, 2, "cash");
           spawnFloating("+" + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
           spawnVaultCoins(collected, rectBtn);
           game.saveGame();
@@ -5421,8 +5429,9 @@
         }
       });
     }
-    if (DOM_CACHE.securityPath) {
-      DOM_CACHE.securityPath.addEventListener("click", () => {
+    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
+    if (vaultGraphicEl) {
+      vaultGraphicEl.addEventListener("click", () => {
         initSound2();
         for (let i = 0; i < game.state.guards.length; i++) {
           const g = game.state.guards[i];
@@ -5432,20 +5441,12 @@
             }
           }
         }
+        if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
       });
-      DOM_CACHE.securityPath.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          DOM_CACHE.securityPath.click();
-        }
-      });
-    }
-    const vaultGraphicEl = DOM_CACHE.vaultGraphic;
-    if (vaultGraphicEl) {
       vaultGraphicEl.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          if (DOM_CACHE.vaultEmptyBtn) DOM_CACHE.vaultEmptyBtn.click();
+          vaultGraphicEl.click();
         }
       });
     }
@@ -5722,10 +5723,6 @@ ${stack}` : String(message);
         window.DOM_CACHE.bulkSelector = document.getElementById("global-bulk-selector");
         window.DOM_CACHE.customerLine = document.getElementById("customer-line");
         window.DOM_CACHE.tellersZone = document.getElementById("tellers-zone");
-        window.DOM_CACHE.securityPath = document.getElementById("security-path");
-        window.DOM_CACHE.guardAvatar = document.getElementById("guard-avatar");
-        window.DOM_CACHE.guardStatus = document.getElementById("guard-status-text");
-        window.DOM_CACHE.guardLoad = document.getElementById("guard-load");
         window.DOM_CACHE.vaultGraphic = document.getElementById("vault-graphic");
         window.DOM_CACHE.vaultFill = document.getElementById("vault-fill");
         window.DOM_CACHE.vaultStats = document.getElementById("vault-stats");

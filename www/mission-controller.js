@@ -531,7 +531,8 @@ class MissionController {
         if (reward && typeof reward === 'object' && reward.type) {
             // Shares / gold reward
             const shareAmt = reward.amount || 1;
-            this.game.state.shares = (this.game.state.shares || 0) + shareAmt;
+            this.game.state.shares = Math.min(100000, (this.game.state.shares || 0) + shareAmt);
+            if (this.game.economyManager) this.game.economyManager.cachedTotalMult = null;
             result = { type: reward.type, amount: shareAmt };
         } else {
             // Cash reward (legacy: reward is a number)
@@ -620,14 +621,20 @@ class DailyChallengeController {
     }
 
     checkAndReset() {
-        // Daily reset is calendar-day based, so use LOCAL time consistently — mixing
-        // server-adjusted timestamps with local midnight caused off-by-one resets.
-        const todayMidnight = new Date();
+        // Daily reset is calendar-day based. Anti-Cheat: derive "now" from verified
+        // server time when available (same helper checkDailyLogin() uses), so advancing
+        // the device clock can't be used to farm repeated daily-challenge rewards.
+        // Both the midnight boundary AND the stored reset timestamp below are derived
+        // from this SAME `now` value — mixing an adjusted timestamp with unadjusted
+        // local midnight (or vice versa) previously caused off-by-one resets.
+        const sm = this.game.saveManager;
+        const now = (sm && sm.isServerTimeVerified) ? (Date.now() + sm.serverTimeOffset) : Date.now();
+        const todayMidnight = new Date(now);
         todayMidnight.setHours(0, 0, 0, 0);
 
         if (!this.game.state.lastDailyReset || this.game.state.lastDailyReset < todayMidnight.getTime()) {
             this.game.state.dailyChallenges = this._generate3Challenges();
-            this.game.state.lastDailyReset = Date.now();
+            this.game.state.lastDailyReset = now;
         }
 
         // עדכון progress
@@ -675,7 +682,8 @@ class DailyChallengeController {
         // represent the same prestige currency. Do not rename 'gold' without updating
         // _generate3Challenges() and all UI rendering that reads c.reward.type.
         if (c.reward.type === 'gold' || c.reward.type === 'shares') {
-            this.game.state.shares = (this.game.state.shares || 0) + c.reward.amount;
+            this.game.state.shares = Math.min(100000, (this.game.state.shares || 0) + c.reward.amount);
+            if (this.game.economyManager) this.game.economyManager.cachedTotalMult = null;
         }
 
         this.game.saveGame();

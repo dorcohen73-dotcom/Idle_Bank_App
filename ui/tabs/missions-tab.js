@@ -32,6 +32,7 @@ export function renderMissionsTab() {
     sortedMissions.forEach(m => {
         const card = document.createElement('div');
         card.className = `mission-card ${m.completed ? 'completed' : ''}`;
+        card.setAttribute('data-mission-id', m.id);
 
         const targetVal = m.target || 1;
         const progressVal = m.progress || 0;
@@ -125,34 +126,36 @@ export function renderMissionsTab() {
             <div class="mission-reward-badge">
                 ${rewardBadgeHtml}
             </div>
-            ${actionZoneHtml}
-            <div class="mission-image-box">
-                <div class="mission-image-glow"></div>
-                <img class="mission-illustration" src="${imgSrc}" alt="" />
-            </div>
-            <div class="mission-content-middle">
-                <div class="mission-details">
-                    <div class="mission-title">${title}</div>
-                    <div class="mission-desc">${progressDesc}</div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="${imgSrc}" alt="" />
                 </div>
-                <div class="mission-progress-row">
-                    <div class="mission-progress-outer">
-                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
-                        <div class="progress-text-overlay">
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                            /
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">${title}</div>
+                        <div class="mission-desc">${progressDesc}</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                            <div class="progress-text-overlay">
+                                ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                                /
+                                ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                        <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                    </svg>
+                    <div class="circle-text">${Math.round(percent)}%</div>
+                </div>
             </div>
-            <div class="mission-circle-progress">
-                <svg width="84" height="84" viewBox="0 0 84 84">
-                    <circle class="circle-bg" cx="42" cy="42" r="32" stroke-width="10" fill="none" />
-                    <circle class="circle-value" cx="42" cy="42" r="32" stroke-width="10" fill="none" stroke-dasharray="${2 * Math.PI * 32}" stroke-dashoffset="${2 * Math.PI * 32 - (percent / 100) * (2 * Math.PI * 32)}" />
-                </svg>
-                <div class="circle-text">${Math.round(percent)}%</div>
-            </div>
+            ${actionZoneHtml}
         `;
 
         card.addEventListener('click', (e) => {

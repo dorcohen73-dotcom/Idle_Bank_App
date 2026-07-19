@@ -118,6 +118,7 @@ let vipBannerCountdownInterval = null;
                 let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.30));
                 
                 game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1000000000);
+                if (game.economyManager) game.economyManager.cachedTotalMult = null;
                 const msg = `⭐ ${shareReward} VIP Shares ⭐`;
                 spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
                 for (let i = 0; i < 20; i++) {

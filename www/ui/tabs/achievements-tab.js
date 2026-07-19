@@ -1,12 +1,9 @@
 // Fires coin/float/sound feedback for achievements unlocked on a live tick (never for the silent
 // load-time backfill). Called from ui-events.js's tabRefreshTimer right after game.checkAchievements().
 export function playAchievementUnlockFeedback(achievement) {
-    const targetEl = document.getElementById('eps-value-container') || document.getElementById('stat-cash');
-    const toRect = targetEl ? targetEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
     const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
     const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
 
-    animateCoins(fromRect, toRect, 8, 'gold');
     spawnFloating('🏆 +' + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, '') + '%', fromRect.left + fromRect.width / 2, fromRect.top, 'gold', '2.2rem');
     if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {
         window.gameAudio.playUnlock();
@@ -132,10 +129,6 @@ export function renderAchievementsTab() {
             if (collected && collected.type !== 'none' && collected.amount > 0) {
                 btn.disabled = true;
                 const rectBtn = btn.getBoundingClientRect();
-                const rectSharesBox = document.getElementById('stat-shares');
-                if (rectSharesBox) {
-                    animateCoins(rectBtn, rectSharesBox.getBoundingClientRect(), collected.amount, 'gold');
-                }
                 const lang2 = (game.state && game.state.language) || 'en';
                 const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || 'Gold Shares';
                 spawnFloating('+' + collected.amount + ' ' + shareLbl2 + ' 🪙', rectBtn.left + rectBtn.width / 2, rectBtn.top, 'gold', '2.2rem');

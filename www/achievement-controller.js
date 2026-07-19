@@ -78,6 +78,7 @@ class AchievementController {
 
         state.achievements.claimed[id] = true;
         state.shares = (state.shares || 0) + a.rewardShares;
+        if (this.game.economyManager) this.game.economyManager.cachedTotalMult = null;
         this.game.saveGame();
         return { type: 'shares', amount: a.rewardShares };
     }

@@ -27,6 +27,10 @@ class IdleBankGame {
         this.economyManager = new EconomyManager(this);
         this.missionController = new MissionController(this);
         this.achievementController = new AchievementController(this);
+        this.guardController = new GuardController(this);
+        this.customerFlowController = new CustomerFlowController(this);
+        this.prestigeController = new PrestigeController(this);
+        this.shopController = new ShopController(this);
 
         // Load state
         this.loadGame();
@@ -158,7 +162,7 @@ class IdleBankGame {
             queueUpgradeLevel: 1,
 
             lastSaveTime: Date.now(),
-            lastWeeklyReward: 0,
+            lastWeeklyReward: Date.now(),
 
             // Fortune Wheel
             lastSpinTime: 0,
@@ -242,11 +246,13 @@ class IdleBankGame {
     }
 
     getTellerSpeed(level) {
-        return this.economyManager.getTellerSpeed(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerSpeed(lvl);
     }
 
     getTellerCapacity(level) {
-        return this.economyManager.getTellerCapacity(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerCapacity(lvl);
     }
 
     getEventBonusMultiplier() {
@@ -256,7 +262,8 @@ class IdleBankGame {
     }
 
     getTellerUpgradeCost(level) {
-        return this.economyManager.getTellerUpgradeCost(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getTellerUpgradeCost(lvl);
     }
 
     getGuardSpeed(level) {
@@ -264,23 +271,28 @@ class IdleBankGame {
     }
 
     getGuardCapacity(level) {
-        return this.economyManager.getGuardCapacity(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getGuardCapacity(lvl);
     }
 
     getGuardUpgradeCost(level) {
-        return this.economyManager.getGuardUpgradeCost(level);
+        const lvl = level !== undefined ? level : 1;
+        return this.economyManager.getGuardUpgradeCost(lvl);
     }
 
     getVaultCapacity(level) {
-        return this.economyManager.getVaultCapacity(level);
+        const lvl = level !== undefined ? level : (this.state.vault.level || 1);
+        return this.economyManager.getVaultCapacity(lvl);
     }
 
     getVaultUpgradeCost(level) {
-        return this.economyManager.getVaultUpgradeCost(level);
+        const lvl = level !== undefined ? level : (this.state.vault.level || 1);
+        return this.economyManager.getVaultUpgradeCost(lvl);
     }
 
     getQueueCapacity(level) {
-        return this.economyManager.getQueueCapacity(level);
+        const lvl = level !== undefined ? level : (this.state.queueUpgradeLevel || 1);
+        return this.economyManager.getQueueCapacity(lvl);
     }
 
     getBaseQueueCapacity(level) {
@@ -395,7 +407,13 @@ class IdleBankGame {
         const branch = this.state.currentBranch || 0;
         const branchMaxBudget = 1000 * Math.pow(10, branch);
         const floorBudget = 100 * Math.pow(10, branch);
-        const epsBasis = this.getEarningsPerSecond() * 60 * 1.5;
+        let epsBasis = this.getEarningsPerSecond() * 60 * 0.4;
+        
+        if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades && this.state.managerUpgrades.marketing) {
+            const mktLvl = this.state.managerUpgrades.marketing.level || 1;
+            epsBasis = epsBasis * (1 - (0.10 * mktLvl));
+        }
+        
         return Math.min(branchMaxBudget, Math.max(floorBudget, epsBasis));
     }
 
@@ -414,225 +432,63 @@ class IdleBankGame {
 
     // --- GAME ACTIONS ---
     upgradeEntity(type, id) {
-        let entity, cost, statsKey;
-        if (type === 'teller') {
-            entity = this.state.tellers[id];
-            if (!entity || !entity.unlocked) return false;
-            cost = this.getTellerUpgradeCost(entity.level);
-            statsKey = 'tellerUpgrades';
-        } else if (type === 'guard') {
-            entity = this.state.guards[id];
-            if (!entity || !entity.unlocked) return false;
-            cost = this.getGuardUpgradeCost(entity.level);
-            statsKey = 'guardUpgrades';
-        } else if (type === 'vault') {
-            entity = this.state.vault;
-            cost = this.getVaultUpgradeCost(entity.level);
-            statsKey = 'vaultUpgrades';
-        } else {
-            return false;
-        }
-
-        if (this.spendCash(cost)) {
-            entity.level++;
-            this.state.stats[statsKey]++;
-            this.missionsDirty = true;
-            window.gameAudio.playClick();
-            if (type === 'teller') {
-                this.recalculateEps();
-            } else if (type === 'vault' && this.economyManager) {
-                this.economyManager._cachedVaultCap = new Map();
-            }
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeEntity(type, id);
     }
 
     upgradeEntityBulk(type, id, mode) {
-        let entity, statsKey;
-        if (type === 'teller') {
-            entity = this.state.tellers[id];
-            if (!entity || !entity.unlocked) return false;
-            statsKey = 'tellerUpgrades';
-        } else if (type === 'guard') {
-            entity = this.state.guards[id];
-            if (!entity || !entity.unlocked) return false;
-            statsKey = 'guardUpgrades';
-        } else if (type === 'vault') {
-            entity = this.state.vault;
-            statsKey = 'vaultUpgrades';
-        } else {
-            return false;
-        }
-
-        const details = this.getBulkUpgradeDetails(type, id, mode, entity.level, this.state.cash);
-        if (details.canAfford && details.levels > 0) {
-            if (this.spendCash(details.cost)) {
-                entity.level += details.levels;
-                this.state.stats[statsKey] += details.levels;
-                this.missionsDirty = true;
-                window.gameAudio.playClick();
-                if (type === 'teller') {
-                    this.recalculateEps();
-                } else if (type === 'vault' && this.economyManager) {
-                    this.economyManager._cachedVaultCap = new Map();
-                }
-                this.saveGame();
-                return true;
-            }
-        }
-        return false;
+        return this.shopController.upgradeEntityBulk(type, id, mode);
     }
 
     upgradeTeller(id) {
-        return this.upgradeEntity('teller', id);
+        return this.shopController.upgradeTeller(id);
     }
 
     unlockTeller(id) {
-        const teller = this.state.tellers[id];
-        if (!teller || teller.unlocked) return false;
-
-        const cost = this.tellerUnlockCosts[id];
-        if (this.spendCash(cost)) {
-            teller.unlocked = true;
-            this.missionsDirty = true;
-            teller.level = 1;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockTeller(id);
     }
 
     upgradeGuard(id) {
-        return this.upgradeEntity('guard', id);
+        return this.shopController.upgradeGuard(id);
     }
 
     unlockGuard(id) {
-        const guard = this.state.guards[id];
-        if (!guard || guard.unlocked) return false;
-
-        const cost = this.guardUnlockCosts[id];
-        if (this.spendCash(cost)) {
-            guard.unlocked = true;
-            this.missionsDirty = true;
-            guard.level = 1;
-            window.gameAudio.playUnlock();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockGuard(id);
     }
 
     upgradeVault() {
-        return this.upgradeEntity('vault');
+        return this.shopController.upgradeVault();
     }
 
     upgradeQueue() {
-        const level = this.state.queueUpgradeLevel || 1;
-        if (level >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
-
-        const cost = this.getQueueUpgradeCost(level);
-        if (this.spendCash(cost)) {
-            this.state.queueUpgradeLevel = level + 1;
-            this.missionsDirty = true;
-            window.gameAudio.playClick();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeQueue();
     }
 
     upgradeTellerBulk(id, mode) {
-        return this.upgradeEntityBulk('teller', id, mode);
+        return this.shopController.upgradeTellerBulk(id, mode);
     }
 
     upgradeGuardBulk(id, mode) {
-        return this.upgradeEntityBulk('guard', id, mode);
+        return this.shopController.upgradeGuardBulk(id, mode);
     }
 
     upgradeVaultBulk(mode) {
-        return this.upgradeEntityBulk('vault', null, mode);
+        return this.shopController.upgradeVaultBulk(mode);
     }
 
     upgradeQueueBulk(mode) {
-        const queueLvl = this.state.queueUpgradeLevel || 1;
-        if (queueLvl >= GAME_CONFIG.QUEUE_MAX_LEVEL) return false;
-
-        const details = this.getBulkUpgradeDetails('queue', null, mode, queueLvl, this.state.cash);
-        if (details.canAfford && details.levels > 0) {
-            if (this.spendCash(details.cost)) {
-                this.state.queueUpgradeLevel += details.levels;
-                this.missionsDirty = true;
-                window.gameAudio.playClick();
-                this.saveGame();
-                return true;
-            }
-        }
-        return false;
+        return this.shopController.upgradeQueueBulk(mode);
     }
 
     hireManager(type) {
-        if (!this.isManagerUnlocked(type)) return false;
-        if (this.state.managers[type]) return false;
-
-        const cost = this.managerCosts[type];
-        if (this.spendCash(cost)) {
-            this.state.managers[type] = true;
-            if (!this.state.managerUpgrades) {
-                this.state.managerUpgrades = {
-                    customer: { level: 1, skill: null },
-                    finance: { level: 1, skill: null },
-                    operations: { level: 1, skill: null },
-                    service: { level: 1, skill: null },
-                    vip: { level: 1, skill: null },
-                    marketing: { level: 1, skill: null },
-                    accountant: { level: 1, skill: null }
-                };
-            }
-            if (!this.state.managerUpgrades[type]) {
-                this.state.managerUpgrades[type] = { level: 1, skill: null };
-            }
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.hireManager(type);
     }
 
     unlockDepartment(id) {
-        const dept = this.state.departments.find(d => d.id === id);
-        if (!dept || dept.unlocked) return false;
-
-        if (this.spendCash(this.getDepartmentUnlockCost(dept))) {
-            dept.unlocked = true;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.unlockDepartment(id);
     }
 
     clickTeller(id) {
-        const teller = this.state.tellers[id];
-        if (!teller || !teller.unlocked || teller.isProcessing) return false;
-        
-        if (this.customerQueue.length > 0 && teller.cashStored < this.getTellerCapacity(teller.level)) {
-            const client = this.customerQueue.shift();
-            teller.isProcessing = true;
-            teller.customerType = client.type;
-            teller.customerSeed = client.seed !== undefined ? client.seed : Math.floor(Math.random() * 1000);
-            teller.processingTimeLeft = this.getTellerSpeed(teller.level);
-            window.gameAudio.playClick();
-            return true;
-        }
-        return false;
+        return this.customerFlowController.clickTeller(id);
     }
 
     collectTellerCash(id) {
@@ -667,263 +523,23 @@ class IdleBankGame {
     }
 
     calculateTotalAssets() {
-        let total = 0;
-        if (this.state.tellers) {
-            this.state.tellers.forEach(t => {
-                if (t.unlocked) total += t.level;
-            });
-        }
-        if (this.state.guards) {
-            this.state.guards.forEach(g => {
-                if (g.unlocked) total += g.level;
-            });
-        }
-        if (this.state.vault) {
-            total += this.state.vault.level || 1;
-        }
-        total += this.state.queueUpgradeLevel || 1;
-        if (this.state.departments) {
-            this.state.departments.forEach(d => {
-                if (d.unlocked) total += 5;
-            });
-        }
-        if (this.state.managers) {
-            Object.keys(this.state.managers).forEach(k => {
-                if (k !== 'operations' && this.state.managers[k]) {
-                    total += 5;
-                }
-            });
-        }
-        return total;
+        return this.prestigeController.calculateTotalAssets();
     }
 
     calculatePrestigeShares() {
-        // H-06: cache result — invalidate only when lifetimeCash or shares change
-        const lifetimeCash = this.state.lifetimeCash || 2000;
-        
-        // Ensure stats object exists
-        if (!this.state.stats) this.state.stats = {};
-        
-        const vipHired = !!(this.state.managers && this.state.managers.vip);
-        const vipLvl = (this.state.managerUpgrades && this.state.managerUpgrades.vip) ? this.state.managerUpgrades.vip.level : 1;
-        
-        // Smarter Scaling Formula: grows reasonably but very hard to hit the 10k cap instantly in late game
-        let rawGain = 1500 * Math.pow(lifetimeCash / 1000000000, 0.22);
-        
-        if (vipHired && this.state.managerUpgrades && this.state.managerUpgrades.vip) {
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeBoost * vipLvl);
-            rawGain = rawGain * (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.vip.prestigeSharesBoost * vipLvl);
-        }
-
-        // Initialize claimedPrestigeShares for existing players to prevent sudden infinite shares
-        // We set it such that they get exactly 800 base shares right now to "un-stick" them from 0.
-        if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             this.state.stats.claimedPrestigeShares = Math.max(0, Math.floor(rawGain) - 800);
-        }
-        
-        const claimedShares = this.state.stats.claimedPrestigeShares;
-        
-        const cacheKey = `${lifetimeCash}:${claimedShares}:${vipHired}:${vipLvl}`;
-        if (this._cachedPrestigeSharesKey === cacheKey && this._cachedPrestigeShares !== undefined) {
-            return this._cachedPrestigeShares;
-        }
-        
-        let gain = Math.floor(rawGain) - claimedShares;
-        
-        // Reverted cap to 10,000 per user request
-        const result = Math.min(10000, Math.max(0, gain));
-        this._cachedPrestigeSharesKey = cacheKey;
-        this._cachedPrestigeShares = result;
-        return result;
+        return this.prestigeController.calculatePrestigeShares();
     }
 
     getDailyLoginReward(streak) {
-        const eps = this.getEarningsPerSecond();
-        if (streak >= 30) return { type: 'shares', value: 10 };
-        if (streak >= 14) return { type: 'shares', value: 3 };
-        if (streak >= 7)  return { type: 'shares', value: 1 };
-        if (streak >= 5)  return { type: 'boost', value: 1800 };
-        if (streak >= 3)  return { type: 'gold', value: 1 };
-        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
-        return { type: 'cash', value: Math.max(180, eps * 300) };
+        return this.prestigeController.getDailyLoginReward(streak);
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
-        this.isResetting = true;
-        let baseSharesGained = this.calculatePrestigeShares();
-        let sharesGained = baseSharesGained;
-        
-        if (doubleShares) {
-            // HIGH-3: The parameter name is 'doubleShares', but the UI displays and awards a 3x multiplier (triple shares) by design. We preserve the 3x behavior to match the UI.
-            sharesGained *= 3;
-            // CAP: reverted to 10000 per user request
-            sharesGained = Math.min(10000, sharesGained);
-        }
-        if (!bypassCashCheck && this.state.cash < this.branches[this.state.currentBranch].minCashToPrestige) {
-            this.isResetting = false;
-            return false;
-        }
-
-        // Apply Prestige — total wallet shares capped at 100,000 (reverted)
-        this.state.shares = Math.min(100000, (this.state.shares || 0) + sharesGained);
-        
-        // IMPORTANT: Increment claimedPrestigeShares by the BASE amount, NOT the ad-boosted amount
-        if (!this.state.stats) this.state.stats = {};
-        if (typeof this.state.stats.claimedPrestigeShares === 'undefined') {
-             // Fallback initialization just in case calculatePrestigeShares didn't do it
-             this.state.stats.claimedPrestigeShares = Math.max(0, (this.state.shares || 0) - sharesGained);
-        }
-        this.state.stats.claimedPrestigeShares += baseSharesGained;
-
-        this.state.currentBranch = targetBranchIndex;
-        this.state.maxBranchUnlocked = Math.max(this.state.maxBranchUnlocked || 0, targetBranchIndex);
-        
-        // Reset cash based on starting cash options in GAME_CONFIG
-        const startingCashLevel = (this.state.goldUpgrades && this.state.goldUpgrades.startingCash) ? this.state.goldUpgrades.startingCash : 0;
-        const startingCashOptions = GAME_CONFIG.STARTING_CASH_OPTIONS;
-
-        // Branch Welcome Bonus: isNewBranch checked before reset, amount computed after recalculateEps
-        const isNewBranch = !this.state.visitedBranches || !this.state.visitedBranches.includes(targetBranchIndex);
-
-        const savedShares = this.state.shares;
-        const savedMaxBranch = this.state.maxBranchUnlocked;
-        const savedGoldUpgrades = this.state.goldUpgrades;
-        const savedLanguage = this.state.language;
-        const savedStats = this.state.stats;
-        const savedMissionsCompleted = this.state.missionsCompleted;
-        const savedLastWeeklyReward = this.state.lastWeeklyReward;
-        const savedLastSpinTime = this.state.lastSpinTime;
-        const savedLastAdSpinTime = this.state.lastAdSpinTime || 0;
-        const savedVisitedBranches = Array.isArray(this.state.visitedBranches) ? [...this.state.visitedBranches] : [];
-        const savedLoginDate = this.state.lastLoginDate || 0;
-        const savedLoginStreak = this.state.loginStreak || 0;
-        const savedPendingLoginReward = this.state.pendingLoginReward || null;
-        const savedBoost2xUsedEver = this.state.boost2xUsedEver || false;
-        const savedDailyChallenges = this.state.dailyChallenges;
-        const savedLastDailyReset = this.state.lastDailyReset;
-        const savedMigrations = this.state.migrations ? Object.assign({}, this.state.migrations) : {};
-        const savedTutorialCompleted = this.state.tutorialCompleted || false;
-        const savedTutorialStep = this.state.tutorialStep || 0;
-        const savedDiscoveredTips = this.state.discoveredTips ? Object.assign({}, this.state.discoveredTips) : {};
-
-        if (this._tempQueueBonusTimeout) { clearTimeout(this._tempQueueBonusTimeout); this._tempQueueBonusTimeout = null; }
-        this.initDefaultState();
-
-        this.state.shares = savedShares;
-        this.state.currentBranch = targetBranchIndex;
-        this.state.maxBranchUnlocked = savedMaxBranch;
-        this.state.goldUpgrades = savedGoldUpgrades;
-        this.state.language = savedLanguage;
-        this.state.stats = savedStats;
-        this.state.missionsCompleted = savedMissionsCompleted;
-        this.state.lastWeeklyReward = savedLastWeeklyReward;
-        this.state.lastSpinTime = savedLastSpinTime;
-        this.state.lastAdSpinTime = savedLastAdSpinTime;
-        this.state.lastLoginDate = savedLoginDate;
-        this.state.loginStreak = savedLoginStreak;
-        this.state.pendingLoginReward = savedPendingLoginReward;
-        this.state.boost2xUsedEver = savedBoost2xUsedEver;
-        this.state.dailyChallenges = savedDailyChallenges;
-        this.state.lastDailyReset = savedLastDailyReset;
-        this.state.migrations = savedMigrations;
-        this.state.tutorialCompleted = savedTutorialCompleted;
-        this.state.tutorialStep = savedTutorialStep;
-        this.state.discoveredTips = savedDiscoveredTips;
-
-        // Restore visitedBranches and add targetBranch if new
-        if (!savedVisitedBranches.includes(targetBranchIndex)) {
-            savedVisitedBranches.push(targetBranchIndex);
-        }
-        this.state.visitedBranches = savedVisitedBranches;
-
-        // Auto-discover all basic tutorial tips to prevent them from showing after prestige
-        this.state.discoveredTips.start = true;
-        this.state.discoveredTips.vault = true;
-        this.state.discoveredTips.guard = true;
-        this.state.discoveredTips.dept = true;
-        this.state.discoveredTips.manager = true;
-        this.state.discoveredTips.prestige = true;
-
-        // Reset cash based on starting cash options in GAME_CONFIG
-        this.state.cash = Math.round(((startingCashOptions[startingCashLevel] || 180) + Number.EPSILON) * 100) / 100;
-        this.state.lifetimeCash = this.state.cash;
-
-        // Generate initial missions
-        this.state.missions = [];
-        for (let i = 0; i < 5; i++) {
-            this.state.missions.push(this.generateMission());
-        }
-        
-        this.sanitizeQueueAndTellers();
-        this.customerSpawnTimer = 0;
-        
-        // Spawn 3 initial customers immediately
-        for (let i = 0; i < 3; i++) {
-            this.customerCounter++;
-            this.customerQueue.push({ id: 'c_' + this.customerCounter, type: 'normal', seed: Math.floor(Math.random() * 1000) });
-        }
-        
-        window.gameAudio.playUnlock();
-        this.recalculateEps();
-
-        // Branch Welcome Bonus: computed here so EPS reflects the new branch
-        const welcomeBonusCash = isNewBranch ? (this.getEarningsPerSecond() * 60) : 0;
-        if (isNewBranch && welcomeBonusCash > 0) {
-            this.state.cash = Math.round((this.state.cash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
-            this.state.lifetimeCash = Math.round((this.state.lifetimeCash + welcomeBonusCash + Number.EPSILON) * 100) / 100;
-            if (typeof window.showToast === 'function') {
-                const lang = this.state.language || 'en';
-                const tObj = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : null;
-                const branchName = (tObj && tObj.branches && tObj.branches.names && tObj.branches.names[targetBranchIndex])
-                    ? tObj.branches.names[targetBranchIndex]
-                    : (this.branches && this.branches[targetBranchIndex] ? this.branches[targetBranchIndex].name : ('Branch ' + targetBranchIndex));
-                const amt = Math.round(welcomeBonusCash).toLocaleString();
-                const msg = (tObj && typeof tObj.welcomeBonusMsg === 'function')
-                    ? tObj.welcomeBonusMsg(branchName, amt)
-                    : ('Welcome to ' + branchName + '! You received $' + amt + ' as an opening gift.');
-                window.showToast(msg, 'success');
-            }
-        }
-
-        // Rebase daily_earn_cash so progress earned before prestige survives.
-        // Accumulated progress is banked in baseProgress (always >= 0) instead of encoding it
-        // as a negative startProgress, which validateAndHealState() would clamp back to 0.
-        this.state.dailyChallenges.forEach(c => {
-            if (c.completed || c.claimed || c.type !== 'daily_earn_cash') return;
-            c.baseProgress = (c.baseProgress || 0) + (c.progress || 0);
-            c.startProgress = this.state.lifetimeCash;
-        });
-
-        this.isResetting = false;
-        this.saveGame(true); // Force save immediately during prestige
-        return true;
+        return this.prestigeController.prestige(targetBranchIndex, doubleShares, bypassCashCheck);
     }
 
     triggerGuard(id) {
-        const guard = this.state.guards[id];
-        if (!guard || !guard.unlocked || guard.state !== 'idle') return false;
-
-        const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
-        const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
-
-        // Build ordered queue of ALL unlocked tellers for visual patrol
-        const queue = [];
-        this.state.tellers.forEach((t, idx) => {
-            if (t.unlocked) queue.push(idx);
-        });
-
-        if (queue.length > 0 && vaultSpaceLeft > 0) {
-            guard.tellerVisitQueue = queue;
-            guard.targetTellerIndex = queue[0];
-            guard.carriedAmount = 0;
-            guard.loadedCash = 0;
-            guard.segmentPosition = guard.segmentPosition || guard.position || GAME_CONFIG.GUARD_VAULT_ANCHOR;
-            guard.state = 'moving_to_teller_' + queue[0];
-            guard.timer = 0;
-            window.gameAudio.playClick();
-            return true;
-        }
-        return false;
+        return this.guardController.trigger(id);
     }
 
     tickTimer(stateField, dt, onExpire) {
@@ -944,6 +560,7 @@ class IdleBankGame {
         this.tickTimer('tellerSpeedBoostTimer', dt, () => this.recalculateEps());
 
         const advBudget = this.state.advBudget || 0;
+        const wasAdvActive = this.state.advActive;
         if (advBudget > 0) {
             const costThisFrame = advBudget * dt / 60;
             if (this.state.cash >= costThisFrame) {
@@ -959,346 +576,15 @@ class IdleBankGame {
         } else {
             this.state.advActive = false;
         }
-
-        // Spawning customers
-        this.customerSpawnTimer += dt;
-        let spawnInterval = 4.0;
-        if (this.state.managers && this.state.managers.customer && this.state.managerUpgrades.customer) {
-            const customerLvl = this.state.managerUpgrades.customer.level;
-            // Base numerator matches the un-hired fallback above (4.0s) rather than 1.5s:
-            // save-manager.js force-hires the customer manager for everyone from the start
-            // ("prevent deadlock"), so the old 1.5s value was actually every player's
-            // baseline, not an upgraded state. At 1.5s a single starting teller (5s/customer)
-            // couldn't keep up at all - the queue hit its cap ~10s into a brand new game and
-            // stayed there permanently. 4.0s at level 1 keeps the same upgrade curve but
-            // starts close to what a level-1 teller can actually sustain.
-            spawnInterval = 4.0 / (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.customer.spawnIntervalBoost * (customerLvl - 1));
-        }
-        
-        let adMaxBudget = 0;
-        let normalizedBudget = 0;
-        if (this.state.advActive && advBudget > 0) {
-            adMaxBudget = this.getAdMaxBudget();
-            normalizedBudget = Math.min(1, advBudget / adMaxBudget);
+        if (wasAdvActive !== this.state.advActive && this.economyManager) {
+            this.economyManager.cachedTotalMult = null;
         }
 
-        // Organic walk-in traffic without an active campaign is deliberately slow (3x
-        // slower than the customer-manager-driven rate) - most customers should only
-        // show up because of marketing, not "for free". Without this, arrivals kept
-        // pace with (or outran) teller throughput even at 0% ad spend, so the queue
-        // could never actually drain no matter how little you invested. This scales
-        // linearly down to no slowdown at 100% budget.
-        const ORGANIC_SLOWDOWN = 3.0;
-        spawnInterval *= (ORGANIC_SLOWDOWN - normalizedBudget * (ORGANIC_SLOWDOWN - 1));
+        // Customer spawn/queue/teller-processing logic lives in CustomerFlowController
+        this.customerFlowController.update(dt);
 
-        if (this.state.advActive && advBudget > 0) {
-            let totalServiceRate = 0;
-            this.state.tellers.forEach(t => {
-                if (t.unlocked) {
-                    const speed = this.getTellerSpeed(t.level);
-                    totalServiceRate += (1 / speed);
-                }
-            });
-            
-            const baseSpawnRate = 1 / spawnInterval;
-            // Cap scales with current teller throughput (not a fixed number) so the
-            // campaign keeps mattering as tellers get upgraded in later stages.
-            // We removed the absolute ceiling (Math.min(4)) so that setting the campaign 
-            // to maximum will ALWAYS guarantee that customers spawn faster than tellers 
-            // can serve them, effectively filling the queue (as the user expects).
-            const maxSpawnRate = Math.max(2.5, totalServiceRate * 1.5);
-            const maxBoostFactor = maxSpawnRate / baseSpawnRate;
-            
-            let boostFactor = 1 + normalizedBudget * (maxBoostFactor - 1);
-            if (this.state.managers && this.state.managers.marketing && this.state.managerUpgrades.marketing) {
-                boostFactor *= (1 + GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.adBoost * this.state.managerUpgrades.marketing.level);
-            }
-            spawnInterval = spawnInterval / boostFactor;
-        }
-
-        if (this.customerSpawnTimer >= spawnInterval) {
-            this.customerSpawnTimer = 0;
-            const maxQueue = this.getQueueCapacity(this.state.queueUpgradeLevel || 1);
-            if (this.customerQueue.length < maxQueue) {
-                let type = 'normal';
-                const rand = Math.random();
-                
-                let vipThreshold = 0.95;
-                let richThreshold = 0.80;
-                if (this.state.advActive && advBudget > 0) {
-                    const normalizedBudget = Math.min(1.0, advBudget / adMaxBudget);
-                    vipThreshold -= (normalizedBudget * 0.15);
-                    richThreshold -= (normalizedBudget * 0.30);
-                }
-
-                const deptLaundering = this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
-                const deptVip = this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
-                if (deptVip && deptVip.unlocked && rand > vipThreshold) {
-                    type = 'vip';
-                } else if (deptLaundering && deptLaundering.unlocked && rand > richThreshold) {
-                    type = 'rich';
-                }
-                
-                this.customerCounter++;
-                this.customerQueue.push({ id: 'c_' + this.customerCounter, type, seed: Math.floor(Math.random() * 1000) });
-            } else {
-                // Queue is full - Marketing bounce mechanic
-                if (this.state.advActive && advBudget > 0 && typeof window !== 'undefined' && window.UI && typeof window.UI.spawnFloating === 'function') {
-                    const now = Date.now();
-                    if (!this.lastBounceTime || now - this.lastBounceTime > 1500) {
-                        this.lastBounceTime = now;
-                        const doorX = window.innerWidth * 0.15; 
-                        const doorY = window.innerHeight * 0.85; 
-                        window.UI.spawnFloating('לקוח עזב 😡', doorX + (Math.random() * 40 - 20), doorY + (Math.random() * 20 - 10), 'red', '1.1rem');
-                    }
-                }
-            }
-        }
-
-        // Automating Teller actions
-        let checkedCount = 0;
-        let tellerIndex = this.lastTellerOffset;
-        let assignedCount = 0;
-        
-        while (checkedCount < this.state.tellers.length && assignedCount < this.customerQueue.length) {
-            const t = this.state.tellers[tellerIndex];
-            if (t.unlocked && !t.isProcessing && t.cashStored < this.getTellerCapacity(t.level)) {
-                const client = this.customerQueue[assignedCount];
-                t.isProcessing = true;
-                t.customerType = client.type;
-                t.customerSeed = client.seed !== undefined ? client.seed : Math.floor(Math.random() * 1000);
-                t.processingTimeLeft = this.getTellerSpeed(t.level);
-                assignedCount++;
-                tellerIndex = (tellerIndex + 1) % this.state.tellers.length;
-            } else {
-                tellerIndex = (tellerIndex + 1) % this.state.tellers.length;
-            }
-            checkedCount++;
-        }
-        this.lastTellerOffset = tellerIndex;
-        if (assignedCount > 0) {
-            this.customerQueue = this.customerQueue.slice(assignedCount);
-        }
-
-        const baseRewardForTick = this.getCurrentBaseReward();
-        const finalRewardForTick = baseRewardForTick * this.getTotalMultiplier();
-
-        // Updating Teller processing timers
-        let _tickVipCount = 0;
-        let _tickHadNonVip = false;
-        this.state.tellers.forEach(t => {
-            if (t.unlocked && t.isProcessing) {
-                t.processingTimeLeft -= dt;
-                if (t.processingTimeLeft <= 0) {
-                    t.isProcessing = false;
-                    t.processingTimeLeft = 0;
-                    this.state.stats.clientsServed++;
-                    if (t.customerType === 'vip' || t.customerType === 'rich') {
-                        if (!this.state.stats.vipServed) this.state.stats.vipServed = 0;
-                        this.state.stats.vipServed++;
-                        _tickVipCount++;
-                    } else {
-                        _tickHadNonVip = true;
-                    }
-                    this.missionsDirty = true;
-
-                    // boost_run tracking: accumulate cash earned while boost is active
-                    if (this.state.boost2xTimeLeft > 0) {
-                        this.state.boost2xUsedEver = true;
-                        this.state.missions.forEach(m => {
-                            if (m.type === 'boost_run' && !m.completed) {
-                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + finalRewardForTick;
-                            }
-                        });
-                    }
-
-                    t.cashStored = Math.round((t.cashStored + finalRewardForTick + Number.EPSILON) * 100) / 100;
-
-                    const cap = this.getTellerCapacity(t.level);
-                    if (t.cashStored > cap) {
-                        t.cashStored = cap;
-                    }
-                }
-            }
-        });
-
-
-
-        // Update Guards state machine — multi-stop route
-        // Route: idle → moving_to_teller_N → collecting_from_teller_N (repeat per teller) → moving_to_vault → depositing → idle
-        const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
-
-        const _getTellerAnchor = (ti) => {
-            const anchors = GAME_CONFIG.GUARD_TELLER_ANCHORS;
-            if (anchors && anchors[ti] !== undefined) return anchors[ti];
-            // Fallback for 8 tellers
-            const fallback = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
-            return fallback[ti] !== undefined ? fallback[ti] : 0.5;
-        };
-        const VAULT_ANCHOR = GAME_CONFIG.GUARD_VAULT_ANCHOR;
-
-        this.state.guards.forEach(g => {
-            if (!g.unlocked) return;
-
-            const transitDuration = this.getGuardSpeed(g.level);
-            const capacity = this.getGuardCapacity(g.level);
-            const vaultSpaceLeft = vaultCapacity - this.state.vault.cashStored;
-
-            // Ensure new fields exist (migration safety)
-            if (!Array.isArray(g.tellerVisitQueue)) g.tellerVisitQueue = [];
-            if (typeof g.level !== 'number' || isNaN(g.level)) g.level = 1;
-            if (g.segmentPosition === undefined || isNaN(g.segmentPosition)) {
-                g.segmentPosition = g.position || GAME_CONFIG.GUARD_VAULT_ANCHOR;
-            }
-            if (g.position === undefined || isNaN(g.position)) {
-                g.position = g.segmentPosition;
-            }
-            if (typeof g.segmentPosition !== 'number' || isNaN(g.segmentPosition)) g.segmentPosition = g.position || 0;
-            if (typeof g.carriedAmount !== 'number' || isNaN(g.carriedAmount))   g.carriedAmount = g.loadedCash || 0;
-            if (typeof g.targetTellerIndex !== 'number' || isNaN(g.targetTellerIndex)) g.targetTellerIndex = 0;
-
-            // Normalise legacy states that no longer exist
-            if (g.state === 'moving_to_tellers' || g.state === 'collecting') {
-                g.state = 'idle';
-            }
-
-            if (g.state === 'idle') {
-                // ── IDLE ──────────────────────────────────────────────────────
-                if (g.carriedAmount > 0) {
-                    // Had leftover cargo (e.g. vault was full) — try depositing now
-                    if (vaultSpaceLeft > 0) {
-                        g.state = 'moving_to_vault';
-                    }
-                } else if (this.state.managers.operations && vaultSpaceLeft > 0) {
-                    let hasCash = false;
-                    for (let i = 0; i < this.state.tellers.length; i++) {
-                        if (this.state.tellers[i] && this.state.tellers[i].unlocked && this.state.tellers[i].cashStored > 0) {
-                            hasCash = true;
-                            break;
-                        }
-                    }
-                    if (hasCash) {
-                        const queue = [];
-                        this.state.tellers.forEach((t, idx) => {
-                            if (t.unlocked) queue.push(idx);
-                        });
-                        g.tellerVisitQueue = queue;
-                        g.targetTellerIndex = queue[0];
-                        g.carriedAmount = 0;
-                        g.state = 'moving_to_teller_' + queue[0];
-                    }
-                }
-
-            } else if (g.state.startsWith('moving_to_teller_')) {
-                // ── MOVING TO TELLER N ────────────────────────────────────────
-                const ti = parseInt(g.state.slice('moving_to_teller_'.length), 10);
-                const targetAnchor = _getTellerAnchor(ti);
-                const curPos = g.segmentPosition;
-                const dir = targetAnchor > curPos ? 1 : -1;
-                const step = dt / transitDuration;
-                g.segmentPosition = curPos + dir * step;
-
-                const reached = dir > 0 ? g.segmentPosition >= targetAnchor
-                                         : g.segmentPosition <= targetAnchor;
-                if (reached) {
-                    g.segmentPosition = targetAnchor;
-                    g.targetTellerIndex = ti;
-                    g.state = 'collecting_from_teller_' + ti;
-                    g.timer = 0.4;
-                }
-                g.position = g.segmentPosition;
-
-            } else if (g.state.startsWith('collecting_from_teller_')) {
-                // ── COLLECTING FROM TELLER N ──────────────────────────────────
-                g.timer -= dt;
-                if (g.timer <= 0) {
-                    const ti = parseInt(g.state.slice('collecting_from_teller_'.length), 10);
-                    const teller = this.state.tellers[ti];
-                    if (teller && teller.unlocked && teller.cashStored > 0) {
-                        const spaceLeft = capacity - g.carriedAmount;
-                        const taken = Math.min(teller.cashStored, spaceLeft);
-                        teller.cashStored = Math.round((teller.cashStored - taken + Number.EPSILON) * 100) / 100;
-                        g.carriedAmount = Math.round((g.carriedAmount + taken + Number.EPSILON) * 100) / 100;
-                        // Store actual collected amount and source teller so ui-draw can display
-                        // the correct floating text and coin animation when this state transition
-                        // is detected (prev=collecting_from_teller_N → cur=moving_to_* or moving_to_vault).
-                        g.lastCollectedAmount = taken;
-                        g.lastCollectedTellerIndex = ti;
-                    } else {
-                        g.lastCollectedAmount = 0;
-                        g.lastCollectedTellerIndex = ti;
-                    }
-                    // Remove this teller from the visit queue
-                    g.tellerVisitQueue = g.tellerVisitQueue.filter(idx => idx !== ti);
-
-                    // Find next teller in order (1, 2, 3...)
-                    let nextTi = -1;
-                    for (let i = ti + 1; i < this.state.tellers.length; i++) {
-                        const t = this.state.tellers[i];
-                        if (t && t.unlocked) {
-                            nextTi = i;
-                            break;
-                        }
-                    }
-
-                    if (nextTi >= 0) {
-                        g.targetTellerIndex = nextTi;
-                        g.state = 'moving_to_teller_' + nextTi;
-                    } else {
-                        // Done collecting — head to vault
-                        g.tellerVisitQueue = [];
-                        g.state = 'moving_to_vault';
-                    }
-                    // Sync loadedCash for UI / save compatibility
-                    g.loadedCash = g.carriedAmount;
-                }
-
-            } else if (g.state === 'moving_to_vault') {
-                // ── MOVING TO VAULT ───────────────────────────────────────────
-                const curPos = g.segmentPosition;
-                const dir = VAULT_ANCHOR > curPos ? 1 : -1;
-                const step = dt / transitDuration;
-                g.segmentPosition = curPos + dir * step;
-
-                const reached = dir > 0 ? g.segmentPosition >= VAULT_ANCHOR
-                                         : g.segmentPosition <= VAULT_ANCHOR;
-                if (reached) {
-                    g.segmentPosition = VAULT_ANCHOR;
-                    g.state = 'depositing';
-                    g.timer = 0.5;
-                }
-                g.position = g.segmentPosition;
-
-            } else if (g.state === 'depositing') {
-                // ── DEPOSITING ────────────────────────────────────────────────
-                // C-12: vault completely full — go idle immediately
-                if (vaultSpaceLeft <= 0) {
-                    g.state = 'idle';
-                } else {
-                    g.timer -= dt;
-                    if (g.timer <= 0) {
-                        const spaceInVault = vaultCapacity - this.state.vault.cashStored;
-                        if (spaceInVault <= 0) {
-                            g.state = 'idle';
-                        } else {
-                            const depositAmount = Math.min(g.carriedAmount, spaceInVault);
-                            this.state.vault.cashStored = Math.round((this.state.vault.cashStored + depositAmount + Number.EPSILON) * 100) / 100;
-                            g.carriedAmount = Math.round((g.carriedAmount - depositAmount + Number.EPSILON) * 100) / 100;
-                            g.loadedCash = g.carriedAmount;
-
-                            if (g.carriedAmount > 0) {
-                                // Vault partially full — retry next tick
-                                g.timer = 0.5;
-                            } else {
-                                g.state = 'idle';
-                                // guard_trips tracking: count completed deposit trips
-                                this.state.guardTripsTotal = (this.state.guardTripsTotal || 0) + 1;
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        // Guard patrol logic lives in GuardController (see guard-controller.js)
+        this.guardController.update(dt);
 
         // Automating Vault emptying (Finance Manager)
         if (this.state.managers.finance && this.state.vault.cashStored > 0) {
@@ -1341,147 +627,25 @@ class IdleBankGame {
     }
 
     buyGoldUpgrade(type) {
-        if (!this.state.goldUpgrades || typeof this.state.goldUpgrades.managerDiscount === 'undefined') {
-            this.state.goldUpgrades = Object.assign({
-                startingCash: 0, guardSpeed: 0, premiumYield: 0, shareEfficiency: 0,
-                offlineEarnings: 0, tellerCapacityBoost: 0, vaultCapacityBoost: 0,
-                eventBonus: 0, managerDiscount: 0
-            }, this.state.goldUpgrades || {});
-        }
-        
-        const currentLvl = this.state.goldUpgrades[type] || 0;
-        let maxLvl = 5;
-        if (type === 'startingCash') maxLvl = 4;
-        else if (type === 'shareEfficiency') maxLvl = 4;
-        else if (type === 'managerDiscount') maxLvl = 4;
-
-        if (currentLvl >= maxLvl) return false;
-        
-        const cost = this.getGoldUpgradeCost(type);
-        if (this.state.shares >= cost) {
-            this.state.shares -= cost;
-            this.state.goldUpgrades[type]++;
-            if ((type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') && this.economyManager) {
-                this.economyManager._cachedVaultCap = new Map();
-                this.economyManager._cachedTellerCap = null;
-            }
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.buyGoldUpgrade(type);
     }
 
     upgradeManager(type) {
-        if (!this.state.managerUpgrades) {
-            // CRIT-9: Initialize managerUpgrades fallback with the correct manager keys instead of tellers/guards/vault
-            this.state.managerUpgrades = {
-                customer: { level: 1, skill: null },
-                finance: { level: 1, skill: null },
-                operations: { level: 1, skill: null },
-                service: { level: 1, skill: null },
-                vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null },
-                accountant: { level: 1, skill: null }
-            };
-        }
-
-        let mgr = this.state.managerUpgrades[type];
-        if (!mgr) {
-            mgr = { level: 1, skill: null };
-            this.state.managerUpgrades[type] = mgr;
-        }
-        if (mgr.level >= 5) return false;
-        
-        const costs = this.managerUpgradeCosts[type] || GAME_CONFIG.MANAGER_UPGRADE_COSTS_DEFAULT;
-        const cost = costs[mgr.level] || 100000;
-        
-        if (this.spendCash(cost)) {
-            mgr.level++;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeManager(type);
     }
 
     upgradeManagerBulk(type, mode) {
-        if (!this.state.managerUpgrades) {
-            this.state.managerUpgrades = {
-                customer: { level: 1, skill: null },
-                finance: { level: 1, skill: null },
-                operations: { level: 1, skill: null },
-                service: { level: 1, skill: null },
-                vip: { level: 1, skill: null },
-                marketing: { level: 1, skill: null },
-                accountant: { level: 1, skill: null }
-            };
-        }
-        let mgr = this.state.managerUpgrades[type];
-        if (!mgr) {
-            mgr = { level: 1, skill: null };
-            this.state.managerUpgrades[type] = mgr;
-        }
-        if (mgr.level >= 5) return false;
-
-        const details = this.getBulkUpgradeDetails('manager', type, mode, mgr.level, this.state.cash);
-        if (details.canAfford && details.levels > 0 && this.spendCash(details.cost)) {
-            mgr.level += details.levels;
-            this.missionsDirty = true;
-            window.gameAudio.playUnlock();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.upgradeManagerBulk(type, mode);
     }
 
     selectManagerSkill(type, skill) {
-        if (!this.state.managerUpgrades) return false;
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr) return false;
-        
-        if (mgr.skill === skill) {
-            return false;
-        } else {
-            mgr.skill = skill;
-        }
-        window.gameAudio.playClick();
-        this.recalculateEps();
-        this.saveGame();
-        return true;
+        return this.shopController.selectManagerSkill(type, skill);
     }
 
     resetManagerSkill(type, free = false) {
-        if (!this.state.managerUpgrades) return false;
-        const mgr = this.state.managerUpgrades[type];
-        if (!mgr || !mgr.skill) return false;
-        
-        const cost = 5000;
-        if (free || this.spendCash(cost)) {
-            mgr.skill = null;
-            window.gameAudio.playClick();
-            this.recalculateEps();
-            this.saveGame();
-            return true;
-        }
-        return false;
+        return this.shopController.resetManagerSkill(type, free);
     }
 
-    addBoost2x(hours) {
-        const secondsToAdd = hours * 3600;
-        const maxSeconds = 8 * 3600;
-        this.state.boost2xTimeLeft = Math.min(maxSeconds, (this.state.boost2xTimeLeft || 0) + secondsToAdd);
-        if (this.economyManager) this.economyManager.cachedTotalMult = null;
-        window.gameAudio.playUnlock();
-        this.saveGame();
-        return true;
-    }
-
-    // --- ENCAPSULATION API METHODS FOR MVC COMPLIANCE ---
     addCash(amount) {
         const prev = this.state.lifetimeCash;
         this.state.cash = Math.round((this.state.cash + amount + Number.EPSILON) * 100) / 100;
@@ -1516,6 +680,7 @@ class IdleBankGame {
     addShares(amount) {
         // Same 100K wallet cap enforced by prestige()
         this.state.shares = Math.min(100000, (this.state.shares || 0) + amount);
+        if (this.economyManager) this.economyManager.cachedTotalMult = null;
         this.saveGame();
     }
 
@@ -1530,17 +695,7 @@ class IdleBankGame {
     }
 
     travelToBranch(branchIndex) {
-        if (branchIndex < this.state.currentBranch) {
-            console.warn("Traveling back to older branches is disabled.");
-            return;
-        }
-        this.state.currentBranch = branchIndex;
-        this.state.missions = [];
-        this.ensureTellersCount();
-        this.checkMissions();
-        this.sanitizeQueueAndTellers();
-        this.recalculateEps();
-        this.saveGame(true); // Force save on travel
+        return this.prestigeController.travelToBranch(branchIndex);
     }
 
     upgradeManagerLevelDirectly(type, level) {
@@ -1568,46 +723,15 @@ class IdleBankGame {
     }
 
     shiftQueue(count = 1) {
-        if (this.customerQueue.length > 0) {
-            const shiftCount = Math.min(count, this.customerQueue.length);
-            this.customerQueue = this.customerQueue.slice(shiftCount);
-        }
+        return this.customerFlowController.shiftQueue(count);
     }
 
     clearQueue() {
-        this.customerQueue = [];
+        return this.customerFlowController.clearQueue();
     }
 
     sanitizeQueueAndTellers() {
-        if (!this.state || !this.state.departments) return;
-        const richDept = this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
-        const vipDept = this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
-        const richUnlocked = richDept ? richDept.unlocked : false;
-        const vipUnlocked = vipDept ? vipDept.unlocked : false;
-
-        if (this.customerQueue) {
-            this.customerQueue.forEach(client => {
-                if (client.type === 'vip' && !vipUnlocked) {
-                    client.type = 'normal';
-                }
-                if (client.type === 'rich' && !richUnlocked) {
-                    client.type = 'normal';
-                }
-            });
-        }
-
-        if (this.state.tellers) {
-            this.state.tellers.forEach(t => {
-                if (t.isProcessing) {
-                    if (t.customerType === 'vip' && !vipUnlocked) {
-                        t.customerType = 'normal';
-                    }
-                    if (t.customerType === 'rich' && !richUnlocked) {
-                        t.customerType = 'normal';
-                    }
-                }
-            });
-        }
+        return this.customerFlowController.sanitizeQueueAndTellers();
     }
 
     // --- MVC RENDER DATA GETTERS ---

@@ -32,6 +32,7 @@ export function renderMissionsTab() {
     sortedMissions.forEach(m => {
         const card = document.createElement('div');
         card.className = `mission-card ${m.completed ? 'completed' : ''}`;
+        card.setAttribute('data-mission-id', m.id);
 
         const targetVal = m.target || 1;
         const progressVal = m.progress || 0;
@@ -125,34 +126,36 @@ export function renderMissionsTab() {
             <div class="mission-reward-badge">
                 ${rewardBadgeHtml}
             </div>
-            ${actionZoneHtml}
-            <div class="mission-image-box">
-                <div class="mission-image-glow"></div>
-                <img class="mission-illustration" src="${imgSrc}" alt="" />
-            </div>
-            <div class="mission-content-middle">
-                <div class="mission-details">
-                    <div class="mission-title">${title}</div>
-                    <div class="mission-desc">${progressDesc}</div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="${imgSrc}" alt="" />
                 </div>
-                <div class="mission-progress-row">
-                    <div class="mission-progress-outer">
-                        <div class="mission-progress-bar" style="width: ${percent}%"></div>
-                        <div class="progress-text-overlay">
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
-                            /
-                            ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">${title}</div>
+                        <div class="mission-desc">${progressDesc}</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: ${percent}%"></div>
+                            <div class="progress-text-overlay">
+                                ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(progressVal) : progressVal}
+                                /
+                                ${['earn_eps','accumulate_cash','earn_cash','boost_run'].includes(m.type) ? formatMoney(targetVal) : targetVal}
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
+                        <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
+                    </svg>
+                    <div class="circle-text">${Math.round(percent)}%</div>
+                </div>
             </div>
-            <div class="mission-circle-progress">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                    <circle class="circle-bg" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" />
-                    <circle class="circle-value" cx="32" cy="32" r="${circleRadius}" stroke-width="5" fill="none" stroke-dasharray="${circleCircumference}" stroke-dashoffset="${strokeDashoffset}" />
-                </svg>
-                <div class="circle-text">${Math.round(percent)}%</div>
-            </div>
+            ${actionZoneHtml}
         `;
 
         card.addEventListener('click', (e) => {
@@ -180,16 +183,9 @@ export function renderMissionsTab() {
                 btn.disabled = true;
                 const rectBtn = btn.getBoundingClientRect();
                 if (collected.type === 'cash') {
-                    const rectCashBox = document.getElementById('stat-cash').getBoundingClientRect();
-                    animateCoins(rectBtn, rectCashBox, 10, 'cash_silent');
                     spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem');
                 } else {
                     // shares / gold reward
-                    const rectSharesBox = document.getElementById('stat-shares');
-                    if (rectSharesBox) {
-                        const rectShares = rectSharesBox.getBoundingClientRect();
-                        animateCoins(rectBtn, rectShares, collected.amount, 'gold');
-                    }
                     const lang = (game.state && game.state.language) || 'en';
                     const shareLbl = (translations[lang] || translations.en).sharesLabel || 'Gold Shares';
                     spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');
@@ -225,7 +221,7 @@ export function updateMissionsTabProgress() {
                 const newText = pStr + ' / ' + tStr;
                 if (textOverlay.innerText !== newText) textOverlay.innerText = newText;
             }
-            const circleRadius = 24;
+            const circleRadius = 32;
             const circleCircumference = 2 * Math.PI * circleRadius;
             const strokeDashoffset = circleCircumference - (percent / 100) * circleCircumference;
             const circleValue = card.querySelector('.circle-value');
