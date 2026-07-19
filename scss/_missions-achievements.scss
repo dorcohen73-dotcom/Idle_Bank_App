@@ -1,5 +1,6 @@
 /* Missions Tab Styling matching mockup exactly */
 #tab-missions .missions-summary-header {
+    flex-shrink: 0;
     background: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px), linear-gradient(135deg, #0b101e 0%, #1e293b 50%, #050811 100%);
     background-size: 10px 10px, 100% 100%;
     border: 1px solid rgba(223, 171, 41, 0.6); /* Gold glowing border */
@@ -39,6 +40,9 @@
 }
 
 #tab-missions .mission-card {
+    /* tab pane is a fixed-height flex column: without this, cards get compressed
+       to min-height and the claim button spills outside the card */
+    flex-shrink: 0;
     background: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px), linear-gradient(135deg, #0d152e 0%, #050814 100%);
     background-size: 10px 10px, 100% 100%;
     border: 1px solid rgba(223, 171, 41, 0.6); /* Glowing gold border */
