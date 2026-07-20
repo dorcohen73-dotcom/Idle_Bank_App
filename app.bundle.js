@@ -4059,11 +4059,20 @@
       card.className = `branch-card bg-branch-${idx} ${isCurrent ? "current" : ""}`;
       let actionBtnHtml = "";
       if (!isSold && !isCurrent) {
-        actionBtnHtml = `
-                <button class="branch-action-btn ghost-gold ${canPrestige ? "" : "disabled"}" data-prestige-branch="${idx}">
-                    ${translations[lang].branches.sellAndBuild.replace("!", "")}
-                </button>
-            `;
+        const isAvailable = idx === game.state.currentBranch + 1;
+        if (isAvailable) {
+          actionBtnHtml = `
+                    <button class="branch-action-btn gold-gradient-btn ${canPrestige ? "" : "disabled"}" data-prestige-branch="${idx}">
+                        <i class="fas fa-university" style="margin-inline-end:6px"></i>${translations[lang].branches.sellAndBuild.replace("!", "")}
+                    </button>
+                `;
+        } else {
+          actionBtnHtml = `
+                    <button class="branch-action-btn ghost-gold disabled" disabled>
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${translations[lang].locked || (lang === "he" ? "\u05E0\u05E2\u05D5\u05DC" : "Locked")}
+                    </button>
+                `;
+        }
       }
       const costToEnter = idx > 0 ? game.branches[idx - 1].minCashToPrestige : 0;
       const requirementText = isSold ? translations[lang].branches.sold : idx === 0 ? translations[lang].branches.active.replace(" \u{1F3DB}", "") : `${translations[lang].branches.minCash(formatMoney(costToEnter))}`;
@@ -4076,20 +4085,28 @@
       card.innerHTML = `
             <div class="branch-card-right">
                 <div class="branch-header-row">
-                    <div class="branch-nav-arrow-icon" dir="ltr"><i class="fas fa-chevron-right"></i></div>
                     <div class="branch-name">${tObj.names[idx]}</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
                 </div>
                 <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
                 ${idx > 0 ? `
-                <div class="branch-req-row">
-                    <span class="crown-icon">\u{1F451}</span>
-                    <span class="branch-req-text">${requirementText}</span>
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">${translations[lang].branches.minCashLabel || "\u05D3\u05E8\u05D9\u05E9\u05EA \u05DB\u05E1\u05E3 \u05E0\u05D5\u05DB\u05D7\u05D9\u05EA:"}</span>
+                        <span class="req-val">${isSold ? translations[lang].branches.sold : idx === 0 ? translations[lang].branches.active.replace(" \u{1F3DB}", "") : formatMoney(costToEnter)}</span>
+                    </div>
+                    <div class="branch-req-pill-crown">\u{1F451}</div>
                 </div>
                 ` : ""}
                 ${statusPillHtml}
             </div>
             <div class="branch-card-left">
-                <div class="multiplier-glass-badge">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
                     <div class="mult-val">${b.baseMultiplier}x</div>
                     <div class="mult-lbl">${translations[lang].multiplier}</div>
                 </div>
@@ -4851,7 +4868,7 @@
         const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
         mainPresBtn.classList.toggle("disabled", !currentCanPrestige);
         mainPresBtn.disabled = !currentCanPrestige;
-        const actionBtns = container.querySelectorAll(".branch-action-btn");
+        const actionBtns = container.querySelectorAll(".branch-action-btn[data-prestige-branch]");
         actionBtns.forEach((btn) => {
           btn.classList.toggle("disabled", !currentCanPrestige);
           btn.disabled = !currentCanPrestige;

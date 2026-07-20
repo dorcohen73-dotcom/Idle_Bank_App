@@ -63,15 +63,22 @@ export function renderBranchesTab() {
         
         let actionBtnHtml = '';
         if (!isSold && !isCurrent) {
-            // The card you're already on has nothing to "sell & rebuild" into (it IS
-            // the current branch) — that action belongs to #main-prestige-btn, which
-            // targets currentBranch+1. Showing a self-targeting button here just
-            // confused taps meant for the next branch's card right below it.
-            actionBtnHtml = `
-                <button class="branch-action-btn ghost-gold ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}">
-                    ${translations[lang].branches.sellAndBuild.replace('!', '')}
-                </button>
-            `;
+            // The user requested that the purchase button ONLY appears on the immediate next branch.
+            const isAvailable = idx === game.state.currentBranch + 1;
+
+            if (isAvailable) {
+                actionBtnHtml = `
+                    <button class="branch-action-btn gold-gradient-btn ${canPrestige ? '' : 'disabled'}" data-prestige-branch="${idx}">
+                        <i class="fas fa-university" style="margin-inline-end:6px"></i>${translations[lang].branches.sellAndBuild.replace('!', '')}
+                    </button>
+                `;
+            } else {
+                actionBtnHtml = `
+                    <button class="branch-action-btn ghost-gold disabled" disabled>
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${translations[lang].locked || (lang === 'he' ? 'נעול' : 'Locked')}
+                    </button>
+                `;
+            }
         }
 
         const costToEnter = idx > 0 ? game.branches[idx - 1].minCashToPrestige : 0;
@@ -86,20 +93,28 @@ export function renderBranchesTab() {
         card.innerHTML = `
             <div class="branch-card-right">
                 <div class="branch-header-row">
-                    <div class="branch-nav-arrow-icon" dir="ltr"><i class="fas fa-chevron-right"></i></div>
                     <div class="branch-name">${tObj.names[idx]}</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
                 </div>
                 <div class="branch-desc">${tObj.descs[idx] || b.desc}</div>
                 ${idx > 0 ? `
-                <div class="branch-req-row">
-                    <span class="crown-icon">👑</span>
-                    <span class="branch-req-text">${requirementText}</span>
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">${translations[lang].branches.minCashLabel || 'דרישת כסף נוכחית:'}</span>
+                        <span class="req-val">${isSold ? translations[lang].branches.sold : (idx === 0 ? translations[lang].branches.active.replace(' 🏛', '') : formatMoney(costToEnter))}</span>
+                    </div>
+                    <div class="branch-req-pill-crown">👑</div>
                 </div>
                 ` : ''}
                 ${statusPillHtml}
             </div>
             <div class="branch-card-left">
-                <div class="multiplier-glass-badge">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
                     <div class="mult-val">${b.baseMultiplier}x</div>
                     <div class="mult-lbl">${translations[lang].multiplier}</div>
                 </div>
