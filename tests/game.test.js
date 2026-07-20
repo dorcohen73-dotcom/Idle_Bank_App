@@ -67,6 +67,16 @@ describe('IdleBankGame Logic Tests', () => {
         expect(game.state.goldUpgrades.startingCash).toBe(0);
     });
 
+    test('validateAndHealState should heal invalid perfMode', () => {
+        game.state.perfMode = 'invalid';
+        game.validateAndHealState(game.state);
+        expect(game.state.perfMode).toBe('auto');
+
+        game.state.perfMode = null;
+        game.validateAndHealState(game.state);
+        expect(game.state.perfMode).toBe('auto');
+    });
+
     test('prestige calculations should return correct gold shares', () => {
         // Set lifetime cash to 10M
         game.state.lifetimeCash = 10000000;

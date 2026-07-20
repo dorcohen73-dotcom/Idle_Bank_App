@@ -2698,6 +2698,19 @@
       DOM_CACHE.settingsDangerTitle.innerHTML = `${base} <span aria-hidden="true">\u26A0\uFE0F</span>`;
     }
     if (DOM_CACHE.settingsThemeTitle) DOM_CACHE.settingsThemeTitle.innerText = tObj.themeTitle || "\u05D1\u05D7\u05E8 \u05E6\u05D1\u05E2 \u05E8\u05E7\u05E2";
+    const perfTitle = document.getElementById("settings-perf-title");
+    if (perfTitle) {
+      perfTitle.innerText = tObj.perfModeTitle || "\u05DE\u05E6\u05D1 \u05D1\u05D9\u05E6\u05D5\u05E2\u05D9\u05DD:";
+      if (tObj.perfModeHint) {
+        perfTitle.title = tObj.perfModeHint;
+      }
+    }
+    const perfAutoBtn = document.getElementById("perf-auto-btn");
+    if (perfAutoBtn) perfAutoBtn.innerText = tObj.perfModeAuto || "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9";
+    const perfFullBtn = document.getElementById("perf-full-btn");
+    if (perfFullBtn) perfFullBtn.innerText = tObj.perfModeFull || "\u05DE\u05DC\u05D0";
+    const perfEcoBtn = document.getElementById("perf-eco-btn");
+    if (perfEcoBtn) perfEcoBtn.innerText = tObj.perfModeEco || "\u05D7\u05E1\u05DB\u05D5\u05E0\u05D9";
     if (DOM_CACHE.resetBtn) {
       const base = (tObj.resetGameBtn || "\u05D0\u05D9\u05E4\u05D5\u05E1 \u05DE\u05E9\u05D7\u05E7 \u05DE\u05D5\u05D7\u05DC\u05D8").replace("\u26A0\uFE0F", "").trim();
       DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">\u26A0\uFE0F</span> ${base}`;
@@ -2814,7 +2827,7 @@
       root.style.setProperty("--glass-blur", "blur(12px)");
       document.body.style.backgroundImage = "radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(223, 171, 41, 0.12) 0px, transparent 50%)";
     }
-    document.querySelectorAll(".theme-option-btn-choice").forEach((btn) => {
+    document.querySelectorAll(".theme-option-btn-choice:not(.perf-option-btn)").forEach((btn) => {
       if (btn.getAttribute("data-theme") === themeName) {
         btn.classList.add("active");
       } else {
@@ -5167,6 +5180,24 @@
         }
       });
     });
+    document.querySelectorAll(".perf-option-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        initSound2();
+        const mode = btn.getAttribute("data-perf");
+        if (window.game && window.game.state) {
+          window.game.state.perfMode = mode;
+          window.game.saveGame();
+        }
+        if (window.PerformanceManager) {
+          window.PerformanceManager.apply(mode, window.game && window.game.state ? window.game.state.lastMeasuredFps : 60);
+        }
+        document.querySelectorAll(".perf-option-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+      });
+    });
     if (DOM_CACHE.langModal) {
       DOM_CACHE.langModal.addEventListener("click", (e) => {
         try {
@@ -5837,6 +5868,17 @@ ${stack}` : String(message);
         }
         const savedTheme = window.localStorage.getItem("idle_bank_theme") || "blue";
         applyTheme(savedTheme);
+        const savedPerfMode = window.game.state.perfMode || "auto";
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get("perf");
+        const activeMode = urlMode === "eco" || urlMode === "full" ? urlMode : savedPerfMode;
+        document.querySelectorAll(".perf-option-btn").forEach((b) => {
+          if (b.getAttribute("data-perf") === activeMode) {
+            b.classList.add("active");
+          } else {
+            b.classList.remove("active");
+          }
+        });
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) {
             cancelAnimationFrame(window.rafId);
@@ -5923,9 +5965,12 @@ ${stack}` : String(message);
         cancelAnimationFrame(window.rafId);
         window.rafId = requestAnimationFrame(tick);
         if (window.PerformanceManager) {
+          const urlParams2 = new URLSearchParams(window.location.search);
+          const forcePerf = urlParams2.get("perf");
           window.PerformanceManager.probe().then((fps) => {
             window.game.state.lastMeasuredFps = fps;
-            window.PerformanceManager.apply(window.game.state.perfMode, fps);
+            const finalMode = forcePerf || window.game.state.perfMode;
+            window.PerformanceManager.apply(finalMode, fps);
           });
         }
         if (window.Capacitor && "serviceWorker" in navigator) {

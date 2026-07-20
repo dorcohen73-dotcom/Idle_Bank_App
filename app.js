@@ -270,6 +270,20 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         const savedTheme = window.localStorage.getItem('idle_bank_theme') || 'blue';
         applyTheme(savedTheme);
 
+        // Set up performance mode UI on load
+        const savedPerfMode = window.game.state.perfMode || 'auto';
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get('perf');
+        const activeMode = (urlMode === 'eco' || urlMode === 'full') ? urlMode : savedPerfMode;
+        
+        document.querySelectorAll('.perf-option-btn').forEach(b => {
+            if (b.getAttribute('data-perf') === activeMode) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+
         // visibilitychange listener for offline calculations when returning to tab
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -381,9 +395,13 @@ import { refreshAllTabs } from './ui/tabs/index.js';
 
         // Performance mode probe
         if (window.PerformanceManager) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const forcePerf = urlParams.get('perf');
+            
             window.PerformanceManager.probe().then(fps => {
                 window.game.state.lastMeasuredFps = fps;
-                window.PerformanceManager.apply(window.game.state.perfMode, fps);
+                const finalMode = forcePerf || window.game.state.perfMode;
+                window.PerformanceManager.apply(finalMode, fps);
             });
         }
 

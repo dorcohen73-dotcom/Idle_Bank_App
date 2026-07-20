@@ -23,6 +23,12 @@ class PerformanceManager {
     }
 
     static apply(mode, fps) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get('perf');
+        if (urlMode === 'eco' || urlMode === 'full') {
+            mode = urlMode;
+        }
+
         if (mode === 'eco') {
             this._isEco = true;
         } else if (mode === 'full') {

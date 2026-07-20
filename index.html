@@ -89,7 +89,7 @@
 
     <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
          includes what used to be premium_depts.css and premium_managers.css. -->
-    <link rel="stylesheet" href="style.css?v=7b25f84cfd">
+    <link rel="stylesheet" href="style.css?v=30583a7b26">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -594,6 +594,16 @@
                 </div>
             </div>
 
+            <!-- Performance Selection -->
+            <div class="settings-theme-section" style="margin-top: 1.5rem;">
+                <h3 id="settings-perf-title" class="settings-section-title" title="">מצב ביצועים:</h3>
+                <div class="theme-options-row">
+                    <button class="theme-option-btn-choice perf-option-btn" data-perf="auto" id="perf-auto-btn">אוטומטי</button>
+                    <button class="theme-option-btn-choice perf-option-btn" data-perf="full" id="perf-full-btn">מלא</button>
+                    <button class="theme-option-btn-choice perf-option-btn" data-perf="eco" id="perf-eco-btn">חסכוני</button>
+                </div>
+            </div>
+
             <div class="settings-danger-section">
                 <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
                 <div class="reset-confirm-wrapper">
@@ -826,7 +836,7 @@
     <script src="shop-controller.js?v=20260718_5" defer></script>
     <script src="performance-manager.js?v=1" defer></script>
     <script src="game.js?v=20260718_5" defer></script>
-    <script src="app.bundle.js?v=7b25f84cfd" defer></script>
+    <script src="app.bundle.js?v=30583a7b26" defer></script>
     
 </body>
 

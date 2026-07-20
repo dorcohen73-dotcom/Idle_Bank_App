@@ -122,6 +122,19 @@ export function applyLanguage(lang) {
         DOM_CACHE.settingsDangerTitle.innerHTML = `${base} <span aria-hidden="true">⚠️</span>`;
     }
     if (DOM_CACHE.settingsThemeTitle) DOM_CACHE.settingsThemeTitle.innerText = tObj.themeTitle || 'בחר צבע רקע';
+    const perfTitle = document.getElementById('settings-perf-title');
+    if (perfTitle) {
+        perfTitle.innerText = tObj.perfModeTitle || 'מצב ביצועים:';
+        if (tObj.perfModeHint) {
+            perfTitle.title = tObj.perfModeHint;
+        }
+    }
+    const perfAutoBtn = document.getElementById('perf-auto-btn');
+    if (perfAutoBtn) perfAutoBtn.innerText = tObj.perfModeAuto || 'אוטומטי';
+    const perfFullBtn = document.getElementById('perf-full-btn');
+    if (perfFullBtn) perfFullBtn.innerText = tObj.perfModeFull || 'מלא';
+    const perfEcoBtn = document.getElementById('perf-eco-btn');
+    if (perfEcoBtn) perfEcoBtn.innerText = tObj.perfModeEco || 'חסכוני';
     if (DOM_CACHE.resetBtn) {
         const base = (tObj.resetGameBtn || 'איפוס משחק מוחלט').replace('⚠️', '').trim();
         DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">⚠️</span> ${base}`;
@@ -247,7 +260,7 @@ export function applyTheme(themeName) {
         document.body.style.backgroundImage = 'radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(223, 171, 41, 0.12) 0px, transparent 50%)';
     }
     
-    document.querySelectorAll('.theme-option-btn-choice').forEach(btn => {
+    document.querySelectorAll('.theme-option-btn-choice:not(.perf-option-btn)').forEach(btn => {
         if (btn.getAttribute('data-theme') === themeName) {
             btn.classList.add('active');
         } else {
