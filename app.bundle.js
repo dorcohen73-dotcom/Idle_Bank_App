@@ -5967,8 +5967,9 @@ ${stack}` : String(message);
         if (window.PerformanceManager) {
           const urlParams2 = new URLSearchParams(window.location.search);
           const forcePerf = urlParams2.get("perf");
+          window.PerformanceManager.apply(forcePerf || window.game.state.perfMode);
           window.PerformanceManager.probe().then((fps) => {
-            window.game.state.lastMeasuredFps = fps;
+            if (typeof fps === "number") window.game.state.lastMeasuredFps = fps;
             const finalMode = forcePerf || window.game.state.perfMode;
             window.PerformanceManager.apply(finalMode, fps);
           });

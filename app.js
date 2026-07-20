@@ -397,9 +397,14 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         if (window.PerformanceManager) {
             const urlParams = new URLSearchParams(window.location.search);
             const forcePerf = urlParams.get('perf');
+
+            // Apply immediately (URL override / saved mode / hardware hints):
+            // background tabs pause rAF, so waiting for the probe could mean the
+            // chosen mode is never applied at all.
+            window.PerformanceManager.apply(forcePerf || window.game.state.perfMode);
             
             window.PerformanceManager.probe().then(fps => {
-                window.game.state.lastMeasuredFps = fps;
+                if (typeof fps === 'number') window.game.state.lastMeasuredFps = fps;
                 const finalMode = forcePerf || window.game.state.perfMode;
                 window.PerformanceManager.apply(finalMode, fps);
             });
