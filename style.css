@@ -13544,4 +13544,91 @@ button.buy-btn.mgr-buy-btn.disabled {
     font-size: 0.8rem !important;
   }
 }
+/* Performance Mode Overrides for Eco settings */
+body.perf-eco {
+  /* Backdrop filter overrides */
+}
+body.perf-eco * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.perf-eco {
+  /* Expensive decorative shadow/glow overrides */
+}
+body.perf-eco .splash-halo,
+body.perf-eco .splash-door-light,
+body.perf-eco .splash-progress-glow,
+body.perf-eco .splash-progress-shine,
+body.perf-eco .secondary-card-accent,
+body.perf-eco .hex-glow,
+body.perf-eco .branch-card::before,
+body.perf-eco .branch-card::after,
+body.perf-eco .vip-glow,
+body.perf-eco .vault-glow,
+body.perf-eco .floating-text {
+  filter: none !important;
+}
+body.perf-eco {
+  /* Reduce multi-layer box shadows to a single simple shadow */
+}
+body.perf-eco .branch-card,
+body.perf-eco .upgrade-card,
+body.perf-eco .manager-card,
+body.perf-eco .dept-card,
+body.perf-eco .mission-card,
+body.perf-eco .premium-card,
+body.perf-eco .branch-action-btn,
+body.perf-eco .gold-gradient-btn,
+body.perf-eco .ghost-gold,
+body.perf-eco .solid-gold,
+body.perf-eco .branch-req-pill,
+body.perf-eco .branch-diamond-icon,
+body.perf-eco .multiplier-hexagon-badge,
+body.perf-eco .progress-bar-fill,
+body.perf-eco .nav-btn.active,
+body.perf-eco .buy-btn,
+body.perf-eco .prestige-btn,
+body.perf-eco .teller-desk,
+body.perf-eco .vault-door,
+body.perf-eco .customer-avatar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5) !important;
+}
+body.perf-eco {
+  /* Flat icons */
+}
+body.perf-eco .branch-diamond-icon {
+  box-shadow: none !important;
+  border: 1px solid rgba(96, 165, 250, 0.4) !important;
+}
+body.perf-eco {
+  /* Reduce multi-layer text shadows to a single simple shadow */
+}
+body.perf-eco .branch-name,
+body.perf-eco .cash-amount,
+body.perf-eco h1, body.perf-eco h2, body.perf-eco h3, body.perf-eco h4,
+body.perf-eco .splash-title-main,
+body.perf-eco .splash-welcome-text,
+body.perf-eco .mult-val,
+body.perf-eco .req-val,
+body.perf-eco .action-val,
+body.perf-eco .upgrade-title,
+body.perf-eco .manager-name,
+body.perf-eco .floating-text,
+body.perf-eco .toast-message,
+body.perf-eco .prestige-btn {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+body.perf-eco {
+  /* Turn off expensive keyframe animations that use box-shadow or filter */
+}
+body.perf-eco .ad-pulse-button,
+body.perf-eco .pulse-dot,
+body.perf-eco .splash-loading-dots span,
+body.perf-eco .ready-to-claim,
+body.perf-eco .mission-pulse,
+body.perf-eco .boost-img,
+body.perf-eco .vault-door.open,
+body.perf-eco .header-daily-btn.alert {
+  animation: none !important;
+}
 /*# sourceMappingURL=style.css.map */

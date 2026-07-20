@@ -272,6 +272,7 @@ class SaveManager {
         if (!isNum(state.currentBranch) || state.currentBranch < 0 || state.currentBranch >= GAME_CONFIG.BRANCHES.length) state.currentBranch = 0;
         if (!isNum(state.maxBranchUnlocked) || state.maxBranchUnlocked < 0) state.maxBranchUnlocked = state.currentBranch;
         if (!isString(state.language)) state.language = 'he';
+        if (!['auto', 'full', 'eco'].includes(state.perfMode)) state.perfMode = 'auto';
 
         // Timers
         if (!isNum(state.boost2xTimeLeft) || state.boost2xTimeLeft < 0) state.boost2xTimeLeft = 0;

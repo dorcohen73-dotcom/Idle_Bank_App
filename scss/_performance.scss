@@ -1,0 +1,82 @@
+/* Performance Mode Overrides for Eco settings */
+body.perf-eco {
+    /* Backdrop filter overrides */
+    * {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    /* Expensive decorative shadow/glow overrides */
+    .splash-halo,
+    .splash-door-light,
+    .splash-progress-glow,
+    .splash-progress-shine,
+    .secondary-card-accent,
+    .hex-glow,
+    .branch-card::before,
+    .branch-card::after,
+    .vip-glow,
+    .vault-glow,
+    .floating-text {
+        filter: none !important;
+    }
+
+    /* Reduce multi-layer box shadows to a single simple shadow */
+    .branch-card,
+    .upgrade-card,
+    .manager-card,
+    .dept-card,
+    .mission-card,
+    .premium-card,
+    .branch-action-btn, 
+    .gold-gradient-btn, 
+    .ghost-gold,
+    .solid-gold,
+    .branch-req-pill,
+    .branch-diamond-icon, 
+    .multiplier-hexagon-badge,
+    .progress-bar-fill,
+    .nav-btn.active,
+    .buy-btn,
+    .prestige-btn,
+    .teller-desk,
+    .vault-door,
+    .customer-avatar {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Flat icons */
+    .branch-diamond-icon {
+        box-shadow: none !important;
+        border: 1px solid rgba(96, 165, 250, 0.4) !important;
+    }
+
+    /* Reduce multi-layer text shadows to a single simple shadow */
+    .branch-name,
+    .cash-amount,
+    h1, h2, h3, h4,
+    .splash-title-main,
+    .splash-welcome-text,
+    .mult-val,
+    .req-val,
+    .action-val,
+    .upgrade-title,
+    .manager-name,
+    .floating-text,
+    .toast-message,
+    .prestige-btn {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    /* Turn off expensive keyframe animations that use box-shadow or filter */
+    .ad-pulse-button,
+    .pulse-dot,
+    .splash-loading-dots span,
+    .ready-to-claim,
+    .mission-pulse,
+    .boost-img,
+    .vault-door.open,
+    .header-daily-btn.alert {
+        animation: none !important;
+    }
+}

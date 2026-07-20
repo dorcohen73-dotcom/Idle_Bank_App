@@ -211,7 +211,7 @@ function updateButtonAffordability() {
             mainPresBtn.classList.toggle('disabled', !currentCanPrestige);
             mainPresBtn.disabled = !currentCanPrestige;
             
-            const actionBtns = container.querySelectorAll('.branch-action-btn');
+            const actionBtns = container.querySelectorAll('.branch-action-btn[data-prestige-branch]');
             actionBtns.forEach(btn => {
                 btn.classList.toggle('disabled', !currentCanPrestige);
                 btn.disabled = !currentCanPrestige;

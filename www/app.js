@@ -379,6 +379,14 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         cancelAnimationFrame(window.rafId);
         window.rafId = requestAnimationFrame(tick);
 
+        // Performance mode probe
+        if (window.PerformanceManager) {
+            window.PerformanceManager.probe().then(fps => {
+                window.game.state.lastMeasuredFps = fps;
+                window.PerformanceManager.apply(window.game.state.perfMode, fps);
+            });
+        }
+
         // Register PWA Service Worker (with file:// protocol protection and Capacitor guard)
         if (window.Capacitor && 'serviceWorker' in navigator) {
             // Disable and unregister Service Worker in native apps to prevent infinite reload loops

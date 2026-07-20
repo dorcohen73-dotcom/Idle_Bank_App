@@ -196,7 +196,11 @@ class IdleBankGame {
             tutorialCompleted: false,
 
             // Discovery tips — tracks which contextual tips were already shown
-            discoveredTips: {}
+            discoveredTips: {},
+            
+            // Performance mode
+            perfMode: 'auto',
+            lastMeasuredFps: 0
         };
 
         this._contextualAdPending = null;

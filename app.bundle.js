@@ -5911,6 +5911,12 @@ ${stack}` : String(message);
         window.lastTime = performance.now();
         cancelAnimationFrame(window.rafId);
         window.rafId = requestAnimationFrame(tick);
+        if (window.PerformanceManager) {
+          window.PerformanceManager.probe().then((fps) => {
+            window.game.state.lastMeasuredFps = fps;
+            window.PerformanceManager.apply(window.game.state.perfMode, fps);
+          });
+        }
         if (window.Capacitor && "serviceWorker" in navigator) {
           navigator.serviceWorker.getRegistrations().then((registrations) => {
             for (let reg of registrations) {
