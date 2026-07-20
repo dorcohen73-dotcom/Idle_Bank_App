@@ -32,7 +32,7 @@ class PerformanceManager {
             const memory = navigator.deviceMemory || Infinity;
             const cores = navigator.hardwareConcurrency || Infinity;
             
-            if ((fps !== undefined && fps < 45) || memory <= 2 || cores <= 4) {
+            if ((fps !== undefined && fps < 45) || (memory <= 2 && cores <= 4)) {
                 this._isEco = true;
             } else {
                 this._isEco = false;

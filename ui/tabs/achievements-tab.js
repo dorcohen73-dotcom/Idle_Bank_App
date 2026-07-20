@@ -4,7 +4,7 @@ export function playAchievementUnlockFeedback(achievement) {
     const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
     const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
 
-    spawnFloating('🏆 +' + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, '') + '%', fromRect.left + fromRect.width / 2, fromRect.top, 'gold', '2.2rem');
+    spawnFloating('🏆 +' + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, '') + '%', fromRect.left + fromRect.width / 2, fromRect.top, 'gold', '2.2rem', true);
     if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {
         window.gameAudio.playUnlock();
     }
@@ -131,7 +131,7 @@ export function renderAchievementsTab() {
                 const rectBtn = btn.getBoundingClientRect();
                 const lang2 = (game.state && game.state.language) || 'en';
                 const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || 'Gold Shares';
-                spawnFloating('+' + collected.amount + ' ' + shareLbl2 + ' 🪙', rectBtn.left + rectBtn.width / 2, rectBtn.top, 'gold', '2.2rem');
+                spawnFloating('+' + collected.amount + ' ' + shareLbl2 + ' 🪙', rectBtn.left + rectBtn.width / 2, rectBtn.top, 'gold', '2.2rem', true);
 
                 if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {
                     window.gameAudio.playUnlock();

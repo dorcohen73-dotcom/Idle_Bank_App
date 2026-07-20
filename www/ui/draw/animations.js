@@ -46,7 +46,14 @@ export function getFloatingFromPool() {
     return floatingTextPool[0];
 }
 
-export function spawnFloating(text, x, y, type = 'gold', fontSize = null) {
+let spawnCounter = 0;
+
+export function spawnFloating(text, x, y, type = 'gold', fontSize = null, important = false) {
+    if (window.PerformanceManager && window.PerformanceManager.isEco() && !important) {
+        spawnCounter++;
+        if (spawnCounter % 3 !== 0) return;
+    }
+
     const floatObj = getFloatingFromPool();
     if (!floatObj) return;
     floatObj.active = true;

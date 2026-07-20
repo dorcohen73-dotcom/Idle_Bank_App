@@ -273,6 +273,7 @@ class SaveManager {
         if (!isNum(state.maxBranchUnlocked) || state.maxBranchUnlocked < 0) state.maxBranchUnlocked = state.currentBranch;
         if (!isString(state.language)) state.language = 'he';
         if (!['auto', 'full', 'eco'].includes(state.perfMode)) state.perfMode = 'auto';
+        if (!isNum(state.lastMeasuredFps)) state.lastMeasuredFps = 0;
 
         // Timers
         if (!isNum(state.boost2xTimeLeft) || state.boost2xTimeLeft < 0) state.boost2xTimeLeft = 0;

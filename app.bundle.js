@@ -156,7 +156,12 @@
     }
     return floatingTextPool[0];
   }
-  function spawnFloating2(text, x, y, type = "gold", fontSize = null) {
+  var spawnCounter = 0;
+  function spawnFloating2(text, x, y, type = "gold", fontSize = null, important = false) {
+    if (window.PerformanceManager && window.PerformanceManager.isEco() && !important) {
+      spawnCounter++;
+      if (spawnCounter % 3 !== 0) return;
+    }
     const floatObj = getFloatingFromPool();
     if (!floatObj) return;
     floatObj.active = true;
@@ -1008,6 +1013,7 @@
   }
 
   // ui/draw/index.js
+  var drawFrameCounter = 0;
   function draw2() {
     const lang = game.state.language || "en";
     const tObj = translations[lang];
@@ -1016,14 +1022,19 @@
       game.cheatWarning = false;
       showToast2(tObj.cheatDetectedMsg || "\u26A0\uFE0F Save editing detected!", "danger");
     }
-    updateHeaderStats(lang, tObj);
-    updateAdCampaignDisplay();
-    updateBoostButtonDisplay(tObj);
-    updateQueueDisplay(tObj);
+    drawFrameCounter++;
+    const isEco = window.PerformanceManager && window.PerformanceManager.isEco();
+    const skipTextUpdates = isEco && drawFrameCounter % 2 !== 0;
+    if (!skipTextUpdates) {
+      updateHeaderStats(lang, tObj);
+      updateAdCampaignDisplay();
+      updateBoostButtonDisplay(tObj);
+      updateQueueDisplay(tObj);
+      updateVaultDisplay(tObj, vaultData);
+      updateNotifications();
+    }
     updateTellersDisplay(tObj, vaultData);
     updateGuardsDisplay(lang);
-    updateVaultDisplay(tObj, vaultData);
-    updateNotifications();
   }
   window.updateCachedSuffixes = updateCachedSuffixes2;
   window.showToast = showToast2;
@@ -4473,11 +4484,11 @@
           btn.disabled = true;
           const rectBtn = btn.getBoundingClientRect();
           if (collected.type === "cash") {
-            spawnFloating("+" + formatMoney(collected.amount), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", "2.2rem");
+            spawnFloating("+" + formatMoney(collected.amount), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", "2.2rem", true);
           } else {
             const lang2 = game.state && game.state.language || "en";
             const shareLbl = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
-            spawnFloating("+" + collected.amount + " " + shareLbl + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
+            spawnFloating("+" + collected.amount + " " + shareLbl + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem", true);
           }
           if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
             window.gameAudio.playUnlock();
@@ -4531,7 +4542,7 @@
   function playAchievementUnlockFeedback(achievement) {
     const cardEl = document.querySelector(`.achievement-card[data-achievement-id="${achievement.id}"]`);
     const fromRect = cardEl ? cardEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
-    spawnFloating("\u{1F3C6} +" + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "") + "%", fromRect.left + fromRect.width / 2, fromRect.top, "gold", "2.2rem");
+    spawnFloating("\u{1F3C6} +" + (achievement.bonusPercent * 100).toFixed(2).replace(/\.?0+$/, "") + "%", fromRect.left + fromRect.width / 2, fromRect.top, "gold", "2.2rem", true);
     if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
       window.gameAudio.playUnlock();
     }
@@ -4641,7 +4652,7 @@
           const rectBtn = btn.getBoundingClientRect();
           const lang2 = game.state && game.state.language || "en";
           const shareLbl2 = (translations[lang2] || translations.en).sharesLabel || "Gold Shares";
-          spawnFloating("+" + collected.amount + " " + shareLbl2 + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem");
+          spawnFloating("+" + collected.amount + " " + shareLbl2 + " \u{1FA99}", rectBtn.left + rectBtn.width / 2, rectBtn.top, "gold", "2.2rem", true);
           if (window.gameAudio && typeof window.gameAudio.playUnlock === "function") {
             window.gameAudio.playUnlock();
           }
@@ -5341,7 +5352,7 @@
               window.gameAudio.playChaChing();
             }
             const rect = DOM_CACHE.offlineModalDoubleBtn.getBoundingClientRect();
-            spawnFloating("+$" + formatMoney(extra), rect.left + rect.width / 2, rect.top, "green");
+            spawnFloating("+$" + formatMoney(extra), rect.left + rect.width / 2, rect.top, "green", null, true);
           }
           game.offlineEarningsReport = 0;
           game.saveGame();
@@ -5426,7 +5437,7 @@
         const collected = game.collectVault();
         if (collected > 0) {
           const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
-          spawnFloating("+" + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green");
+          spawnFloating("+" + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, "green", null, true);
           spawnVaultCoins(collected, rectBtn);
           game.saveGame();
           draw();
@@ -5487,7 +5498,7 @@
         const bonus = 10 * (game.state.currentBranch + 1);
         game.addCash(bonus);
         const rect = camera.getBoundingClientRect();
-        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green", null, true);
         if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
           window.gameAudio.playClick();
         }
@@ -5510,7 +5521,7 @@
         const bonus = 15 * (game.state.currentBranch + 1);
         game.addCash(bonus);
         const rect = atm.getBoundingClientRect();
-        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green", null, true);
         if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
           window.gameAudio.playClick();
         }
@@ -5533,7 +5544,7 @@
         const bonus = 2 * (game.state.currentBranch + 1);
         game.addCash(bonus);
         const rect = plant.getBoundingClientRect();
-        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green");
+        spawnFloating("+$" + bonus, rect.left + rect.width / 2, rect.top, "green", null, true);
         draw();
       });
     });

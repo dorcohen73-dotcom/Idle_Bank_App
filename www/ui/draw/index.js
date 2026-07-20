@@ -14,6 +14,8 @@ import { updateNotifications } from './notifications.js';
 // independently-callable function (see ui/draw/*.js) — a deliberate step
 // towards a future reactive model, where a given concern here can be swapped
 // for a state-change listener without touching the others.
+let drawFrameCounter = 0;
+
 function draw() {
     const lang = game.state.language || 'en';
     const tObj = translations[lang];
@@ -24,14 +26,22 @@ function draw() {
         showToast(tObj.cheatDetectedMsg || "⚠️ Save editing detected!", 'danger');
     }
 
-    updateHeaderStats(lang, tObj);
-    updateAdCampaignDisplay();
-    updateBoostButtonDisplay(tObj);
-    updateQueueDisplay(tObj);
+    drawFrameCounter++;
+    const isEco = window.PerformanceManager && window.PerformanceManager.isEco();
+    const skipTextUpdates = isEco && (drawFrameCounter % 2 !== 0);
+
+    if (!skipTextUpdates) {
+        updateHeaderStats(lang, tObj);
+        updateAdCampaignDisplay();
+        updateBoostButtonDisplay(tObj);
+        updateQueueDisplay(tObj);
+        updateVaultDisplay(tObj, vaultData);
+        updateNotifications();
+    }
+
+    // Visual movement always updates every frame for smoothness
     updateTellersDisplay(tObj, vaultData);
     updateGuardsDisplay(lang);
-    updateVaultDisplay(tObj, vaultData);
-    updateNotifications();
 }
 
 export {

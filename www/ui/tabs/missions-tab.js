@@ -183,12 +183,12 @@ export function renderMissionsTab() {
                 btn.disabled = true;
                 const rectBtn = btn.getBoundingClientRect();
                 if (collected.type === 'cash') {
-                    spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem');
+                    spawnFloating('+' + formatMoney(collected.amount), rectBtn.left + rectBtn.width/2, rectBtn.top, 'green', '2.2rem', true);
                 } else {
                     // shares / gold reward
                     const lang = (game.state && game.state.language) || 'en';
                     const shareLbl = (translations[lang] || translations.en).sharesLabel || 'Gold Shares';
-                    spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem');
+                    spawnFloating('+' + collected.amount + ' ' + shareLbl + ' 🪙', rectBtn.left + rectBtn.width/2, rectBtn.top, 'gold', '2.2rem', true);
                 }
 
                 if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {

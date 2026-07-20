@@ -388,7 +388,7 @@ function initUIEvents() {
                         window.gameAudio.playChaChing();
                     }
                     const rect = DOM_CACHE.offlineModalDoubleBtn.getBoundingClientRect();
-                    spawnFloating('+$' + formatMoney(extra), rect.left + rect.width / 2, rect.top, 'green');
+                    spawnFloating('+$' + formatMoney(extra), rect.left + rect.width / 2, rect.top, 'green', null, true);
                 }
                 game.offlineEarningsReport = 0;
                 game.saveGame();
@@ -480,7 +480,7 @@ function initUIEvents() {
             const collected = game.collectVault();
             if (collected > 0) {
                 const rectBtn = DOM_CACHE.vaultEmptyBtn.getBoundingClientRect();
-                spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green');
+                spawnFloating('+' + formatMoney(collected), rectBtn.left + rectBtn.width / 2, rectBtn.top, 'green', null, true);
                 // Gold coins rain effect on vault collect
                 spawnVaultCoins(collected, rectBtn);
                 game.saveGame();
@@ -556,7 +556,7 @@ function initUIEvents() {
             game.addCash(bonus);
             
             const rect = camera.getBoundingClientRect();
-            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green', null, true);
             if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
                 window.gameAudio.playClick();
             }
@@ -584,7 +584,7 @@ function initUIEvents() {
             game.addCash(bonus);
             
             const rect = atm.getBoundingClientRect();
-            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green', null, true);
             if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
                 window.gameAudio.playClick();
             }
@@ -612,7 +612,7 @@ function initUIEvents() {
             game.addCash(bonus);
             
             const rect = plant.getBoundingClientRect();
-            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green');
+            spawnFloating('+$' + bonus, rect.left + rect.width / 2, rect.top, 'green', null, true);
             draw();
         });
     });
