@@ -33,14 +33,18 @@ const GAME_CONFIG = {
     // stopped noticing the guard existed. Verified via a deterministic sim over economy-manager.js's
     // real formulas (levels 1-40) — see commit message for the crossover table.
     GUARD_BASE_CAPACITY: 115,
-    // Deliberately grows SLOWER than TELLER_CAPACITY_GROWTH (1.08). A static guard's
-    // per-trip capacity is meant to fall behind rising teller cash-holding capacity as the
-    // player levels tellers (which is cheap), so cash starts backing up at the tellers and
-    // upgrading guards becomes a real, felt need — not a purchase with no payoff. This gap
-    // keeps widening at higher levels too (not just an early one-off): by teller level 30 a
-    // single guard leveled in lockstep covers barely 1/6th of one branch's combined teller
-    // capacity, so the pressure recurs through the midgame instead of being front-loaded once.
-    GUARD_CAPACITY_GROWTH: 1.05,
+    // Set EQUAL to TELLER_CAPACITY_GROWTH (both 1.08) rather than to GUARD_UPGRADE_COST_GROWTH
+    // (1.14). A guard's job is to keep pace with the cash piling up at tellers — matching cost
+    // growth instead (tried first) made a lockstep-leveled guard balloon to ~200x oversized by
+    // level 100 (guard-cap/teller-cap ratio: 0.26 at lvl1 -> 6.36 at lvl50 -> 218.56 at lvl100 —
+    // verified via a deterministic sim over economy-manager.js's real formulas), i.e. upgrading
+    // past ~lvl40 bought capacity nobody needed. Matching teller growth instead keeps that ratio
+    // in a stable ~0.2-1.0 band across the entire 1-100 range, so the guard stays relevant
+    // (and neglecting it still creates real backpressure) at every stage, not just early game.
+    // This replaces an earlier design (0.05, deliberately slower, meant to make guards
+    // permanently fall behind on purpose) that had already been made moot in practice by
+    // getGuardCapacity()'s EPS-based scaling — see economy-manager.js.
+    GUARD_CAPACITY_GROWTH: 1.08,
     GUARD_AUTO_CAPACITY_FACTOR: 1.5, // Alon manager auto capacity multiplier (+50%)
 
     GUARD_BASE_UPGRADE_COST: 130,
