@@ -122,6 +122,10 @@ export function applyLanguage(lang) {
         DOM_CACHE.settingsDangerTitle.innerHTML = `${base} <span aria-hidden="true">⚠️</span>`;
     }
     if (DOM_CACHE.settingsThemeTitle) DOM_CACHE.settingsThemeTitle.innerText = tObj.themeTitle || 'בחר צבע רקע';
+    const notifLabel = document.getElementById('settings-notif-label');
+    if (notifLabel) {
+        notifLabel.innerText = tObj.settingsNotifLabel || 'התראות דחיפה';
+    }
     const perfTitle = document.getElementById('settings-perf-title');
     if (perfTitle) {
         perfTitle.innerText = tObj.perfModeTitle || 'מצב ביצועים:';

@@ -33,14 +33,18 @@ const GAME_CONFIG = {
     // stopped noticing the guard existed. Verified via a deterministic sim over economy-manager.js's
     // real formulas (levels 1-40) — see commit message for the crossover table.
     GUARD_BASE_CAPACITY: 115,
-    // Deliberately grows SLOWER than TELLER_CAPACITY_GROWTH (1.08). A static guard's
-    // per-trip capacity is meant to fall behind rising teller cash-holding capacity as the
-    // player levels tellers (which is cheap), so cash starts backing up at the tellers and
-    // upgrading guards becomes a real, felt need — not a purchase with no payoff. This gap
-    // keeps widening at higher levels too (not just an early one-off): by teller level 30 a
-    // single guard leveled in lockstep covers barely 1/6th of one branch's combined teller
-    // capacity, so the pressure recurs through the midgame instead of being front-loaded once.
-    GUARD_CAPACITY_GROWTH: 1.05,
+    // Set EQUAL to TELLER_CAPACITY_GROWTH (both 1.08) rather than to GUARD_UPGRADE_COST_GROWTH
+    // (1.14). A guard's job is to keep pace with the cash piling up at tellers — matching cost
+    // growth instead (tried first) made a lockstep-leveled guard balloon to ~200x oversized by
+    // level 100 (guard-cap/teller-cap ratio: 0.26 at lvl1 -> 6.36 at lvl50 -> 218.56 at lvl100 —
+    // verified via a deterministic sim over economy-manager.js's real formulas), i.e. upgrading
+    // past ~lvl40 bought capacity nobody needed. Matching teller growth instead keeps that ratio
+    // in a stable ~0.2-1.0 band across the entire 1-100 range, so the guard stays relevant
+    // (and neglecting it still creates real backpressure) at every stage, not just early game.
+    // This replaces an earlier design (0.05, deliberately slower, meant to make guards
+    // permanently fall behind on purpose) that had already been made moot in practice by
+    // getGuardCapacity()'s EPS-based scaling — see economy-manager.js.
+    GUARD_CAPACITY_GROWTH: 1.08,
     GUARD_AUTO_CAPACITY_FACTOR: 1.5, // Alon manager auto capacity multiplier (+50%)
 
     GUARD_BASE_UPGRADE_COST: 130,
@@ -81,11 +85,11 @@ const GAME_CONFIG = {
 
     // Branches and prestige constants
     BRANCHES: [
-        { name: "קאש-אפ (CashUp)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
-        { name: "נאו-בנק (NeoBank)", baseMultiplier: 5, minCashToPrestige: 2500000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
-        { name: "קריפטו איקס (Crypto X)", baseMultiplier: 15, minCashToPrestige: 500000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
-        { name: "מון-טרייד (MoonTrade)", baseMultiplier: 30, minCashToPrestige: 250000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
-        { name: "הייפ קפיטל (Hype Capital)", baseMultiplier: 200, minCashToPrestige: 100000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
+        { name: "קאש-אפ (CashUp)", baseMultiplier: 1, minCashToPrestige: 300000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
+        { name: "נאו-בנק (NeoBank)", baseMultiplier: 5, minCashToPrestige: 25000000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
+        { name: "קריפטו איקס (Crypto X)", baseMultiplier: 15, minCashToPrestige: 5000000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
+        { name: "מון-טרייד (MoonTrade)", baseMultiplier: 30, minCashToPrestige: 2500000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
+        { name: "הייפ קפיטל (Hype Capital)", baseMultiplier: 200, minCashToPrestige: 1000000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
     ],
 
     TELLER_UNLOCK_COSTS: [0, 800, 20000, 600000, 18000000, 500000000, 12500000000, 300000000000],

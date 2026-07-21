@@ -1,6 +1,6 @@
 {
   "name": "idle-bank-empire",
-  "version": "1.0.135",
+  "version": "1.0.136",
   "description": "Idle Bank Empire - Clicker & Simulation Game",
   "main": "app.js",
   "scripts": {
@@ -37,8 +37,12 @@
     "@capacitor-community/admob": "^8.0.0",
     "@capacitor-firebase/crashlytics": "^8.3.0",
     "@capacitor/android": "^8.4.1",
+    "@capacitor/app": "^8.1.1",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
-    "@capacitor/splash-screen": "^8.0.1"
+    "@capacitor/local-notifications": "^8.2.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.3",
+    "@capawesome/capacitor-app-review": "^8.0.1"
   }
 }

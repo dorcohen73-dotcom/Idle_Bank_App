@@ -114,6 +114,7 @@ const translations = {
             tellerDesc: "מטפל בלקוחות ומייצר ערימת מזומנים.",
             tellerSpeed: "מהירות",
             tellerCap: "קיבולת דלפק",
+            tellerFull: "כספר מלא",
             tellerLocked: (id) => `כספר ${id} - [נעול]`,
             tellerLockedDesc: "פתח דלפק שירות נוסף להגברת תזרים הלקוחות שלך.",
             guardTitle: (id, lvl) => `בלדר ${id} - רמה ${lvl}`,
@@ -410,6 +411,7 @@ const translations = {
             tellerDesc: "Serves customers and generates piles of cash.",
             tellerSpeed: "Speed",
             tellerCap: "Desk Cap",
+            tellerFull: "Full Teller",
             tellerLocked: (id) => `Teller ${id} - [Locked]`,
             tellerLockedDesc: "Unlock an extra desk to boost customer flow.",
             guardTitle: (id, lvl) => `Guard ${id} - Lvl ${lvl}`,
@@ -706,6 +708,7 @@ const translations = {
             tellerDesc: "Atiende a los clientes y genera montones de efectivo.",
             tellerSpeed: "Velocidad",
             tellerCap: "Cap. Escritorio",
+            tellerFull: "Cajero Lleno",
             tellerLocked: (id) => `Cajero ${id} - [Bloqueado]`,
             tellerLockedDesc: "Desbloquea un cajero adicional para aumentar el flujo de clientes.",
             guardTitle: (id, lvl) => `Guardia ${id} - Nivel ${lvl}`,
@@ -1002,6 +1005,7 @@ const translations = {
             tellerDesc: "Обслуживает клиентов и складывает стопки денег.",
             tellerSpeed: "Скорость",
             tellerCap: "Емкость стола",
+            tellerFull: "Полный кассир",
             tellerLocked: (id) => `Кассир ${id} - [Закрыто]`,
             tellerLockedDesc: "Откройте дополнительную кассу, чтобы увеличить поток клиентов.",
             guardTitle: (id, lvl) => `Инкассатор ${id} - Ур. ${lvl}`,
@@ -2861,4 +2865,41 @@ Object.assign(translations.ru, {
     branchLabel: "Филиал",
     autoText: "Авто",
     boostEventEarningsHint: (amount) => ` — ~💰${amount} по текущему EPS`
+});
+
+Object.assign(translations.he, {
+    notifOfflineTitle: "🏦 הכספת עולה על גדותיה!",
+    notifOfflineBody: "רווחי ה-offline שלך הגיעו למקסימום — בוא לאסוף אותם",
+    notifDailyTitle: "🎁 התגמול היומי מחכה לך",
+    notifDailyBody: "שמור על רצף הכניסות שלך וקבל את הבונוס",
+    notifComebackTitle: "😴 הבנק שלך מתגעגע",
+    notifComebackBody: "העובדים משתעממים בלעדיך — חזרה מהירה?",
+    settingsNotifLabel: "התראות דחיפה"
+});
+Object.assign(translations.en, {
+    notifOfflineTitle: "🏦 Vault is full!",
+    notifOfflineBody: "Your offline earnings have reached maximum capacity — come collect them",
+    notifDailyTitle: "🎁 Daily Reward waiting",
+    notifDailyBody: "Keep up your login streak and claim your bonus",
+    notifComebackTitle: "😴 Your bank misses you",
+    notifComebackBody: "The employees are getting bored — quick check-in?",
+    settingsNotifLabel: "Push Notifications"
+});
+Object.assign(translations.es, {
+    notifOfflineTitle: "🏦 ¡La bóveda está llena!",
+    notifOfflineBody: "Tus ganancias sin conexión han alcanzado su capacidad máxima — ven a recogerlas",
+    notifDailyTitle: "🎁 Recompensa diaria esperando",
+    notifDailyBody: "Mantén tu racha de inicios de sesión y reclama tu bono",
+    notifComebackTitle: "😴 Tu banco te extraña",
+    notifComebackBody: "Los empleados se aburren sin ti — ¿un vistazo rápido?",
+    settingsNotifLabel: "Notificaciones"
+});
+Object.assign(translations.ru, {
+    notifOfflineTitle: "🏦 Хранилище переполнено!",
+    notifOfflineBody: "Ваша офлайн-прибыль достигла максимума — заберите её",
+    notifDailyTitle: "🎁 Ежедневная награда ждет",
+    notifDailyBody: "Продолжайте серию входов в игру и заберите бонус",
+    notifComebackTitle: "😴 Ваш банк скучает",
+    notifComebackBody: "Сотрудники скучают без вас — заглянете?",
+    settingsNotifLabel: "Уведомления"
 });

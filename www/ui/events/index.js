@@ -14,6 +14,8 @@ import {
 } from './engagement.js';
 import { setCurrentUpgradeMode } from '../tabs/tab-shared.js';
 import { refreshAllTabs } from '../tabs/index.js';
+import { NotificationService } from './notifications.js';
+import { ReviewService } from './review.js';
 
 let uiEventsInitialized = false;
 
@@ -183,6 +185,46 @@ function initUIEvents() {
             }
         });
     });
+
+    document.querySelectorAll('.perf-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            initSound();
+            const mode = btn.getAttribute('data-perf');
+            if (window.game && window.game.state) {
+                window.game.state.perfMode = mode;
+                window.game.saveGame();
+            }
+            if (window.PerformanceManager) {
+                window.PerformanceManager.apply(mode, window.game && window.game.state ? window.game.state.lastMeasuredFps : 60);
+            }
+            
+            document.querySelectorAll('.perf-option-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+        });
+    });
+
+    const notifToggle = document.getElementById('settings-notif-checkbox');
+    if (notifToggle) {
+        notifToggle.addEventListener('change', (e) => {
+            initSound();
+            if (window.game && window.game.state) {
+                window.game.state.notificationsEnabled = e.target.checked;
+                window.game.saveGame();
+                if (!e.target.checked && window.NotificationService) {
+                    window.NotificationService.cancelAll();
+                } else if (e.target.checked && window.NotificationService) {
+                    window.NotificationService.requestPermission();
+                }
+            }
+            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
+                window.gameAudio.playClick();
+            }
+        });
+    }
 
     if (DOM_CACHE.langModal) {
         DOM_CACHE.langModal.addEventListener('click', (e) => {
@@ -437,6 +479,7 @@ function initUIEvents() {
                         if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
                         const firstTabBtn = document.querySelector('.tab-btn');
                         if (firstTabBtn) firstTabBtn.click();
+                        ReviewService.maybeRequest(game);
                         draw();
                     });
                 });
@@ -459,6 +502,7 @@ function initUIEvents() {
                     if (typeof syncBottomNav === 'function') syncBottomNav('upgrades');
                     const firstTabBtn = document.querySelector('.tab-btn');
                     if (firstTabBtn) firstTabBtn.click();
+                    ReviewService.maybeRequest(game);
                     draw();
                 });
             }
@@ -643,7 +687,7 @@ export {
     tick, syncBottomNav, updateVaultMiniBar,
     triggerVipVisitBanner, removeVipVisitBanner, serveVipVisitor, renderDailyChallengesSection,
     startPromoRecording, spawnVaultCoins, showDiscoveryTip, initTutorialEvents, maybeStartTutorial, checkPrestigeTip,
-    initUIEvents,
+    initUIEvents, NotificationService, ReviewService
 };
 
 // Dual-exposed on window for classic <script> consumers (game.js, save-manager.js,
@@ -677,4 +721,6 @@ window.checkPrestigeTip = checkPrestigeTip;
 window.maybeStartTutorial = maybeStartTutorial;
 window.spawnVaultCoins = spawnVaultCoins;
 window.startPromoRecording = startPromoRecording;
+window.NotificationService = NotificationService;
+window.ReviewService = ReviewService;
 

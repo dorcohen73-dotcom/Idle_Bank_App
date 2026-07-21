@@ -86,6 +86,7 @@ class IdleBankGame {
             currentBranch: 0,              // 0: Jerusalem, 1: Tel Aviv, 2: NY, 3: London
             maxBranchUnlocked: 0,
             language: 'en',
+            notificationsEnabled: true,
             goldUpgrades: {
                 startingCash: 0,
                 guardSpeed: 0,
@@ -502,7 +503,17 @@ class IdleBankGame {
         const teller = this.state.tellers[id];
         if (!teller || !teller.unlocked || teller.cashStored <= 0) return 0;
 
-        const amountToCollect = teller.cashStored;
+        let bestGuardLevel = 1;
+        if (this.state.guards && this.state.guards.length > 0) {
+            for (let i = 0; i < this.state.guards.length; i++) {
+                const g = this.state.guards[i];
+                if (g && g.unlocked && g.level > bestGuardLevel) {
+                    bestGuardLevel = g.level;
+                }
+            }
+        }
+        const maxCollect = this.getGuardCapacity(bestGuardLevel);
+        const amountToCollect = Math.min(teller.cashStored, maxCollect);
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
         const vaultAvailableSpace = vaultCapacity - this.state.vault.cashStored;
 

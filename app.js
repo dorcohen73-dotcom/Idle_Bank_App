@@ -284,6 +284,14 @@ import { refreshAllTabs } from './ui/tabs/index.js';
             }
         });
 
+        const notifCheckbox = document.getElementById('settings-notif-checkbox');
+        if (notifCheckbox) {
+            notifCheckbox.checked = window.game.state.notificationsEnabled !== false;
+        }
+
+        if (window.NotificationService) window.NotificationService.init();
+        if (window.ReviewService) window.ReviewService.init();
+
         // visibilitychange listener for offline calculations when returning to tab
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -291,11 +299,22 @@ import { refreshAllTabs } from './ui/tabs/index.js';
                 // Save game immediately on hidden tab
                 if (window.game) {
                     window.game.saveGame(true);
+                    
+                    // Trigger notifications when leaving
+                    if (window.NotificationService) {
+                        // Request permission on exit if tutorial is complete
+                        if (window.game.state.tutorialCompleted) {
+                            window.NotificationService.requestPermission().then(() => {
+                                window.NotificationService.scheduleReminders(window.game);
+                            });
+                        }
+                    }
                 }
                 if (window.gameAudio && typeof window.gameAudio.suspend === 'function') {
                     window.gameAudio.suspend();
                 }
             } else {
+                if (window.NotificationService) window.NotificationService.cancelAll();
                 if (window.gameAudio && typeof window.gameAudio.resume === 'function') {
                     window.gameAudio.resume();
                 }
@@ -347,8 +366,43 @@ import { refreshAllTabs } from './ui/tabs/index.js';
             if (typeof window.renderMissionsTab === 'function') window.renderMissionsTab();
             if (typeof window.renderBranchesTab === 'function') window.renderBranchesTab();
 
-            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
-                window.Capacitor.Plugins.SplashScreen.hide();
+            if (window.Capacitor && window.Capacitor.Plugins) {
+                if (window.Capacitor.Plugins.SplashScreen) {
+                    window.Capacitor.Plugins.SplashScreen.hide();
+                }
+
+                // Native mobile fixes (Edge-to-edge & back button)
+                const SB = window.Capacitor.Plugins.StatusBar;
+                if (SB) {
+                    try {
+                        SB.setOverlaysWebView({ overlay: true }).catch(() => {});
+                        SB.setStyle({ style: 'DARK' }).catch(() => {});
+                    } catch (_e) {
+                        // ignore
+                    }
+                }
+
+                const CapApp = window.Capacitor.Plugins.App;
+                if (CapApp) {
+                    try {
+                        CapApp.addListener('backButton', ({ canGoBack }) => {
+                            // Find the topmost active modal
+                            const modals = Array.from(document.querySelectorAll('.modal.active, .modal:not([hidden]).show, .tutorial-modal.active'));
+                            if (modals.length > 0) {
+                                const topModal = modals[modals.length - 1];
+                                // Don't close if it's a forced onboarding modal without a close button (e.g. offline earnings)
+                                // But usually offline has a collect button. Let's just remove active class.
+                                topModal.classList.remove('active', 'show');
+                                topModal.setAttribute('hidden', 'true');
+                                return;
+                            }
+                            // Otherwise exit app
+                            CapApp.exitApp();
+                        });
+                    } catch (_e) {
+                        // ignore
+                    }
+                }
             }
 
             const finishSplash = () => {

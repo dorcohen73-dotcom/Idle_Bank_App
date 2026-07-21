@@ -174,15 +174,12 @@ class EconomyManager {
     getGuardCapacity(level) {
         if (!this._cachedGuardCap) this._cachedGuardCap = new Map();
         if (this._cachedGuardCap.has(level)) return this._cachedGuardCap.get(level);
-        
-        // Use Global EPS to scale guard capacity (e.g. 60 seconds of Global EPS)
-        let cap = (this.game.cachedEps || 0) * 60;
-        
-        // If eps is 0 (game just started), fallback to old formula
-        if (cap === 0) {
-            cap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
-            cap = Math.round(cap * this.getTotalMultiplier());
-        }
+
+        // Level-based, growing at the same rate as teller capacity (GUARD_CAPACITY_GROWTH ===
+        // TELLER_CAPACITY_GROWTH) so the guard keeps pace with cash piling up at tellers across
+        // the whole progression — see config.js for the reasoning.
+        let cap = Math.round(GAME_CONFIG.GUARD_BASE_CAPACITY * Math.pow(GAME_CONFIG.GUARD_CAPACITY_GROWTH, level - 1));
+        cap = Math.round(cap * this.getTotalMultiplier());
 
         if (this.game.state.managers && this.game.state.managers.operations) {
             cap = Math.round(cap * GAME_CONFIG.GUARD_AUTO_CAPACITY_FACTOR);

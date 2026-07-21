@@ -120,6 +120,7 @@ class PrestigeController {
              game.state.stats.claimedPrestigeShares = Math.max(0, (game.state.shares || 0) - sharesGained);
         }
         game.state.stats.claimedPrestigeShares += baseSharesGained;
+        game.state.stats.prestigeCount = (game.state.stats.prestigeCount || 0) + 1;
 
         game.state.currentBranch = targetBranchIndex;
         game.state.maxBranchUnlocked = Math.max(game.state.maxBranchUnlocked || 0, targetBranchIndex);

@@ -81,7 +81,8 @@ function updateButtonAffordability() {
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                                 const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
                                 const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
-                                const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span>';
+                                const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
+                                const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + '</span>';
                                 const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + '</span>';
                                 if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                                 if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;

@@ -434,6 +434,16 @@
     font-family: 'Outfit', sans-serif;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
+.teller-full-alert {
+    color: #ff4444;
+    font-weight: 800;
+    font-size: 1.1rem;
+    animation: alert-blink 1s infinite;
+}
+@keyframes alert-blink {
+    0%, 100% { opacity: 1; text-shadow: 0 0 5px rgba(255, 68, 68, 0.6); }
+    50% { opacity: 0.6; text-shadow: none; }
+}
 .plaque-collect-btn {
     background: linear-gradient(180deg, #dfab29 0%, #b8860b 100%);
     color: #000 !important;

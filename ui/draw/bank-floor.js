@@ -139,8 +139,13 @@ export function updateTellersDisplay(tObj, vaultData) {
 
             if (cashLabel) {
                 let cashIcons = '';
+                let cashText = formatMoney(tData.cashStored);
+                
                 if (tData.cashStored > 0) {
-                    if (tData.fillPercent >= 80) {
+                    if (tData.fillPercent >= 100) {
+                        cashIcons = '';
+                        cashText = `<span class="teller-full-alert">${tObj.upgrades.tellerFull || 'Full Teller'}</span><br/><span style="font-size:0.9rem;">${formatMoney(tData.cashStored)}</span>`;
+                    } else if (tData.fillPercent >= 80) {
                         cashIcons = '💵💵💵 ';
                     } else if (tData.fillPercent >= 40) {
                         cashIcons = '💵💵 ';
@@ -148,7 +153,7 @@ export function updateTellersDisplay(tObj, vaultData) {
                         cashIcons = '💵 ';
                     }
                 }
-                const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${formatMoney(tData.cashStored)}`;
+                const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${cashText}`;
                 if (prevTellerCashHtml[tData.id] !== newCashHtml) {
                     cashLabel.innerHTML = newCashHtml;
                     prevTellerCashHtml[tData.id] = newCashHtml;

@@ -274,15 +274,15 @@
   .vault-mini-top {
     display: flex !important;
     align-items: center !important;
-    gap: 0.5rem !important;
+    gap: 0.35rem !important;
     position: relative !important;
     z-index: 1 !important;
     flex-wrap: nowrap !important; /* Keep everything on one line */
   }
 
   .vault-mini-icon {
-    width: 90px !important;
-    height: 90px !important;
+    width: 54px !important;
+    height: 54px !important;
     border-radius: 50% !important;
     object-fit: cover !important;
     border: 2px solid rgba(223,171,41,0.6) !important;
@@ -304,7 +304,7 @@
   }
 
   .vault-mini-label {
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
     font-weight: 800 !important;
     color: #dfab29 !important;
     letter-spacing: 0.5px !important;
@@ -312,7 +312,7 @@
   }
 
   .vault-mini-level {
-    font-size: 0.72rem !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
     color: rgba(255,255,255,0.45) !important;
     letter-spacing: 0.3px !important;
@@ -799,24 +799,24 @@
 
   /* --- Vault Mini Bar: small phone refinements --- */
   .vault-mini-bar {
-    padding: 0.5rem 0.65rem !important;
-    border-radius: 14px !important;
+    padding: 0.4rem 0.5rem !important;
+    border-radius: 12px !important;
   }
   .vault-mini-icon {
-    width: 65px !important;
-    height: 65px !important;
+    width: 44px !important;
+    height: 44px !important;
   }
   .vault-mini-label {
-    font-size: 1.15rem !important;
+    font-size: 0.85rem !important;
   }
   .vault-mini-stored-val {
-    font-size: 1.35rem !important;
+    font-size: 0.95rem !important;
   }
   .vault-mini-collect {
-    min-height: 48px !important;
+    min-height: 40px !important;
     font-size: 0.7rem !important;
-    padding: 0.28rem 0.48rem !important;
-    border-radius: 10px !important;
+    padding: 0.28rem 0.45rem !important;
+    border-radius: 8px !important;
   }
   .vault-mini-track {
     height: 10px !important;

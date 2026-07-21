@@ -286,6 +286,11 @@ class SaveManager {
         else if (state.queueUpgradeLevel > GAME_CONFIG.QUEUE_MAX_LEVEL) state.queueUpgradeLevel = GAME_CONFIG.QUEUE_MAX_LEVEL;
         if (!isNum(state.missionsCompleted) || state.missionsCompleted < 0) state.missionsCompleted = 0;
         if (!isNum(state.lastSaveTime)) state.lastSaveTime = Date.now();
+        if (!isBool(state.notificationsEnabled)) state.notificationsEnabled = true;
+
+        if (!state.stats || typeof state.stats !== 'object') state.stats = {};
+        if (!isNum(state.stats.prestigeCount) || state.stats.prestigeCount < 0) state.stats.prestigeCount = 0;
+        if (!isBool(state.stats.reviewRequested)) state.stats.reviewRequested = false;
 
         // Fortune Wheel
         if (!isNum(state.lastSpinTime) || state.lastSpinTime < 0) state.lastSpinTime = 0;
@@ -772,6 +777,33 @@ class SaveManager {
         }
     }
 
+    getOfflineLimitHours() {
+        let limitHours = 2; // Reduced base offline limit to 2 hours
+        
+        // Accountant manager adds offline time
+        if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
+            const accLvl = this.game.state.managerUpgrades.accountant.level || 1;
+            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineLimitBoost * accLvl);
+        }
+        
+        if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
+            const mktLvl = this.game.state.managerUpgrades.marketing.level || 1;
+            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * mktLvl); // +1 hour per level
+        }
+        // Offline limit boost from service manager (merged from tech)
+        const svcMgr = this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service;
+        const svcLvl = svcMgr ? (this.game.state.managerUpgrades.service.level || 1) : 0;
+        const svcOfflineBonus = svcMgr ? ((GAME_CONFIG.MANAGER_COEFFICIENTS.service.offlineLimitBoost || 0) * svcLvl) : 0;
+        limitHours += svcOfflineBonus;
+        
+        if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.offlineEarnings) {
+            limitHours += (this.game.state.goldUpgrades.offlineEarnings * 2); // +2 hours per level
+        }
+        
+        // Hard cap total offline time at 12 hours as requested by user
+        return Math.min(12, limitHours);
+    }
+
     calculateOfflineEarnings() {
         this.game.offlineEarningsReport = 0;
 
@@ -801,30 +833,7 @@ class SaveManager {
         if (timePassedSec < 15) return;
 
         let offlineCashEarned = 0;
-        let limitHours = 2; // Reduced base offline limit to 2 hours
-        
-        // Accountant manager adds offline time
-        if (this.game.state.managers && this.game.state.managers.accountant && this.game.state.managerUpgrades.accountant) {
-            const accLvl = this.game.state.managerUpgrades.accountant.level || 1;
-            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.accountant.offlineLimitBoost * accLvl);
-        }
-        
-        if (this.game.state.managers && this.game.state.managers.marketing && this.game.state.managerUpgrades.marketing) {
-            const mktLvl = this.game.state.managerUpgrades.marketing.level || 1;
-            limitHours += (GAME_CONFIG.MANAGER_COEFFICIENTS.marketing.offlineLimitBoost * mktLvl); // +1 hour per level
-        }
-        // Offline limit boost from service manager (merged from tech)
-        const svcMgr = this.game.state.managers && this.game.state.managers.service && this.game.state.managerUpgrades && this.game.state.managerUpgrades.service;
-        const svcLvl = svcMgr ? (this.game.state.managerUpgrades.service.level || 1) : 0;
-        const svcOfflineBonus = svcMgr ? ((GAME_CONFIG.MANAGER_COEFFICIENTS.service.offlineLimitBoost || 0) * svcLvl) : 0;
-        limitHours += svcOfflineBonus;
-        
-        if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.offlineEarnings) {
-            limitHours += (this.game.state.goldUpgrades.offlineEarnings * 2); // +2 hours per level
-        }
-        
-        // Hard cap total offline time at 12 hours as requested by user
-        limitHours = Math.min(12, limitHours);
+        let limitHours = this.getOfflineLimitHours();
         
         let maxAllowedSec = limitHours * 3600;
 

@@ -205,7 +205,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         card.className = 'upgrade-card premium-upg-card';
         let eps = 0;
         if (type === 'teller') {
-            const reward = game.getCurrentBaseReward() * game.getTotalMultiplier();
+            const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
             eps = reward / speed;
         } else {
             eps = capacity / speed;

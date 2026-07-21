@@ -401,7 +401,7 @@
 
     .adv-limit {
         font-size: 0.78rem !important;
-        min-width: 24px !important;
+        min-width: 40px !important;
     }
 
     .adv-slider::-webkit-slider-thumb {
@@ -914,6 +914,7 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: rgba(15, 23, 42, 0.95);
     color: #fff;
     z-index: 10000;

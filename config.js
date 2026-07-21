@@ -85,11 +85,11 @@ const GAME_CONFIG = {
 
     // Branches and prestige constants
     BRANCHES: [
-        { name: "קאש-אפ (CashUp)", baseMultiplier: 1, minCashToPrestige: 30000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
-        { name: "נאו-בנק (NeoBank)", baseMultiplier: 5, minCashToPrestige: 2500000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
-        { name: "קריפטו איקס (Crypto X)", baseMultiplier: 15, minCashToPrestige: 500000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
-        { name: "מון-טרייד (MoonTrade)", baseMultiplier: 30, minCashToPrestige: 250000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
-        { name: "הייפ קפיטל (Hype Capital)", baseMultiplier: 200, minCashToPrestige: 100000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
+        { name: "קאש-אפ (CashUp)", baseMultiplier: 1, minCashToPrestige: 300000, desc: "הבנק המקומי הראשון שלך. כאן הכל מתחיל." },
+        { name: "נאו-בנק (NeoBank)", baseMultiplier: 5, minCashToPrestige: 25000000, desc: "ענק פיננסי גלובלי. לקוחות עשירים יותר ותנועת כספים מהירה." },
+        { name: "קריפטו איקס (Crypto X)", baseMultiplier: 15, minCashToPrestige: 5000000000, desc: "לב הפיננסים האירופאי. עסקאות נדל\"ן ו-corporate banking." },
+        { name: "מון-טרייד (MoonTrade)", baseMultiplier: 30, minCashToPrestige: 2500000000000, desc: "מרכז העסקים של וול סטריט. עסקאות ענק, הלוואות מפלצתיות ורווחים אדירים." },
+        { name: "הייפ קפיטל (Hype Capital)", baseMultiplier: 200, minCashToPrestige: 1000000000000000, desc: "אימפריית ההשקעות העולמית. רווחים אגדיים שממלאים את כספות הזהב בשניות." }
     ],
 
     TELLER_UNLOCK_COSTS: [0, 800, 20000, 600000, 18000000, 500000000, 12500000000, 300000000000],

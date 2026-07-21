@@ -445,8 +445,12 @@
         }
         if (cashLabel) {
           let cashIcons = "";
+          let cashText = formatMoney2(tData.cashStored);
           if (tData.cashStored > 0) {
-            if (tData.fillPercent >= 80) {
+            if (tData.fillPercent >= 100) {
+              cashIcons = "";
+              cashText = `<span class="teller-full-alert">${tObj.upgrades.tellerFull || "Full Teller"}</span><br/><span style="font-size:0.9rem;">${formatMoney2(tData.cashStored)}</span>`;
+            } else if (tData.fillPercent >= 80) {
               cashIcons = "\u{1F4B5}\u{1F4B5}\u{1F4B5} ";
             } else if (tData.fillPercent >= 40) {
               cashIcons = "\u{1F4B5}\u{1F4B5} ";
@@ -454,7 +458,7 @@
               cashIcons = "\u{1F4B5} ";
             }
           }
-          const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${formatMoney2(tData.cashStored)}`;
+          const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${cashText}`;
           if (prevTellerCashHtml[tData.id] !== newCashHtml) {
             cashLabel.innerHTML = newCashHtml;
             prevTellerCashHtml[tData.id] = newCashHtml;
@@ -2698,6 +2702,10 @@
       DOM_CACHE.settingsDangerTitle.innerHTML = `${base} <span aria-hidden="true">\u26A0\uFE0F</span>`;
     }
     if (DOM_CACHE.settingsThemeTitle) DOM_CACHE.settingsThemeTitle.innerText = tObj.themeTitle || "\u05D1\u05D7\u05E8 \u05E6\u05D1\u05E2 \u05E8\u05E7\u05E2";
+    const notifLabel = document.getElementById("settings-notif-label");
+    if (notifLabel) {
+      notifLabel.innerText = tObj.settingsNotifLabel || "\u05D4\u05EA\u05E8\u05D0\u05D5\u05EA \u05D3\u05D7\u05D9\u05E4\u05D4";
+    }
     const perfTitle = document.getElementById("settings-perf-title");
     if (perfTitle) {
       perfTitle.innerText = tObj.perfModeTitle || "\u05DE\u05E6\u05D1 \u05D1\u05D9\u05E6\u05D5\u05E2\u05D9\u05DD:";
@@ -3219,7 +3227,7 @@
       card.className = "upgrade-card premium-upg-card";
       let eps = 0;
       if (type === "teller") {
-        const reward = game.getCurrentBaseReward() * game.getTotalMultiplier();
+        const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
         eps = reward / speed;
       } else {
         eps = capacity / speed;
@@ -4772,7 +4780,8 @@
                   const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                   const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
-                  const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + "</span>";
+                  const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
+                  const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + "</span>";
                   const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                   if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
@@ -5024,6 +5033,130 @@
   window.updateButtonAffordability = updateButtonAffordability2;
   window.invalidateTabHashes = invalidateTabHashes;
 
+  // ui/events/notifications.js
+  var NotificationService = {
+    available: false,
+    async init() {
+      try {
+        if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+          if (window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+            this.available = true;
+          }
+        }
+      } catch (e) {
+        console.warn("NotificationService init error:", e);
+      }
+    },
+    async requestPermission() {
+      if (!this.available) return false;
+      try {
+        const result = await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
+        return result.display === "granted";
+      } catch (e) {
+        console.warn("Failed to request notification permission:", e);
+        return false;
+      }
+    },
+    async checkPermission() {
+      if (!this.available) return false;
+      try {
+        const result = await window.Capacitor.Plugins.LocalNotifications.checkPermissions();
+        return result.display === "granted";
+      } catch (e) {
+        console.warn("Failed to check notification permission:", e);
+        return false;
+      }
+    },
+    async scheduleReminders(game2) {
+      if (!this.available || !game2 || !game2.state) return;
+      if (game2.state.notificationsEnabled === false) return;
+      try {
+        const hasPermission = await this.checkPermission();
+        if (!hasPermission) return;
+        await this.cancelAll();
+        const lang = game2.state.language || "en";
+        const t = translations[lang] || translations["en"];
+        const notifications = [];
+        const now = Date.now();
+        if (game2.saveManager && typeof game2.saveManager.getOfflineLimitHours === "function") {
+          const limitHours = game2.saveManager.getOfflineLimitHours();
+          const msUntilFull = limitHours * 3600 * 1e3;
+          notifications.push({
+            id: 101,
+            title: t.notifOfflineTitle || "\u{1F3E6} Vault is full!",
+            body: t.notifOfflineBody || "Your offline earnings have reached maximum capacity \u2014 come collect them",
+            schedule: { at: new Date(now + msUntilFull) }
+          });
+        }
+        notifications.push({
+          id: 102,
+          title: t.notifDailyTitle || "\u{1F381} Daily Reward waiting",
+          body: t.notifDailyBody || "Keep up your login streak and claim your bonus",
+          schedule: { at: new Date(now + 24 * 3600 * 1e3) }
+        });
+        notifications.push({
+          id: 103,
+          title: t.notifComebackTitle || "\u{1F634} Your bank misses you",
+          body: t.notifComebackBody || "The employees are getting bored \u2014 quick check-in?",
+          schedule: { at: new Date(now + 24 * 3600 * 1e3) }
+        });
+        notifications.sort((a, b) => a.schedule.at.getTime() - b.schedule.at.getTime());
+        const MIN_GAP_MS = 3 * 3600 * 1e3;
+        for (let i = 1; i < notifications.length; i++) {
+          const prevTime = notifications[i - 1].schedule.at.getTime();
+          const currTime = notifications[i].schedule.at.getTime();
+          if (currTime - prevTime < MIN_GAP_MS) {
+            notifications[i].schedule.at = new Date(prevTime + MIN_GAP_MS);
+          }
+        }
+        await window.Capacitor.Plugins.LocalNotifications.schedule({
+          notifications
+        });
+      } catch (e) {
+        console.warn("Failed to schedule reminders:", e);
+      }
+    },
+    async cancelAll() {
+      if (!this.available) return;
+      try {
+        await window.Capacitor.Plugins.LocalNotifications.cancel({
+          notifications: [{ id: 101 }, { id: 102 }, { id: 103 }]
+        });
+      } catch (e) {
+        console.warn("Failed to cancel notifications:", e);
+      }
+    }
+  };
+
+  // ui/events/review.js
+  var ReviewService = {
+    available: false,
+    init() {
+      try {
+        if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+          if (window.Capacitor.Plugins && window.Capacitor.Plugins.AppReview) {
+            this.available = true;
+          }
+        }
+      } catch (e) {
+        console.warn("ReviewService init error:", e);
+      }
+    },
+    async maybeRequest(game2) {
+      if (!game2 || !game2.state || !game2.state.stats) return;
+      if (game2.state.stats.reviewRequested) return;
+      if (!this.available) return;
+      if ((game2.state.stats.prestigeCount || 0) < 2) return;
+      game2.state.stats.reviewRequested = true;
+      game2.saveGame();
+      try {
+        await window.Capacitor.Plugins.AppReview.requestReview();
+      } catch (e) {
+        console.warn("AppReview request error:", e);
+      }
+    }
+  };
+
   // ui/events/index.js
   var uiEventsInitialized = false;
   function initUIEvents() {
@@ -5198,6 +5331,24 @@
         }
       });
     });
+    const notifToggle = document.getElementById("settings-notif-checkbox");
+    if (notifToggle) {
+      notifToggle.addEventListener("change", (e) => {
+        initSound2();
+        if (window.game && window.game.state) {
+          window.game.state.notificationsEnabled = e.target.checked;
+          window.game.saveGame();
+          if (!e.target.checked && window.NotificationService) {
+            window.NotificationService.cancelAll();
+          } else if (e.target.checked && window.NotificationService) {
+            window.NotificationService.requestPermission();
+          }
+        }
+        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
+          window.gameAudio.playClick();
+        }
+      });
+    }
     if (DOM_CACHE.langModal) {
       DOM_CACHE.langModal.addEventListener("click", (e) => {
         try {
@@ -5428,6 +5579,7 @@
               if (typeof syncBottomNav === "function") syncBottomNav("upgrades");
               const firstTabBtn = document.querySelector(".tab-btn");
               if (firstTabBtn) firstTabBtn.click();
+              ReviewService.maybeRequest(game);
               draw();
             });
           });
@@ -5449,6 +5601,7 @@
             if (typeof syncBottomNav === "function") syncBottomNav("upgrades");
             const firstTabBtn = document.querySelector(".tab-btn");
             if (firstTabBtn) firstTabBtn.click();
+            ReviewService.maybeRequest(game);
             draw();
           });
         }
@@ -5620,6 +5773,8 @@
   window.maybeStartTutorial = maybeStartTutorial;
   window.spawnVaultCoins = spawnVaultCoins;
   window.startPromoRecording = startPromoRecording;
+  window.NotificationService = NotificationService;
+  window.ReviewService = ReviewService;
 
   // app.js
   (() => {
@@ -5879,16 +6034,30 @@ ${stack}` : String(message);
             b.classList.remove("active");
           }
         });
+        const notifCheckbox = document.getElementById("settings-notif-checkbox");
+        if (notifCheckbox) {
+          notifCheckbox.checked = window.game.state.notificationsEnabled !== false;
+        }
+        if (window.NotificationService) window.NotificationService.init();
+        if (window.ReviewService) window.ReviewService.init();
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) {
             cancelAnimationFrame(window.rafId);
             if (window.game) {
               window.game.saveGame(true);
+              if (window.NotificationService) {
+                if (window.game.state.tutorialCompleted) {
+                  window.NotificationService.requestPermission().then(() => {
+                    window.NotificationService.scheduleReminders(window.game);
+                  });
+                }
+              }
             }
             if (window.gameAudio && typeof window.gameAudio.suspend === "function") {
               window.gameAudio.suspend();
             }
           } else {
+            if (window.NotificationService) window.NotificationService.cancelAll();
             if (window.gameAudio && typeof window.gameAudio.resume === "function") {
               window.gameAudio.resume();
             }
@@ -5926,8 +6095,36 @@ ${stack}` : String(message);
           if (typeof window.renderDepartmentsTab === "function") window.renderDepartmentsTab();
           if (typeof window.renderMissionsTab === "function") window.renderMissionsTab();
           if (typeof window.renderBranchesTab === "function") window.renderBranchesTab();
-          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
-            window.Capacitor.Plugins.SplashScreen.hide();
+          if (window.Capacitor && window.Capacitor.Plugins) {
+            if (window.Capacitor.Plugins.SplashScreen) {
+              window.Capacitor.Plugins.SplashScreen.hide();
+            }
+            const SB = window.Capacitor.Plugins.StatusBar;
+            if (SB) {
+              try {
+                SB.setOverlaysWebView({ overlay: true }).catch(() => {
+                });
+                SB.setStyle({ style: "DARK" }).catch(() => {
+                });
+              } catch (_e) {
+              }
+            }
+            const CapApp = window.Capacitor.Plugins.App;
+            if (CapApp) {
+              try {
+                CapApp.addListener("backButton", ({ canGoBack }) => {
+                  const modals = Array.from(document.querySelectorAll(".modal.active, .modal:not([hidden]).show, .tutorial-modal.active"));
+                  if (modals.length > 0) {
+                    const topModal = modals[modals.length - 1];
+                    topModal.classList.remove("active", "show");
+                    topModal.setAttribute("hidden", "true");
+                    return;
+                  }
+                  CapApp.exitApp();
+                });
+              } catch (_e) {
+              }
+            }
           }
           const finishSplash = () => {
             setTimeout(() => {
