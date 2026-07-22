@@ -375,8 +375,9 @@ import { refreshAllTabs } from './ui/tabs/index.js';
                 const SB = window.Capacitor.Plugins.StatusBar;
                 if (SB) {
                     try {
-                        SB.setOverlaysWebView({ overlay: true }).catch(() => {});
+                        SB.setOverlaysWebView({ overlay: false }).catch(() => {});
                         SB.setStyle({ style: 'DARK' }).catch(() => {});
+                        SB.setBackgroundColor({ color: '#03050a' }).catch(() => {});
                     } catch (_e) {
                         // ignore
                     }
