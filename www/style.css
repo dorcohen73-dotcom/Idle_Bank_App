@@ -6709,12 +6709,12 @@ header, .control-panel, .bank-floor {
 /* ===================================================
    PORTRAIT MOBILE MODE
    =================================================== */
-@media (max-width: 950px), (max-height: 500px) {
+@media (max-width: 950px), (max-height: 500px), (pointer: coarse) {
   /* --- Bottom Nav: גלוי ב-portrait --- */
   .bottom-nav {
     display: flex;
     position: fixed;
-    bottom: calc(15px + env(safe-area-inset-bottom));
+    bottom: max(15px, env(safe-area-inset-bottom, 15px));
     left: 15px;
     right: 15px;
     height: 70px;
