@@ -6712,25 +6712,29 @@ header, .control-panel, .bank-floor {
 @media (max-width: 950px), (max-height: 500px), (pointer: coarse) {
   /* --- Bottom Nav: גלוי ב-portrait --- */
   .bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: max(15px, env(safe-area-inset-bottom, 15px));
-    left: 15px;
-    right: 15px;
-    height: 70px;
-    background: rgba(15, 18, 28, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 35px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    z-index: 1000;
-    justify-content: space-around;
-    align-items: center;
-    overflow: visible;
-    gap: 0;
-    padding: 0 15px;
-    box-sizing: border-box;
+    display: flex !important;
+    position: fixed !important;
+    bottom: 15px !important; /* Fallback */
+    bottom: calc(15px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 15px !important;
+    right: 15px !important;
+    height: 70px !important;
+    background: rgba(15, 18, 28, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 35px !important;
+    z-index: 2147483647 !important; /* ABSOLUTE MAX Z-INDEX */
+    padding: 0 15px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.05) !important;
+    transform: translateZ(0) !important; /* Force hardware acceleration and prevent clipping */
+    visibility: visible !important;
+    opacity: 1 !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    overflow: visible !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
   }
   .bottom-nav::-webkit-scrollbar {
     display: none;
