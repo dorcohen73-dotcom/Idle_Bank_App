@@ -7,8 +7,8 @@
   .bottom-nav {
     display: flex !important;
     position: fixed !important;
-    bottom: 50px !important; /* Fallback raised for Android nav bar */
-    bottom: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: 35px !important; /* Raised slightly from original 15px to clear edge-to-edge nav bar */
+    bottom: max(35px, env(safe-area-inset-bottom, 35px)) !important;
     left: 15px !important;
     right: 15px !important;
     height: 70px !important;
@@ -17,12 +17,10 @@
     -webkit-backdrop-filter: blur(20px) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     border-radius: 35px !important;
-    z-index: 2147483647 !important; /* ABSOLUTE MAX Z-INDEX */
+    z-index: 1000 !important; /* Reverted to 1000 */
     padding: 0 15px !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.05) !important;
-    transform: translateZ(0) !important; /* Force hardware acceleration and prevent clipping */
-    visibility: visible !important;
-    opacity: 1 !important;
+    /* Removed transform: translateZ(0), visibility, and opacity to fix WebView rendering bug */
     justify-content: space-around !important;
     align-items: center !important;
     overflow: visible !important;

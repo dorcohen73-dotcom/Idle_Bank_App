@@ -419,7 +419,12 @@
 
     .modal-box {
         margin: auto !important;
-        max-height: none !important;
+        /* Cap height to the viewport and scroll internally so the close/claim
+           buttons at the bottom are ALWAYS reachable on short phone screens
+           (previously max-height:none let tall modals push buttons off-screen,
+           leaving the modal un-closable and blocking the whole header). */
+        max-height: calc(100dvh - 3rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+        overflow-y: auto !important;
         padding: 1.25rem !important;
         width: 92% !important;
         gap: 0.85rem !important;
