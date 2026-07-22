@@ -6714,8 +6714,8 @@ header, .control-panel, .bank-floor {
   .bottom-nav {
     display: flex !important;
     position: fixed !important;
-    bottom: 15px !important; /* Fallback */
-    bottom: calc(15px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: 50px !important; /* Fallback raised for Android nav bar */
+    bottom: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
     left: 15px !important;
     right: 15px !important;
     height: 70px !important;
