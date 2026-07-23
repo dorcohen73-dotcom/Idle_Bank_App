@@ -3941,9 +3941,10 @@ footer {
      happened (e.g. tapping the fortune wheel appeared to do nothing).
      Dropping the blur on mobile unfreezes rendering; the glass panels keep
      their solid rgba() backgrounds so the look is preserved. */
-  *,
-  *::before,
-  *::after {
+  html body [class],
+  html body [class]::before,
+  html body [class]::after,
+  html body [id] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
