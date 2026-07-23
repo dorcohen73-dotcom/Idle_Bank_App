@@ -1,6 +1,21 @@
 /* Responsive adjustments to prevent horizontal shifts and overflows on smaller screens */
 @media (max-width: 768px) {
     /* Performance & Layout overrides */
+
+    /* Mobile perf fix: the game uses backdrop-filter: blur() on ~29 elements
+       (nav, cards, modals). On phones this heavy compositor load freezes CSS
+       transitions — a modal becomes "active" but its opacity never animates
+       from 0 to 1, so it opens fully transparent and looks like nothing
+       happened (e.g. tapping the fortune wheel appeared to do nothing).
+       Dropping the blur on mobile unfreezes rendering; the glass panels keep
+       their solid rgba() backgrounds so the look is preserved. */
+    *,
+    *::before,
+    *::after {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
     .control-panel {
         max-height: none !important;
     }
