@@ -7,20 +7,18 @@
   .bottom-nav {
     display: flex !important;
     position: fixed !important;
-    bottom: 35px !important; /* Raised slightly from original 15px to clear edge-to-edge nav bar */
-    bottom: max(35px, env(safe-area-inset-bottom, 35px)) !important;
-    left: 15px !important;
-    right: 15px !important;
+    bottom: 45px !important; /* Raised significantly to avoid Android gesture bar */
+    bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
+    left: 20px !important; /* Move away from edge swipe zone */
+    right: 20px !important; /* Move away from edge swipe zone */
     height: 70px !important;
-    background: rgba(15, 18, 28, 0.85) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: rgba(15, 18, 28, 0.98) !important;
+    /* backdrop-filter is REMOVED intentionally! It causes Android WebView to fail repainting after modals close */
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 35px !important;
-    z-index: 1000 !important; /* Reverted to 1000 */
-    padding: 0 15px !important;
+    z-index: 9999 !important; /* Extremely high to ensure visibility */
+    padding: 0 10px !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.05) !important;
-    /* Removed transform: translateZ(0), visibility, and opacity to fix WebView rendering bug */
     justify-content: space-around !important;
     align-items: center !important;
     overflow: visible !important;
