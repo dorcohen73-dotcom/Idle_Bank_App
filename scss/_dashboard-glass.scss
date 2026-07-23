@@ -4,16 +4,18 @@
 @media (max-width: 950px), (max-height: 500px), (pointer: coarse) {
 
   /* --- Bottom Nav: גלוי ב-portrait --- */
+  /* Using position: sticky makes it "built-in" (part of the normal DOM flow), avoiding WebView fixed-position bugs! */
   .bottom-nav {
     display: flex !important;
-    position: fixed !important;
+    position: sticky !important;
     bottom: 45px !important; /* Raised significantly to avoid Android gesture bar */
     bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
     left: 20px !important; /* Move away from edge swipe zone */
     right: 20px !important; /* Move away from edge swipe zone */
+    margin: auto 20px 45px 20px !important; /* Forces it to the bottom if content is short, and matches left/right/bottom constraints */
+    margin-bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
     height: 70px !important;
-    background: rgba(15, 18, 28, 0.98) !important;
-    /* backdrop-filter is REMOVED intentionally! It causes Android WebView to fail repainting after modals close */
+    background: rgba(15, 18, 28, 0.98) !important; /* Removed backdrop-filter to prevent WebView repainting issues */
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 35px !important;
     z-index: 9999 !important; /* Extremely high to ensure visibility */
