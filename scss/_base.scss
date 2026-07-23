@@ -96,7 +96,6 @@ body {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
     padding-bottom: calc(100px + env(safe-area-inset-bottom));
 }
 
