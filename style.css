@@ -8105,9 +8105,9 @@ header {
   position: absolute;
   left: 2%;
   bottom: 5%;
-  height: 80%;
-  max-height: 65px;
-  max-width: 65px;
+  height: 90%;
+  max-height: 85px;
+  max-width: 85px;
   object-fit: contain;
   object-position: center;
   z-index: 0;
@@ -8118,34 +8118,177 @@ header {
   mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 75%, transparent 100%);
 }
 
+.secondary-side-img.boost-img {
+  filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.6)) brightness(1.15); /* Purple aura */
+}
+
+.cash-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(52, 211, 153, 0.8);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cash-live-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(52, 211, 153, 0.85);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  border-radius: 5px;
+  padding: 1px 5px;
+  animation: live-blink 2.2s ease-in-out infinite;
+}
+
+@keyframes live-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+/* The hero number */
+.cash-amount {
+  font-size: 2.25rem;
+  font-weight: 900;
+  font-family: "Outfit", sans-serif;
+  color: #ffffff;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-shadow: 0 0 40px rgba(16, 185, 129, 0.28), 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* EPS sub-row */
+.cash-eps {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--money-green);
+  margin-top: 0.05rem;
+}
+
+.eps-arrow {
+  font-size: 0.72rem;
+  display: inline-block;
+  animation: eps-float 1.8s ease-in-out infinite;
+  color: var(--green-light);
+}
+
+@keyframes eps-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+/* ════════════════════════════════
+   SECONDARY CARDS GRID
+   ════════════════════════════════ */
+.secondary-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0.65rem;
+}
+
+/* ── Single secondary card ── */
+.secondary-card {
+  padding: 0.9rem 1rem;
+  border-color: rgba(255, 204, 77, 0.4); /* Brighter gold border */
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.35), 0 0 32px rgba(223, 171, 41, 0.15), inset 0 0 24px rgba(223, 171, 41, 0.12); /* Inner gold glow */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Strictly align text to right in RTL */
+  gap: 0.18rem;
+  min-height: 90px; /* Taller card */
+}
+
 .secondary-card-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 65px; /* Protect text from left image in LTR */
-  width: 100%;
-  box-sizing: border-box;
+  padding-left: 100px; /* Protect text from left image */
 }
 
-[dir=rtl] .secondary-card-content {
-  padding-left: 65px;
-  padding-right: 0;
+/* Fix gold shares image white corners specifically */
+.gold-shares-card .secondary-side-img {
+  border-radius: 24px;
 }
 
-[dir=ltr] .secondary-card-content {
-  padding-left: 65px;
-  padding-right: 0;
+.secondary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 10% 50%, rgba(223, 171, 41, 0.25) 0%, transparent 55%), radial-gradient(ellipse at 85% 5%, rgba(223, 171, 41, 0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .secondary-card:hover {
+    border-color: rgba(223, 171, 41, 0.32);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 50px rgba(223, 171, 41, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+/* Gold top-edge accent line */
+.secondary-card-accent {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(223, 171, 41, 0.9), transparent);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Multiplier Specific Styling (Purple/Blue) */
+.multiplier-card {
+  border-color: rgba(180, 140, 255, 0.45); /* Brighter purple border */
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.35), 0 0 32px rgba(167, 139, 250, 0.15), inset 0 0 24px rgba(167, 139, 250, 0.12); /* Inner purple glow */
+}
+
+.multiplier-card::before {
+  background: radial-gradient(circle at 10% 50%, rgba(167, 139, 250, 0.25) 0%, transparent 55%), radial-gradient(ellipse at 85% 5%, rgba(147, 51, 234, 0.18) 0%, transparent 65%);
+}
+
+.multiplier-card:hover {
+  border-color: rgba(147, 51, 234, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 50px rgba(147, 51, 234, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.multiplier-card .secondary-card-accent {
+  background: linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.9), transparent);
+}
+
+/* Icon + label row */
+.secondary-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.secondary-icon {
+  font-size: 1rem;
+  filter: drop-shadow(0 0 5px rgba(223, 171, 41, 0.55));
+  line-height: 1;
 }
 
 .secondary-label {
-  font-size: 0.72rem;
+  font-size: clamp(0.68rem, 2.4vw, 0.85rem);
   font-weight: 800;
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   line-height: 1.15;
-  word-break: break-word;
 }
 
 /* Main value in secondary card */
