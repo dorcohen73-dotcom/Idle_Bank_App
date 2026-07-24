@@ -40,7 +40,7 @@
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
     return "$" + fastFormat(val, cachedLang) + suffix;
   }
-  function formatNumberCompact(num, noDecimals = false) {
+  function formatNumberCompact2(num, noDecimals = false) {
     if (num === null || num === void 0 || isNaN(num)) return "0";
     if (num < 1e3) {
       return fastFormat(Math.floor(num), "en");
@@ -821,12 +821,12 @@
     }
     if (game.state.shares !== lastShares || lang !== lastLang) {
       lastShares = game.state.shares;
-      DOM_CACHE.shares.innerText = formatNumberCompact(game.state.shares, true);
+      DOM_CACHE.shares.innerText = formatNumberCompact2(game.state.shares, true);
     }
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
       lastMultiplier = mult;
-      DOM_CACHE.multiplier.innerText = formatNumberCompact(mult) + "x";
+      DOM_CACHE.multiplier.innerText = formatNumberCompact2(mult) + "x";
     }
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
       lastBranch = game.state.currentBranch;
@@ -1860,8 +1860,8 @@
     return "\u2B50";
   }
   function _rewardShortText(reward) {
-    if (reward.type === "cash") return "+" + formatMoney(reward.value);
-    if (reward.type === "boost") return "+" + Math.round(reward.value / 60) + "m x2";
+    if (reward.type === "cash") return "+$" + formatNumberCompact(reward.value);
+    if (reward.type === "boost") return "+" + Math.round(reward.value / 60) + "m";
     return "+" + reward.value;
   }
   function _renderLoginStreakStrip(streak, lm) {

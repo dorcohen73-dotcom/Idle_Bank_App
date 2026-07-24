@@ -1107,11 +1107,15 @@
 }
 
 .login-streak-day-value {
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
     font-weight: 800 !important;
     color: #ffffff !important;
     line-height: 1.1 !important;
     text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
 }
 
 /* Collect Button (Gold Gradient + Crown Badge) */

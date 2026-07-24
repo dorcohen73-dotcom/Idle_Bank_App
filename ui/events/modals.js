@@ -402,8 +402,8 @@ export function _rewardIcon(type) {
 }
 
 export function _rewardShortText(reward) {
-    if (reward.type === 'cash') return '+' + formatMoney(reward.value);
-    if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm x2';
+    if (reward.type === 'cash') return '+$' + formatNumberCompact(reward.value);
+    if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm';
     return '+' + reward.value;
 }
 
