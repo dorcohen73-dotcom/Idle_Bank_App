@@ -5,7 +5,7 @@ import { triggerMilestoneConfetti, handlePurchaseFeedback, handleMissionRedirect
 import {
     openPrestigeModal, openBoostModal, openAnalyticsModal, openWeeklyRewardModal, checkWeeklyReward,
     showOfflineEarningsModal, showLoginRewardModal, triggerPrestigeCeremony,
-    updateFortuneWheelBtnState, openFortuneWheel,
+    updateFortuneWheelBtnState, openFortuneWheel, activateModal,
 } from './modals.js';
 import { tick, syncBottomNav, updateVaultMiniBar } from './main-loop.js';
 import {
@@ -80,7 +80,7 @@ function initUIEvents() {
         DOM_CACHE.langBtn.addEventListener('click', () => {
             initSound();
             if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'inline-block';
-            if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active');
+            if (DOM_CACHE.langModal) activateModal(DOM_CACHE.langModal);
         });
     }
 
@@ -430,7 +430,7 @@ function initUIEvents() {
                         window.gameAudio.playChaChing();
                     }
                     const rect = DOM_CACHE.offlineModalDoubleBtn.getBoundingClientRect();
-                    spawnFloating('+$' + formatMoney(extra), rect.left + rect.width / 2, rect.top, 'green', null, true);
+                    spawnFloating('+' + formatMoney(extra), rect.left + rect.width / 2, rect.top, 'green', null, true);
                 }
                 game.offlineEarningsReport = 0;
                 game.saveGame();
@@ -696,6 +696,7 @@ window.applyLanguage = applyLanguage;
 window.applyTheme = applyTheme;
 window.playAd = playAd;
 window.formatTime = formatTime;
+window.activateModal = activateModal;
 window.openPrestigeModal = openPrestigeModal;
 window.openBoostModal = openBoostModal;
 window.openAnalyticsModal = openAnalyticsModal;

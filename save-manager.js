@@ -116,7 +116,12 @@ class SaveManager {
 
         // Show daily login reward modal if pending — NotificationQueue handles waiting
         // for the language/offline modals to close first.
-        if (this.game.state.pendingLoginReward) {
+        // pendingLoginRewardShown gates this to one attempt per calendar day: if the
+        // player closes/refreshes before the modal (or the collect click) ever runs,
+        // the reward stays pending but we won't re-nag them again in the same session/day.
+        if (this.game.state.pendingLoginReward && !this.game.state.pendingLoginRewardShown) {
+            this.game.state.pendingLoginRewardShown = true;
+            this.game.saveGame();
             const hasOffline = this.game.offlineEarningsReport && this.game.offlineEarningsReport > 0;
             const initialDelay = hasOffline ? 2000 : 1500;
             setTimeout(() => {
@@ -312,6 +317,7 @@ class SaveManager {
                 state.pendingLoginReward = null;
             }
         }
+        if (!isBool(state.pendingLoginRewardShown)) state.pendingLoginRewardShown = false;
 
         // Branch Welcome Bonus
         if (!Array.isArray(state.visitedBranches)) state.visitedBranches = [];
@@ -973,6 +979,8 @@ class SaveManager {
             this.game.state.loginStreak = (daysSince === 1) ? ((this.game.state.loginStreak || 0) + 1) : 1;
             this.game.state.lastLoginDate = now;
             this.game.state.pendingLoginReward = this.game.getDailyLoginReward(this.game.state.loginStreak);
+            // New day, new reward — allow the popup to be attempted again today.
+            this.game.state.pendingLoginRewardShown = false;
             this.game.saveGame();
         }
     }

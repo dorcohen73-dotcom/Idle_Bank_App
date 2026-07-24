@@ -256,7 +256,7 @@ import { refreshAllTabs } from './ui/tabs/index.js';
             window.game.setLanguage('en');
             applyLanguage('en');
             if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'none'; // Force choice first time
-            const showLangModal = () => { if (DOM_CACHE.langModal) DOM_CACHE.langModal.classList.add('active'); };
+            const showLangModal = () => { if (DOM_CACHE.langModal) window.activateModal(DOM_CACHE.langModal); };
             if (window.NotificationQueue) {
                 window.NotificationQueue.request('lang-modal', window.NotificationQueue.PRIORITY.CRITICAL, showLangModal);
             } else {

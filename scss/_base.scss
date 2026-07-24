@@ -2,6 +2,11 @@ html {
     scrollbar-gutter: stable;
 }
 
+html[dir="rtl"] body {
+    direction: rtl;
+    font-family: 'Heebo', 'Rubik', var(--font-body), sans-serif;
+}
+
 /* Reset and Global Styles */
 * {
     margin: 0;

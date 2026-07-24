@@ -248,11 +248,12 @@
 }
 
 .dept-action-btn:hover:not(.disabled) {
-    transform: scale(1.05) translateY(-1px) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    filter: brightness(1.12) !important;
     box-shadow: 
         0 8px 20px rgba(255, 143, 0, 0.45), 
-        inset 0 2px 2px rgba(255, 255, 255, 0.7), 
-        inset 0 -2px 3px rgba(0, 0, 0, 0.3) !important;
+        inset 0 1.5px 3px rgba(255, 255, 255, 0.6),
+        0 0 12px rgba(255, 179, 0, 0.4) !important;
 }
 
 .dept-action-btn:active:not(.disabled) {

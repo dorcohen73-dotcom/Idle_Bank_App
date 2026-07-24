@@ -2,7 +2,6 @@
 .control-panel {
     min-width: 0;
     background: var(--surface-color);
-    backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 1.25rem;
@@ -39,7 +38,6 @@
     width: 100%;
     max-width: 800px;
     z-index: 10;
-    backdrop-filter: blur(12px);
 }
 
 .tab-btn {
@@ -401,8 +399,6 @@
         inset 0 0 15px rgba(255, 255, 255, 0.05),
         0 8px 32px 0 rgba(0, 0, 0, 0.37),
         0 0 20px rgba(16, 185, 129, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border-radius: 12px;
     padding: 1.25rem 2rem;
     margin: 0.5rem auto;
@@ -868,8 +864,6 @@
 
 .branch-action-btn.ghost-gold {
     background: linear-gradient(180deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.95) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(245, 208, 112, 0.8);
     color: #F5D070;
     font-weight: 800;

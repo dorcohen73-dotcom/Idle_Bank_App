@@ -71,24 +71,28 @@
 
 /* Premium Offline Modal styling */
 .offline-modal-premium {
-    background: linear-gradient(180deg, #111827, #030712) !important;
-    border: 1px solid rgba(255, 215, 0, 0.5) !important;
-    box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(255, 215, 0, 0.05) !important;
-    border-radius: 20px !important;
-    padding: 30px 20px 20px 20px !important;
+    background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(3, 7, 18, 0.99)) !important;
+    border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.95), 
+        0 0 35px rgba(251, 191, 36, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    border-radius: 24px !important;
+    padding: 32px 24px 24px 24px !important;
     text-align: center;
     position: relative;
     overflow: hidden;
-    font-family: 'Heebo', Arial, sans-serif !important;
-    max-width: 400px;
+    font-family: 'Heebo', var(--font-body), sans-serif !important;
+    max-width: 420px;
     margin: 0 auto;
+    direction: rtl !important;
 }
 
 .offline-modal-premium::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 160px;
-    background: radial-gradient(circle at top center, rgba(255, 215, 0, 0.2), transparent 70%);
+    top: 0; left: 0; right: 0; height: 180px;
+    background: radial-gradient(circle at top center, rgba(251, 191, 36, 0.25), transparent 70%);
     pointer-events: none;
 }
 

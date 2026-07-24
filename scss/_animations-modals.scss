@@ -44,7 +44,6 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,7 +61,6 @@
 
 .modal-box {
     background: radial-gradient(circle at top, rgba(30, 35, 52, 0.95) 0%, rgba(10, 12, 18, 0.98) 100%);
-    backdrop-filter: blur(16px);
     border: 1px solid rgba(223, 171, 41, 0.35);
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(223, 171, 41, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     border-radius: 24px;
@@ -74,7 +72,6 @@
     flex-direction: column;
     align-items: center;
     gap: 1.25rem;
-    animation: spawn-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overscroll-behavior: contain;
 }
 
@@ -126,6 +123,73 @@
 .modal-close-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 15px rgba(223, 171, 41, 0.4);
+}
+
+/* Daily Login Reward: rolling 7-day streak strip (today + next 6 days preview) */
+.login-streak-strip {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.35rem;
+    width: 100%;
+}
+
+.login-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: 0.4rem 0.15rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 0.5;
+}
+
+.login-streak-day-label {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.login-streak-day-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.login-streak-day-value {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+}
+
+.login-streak-day.is-today {
+    opacity: 1;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.45);
+}
+
+.login-streak-day.is-today .login-streak-day-label {
+    color: var(--green-light);
+}
+
+.login-streak-day.is-tomorrow {
+    opacity: 1;
+    background: rgba(223, 171, 41, 0.14);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 12px rgba(223, 171, 41, 0.35);
+    animation: login-streak-tomorrow-pulse 2.2s infinite ease-in-out;
+}
+
+.login-streak-day.is-tomorrow .login-streak-day-label {
+    color: var(--primary-gold);
+    font-weight: 700;
+}
+
+@keyframes login-streak-tomorrow-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
 }
 
 /* Flying Coin Animation */

@@ -68,8 +68,6 @@
 /* Override header base to column layout */
 header {
     background: rgba(7, 9, 16, 0.88) !important;
-    backdrop-filter: blur(28px) saturate(1.6) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(1.6) !important;
     border: 1px solid rgba(223, 171, 41, 0.14) !important;
     border-radius: 22px !important;
     padding: 1rem 1.25rem !important;
@@ -179,8 +177,6 @@ header {
         rgba(16, 20, 32, 0.82) 0%,
         rgba(10, 12, 22, 0.92) 100%
     );
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.07);
     transition:
