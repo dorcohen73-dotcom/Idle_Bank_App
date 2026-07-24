@@ -852,9 +852,14 @@
   }
   function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
+      if (!DOM_CACHE.boostBtn.querySelector("span")) {
+        DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">\u26A1</span>';
+      }
       if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
-        DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
-        DOM_CACHE.boostBtn.setAttribute("data-time", formatTime(game.state.boost2xTimeLeft));
+        const timeStr = formatTime(game.state.boost2xTimeLeft);
+        const activeText = tObj && typeof tObj.boostActive === "function" ? tObj.boostActive(timeStr) : `\u26A1 Boost: ${timeStr}`;
+        DOM_CACHE.boostBtn.title = activeText;
+        DOM_CACHE.boostBtn.setAttribute("data-time", timeStr);
         DOM_CACHE.boostBtn.classList.add("active");
         DOM_CACHE.boostBtn.classList.remove("offer");
       } else {
@@ -863,12 +868,14 @@
         const offerEnd = window._boostOfferEndTime || 0;
         if (offerEnd > nowMs) {
           const offerSec = Math.ceil((offerEnd - nowMs) / 1e3);
-          const boostOfferFn = tObj.boostOfferText;
-          DOM_CACHE.boostBtn.innerText = typeof boostOfferFn === "function" ? boostOfferFn(formatTime(offerSec)) : `\u26A1 OFFER! ${formatTime(offerSec)}`;
+          const timeStr = formatTime(offerSec);
+          const boostOfferFn = tObj ? tObj.boostOfferText : null;
+          const offerText = typeof boostOfferFn === "function" ? boostOfferFn(timeStr) : `\u26A1 OFFER! ${timeStr}`;
+          DOM_CACHE.boostBtn.title = offerText;
           DOM_CACHE.boostBtn.classList.add("offer");
           DOM_CACHE.boostBtn.classList.remove("active");
         } else {
-          DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "\u26A1 BOOST x2";
+          DOM_CACHE.boostBtn.title = tObj && tObj.boostBtn || "\u26A1 BOOST x2";
           DOM_CACHE.boostBtn.classList.remove("active", "offer");
         }
       }

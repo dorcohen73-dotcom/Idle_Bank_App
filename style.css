@@ -7899,6 +7899,7 @@ header {
   min-width: 44px !important;
   min-height: 44px !important;
   border-radius: 50% !important;
+  overflow: hidden !important;
   background: linear-gradient(145deg, rgba(24, 34, 58, 0.95) 0%, rgba(12, 17, 30, 0.98) 100%) !important;
   border: 1.5px solid rgba(223, 171, 41, 0.35) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
