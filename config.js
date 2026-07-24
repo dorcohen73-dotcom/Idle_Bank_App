@@ -53,7 +53,12 @@ const GAME_CONFIG = {
     VAULT_BASE_CAPACITY: 1500,
     VAULT_CAPACITY_GROWTH: 1.10,
 
-    VAULT_BASE_UPGRADE_COST: 250,
+    // Base was 250 - nearly double the guard's 130 and >4x the teller's 60 at level 1,
+    // on top of getVaultCapacity() completely ignoring vault level once EPS-based scaling
+    // kicked in (see economy-manager.js), so the very first vault upgrades cost the most
+    // of any building while doing the least. Brought down closer to the guard's cost now
+    // that vault level always compounds capacity again.
+    VAULT_BASE_UPGRADE_COST: 150,
     VAULT_UPGRADE_COST_GROWTH: 1.14,
 
     // Queue Lobby Formulas

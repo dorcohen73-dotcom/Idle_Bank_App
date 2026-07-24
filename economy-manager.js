@@ -203,17 +203,14 @@ class EconomyManager {
     // Vault Formulas
     getVaultCapacity(level) {
         if (this._cachedVaultCap.has(level)) return this._cachedVaultCap.get(level);
-        
-        // Use Global EPS to scale vault capacity (e.g. 60 minutes = 3600 seconds of Global EPS)
-        let cap = (this.game.cachedEps || 0) * 3600;
-        
-        if (cap === 0) {
-            cap = Math.round(GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1));
-            cap = Math.round(cap * this.getTotalMultiplier());
-        }
+
+        // Pure per-level formula (matches getTellerCapacity/getGuardCapacity's convention)
+        // — capacity must only move when the player actually pays for a vault upgrade
+        // (or a paid goldUpgrades.vaultCapacityBoost level), never from a live EPS read.
+        let cap = GAME_CONFIG.VAULT_BASE_CAPACITY * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1);
 
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.vaultCapacityBoost) {
-            cap = Math.round(cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost)); // +10% per level
+            cap = cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost); // +10% per level
         }
 
         cap = Math.round(cap);
