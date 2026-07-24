@@ -505,11 +505,14 @@ class SaveManager {
 
         // vault
         if (!state.vault || typeof state.vault !== 'object') {
-            state.vault = { level: 1, cashStored: 0 };
+            state.vault = { level: 1, cashStored: 0, branchBaseCapacity: GAME_CONFIG.VAULT_BASE_CAPACITY };
         } else {
             if (!isNum(state.vault.level) || state.vault.level < 1) state.vault.level = 1;
             if (!isNum(state.vault.cashStored) || state.vault.cashStored < 0) state.vault.cashStored = 0;
             else state.vault.cashStored = roundCents(state.vault.cashStored);
+            if (!isNum(state.vault.branchBaseCapacity) || state.vault.branchBaseCapacity < GAME_CONFIG.VAULT_BASE_CAPACITY) {
+                state.vault.branchBaseCapacity = GAME_CONFIG.VAULT_BASE_CAPACITY;
+            }
         }
 
         // tellers

@@ -221,6 +221,21 @@ class PrestigeController {
         window.gameAudio.playUnlock();
         game.recalculateEps();
 
+        // Vault floor: size this branch's level-1 vault capacity so it can absorb at least
+        // 1.5x a single guard delivery right after the reset. Branch multiplier can jump
+        // 5x-200x between branches, but getVaultCapacity()'s formula deliberately has zero
+        // live coupling to it (see economy-manager.js) — without this, a fresh level-1 vault
+        // can be smaller than one guard's carry capacity, freezing the guard the moment it
+        // tries to deposit (guard-controller.js: vaultSpaceLeft <= 0 -> guard goes idle).
+        // Computed once, here, from the just-reset state (new branch, restored shares,
+        // default managers) — NOT recomputed afterward, so vault leveling for the rest of
+        // this branch stays pure per-level investment like before.
+        game.state.vault.branchBaseCapacity = Math.max(
+            GAME_CONFIG.VAULT_BASE_CAPACITY,
+            Math.round(game.economyManager.getGuardCapacity(1) * 1.5)
+        );
+        game.economyManager._cachedVaultCap = new Map();
+
         // Branch Welcome Bonus: computed here so EPS reflects the new branch
         const welcomeBonusCash = isNewBranch ? (game.getEarningsPerSecond() * 60) : 0;
         if (isNewBranch && welcomeBonusCash > 0) {
