@@ -76,7 +76,24 @@ class AudioEngine {
         return gainNode;
     }
 
+    triggerHaptic(style = 'light') {
+        try {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics) {
+                if (style === 'impact') {
+                    window.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
+                } else {
+                    window.Capacitor.Plugins.Haptics.selectionChanged();
+                }
+            } else if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+                navigator.vibrate(15);
+            }
+        } catch (_e) {
+            // ignore haptic errors
+        }
+    }
+
     playClick() {
+        this.triggerHaptic('light');
         this.ensureRunning(() => {
             const gain = this.createGainNode(0.1, this.volume * 0.5);
             if (!gain) return;
@@ -98,6 +115,7 @@ class AudioEngine {
     }
 
     playCoin() {
+        this.triggerHaptic('impact');
         this.ensureRunning(() => {
             const gain = this.createGainNode(0.3, this.volume);
             if (!gain) return;

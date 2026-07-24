@@ -84,11 +84,17 @@ class PrestigeController {
     getDailyLoginReward(streak) {
         const game = this.game;
         const eps = game.getEarningsPerSecond();
-        if (streak >= 30) return { type: 'shares', value: 10 };
-        if (streak >= 14) return { type: 'shares', value: 3 };
-        if (streak >= 7)  return { type: 'shares', value: 1 };
+        // Share/gold tiers used to be flat numbers that stayed relevant early on but became
+        // trivial once a player's prestige gain grows into the thousands. Scale them against
+        // calculatePrestigeShares() (the same "shares you'd gain by prestiging right now" metric
+        // used elsewhere) so late-game players still get a meaningful daily reward, while the
+        // Math.max floor keeps new players' rewards identical to the old fixed values.
+        const prestigeShares = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 0;
+        if (streak >= 30) return { type: 'shares', value: Math.max(10, Math.ceil(prestigeShares * 0.05)) };
+        if (streak >= 14) return { type: 'shares', value: Math.max(3, Math.ceil(prestigeShares * 0.02)) };
+        if (streak >= 7)  return { type: 'shares', value: Math.max(1, Math.ceil(prestigeShares * 0.01)) };
         if (streak >= 5)  return { type: 'boost', value: 1800 };
-        if (streak >= 3)  return { type: 'gold', value: 1 };
+        if (streak >= 3)  return { type: 'gold', value: Math.max(1, Math.ceil(prestigeShares * 0.005)) };
         if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
         return { type: 'cash', value: Math.max(180, eps * 300) };
     }

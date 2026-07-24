@@ -5128,10 +5128,13 @@
             schedule: { at: new Date(now + msUntilFull) }
           });
         }
+        const streak = game2.state.loginStreak || 1;
+        const nextReward = typeof game2.getDailyLoginReward === "function" ? game2.getDailyLoginReward(streak + 1) : null;
+        const rewardText = nextReward ? _rewardIcon(nextReward.type) + " " + _rewardShortText(nextReward) : "";
         notifications.push({
           id: 102,
-          title: t.notifDailyTitle || "\u{1F381} Daily Reward waiting",
-          body: t.notifDailyBody || "Keep up your login streak and claim your bonus",
+          title: typeof t.notifDailyTitle === "function" ? t.notifDailyTitle(streak) : t.notifDailyTitle || "\u{1F525} Daily Streak!",
+          body: typeof t.notifDailyBody === "function" ? t.notifDailyBody(rewardText) : t.notifDailyBody || "Keep up your login streak and claim your bonus",
           schedule: { at: new Date(now + 24 * 3600 * 1e3) }
         });
         notifications.push({

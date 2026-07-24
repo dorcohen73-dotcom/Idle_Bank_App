@@ -1,6 +1,22 @@
 import { initSound, playAd, AdService } from './ads.js';
 import { showDiscoveryTip } from './engagement.js';
 
+// Re-parenting to <body> plus a forced reflow works around a rendering bug where
+// a .modal-overlay deep in the page's DOM tree gets its `active` class/opacity
+// applied correctly (confirmed via getComputedStyle) but the browser never
+// actually paints the new layer — verified with OS-level screen capture, ruled
+// out backdrop-filter/animations/z-index/position as the cause. Moving the node
+// to be a direct child of body and forcing a synchronous layout before the
+// class toggle reliably fixes the paint.
+export function activateModal(modal) {
+    if (!modal) return;
+    if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+    }
+    void modal.offsetHeight;
+    modal.classList.add('active');
+}
+
 export function openPrestigeModal(target) {
     const lang = game.state.language || 'en';
     const tObj = translations[lang];
@@ -33,7 +49,7 @@ export function openPrestigeModal(target) {
     const modal = document.getElementById('prestige-modal');
     if (modal) {
         modal.setAttribute('data-target-branch', target);
-        modal.classList.add('active');
+        activateModal(modal);
     }
     // Discovery tip: first time player opens prestige modal
     if (typeof window.showDiscoveryTip === 'function') window.showDiscoveryTip('prestige');
@@ -41,8 +57,8 @@ export function openPrestigeModal(target) {
 
 export function openBoostModal() {
     const lang = game.state.language || 'en';
-    const tObj = translations[lang];
-    
+    const tObj = translations[lang] || translations.en;
+
     const eventModal = document.getElementById('event-modal');
     const iconEl = document.getElementById('event-icon');
     const titleEl = document.getElementById('event-title');
@@ -94,7 +110,7 @@ export function openBoostModal() {
     container.appendChild(btnAd);
     container.appendChild(btnCancel);
     
-    eventModal.classList.add('active');
+    activateModal(eventModal);
 }
 
 export function openAnalyticsModal() {
@@ -102,8 +118,8 @@ export function openAnalyticsModal() {
     if (!modal) return;
     
     const lang = game.state.language || 'en';
-    const tObj = translations[lang];
-    
+    const tObj = translations[lang] || translations.en;
+
     document.getElementById('analytics-modal-title').innerText = tObj.analyticsTitle;
     document.getElementById('analytics-title-general').innerText = tObj.analyticsGeneralStats || 'General Stats';
     document.getElementById('analytics-label-eps').innerText = tObj.analyticsTotalEps;
@@ -177,8 +193,8 @@ export function openAnalyticsModal() {
         warningsListEl.appendChild(warningsFragment);
     }
     
-    modal.classList.add('active');
-    
+    activateModal(modal);
+
     const closeBtn = document.getElementById('analytics-close-btn');
     if (closeBtn) {
         closeBtn.onclick = () => {
@@ -254,10 +270,10 @@ export function openWeeklyRewardModal() {
 
     if (window.NotificationQueue) {
         window.NotificationQueue.request('weekly-modal', window.NotificationQueue.PRIORITY.IMPORTANT, () => {
-            modal.classList.add('active');
+            activateModal(modal);
         });
     } else {
-        modal.classList.add('active');
+        activateModal(modal);
     }
 }
 
@@ -276,7 +292,7 @@ export function showOfflineEarningsModal() {
     const displayFn = () => {
         if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
         if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
-        if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.add('active');
+        if (DOM_CACHE.offlineModal) activateModal(DOM_CACHE.offlineModal);
     };
 
     if (window.NotificationQueue) {
@@ -314,7 +330,7 @@ export function showLoginRewardModal() {
     let descText = '';
 
     if (reward.type === 'cash') {
-        displayText = '+$' + formatMoney(reward.value);
+        displayText = '+' + formatMoney(reward.value);
         descText = lm.cashDesc;
     } else if (reward.type === 'boost') {
         const mins = Math.round(reward.value / 60);
@@ -327,6 +343,8 @@ export function showLoginRewardModal() {
 
     if (amountEl) amountEl.innerText = displayText;
     if (descEl) descEl.innerText = descText;
+
+    _renderLoginStreakStrip(streak, lm);
 
     const collectBtn = document.getElementById('login-reward-collect-btn');
     if (collectBtn) {
@@ -348,10 +366,50 @@ export function showLoginRewardModal() {
 
     if (window.NotificationQueue) {
         window.NotificationQueue.request('login-reward-modal', window.NotificationQueue.PRIORITY.IMPORTANT, () => {
-            modal.classList.add('active');
+            activateModal(modal);
         });
     } else {
-        modal.classList.add('active');
+        activateModal(modal);
+    }
+}
+
+function _rewardIcon(type) {
+    if (type === 'cash') return '💵';
+    if (type === 'boost') return '⚡';
+    return '⭐'; // gold / shares
+}
+
+function _rewardShortText(reward) {
+    if (reward.type === 'cash') return '+' + formatMoney(reward.value);
+    if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm x2';
+    return '+' + reward.value;
+}
+
+// Rolling 7-day preview: today's already-granted reward plus the next 6 days, so the
+// player sees exactly what tomorrow (highlighted) is worth without changing the underlying
+// milestone-based reward table (getDailyLoginReward keeps its day 1/2/3/5/7/14/30 thresholds).
+function _renderLoginStreakStrip(streak, lm) {
+    const strip = document.getElementById('login-streak-strip');
+    if (!strip || !window.game || typeof window.game.getDailyLoginReward !== 'function') return;
+    strip.innerHTML = '';
+
+    for (let offset = 0; offset <= 6; offset++) {
+        const dayStreak = streak + offset;
+        const reward = window.game.getDailyLoginReward(dayStreak);
+
+        let label;
+        if (offset === 0) label = lm.todayLabel || 'Today';
+        else if (offset === 1) label = lm.tomorrowLabel || 'Tomorrow';
+        else label = typeof lm.dayLabel === 'function' ? lm.dayLabel(dayStreak) : ('Day ' + dayStreak);
+
+        const card = document.createElement('div');
+        card.className = 'login-streak-day' + (offset === 0 ? ' is-today' : '') + (offset === 1 ? ' is-tomorrow' : '');
+        card.innerHTML = `
+            <span class="login-streak-day-label">${label}</span>
+            <span class="login-streak-day-icon">${_rewardIcon(reward.type)}</span>
+            <span class="login-streak-day-value">${_rewardShortText(reward)}</span>
+        `;
+        strip.appendChild(card);
     }
 }
 
@@ -359,7 +417,7 @@ export function _applyLoginReward(reward) {
     if (!reward) return;
     if (reward.type === 'cash') {
         window.game.addCash(Math.round(reward.value));
-        spawnFloating('+$' + formatMoney(reward.value), window.innerWidth / 2, window.innerHeight / 2, 'green');
+        spawnFloating('+' + formatMoney(reward.value), window.innerWidth / 2, window.innerHeight / 2, 'green');
     } else if (reward.type === 'boost') {
         window.game.addBoost2x(reward.value / 3600);
         spawnFloating('BOOST x2 +' + Math.round(reward.value / 60) + 'min', window.innerWidth / 2, window.innerHeight / 2, 'gold');
@@ -729,7 +787,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
             };
         }
 
-        modal.classList.add('active');
+        activateModal(modal);
         modal.onclick = (e) => {
             if (e.target === modal) {
                 initSound();

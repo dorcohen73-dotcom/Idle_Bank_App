@@ -90,13 +90,13 @@ class PrestigeController {
         // used elsewhere) so late-game players still get a meaningful daily reward, while the
         // Math.max floor keeps new players' rewards identical to the old fixed values.
         const prestigeShares = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 0;
-        if (streak >= 30) return { type: 'shares', value: Math.max(10, Math.ceil(prestigeShares * 0.05)) };
-        if (streak >= 14) return { type: 'shares', value: Math.max(3, Math.ceil(prestigeShares * 0.02)) };
-        if (streak >= 7)  return { type: 'shares', value: Math.max(1, Math.ceil(prestigeShares * 0.01)) };
-        if (streak >= 5)  return { type: 'boost', value: 1800 };
-        if (streak >= 3)  return { type: 'gold', value: Math.max(1, Math.ceil(prestigeShares * 0.005)) };
-        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
-        return { type: 'cash', value: Math.max(180, eps * 300) };
+        if (streak >= 30) return { type: 'shares', value: Math.max(20, Math.ceil(prestigeShares * 0.10)) };
+        if (streak >= 14) return { type: 'shares', value: Math.max(6, Math.ceil(prestigeShares * 0.04)) };
+        if (streak >= 7)  return { type: 'shares', value: Math.max(2, Math.ceil(prestigeShares * 0.02)) };
+        if (streak >= 5)  return { type: 'boost', value: 3600 };
+        if (streak >= 3)  return { type: 'gold', value: Math.max(2, Math.ceil(prestigeShares * 0.01)) };
+        if (streak >= 2)  return { type: 'cash', value: Math.max(1000, eps * 3600) };
+        return { type: 'cash', value: Math.max(360, eps * 600) };
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {

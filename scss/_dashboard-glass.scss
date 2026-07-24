@@ -7,24 +7,24 @@
   /* Using position: sticky makes it "built-in" (part of the normal DOM flow), avoiding WebView fixed-position bugs! */
   .bottom-nav {
     display: flex !important;
-    position: sticky !important;
-    bottom: 45px !important; /* Raised significantly to avoid Android gesture bar */
-    bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
-    left: 20px !important; /* Move away from edge swipe zone */
-    right: 20px !important; /* Move away from edge swipe zone */
-    margin: auto 20px 45px 20px !important; /* Forces it to the bottom if content is short, and matches left/right/bottom constraints */
-    margin-bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
-    height: 70px !important;
-    background: rgba(15, 18, 28, 0.98) !important; /* Removed backdrop-filter to prevent WebView repainting issues */
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 35px !important;
-    z-index: 9999 !important; /* Extremely high to ensure visibility */
-    padding: 0 10px !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.05) !important;
-    justify-content: space-around !important;
+    position: fixed !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100% - 20px) !important;
+    max-width: 550px !important;
+    margin: 0 auto !important;
+    height: 64px !important;
+    background: rgba(15, 18, 28, 0.97) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.35) !important;
+    border-radius: 20px !important;
+    z-index: 9990 !important;
+    padding: 2px 6px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+    justify-content: space-between !important;
     align-items: center !important;
-    overflow: visible !important;
-    gap: 0 !important;
+    overflow: hidden !important;
+    gap: 2px !important;
     box-sizing: border-box !important;
   }
 
@@ -33,21 +33,24 @@
   }
 
   .bottom-nav-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 1;
-    height: 100%;
-    background: transparent;
-    border: none;
-    color: rgba(180, 183, 200, 0.9);
-    font-size: 0.72rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-tap-highlight-color: transparent;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(180, 183, 200, 0.9) !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    padding: 2px 2px !important;
+    box-sizing: border-box !important;
   }
 
   .bottom-nav-btn:active {

@@ -185,6 +185,7 @@ class IdleBankGame {
             lastLoginDate: 0,
             loginStreak: 0,
             pendingLoginReward: null,
+            pendingLoginRewardShown: false,
 
             // Branch Welcome Bonus
             visitedBranches: [],

@@ -373,13 +373,13 @@ export function showLoginRewardModal() {
     }
 }
 
-function _rewardIcon(type) {
+export function _rewardIcon(type) {
     if (type === 'cash') return '💵';
     if (type === 'boost') return '⚡';
     return '⭐'; // gold / shares
 }
 
-function _rewardShortText(reward) {
+export function _rewardShortText(reward) {
     if (reward.type === 'cash') return '+' + formatMoney(reward.value);
     if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm x2';
     return '+' + reward.value;

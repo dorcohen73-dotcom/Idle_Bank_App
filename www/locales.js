@@ -291,7 +291,10 @@ const translations = {
             boostLabel: (mins) => `+${mins} דקות בוסט x2`,
             boostDesc: 'בוסט הכנסות כפולות',
             sharesDesc: 'מניות זהב נוספו',
-            streakLabel: (n) => `רצף: ${n} ימים`
+            streakLabel: (n) => `רצף: ${n} ימים`,
+            todayLabel: 'היום',
+            tomorrowLabel: 'מחר',
+            dayLabel: (n) => `יום ${n}`
         },
         cheatDetectedMsg: "⚠️ זוהתה עריכת שמירה! היתרה אופסה ל-150$ ומניות הזהב ל-0 כעונש.",
         adTitle: "צופה בחסות ממומנת...",
@@ -588,7 +591,10 @@ const translations = {
             boostLabel: (mins) => `+${mins} min Boost x2`,
             boostDesc: 'Double earnings boost',
             sharesDesc: 'Gold shares added',
-            streakLabel: (n) => `Streak: ${n} days`
+            streakLabel: (n) => `Streak: ${n} days`,
+            todayLabel: 'Today',
+            tomorrowLabel: 'Tomorrow',
+            dayLabel: (n) => `Day ${n}`
         },
         cheatDetectedMsg: "⚠️ Save editing detected! Balance reset to $150 and golden shares to 0 as penalty.",
         adTitle: "Watching Sponsored Ad...",
@@ -885,7 +891,10 @@ const translations = {
             boostLabel: (mins) => `+${mins} min Boost x2`,
             boostDesc: 'Impulso de ganancias dobles',
             sharesDesc: 'Acciones de oro añadidas',
-            streakLabel: (n) => `Racha: ${n} días`
+            streakLabel: (n) => `Racha: ${n} días`,
+            todayLabel: 'Hoy',
+            tomorrowLabel: 'Mañana',
+            dayLabel: (n) => `Día ${n}`
         },
         cheatDetectedMsg: "⚠️ ¡Edición de guardado detectada! El saldo se restableció a $150 y las acciones de oro a 0 como penalización.",
         adTitle: "Viendo anuncio patrocinado...",
@@ -1182,7 +1191,10 @@ const translations = {
             boostLabel: (mins) => `+${mins} мин Буст x2`,
             boostDesc: 'Двойной доход',
             sharesDesc: 'Золотые акции добавлены',
-            streakLabel: (n) => `Серия: ${n} дн.`
+            streakLabel: (n) => `Серия: ${n} дн.`,
+            todayLabel: 'Сегодня',
+            tomorrowLabel: 'Завтра',
+            dayLabel: (n) => `День ${n}`
         },
         cheatDetectedMsg: "⚠️ Обнаружено изменение сохранений! Баланс сброшен до $150 и золотые акции до 0 в качестве наказания.",
         adTitle: "Просмотр спонсорской рекламы...",
