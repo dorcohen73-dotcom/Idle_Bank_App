@@ -164,6 +164,55 @@ header {
         padding-left: 0;
         z-index: 2;
     }
+
+    /* Enlarge desktop card text for high readability */
+    .cash-label {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.08em;
+    }
+    .cash-amount {
+        font-size: 2.8rem !important;
+    }
+    .cash-eps {
+        font-size: 1rem !important;
+    }
+    .secondary-label {
+        font-size: 0.95rem !important;
+        letter-spacing: 0.03em;
+    }
+    .secondary-value {
+        font-size: 1.7rem !important;
+    }
+    .huge-multiplier {
+        font-size: 1.85rem !important;
+    }
+    .small-multiplier-label {
+        font-size: 0.92rem !important;
+    }
+    .prestige-hint-text {
+        font-size: 0.82rem !important;
+    }
+}
+
+@media (min-width: 1050px) {
+    .cash-amount {
+        font-size: 3.2rem !important;
+    }
+    .cash-label {
+        font-size: 0.95rem !important;
+    }
+    .cash-eps {
+        font-size: 1.1rem !important;
+    }
+    .secondary-label {
+        font-size: 1.05rem !important;
+    }
+    .secondary-value {
+        font-size: 2rem !important;
+    }
+    .huge-multiplier {
+        font-size: 2.2rem !important;
+    }
 }
 
 /* ════════════════════════════════
