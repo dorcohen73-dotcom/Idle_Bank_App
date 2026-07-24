@@ -464,9 +464,11 @@
    =================================================== */
 
 .language-modal-box {
-    background: radial-gradient(circle at top, rgba(18, 26, 46, 0.98) 0%, rgba(8, 12, 22, 0.99) 100%) !important;
-    border: 1.5px solid rgba(223, 171, 41, 0.5) !important;
-    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(223, 171, 41, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: radial-gradient(circle at top, rgba(20, 28, 50, 0.99) 0%, rgba(7, 11, 20, 0.99) 100%) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.55) !important;
+    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 55px rgba(223, 171, 41, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
     border-radius: 28px !important;
     padding: 1.8rem 1.4rem !important;
     max-width: 460px !important;
@@ -476,23 +478,41 @@
     gap: 1.15rem !important;
 }
 
+/* Subtle top glow spotlight behind globe icon */
+.language-modal-box::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 290px;
+    height: 190px;
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.22) 0%, rgba(234, 179, 8, 0.1) 45%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+}
+
 /* Glowing Top Globe Icon */
 .language-modal-box .modal-icon {
+    position: relative !important;
+    z-index: 1 !important;
     font-size: 3rem !important;
-    width: 68px !important;
-    height: 68px !important;
+    width: 70px !important;
+    height: 70px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: 50% !important;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
-    border: 2px solid rgba(234, 179, 8, 0.7) !important;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.55), inset 0 0 15px rgba(234, 179, 8, 0.35) !important;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+    border: 2px solid rgba(234, 179, 8, 0.75) !important;
+    box-shadow: 0 0 28px rgba(59, 130, 246, 0.6), inset 0 0 16px rgba(234, 179, 8, 0.4) !important;
     margin: 0 auto 0.1rem auto !important;
 }
 
 /* Luxury Section Titles with Decorative Diamonds */
 .luxury-modal-title, .luxury-section-title {
+    position: relative !important;
+    z-index: 1 !important;
     font-size: 1.25rem !important;
     font-weight: 800 !important;
     color: #ffffff !important;
@@ -506,11 +526,13 @@
 .modal-title-decor {
     color: #eab308 !important;
     font-size: 0.9rem !important;
-    text-shadow: 0 0 8px rgba(234, 179, 8, 0.6) !important;
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.7) !important;
 }
 
 /* 2x2 Language Grid */
 .lang-options-grid {
+    position: relative !important;
+    z-index: 1 !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 0.85rem !important;
@@ -520,7 +542,7 @@
 
 .lang-option-card {
     position: relative !important;
-    background: linear-gradient(145deg, rgba(20, 30, 55, 0.85) 0%, rgba(10, 16, 32, 0.95) 100%) !important;
+    background: linear-gradient(145deg, rgba(20, 32, 58, 0.85) 0%, rgba(10, 16, 32, 0.96) 100%) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 18px !important;
     padding: 0.9rem 0.6rem !important;
@@ -530,46 +552,47 @@
     justify-content: center !important;
     gap: 0.25rem !important;
     cursor: pointer !important;
-    transition: all 0.25s ease !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
 }
 
 .lang-option-card:hover {
     transform: translateY(-2px) !important;
-    border-color: rgba(234, 179, 8, 0.4) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(234, 179, 8, 0.2) !important;
+    border-color: rgba(234, 179, 8, 0.45) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(234, 179, 8, 0.25) !important;
 }
 
 /* Active Language Card (Gold Glow + Badge) */
 .lang-option-card.active {
-    border: 2px solid #eab308 !important;
-    background: linear-gradient(145deg, rgba(35, 45, 75, 0.95) 0%, rgba(18, 25, 48, 0.98) 100%) !important;
-    box-shadow: 0 0 24px rgba(234, 179, 8, 0.45), inset 0 0 15px rgba(234, 179, 8, 0.2) !important;
+    border: 2px solid #f59e0b !important;
+    background: linear-gradient(145deg, rgba(38, 50, 85, 0.95) 0%, rgba(18, 26, 52, 0.98) 100%) !important;
+    box-shadow: 0 0 26px rgba(245, 158, 11, 0.5), inset 0 0 16px rgba(245, 158, 11, 0.22) !important;
 }
 
 .lang-flag {
-    font-size: 1.8rem !important;
+    font-size: 1.85rem !important;
     line-height: 1 !important;
     margin-bottom: 0.15rem !important;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45)) !important;
 }
 
 .lang-country-code {
-    font-size: 1.35rem !important;
+    font-size: 1.4rem !important;
     font-weight: 900 !important;
     color: #ffffff !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.06em !important;
     line-height: 1.1 !important;
 }
 
 .lang-option-card.active .lang-country-code {
     color: #facc15 !important;
-    text-shadow: 0 0 12px rgba(250, 204, 21, 0.6) !important;
+    text-shadow: 0 0 14px rgba(250, 204, 21, 0.7) !important;
 }
 
 .lang-name {
     font-size: 0.82rem !important;
     font-weight: 600 !important;
-    color: rgba(226, 232, 240, 0.85) !important;
+    color: rgba(226, 232, 240, 0.88) !important;
 }
 
 /* Checkmark Badge on Active Card */
@@ -587,7 +610,7 @@
     display: none !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 0 8px rgba(234, 179, 8, 0.8) !important;
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.85) !important;
 }
 
 [dir="rtl"] .lang-check-badge {
@@ -601,6 +624,8 @@
 
 /* Theme Selection Row */
 .settings-theme-section {
+    position: relative !important;
+    z-index: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 0.65rem !important;
@@ -660,6 +685,8 @@
 
 /* Danger Zone Card */
 .luxury-danger-card {
+    position: relative !important;
+    z-index: 1 !important;
     background: rgba(220, 38, 38, 0.06) !important;
     border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
     border-radius: 18px !important;
@@ -681,6 +708,8 @@
     justify-content: center !important;
     gap: 0.4rem !important;
     text-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+    border-bottom: 1px dashed rgba(239, 68, 68, 0.25) !important;
+    padding-bottom: 0.4rem !important;
 }
 
 .luxury-danger-btn {
@@ -706,16 +735,41 @@
     box-shadow: none !important;
 }
 
+/* Analytics Shortcut Card */
+.analytics-shortcut-btn {
+    position: relative !important;
+    z-index: 1 !important;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+    border: 1.5px solid rgba(234, 179, 8, 0.4) !important;
+    border-radius: 16px !important;
+    color: #facc15 !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.25s ease !important;
+    width: 100% !important;
+    cursor: pointer !important;
+}
+
+.analytics-shortcut-btn:hover {
+    border-color: rgba(234, 179, 8, 0.8) !important;
+    box-shadow: 0 6px 20px rgba(234, 179, 8, 0.35) !important;
+    transform: translateY(-1px) !important;
+}
+
 /* Close Settings Button */
 .luxury-close-btn {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    position: relative !important;
+    z-index: 1 !important;
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
     color: #0f172a !important;
     font-weight: 900 !important;
     font-size: 1.05rem !important;
     padding: 0.85rem 1.2rem !important;
     border-radius: 16px !important;
     border: none !important;
-    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;

@@ -203,12 +203,14 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const canBuy = details.canAfford;
 
         card.className = 'upgrade-card premium-upg-card';
-        let eps = 0;
+        let eps = 0, nextEps = 0;
         if (type === 'teller') {
             const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
             eps = reward / speed;
+            nextEps = reward / nextSpeed;
         } else {
             eps = capacity / speed;
+            nextEps = nextCapacity / nextSpeed;
         }
         
         card.innerHTML = `
@@ -243,6 +245,8 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                         <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
                         <div class="upg-v2-stat-val">
                             <span class="val-current">${formatMoney(eps)}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">➔</span>
+                            <span class="val-next">${formatMoney(nextEps)}</span>
                         </div>
                     </div>
                     <div class="upg-v2-stat">

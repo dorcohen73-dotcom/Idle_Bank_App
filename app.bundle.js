@@ -3256,12 +3256,14 @@
       }
       const canBuy = details.canAfford;
       card.className = "upgrade-card premium-upg-card";
-      let eps = 0;
+      let eps = 0, nextEps = 0;
       if (type === "teller") {
         const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
         eps = reward / speed;
+        nextEps = reward / nextSpeed;
       } else {
         eps = capacity / speed;
+        nextEps = nextCapacity / nextSpeed;
       }
       card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
@@ -3295,6 +3297,8 @@
                         <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
                         <div class="upg-v2-stat-val">
                             <span class="val-current">${formatMoney(eps)}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">\u2794</span>
+                            <span class="val-next">${formatMoney(nextEps)}</span>
                         </div>
                     </div>
                     <div class="upg-v2-stat">
@@ -4812,7 +4816,7 @@
                   const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
                   const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
-                  const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + "</span>";
+                  const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(reward / nextSpeed) + "</span>";
                   const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                   if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
@@ -4856,7 +4860,7 @@
                   const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                   const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
-                  const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + "</span>";
+                  const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity / nextSpeed) + "</span>";
                   const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                   if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;

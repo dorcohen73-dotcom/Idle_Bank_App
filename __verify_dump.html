@@ -1,0 +1,2396 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-version="1.0.140" style="--bg-color: #080c1d; --surface-color: rgba(13, 22, 54, 0.78); --surface-hover: rgba(20, 32, 75, 0.92); --border-color: rgba(223, 171, 41, 0.22); --border-glow: rgba(223, 171, 41, 0.12); --text-main: #f3f4f6; --text-muted: #9ca3af; --glass-blur: blur(16px);"><head>
+    <script>
+        if (!localStorage.getItem('force_reload_v8')) {
+            localStorage.setItem('force_reload_v8', 'true');
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                    window.location.reload(true);
+                });
+            } else {
+                window.location.reload(true);
+            }
+        }
+    </script>
+    <meta charset="UTF-8">
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://worldtimeapi.org; media-src 'self';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bank Empire - Premium Idle Game</title>
+
+    <meta property="og:title" content="אימפריית הבנקים">
+    <meta property="og:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
+    <meta property="og:image" content="images/icon.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="אימפריית הבנקים">
+    <meta name="twitter:description" content="הפוך מטייקון מתחיל למנהל אימפריית בנקים עולמית. משחק קליל וממכר עם גרפיקה יוקרתית, שדרוגים, מנהלים וסניפים ברחבי העולם!">
+    <meta name="twitter:image" content="images/icon.png">
+
+    <!-- Critical splash-screen CSS, inlined so it paints correctly on the very first
+         frame. style.css is 10,000+ lines and render-blocking — on a slow device the
+         page can stay unstyled (default image size, i.e. huge) or fully unpainted
+         (blank) for however long it takes that file to load and parse. These rules
+         duplicate a subset of style.css; that's intentional and harmless. -->
+    <style>
+        #splash-screen.luxury-splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #020617 url('images/splash_bg.png') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 5vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #splash-screen .splash-content {
+            position: relative; width: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #splash-screen .splash-logo-container {
+            margin-top: 5vh; height: 50vh;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 2;
+        }
+        #splash-screen .splash-logo-img {
+            height: 100%; max-height: 480px; object-fit: contain;
+        }
+        #splash-screen .splash-title-container { text-align: center; margin-bottom: 4vh; position: relative; z-index: 2; }
+        #splash-screen .splash-loading-area { width: 85%; max-width: 400px; margin-bottom: 6vh; position: relative; z-index: 2; }
+        @media (max-width: 768px) {
+            #splash-screen .splash-logo-container {
+                height: 35vh; margin-top: 5vh; width: 100%; max-width: 90vw;
+            }
+            #splash-screen .splash-logo-img {
+                height: auto; max-height: 35vh; max-width: 100%; object-fit: contain;
+            }
+        }
+    </style>
+
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <!-- Google Fonts - Heebo -->
+    <!-- Swap ensures that if the user's connection is slow, they still see Arial, and it swaps to Heebo when loaded -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+    <!-- Preload critical assets -->
+    <link rel="preload" href="images/icon.png" as="image">
+    <link rel="preload" href="images/nav_bank.png" as="image">
+    <link rel="preload" href="images/splash_bg.png" as="image">
+    <link rel="preload" href="images/splash_logo.png" as="image">
+
+    <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
+         includes what used to be premium_depts.css and premium_managers.css. -->
+    <link rel="stylesheet" href="style.css?v=4823105af1">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#dfab29">
+
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bank Empire">
+    <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="apple-touch-icon" href="images/icon.png">
+</head>
+
+<body style="background-image: radial-gradient(at 0% 0%, rgba(223, 171, 41, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);">
+    <a href="#main-content" class="skip-link" id="skip-link">Skip to content</a>
+
+    <!-- Luxury Splash Screen -->
+    <div id="splash-screen" class="luxury-splash" style="opacity: 0; transform: scale(1.05); visibility: hidden;">
+        <!-- Animated Background Elements -->
+        <div class="splash-particles" id="splash-particles"></div>
+        <div class="splash-grid-overlay"></div>
+        
+        <div class="splash-content">
+            <!-- Glowing Halo behind logo -->
+            <div class="splash-halo"></div>
+            
+            <div class="splash-logo-container">
+                <img src="images/splash_logo.png" alt="Bank Logo" class="splash-logo-img">
+                <div class="splash-door-light"></div>
+                <div class="splash-podium"></div>
+            </div>
+            
+            <div class="splash-title-container">
+                <div class="splash-welcome-text">WELCOME TO</div>
+                <h1 class="splash-title-main">BANK EMPIRE</h1>
+                <div class="splash-title-divider">
+                    <span class="diamond-icon">♦</span>
+                    <span class="splash-subtitle-en">BUILD YOUR FINANCIAL EMPIRE</span>
+                    <span class="diamond-icon">♦</span>
+                </div>
+            </div>
+            
+            <div class="splash-loading-area">
+                <div class="splash-progress-wrapper">
+                    <div class="splash-progress-track">
+                        <div class="splash-progress-fill" id="splash-progress-fill" style="width: 100%;">
+                            <div class="splash-progress-glow"></div>
+                            <div class="splash-progress-shine"></div>
+                        </div>
+                    </div>
+                    <span class="splash-progress-text" id="splash-progress-text">100%</span>
+                </div>
+                <p class="splash-status-text" id="splash-subtitle">PREPARING GLOBAL BANKING NETWORK...</p>
+                <div class="splash-loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Header / Stats Dashboard -->
+        <header>
+
+            <!-- Top Bar: Brand + Action Buttons -->
+            <div class="luxury-topbar">
+                <div class="brand-section">
+                    <div class="brand-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="brandGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff5db"></stop>
+                                    <stop offset="30%" stop-color="#f5d070"></stop>
+                                    <stop offset="70%" stop-color="#dfaa28"></stop>
+                                    <stop offset="100%" stop-color="#916c0e"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 2L2 7V9H22V7L12 2Z" fill="url(#brandGoldGrad)"></path>
+                            <path d="M12 4.4L4.8 8H19.2L12 4.4Z" fill="#785603" opacity="0.35"></path>
+                            <rect x="3" y="9.5" width="18" height="1.5" rx="0.3" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="4.5" y="11.5" width="2" height="7.5" rx="0.2" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="4" y="11" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="4" y="19" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="9.5" y="11.5" width="2" height="7.5" rx="0.2" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="9" y="11" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="9" y="19" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="14.5" y="11.5" width="2" height="7.5" rx="0.2" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="14" y="11" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="14" y="19" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="19.5" y="11.5" width="2" height="7.5" rx="0.2" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="19" y="11" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="19" y="19" width="3" height="0.8" rx="0.1" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="2" y="19.8" width="20" height="1.2" rx="0.3" fill="url(#brandGoldGrad)"></rect>
+                            <rect x="1" y="21" width="22" height="1.2" rx="0.3" fill="url(#brandGoldGrad)"></rect>
+                        </svg>
+                    </div>
+                    <div class="brand-title">
+                        <h1 id="app-title">Bank Empire</h1>
+                        <p id="branch-name">CashUp (Local Branch)</p>
+                    </div>
+                </div>
+                <div class="header-buttons-row">
+                    <button class="sound-toggle-btn" id="analytics-btn" title="Metrics &amp; Analytics" aria-label="Metrics &amp; Analytics"><span aria-hidden="true">📊</span></button>
+                    <button class="boost-toggle-btn ad-pulse-button offer" id="boost-btn" title="2x Income Booster" aria-label="2x Income Booster">⚡ OFFER! 00:17:05</button>
+                    <button class="sound-toggle-btn header-daily-btn" id="header-daily-btn" data-tab="daily" title="הישגים" aria-label="הישגים"><span aria-hidden="true">🏆</span></button>
+                    <button class="sound-toggle-btn fortune-wheel-header-btn fortune-wheel-ready" id="fortune-wheel-btn" title="Daily Fortune Wheel" aria-label="Daily Fortune Wheel"><span aria-hidden="true">🎡</span></button>
+                    <button class="sound-toggle-btn" id="lang-btn" title="הגדרות ושפה / Settings &amp; Language" aria-label="Select Language"><span aria-hidden="true">⚙️</span></button>
+                    <button class="sound-toggle-btn" id="mute-btn" title="Mute" aria-label="Mute">🔊</button>
+                </div>
+            </div>
+
+            <!-- Premium Stats Dashboard -->
+            <div class="luxury-dashboard">
+
+                <!-- HERO: Cash Card — dominant element -->
+                <div class="premium-card cash-hero-card" id="stat-cash">
+                    <img src="images/3d-cash-stack.png" class="hero-side-img" alt="" aria-hidden="true">
+                    <div class="cash-card-shimmer"></div>
+                    <div class="cash-card-bg-ring"></div>
+                    <div class="cash-card-content">
+                        <div class="cash-card-top">
+                            <span class="cash-label" id="label-cash">Cash Balance</span>
+                        </div>
+                        <div class="cash-amount" id="cash-value" aria-live="polite" aria-atomic="true" aria-label="Cash Balance">$2K</div>
+                        <div class="cash-eps" id="eps-value-container">
+                            <span class="eps-arrow">▲</span>
+                            <span id="eps-value">$2</span>
+                            <span id="label-per-second">per second</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Stats: Gold Shares + Multiplier -->
+                <div class="secondary-cards-grid">
+
+                    <div class="premium-card secondary-card gold-shares-card" id="stat-shares">
+                        <img src="images/gold-bars.png" class="secondary-side-img" alt="" aria-hidden="true">
+                        <div class="secondary-card-accent"></div>
+                        <div class="secondary-card-content">
+                            <div class="secondary-card-top">
+                                <span class="secondary-icon">⭐</span>
+                                <span class="secondary-label" id="label-shares">Golden Shares</span>
+                            </div>
+                            <div class="secondary-value" id="shares-value">0</div>
+                            <div id="prestige-preview-label" class="prestige-hint-text">Prestige now: +83 shares 🏅</div>
+                        </div>
+                    </div>
+
+                    <div class="premium-card secondary-card multiplier-card">
+                        <img src="images/3d-rocket-purple.png" class="secondary-side-img boost-img" alt="" aria-hidden="true">
+                        <div class="secondary-card-accent multiplier-accent"></div>
+                        <div class="secondary-card-content">
+                            <div class="secondary-card-top">
+                                <span class="secondary-icon">✨</span>
+                                <span class="secondary-label" id="double-income-label">Double Income</span>
+                            </div>
+                            <div class="secondary-value multiplier-value-wrap" id="multiplier-value-container">
+                                <div id="multiplier-value" class="huge-multiplier">1x</div>
+                                <div id="label-multiplier" class="small-multiplier-label">Multiplier</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="top-overlay-ui">
+                <!-- Portrait Vault Mini Bar -->
+                <div class="vault-mini-bar" id="vault-mini-bar">
+                    <!-- שורה 1: אייקון עגול + שם + level + סכום / קיבולת + כפתור -->
+                    <div class="vault-mini-top">
+                        <img class="vault-mini-icon" id="vault-mini-icon" src="images/icon.png" alt="Vault">
+                        <div class="vault-mini-name-col">
+                            <span class="vault-mini-label" id="vault-mini-label">Vault</span>
+                        </div>
+                        <div class="vault-mini-spacer"></div>
+                        <div class="vault-mini-amounts">
+                            <span class="vault-mini-stored-val" id="vault-mini-stored">$0</span>
+                            <span class="vault-mini-slash"> / </span>
+                            <span class="vault-mini-cap-val" id="vault-mini-cap">$7.2K</span>
+                        </div>
+                        <button class="vault-mini-collect" id="vault-mini-btn" aria-label="Click to empty the vault" disabled="">💰 Collect</button>
+                    </div>
+                    <!-- שורה 2: פס מילוי + אחוז + תשואה -->
+                    <div class="vault-mini-bottom">
+                        <div class="vault-mini-track">
+                            <div id="vault-mini-fill" class="vault-mini-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Side vault fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="vault-mini-details">
+                            <span class="vault-mini-pct-wrap"><span id="vault-mini-pct">0%</span></span>
+                            <span class="vault-mini-sep">·</span>
+                            <span id="vault-mini-yield">+$7.2K/h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Grid -->
+        <main id="main-content" class="main-grid">
+
+            <!-- Bank Floor Visual Simulation -->
+            <section class="bank-floor" id="bank-floor-section" aria-label="Bank branch view">
+                <div class="panel-header">
+                    <div class="panel-title"><span aria-hidden="true">🏛️</span> <span id="label-simulator-title">Bank Simulator</span></div>
+                    <div class="panel-badge" id="label-panel-badge">Active Cash Flow</div>
+                </div>
+
+                <!-- Simulation Visual Board -->
+                <div class="floor-map" id="floor-map">
+                    <!-- Decorative Bank Assets -->
+                    <div class="bank-decor security-camera" aria-hidden="true" style="cursor: pointer;">📹</div>
+                    <div class="bank-decor atm-machine" aria-hidden="true" style="cursor: pointer;">🏧</div>
+                    <div class="bank-decor gold-pillar pillar-l" aria-hidden="true">🏛️</div>
+                    <div class="bank-decor gold-pillar pillar-r" aria-hidden="true">🏛️</div>
+                    <div class="bank-decor potted-plant plant-l" aria-hidden="true" style="cursor: pointer;">🌿</div>
+                    <div class="bank-decor potted-plant plant-r" aria-hidden="true" style="cursor: pointer;">🌿</div>
+
+                    <!-- Customer Queue Group (Premium Redesign) -->
+                    <div class="queue-wrapper queue-premium-design">
+                        <!-- Top Progress Section -->
+                        <div class="queue-top-section">
+                            <div class="queue-capacity-label" id="queue-capacity-label">0/5</div>
+                            <div class="queue-progress-bar">
+                                <div class="queue-progress-fill" id="queue-progress-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Customer queue" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Subtitle Status Section -->
+                        <div class="queue-status-section">
+                            <span class="queue-status-text" id="queue-status-text">Empty</span>
+                            <span class="queue-status-icon" id="queue-status-icon" style="color: var(--danger-red);">❕</span>
+                        </div>
+                    </div>
+
+                    <!-- Advertising Campaign budget control -->
+                    <div class="advertising-control" id="label-adv-control" title="Sponsored marketing campaign to attract clients">
+                        <div class="adv-header">
+                            <span class="adv-title" id="label-adv-title">📢 Ad Campaign</span>
+                            <span class="adv-value" id="adv-budget-display">Off</span>
+                        </div>
+                        <div class="adv-slider-wrapper">
+                            <span class="adv-limit" id="label-adv-limit-off">Off</span>
+                            <input type="range" id="adv-budget-slider" min="0" max="1000" step="10" value="0" class="adv-slider" aria-label="Ad campaign budget" style="">
+                            <span class="adv-limit" id="label-adv-limit-max">$100</span>
+                        </div>
+                    </div>
+
+                    <!-- Tellers Desks -->
+                    <div class="tellers-zone count-4" id="tellers-zone"><div id="teller-node-0" class="teller-counter active" data-id="0">
+                <div class="glass-showcase">
+                    <img class="teller-bg-img" src="images/teller-1.png?v=20260626" alt="">
+                    <div class="client-slot-3d" id="teller-client-0" title="Serving Client"></div>
+                </div>
+                <div class="gold-plaque">
+                    <div class="plaque-header">
+                        <span class="plaque-title">Teller 1</span>
+                        <span class="plaque-level" id="teller-lvl-lbl-0">Lvl 1</span>
+                    </div>
+                    <div class="plaque-body">
+                        <div class="plaque-cash" id="teller-cash-0">$0</div>
+                        <button class="plaque-collect-btn disabled" id="teller-collect-0">Collect</button>
+                    </div>
+                    <div class="plaque-progress-container">
+                        <div class="plaque-progress-fill" id="teller-progress-0" style="transform: scaleX(0);"></div>
+                    </div>
+                </div>
+            </div><div id="teller-node-1" class="teller-counter locked" data-id="1">
+                <div class="lock-info">
+                    <div class="lock-icon">🔒</div>
+                    <div style="font-size:0.8rem; margin-bottom: 0.15rem;">Unlock Desk</div>
+                    <div class="lock-cost">$800</div>
+                </div>
+            </div><div id="teller-node-2" class="teller-counter locked" data-id="2">
+                <div class="lock-info">
+                    <div class="lock-icon">🔒</div>
+                    <div style="font-size:0.8rem; margin-bottom: 0.15rem;">Unlock Desk</div>
+                    <div class="lock-cost">$20K</div>
+                </div>
+            </div><div id="teller-node-3" class="teller-counter locked" data-id="3">
+                <div class="lock-info">
+                    <div class="lock-icon">🔒</div>
+                    <div style="font-size:0.8rem; margin-bottom: 0.15rem;">Unlock Desk</div>
+                    <div class="lock-cost">$600K</div>
+                </div>
+            </div></div>
+
+
+                    <!-- Vault Zone -->
+                    <div class="vault-zone">
+                        <!-- Left: Vault Graphic -->
+                        <div class="vault-graphic" id="vault-graphic" role="button" tabindex="0" aria-label="Click to empty the vault" title="Click to empty the vault">
+                            <img class="vault-door-img" src="images/vault-door.png" alt="" style="filter: none; transform: scale(1);">
+                            <div class="vault-graphic-label" id="vault-graphic-label">BANK</div>
+                        </div>
+
+                        <!-- Right: Vault Info -->
+                        <div class="vault-info">
+                            <!-- Top Row: Title & Action Button -->
+                            <div class="vault-top-row">
+                                <div class="vault-title-container">
+                                    <div class="vault-title-wrapper">
+                                        <span class="vault-shield-icon" aria-hidden="true">🛡️</span>
+                                        <div class="vault-title" id="label-vault-title">Main Vault</div>
+                                    </div>
+                                    <div class="vault-subtitle" id="label-vault-subtitle">Passive income from the main vault</div>
+                                </div>
+
+                                <button class="collect-vault-btn disabled" id="collect-vault-btn" aria-label="Collect Vault">Collect Vault</button>
+                            </div>
+
+                            <!-- Progress Bar Row -->
+                            <div class="vault-progress-row">
+                                <span class="vault-progress-label" id="vault-progress-label">Vault Fill: 0%</span>
+                                <div class="vault-fill-bar-container">
+                                    <div class="vault-fill-bar-fill" id="vault-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="מילוי כספת ראשית" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Stats Cards Grid -->
+                            <div class="vault-stats-grid">
+                                <!-- Card 1: Yield -->
+                                <div class="vault-stat-card yield-card">
+                                    <span class="vault-stat-icon" aria-hidden="true">📈</span>
+                                    <div class="vault-stat-text">
+                                        <span class="vault-stat-label" id="label-vault-yield-title">Hourly Profit</span>
+                                        <span class="vault-stat-value text-green" id="vault-yield-value">+$7.2K</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Capacity -->
+                                <div class="vault-stat-card cap-card">
+                                    <span class="vault-stat-icon" aria-hidden="true">💵</span>
+                                    <div class="vault-stat-text">
+                                        <span class="vault-stat-label" id="label-vault-cap-title">Vault Capacity</span>
+                                        <span class="vault-stat-value text-gold" id="vault-cap-value">$7.2K</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Volume -->
+                                <div class="vault-stat-card volume-card">
+                                    <span class="vault-stat-icon" aria-hidden="true">📊</span>
+                                    <div class="vault-stat-text">
+                                        <span class="vault-stat-label" id="label-vault-volume-title">Volume</span>
+                                        <span class="vault-stat-value" id="vault-stats">
+        <div>
+            <span class="vault-current-value">$0</span> / <span class="vault-limit-label">$7.2K</span>
+        </div>
+    </span>
+                                    </div>
+                                    <button class="vault-info-btn" id="vault-info-btn" title="Vault interest info" aria-label="Vault interest info">i</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="guard-runner state-idle" data-guard-id="0" style="z-index: 310; will-change: transform, left, top; position: absolute; left: 44.1875px; top: -80.0938px; transform: translate(-50%, -50%);"><div class="guard-runner-avatar"></div><div class="guard-runner-load"></div></div></section>
+
+            <!-- Control & Upgrades Panel -->
+            <section class="control-panel" id="control-panel-section" aria-label="Control Panel &amp; Upgrades">
+                <h2 class="control-panel-title" id="control-panel-sr-heading">Control Panel &amp; Upgrades</h2>
+                <!-- Navigation Tabs -->
+                <nav class="tabs-nav" id="tabs-nav" role="tablist" aria-label="Internal navigation menu">
+                    <button class="tab-btn active" data-tab="upgrades" id="tab-btn-upgrades" role="tab" aria-selected="true" aria-controls="tab-upgrades" style="position: relative;">
+                        <img src="images/nav_bank.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Counters</span>
+                    <div class="notification-dot"></div></button>
+                    <button class="tab-btn" data-tab="managers" id="tab-btn-managers" role="tab" aria-selected="false" aria-controls="tab-managers">
+                        <img src="images/nav_suit.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Managers</span>
+                    </button>
+                    <button class="tab-btn" data-tab="departments" id="tab-btn-departments" role="tab" aria-selected="false" aria-controls="tab-departments">
+                        <img src="images/nav_building.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Depts</span>
+                    </button>
+                    <button class="tab-btn" data-tab="missions" id="tab-btn-missions" role="tab" aria-selected="false" aria-controls="tab-missions">
+                        <img src="images/nav_trophy.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Missions</span>
+                    </button>
+                    <button class="tab-btn" data-tab="daily" id="tab-btn-daily" role="tab" aria-selected="false" aria-controls="tab-daily">
+                        <img src="images/nav_calendar.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Daily</span>
+                    </button>
+                    <button class="tab-btn" data-tab="branches" id="tab-btn-branches" role="tab" aria-selected="false" aria-controls="tab-branches">
+                        <img src="images/nav_globe.png" class="nav-3d-icon-small" alt="">
+                        <span class="tab-label">Branches</span>
+                    </button>
+                </nav>
+
+                <!-- Bulk Upgrade Selector -->
+                <div class="bulk-upgrade-selector" id="global-bulk-selector">
+                    <span class="bulk-label" id="bulk-label-text">Upgrade Mode:</span>
+                    <div class="bulk-options">
+                        <button class="bulk-btn-option active" data-mode="x1">x1</button>
+                        <button class="bulk-btn-option" data-mode="x10">x10</button>
+                        <button class="bulk-btn-option" data-mode="max">MAX</button>
+                    </div>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="tab-content">
+
+                    <!-- Upgrades Tab Pane -->
+                    <div class="tab-pane active" id="tab-upgrades" role="tabpanel" aria-labelledby="tab-btn-upgrades"><div class="upgrades-grid"><div class="upgrade-card premium-upg-card smart-recommendation-glow" style="position: relative;">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/teller-1.png'); background-position: center; background-size: cover;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge">Teller 1</div>
+                    <div class="upg-v2-main-title">
+                        <svg class="bank-icon-title" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-6 8 6"></path><rect x="4" y="10" width="16" height="12" rx="2"></rect><path d="M12 2v6"></path><path d="M8 2h8"></path><path d="M9 14h6"></path><path d="M9 18h6"></path></svg>
+                        Lv 1
+                    </div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Serves customers and generates piles of cash.</div>
+                
+                <div class="upg-v2-stats-glass-box">
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Desk Cap</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">$600</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">$645</span></div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Total Yield</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">$2</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">$2</span></div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Speed</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">5.0</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">4.7</span></div>
+                    </div>
+                </div>
+                
+                <button class="upg-v2-buy-btn buy-btn " data-type="teller" data-id="0" aria-label="Upgrade Teller 1 - Lvl 1 — $60">
+                    <div class="upg-v2-btn-left">
+                        <svg class="premium-cash-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff2a8"></stop>
+                                    <stop offset="40%" stop-color="#d4af37"></stop>
+                                    <stop offset="80%" stop-color="#aa7c11"></stop>
+                                    <stop offset="100%" stop-color="#664600"></stop>
+                                </linearGradient>
+                                <linearGradient id="cashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#4ade80"></stop>
+                                    <stop offset="100%" stop-color="#166534"></stop>
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.8"></feDropShadow>
+                                </filter>
+                            </defs>
+                            <!-- Stack of Cash -->
+                            <rect x="15" y="40" width="70" height="40" rx="4" fill="url(#cashGrad)" filter="url(#glow)" transform="rotate(-10 50 50)"></rect>
+                            <rect x="10" y="30" width="70" height="40" rx="4" fill="#22c55e" filter="url(#glow)" transform="rotate(-5 50 50)"></rect>
+                            <rect x="5" y="20" width="70" height="40" rx="4" fill="#4ade80" filter="url(#glow)"></rect>
+                            <rect x="15" y="30" width="50" height="20" rx="2" fill="#14532d"></rect>
+                            <circle cx="40" cy="40" r="6" fill="#4ade80"></circle>
+                            <!-- Gold Coins -->
+                            <ellipse cx="75" cy="70" rx="18" ry="6" fill="#8c6600"></ellipse>
+                            <ellipse cx="75" cy="68" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="75" cy="62" rx="18" ry="6" fill="#8c6600"></ellipse>
+                            <ellipse cx="75" cy="60" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="65" cy="80" rx="20" ry="8" fill="#8c6600"></ellipse>
+                            <ellipse cx="65" cy="76" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="65" cy="70" rx="20" ry="8" fill="#8c6600"></ellipse>
+                            <ellipse cx="65" cy="66" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <!-- Star Sparkle -->
+                            <path d="M 20 10 L 22 18 L 30 20 L 22 22 L 20 30 L 18 22 L 10 20 L 18 18 Z" fill="#ffffff" filter="url(#glow)"></path>
+                            <path d="M 85 45 L 86 50 L 91 51 L 86 52 L 85 57 L 84 52 L 79 51 L 84 50 Z" fill="#ffffff" filter="url(#glow)"></path>
+                        </svg>
+                    </div>
+                    <div class="upg-v2-btn-center">
+                        <div class="upg-v2-btn-lbl">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+                            Upgrade
+                            <span class="upg-v2-btn-amount" style="display: none;"></span>
+                        </div>
+                        <div class="upg-v2-btn-cost">
+                            $60
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <div class="dark-circle-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        <div class="recommended-badge">🔥 Best Value</div></div><div class="upgrade-card premium-upg-card locked-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/teller-2.png'); background-position: center; background-size: cover;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">נעול</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">Teller 2 - [Locked]</div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Unlock an extra desk to boost customer flow.</div>
+                
+                <button class="upg-v2-buy-btn buy-btn " data-action="unlock-teller" data-id="1" aria-label="Unlock Desk 2 — $800">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: #2b1f02;">Unlock Desk</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">Unlock Cost</span>
+                            $800
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div><div class="upgrade-card premium-upg-card locked-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/teller-3.png'); background-position: center; background-size: cover;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">נעול</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">Teller 3 - [Locked]</div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Unlock an extra desk to boost customer flow.</div>
+                
+                <button class="upg-v2-buy-btn buy-btn disabled" data-action="unlock-teller" data-id="2" disabled="" aria-label="Unlock Desk 3 — $20K">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: #64748b;">Unlock Desk</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">Unlock Cost</span>
+                            $20K
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div><div class="upgrade-card premium-upg-card locked-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/teller-4.png'); background-position: center; background-size: cover;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">נעול</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">Teller 4 - [Locked]</div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Unlock an extra desk to boost customer flow.</div>
+                
+                <button class="upg-v2-buy-btn buy-btn disabled" data-action="unlock-teller" data-id="3" disabled="" aria-label="Unlock Desk 4 — $600K">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: #64748b;">Unlock Desk</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">Unlock Cost</span>
+                            $600K
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div></div><hr style="border-top: 1px solid var(--border-color); border-right: 0px; border-bottom: 0px; border-left: 0px; border-image: initial;"><div class="upgrades-grid"><div class="upgrade-card premium-upg-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/guard.png'); background-position: center 8%; background-size: 220%;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge">Courier 1</div>
+                    <div class="upg-v2-main-title">
+                        <svg class="bank-icon-title" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-6 8 6"></path><rect x="4" y="10" width="16" height="12" rx="2"></rect><path d="M12 2v6"></path><path d="M8 2h8"></path><path d="M9 14h6"></path><path d="M9 18h6"></path></svg>
+                        Lv 1
+                    </div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Collects cash from desks and transfers to main vault.</div>
+                
+                <div class="upg-v2-stats-glass-box">
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Capacity</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">$208</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">$223</span></div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Total Yield</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">$26</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">$30</span></div>
+                    </div>
+                    <div class="upg-v2-stat">
+                        <div class="upg-v2-stat-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="upg-v2-stat-label">Round Speed</div>
+                        <div class="upg-v2-stat-val"><span class="val-current">8.0</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">7.4</span></div>
+                    </div>
+                </div>
+                
+                <button class="upg-v2-buy-btn buy-btn " data-type="guard" data-id="0" aria-label="Upgrade Guard 1 - Lvl 1 — $130">
+                    <div class="upg-v2-btn-left">
+                        <svg class="premium-cash-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff2a8"></stop>
+                                    <stop offset="40%" stop-color="#d4af37"></stop>
+                                    <stop offset="80%" stop-color="#aa7c11"></stop>
+                                    <stop offset="100%" stop-color="#664600"></stop>
+                                </linearGradient>
+                                <linearGradient id="cashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#4ade80"></stop>
+                                    <stop offset="100%" stop-color="#166534"></stop>
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.8"></feDropShadow>
+                                </filter>
+                            </defs>
+                            <!-- Stack of Cash -->
+                            <rect x="15" y="40" width="70" height="40" rx="4" fill="url(#cashGrad)" filter="url(#glow)" transform="rotate(-10 50 50)"></rect>
+                            <rect x="10" y="30" width="70" height="40" rx="4" fill="#22c55e" filter="url(#glow)" transform="rotate(-5 50 50)"></rect>
+                            <rect x="5" y="20" width="70" height="40" rx="4" fill="#4ade80" filter="url(#glow)"></rect>
+                            <rect x="15" y="30" width="50" height="20" rx="2" fill="#14532d"></rect>
+                            <circle cx="40" cy="40" r="6" fill="#4ade80"></circle>
+                            <!-- Gold Coins -->
+                            <ellipse cx="75" cy="70" rx="18" ry="6" fill="#8c6600"></ellipse>
+                            <ellipse cx="75" cy="68" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="75" cy="62" rx="18" ry="6" fill="#8c6600"></ellipse>
+                            <ellipse cx="75" cy="60" rx="18" ry="6" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="65" cy="80" rx="20" ry="8" fill="#8c6600"></ellipse>
+                            <ellipse cx="65" cy="76" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <ellipse cx="65" cy="70" rx="20" ry="8" fill="#8c6600"></ellipse>
+                            <ellipse cx="65" cy="66" rx="20" ry="8" fill="url(#goldGrad)" filter="url(#glow)"></ellipse>
+                            <!-- Star Sparkle -->
+                            <path d="M 20 10 L 22 18 L 30 20 L 22 22 L 20 30 L 18 22 L 10 20 L 18 18 Z" fill="#ffffff" filter="url(#glow)"></path>
+                            <path d="M 85 45 L 86 50 L 91 51 L 86 52 L 85 57 L 84 52 L 79 51 L 84 50 Z" fill="#ffffff" filter="url(#glow)"></path>
+                        </svg>
+                    </div>
+                    <div class="upg-v2-btn-center">
+                        <div class="upg-v2-btn-lbl">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+                            Upgrade
+                            <span class="upg-v2-btn-amount" style="display: none;"></span>
+                        </div>
+                        <div class="upg-v2-btn-cost">
+                            $130
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <div class="dark-circle-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div><div class="upgrade-card premium-upg-card locked-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/guard.png'); background-position: center 8%; background-size: 220%;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">נעול</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">Guard 2 - [Locked]</div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Hire another guard to move cash faster.</div>
+                
+                <button class="upg-v2-buy-btn buy-btn disabled" data-action="unlock-guard" data-id="1" disabled="" aria-label="Unlock Desk 2 — $2.5K">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: #64748b;">Hire Guard</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">Unlock Cost</span>
+                            $2.5K
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div><div class="upgrade-card premium-upg-card locked-card">
+            <div class="upg-v2-avatar-large" style="background-image: url('images/guard.png'); background-position: center 8%; background-size: 220%;"></div>
+            <div class="upg-v2-content-overlay">
+                <div class="upg-v2-header-row">
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">נעול</div>
+                    <div class="upg-v2-main-title" style="color: #cbd5e1;">Guard 3 - [Locked]</div>
+                </div>
+                
+                <div class="upg-v2-desc-text">Hire another guard to move cash faster.</div>
+                
+                <button class="upg-v2-buy-btn buy-btn disabled" data-action="unlock-guard" data-id="2" disabled="" aria-label="Unlock Desk 3 — $70K">
+                    <div class="upg-v2-btn-left">
+                        <div class="upg-v2-btn-lbl" style="color: #64748b;">Hire Guard</div>
+                        <div class="upg-v2-btn-cost">
+                            <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            <span class="upg-v2-btn-sub">Unlock Cost</span>
+                            $70K
+                        </div>
+                    </div>
+                    <div class="upg-v2-btn-right">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div></div><hr style="border-top: 1px solid var(--border-color); border-right: 0px; border-bottom: 0px; border-left: 0px; border-image: initial;"><div class="upgrades-grid"><div class="upgrade-card premium-upg-card">
+        <div class="upg-v2-avatar-large" style="background-image: url('images/vault-door.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-content-overlay">
+            <div class="upg-v2-header-row">
+                <div class="upg-v2-badge">Main Vault</div>
+                <div class="upg-v2-main-title">Lv 1</div>
+            </div>
+            
+            <div class="upg-v2-desc-text">Stores all collected cash in the bank.</div>
+            
+            <div class="upg-v2-stats-glass-box">
+                <div class="upg-v2-stat">
+                    <div class="upg-v2-stat-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    </div>
+                    <div class="upg-v2-stat-label">Storage Volume</div>
+                    <div class="upg-v2-stat-val"><span class="val-current">$7.2K</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">$7.2K</span></div>
+                </div>
+            </div>
+            
+            <button class="upg-v2-buy-btn buy-btn " id="upgrade-vault-btn" aria-label="Upgrade Main Vault — $250">
+                <div class="upg-v2-btn-left">
+                    <div class="upg-v2-btn-sparkles">✨</div>
+                    <div class="upg-v2-btn-lbl">Upgrade <span class="upg-v2-btn-amount"></span></div>
+                    <div class="upg-v2-btn-cost">
+                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        <span class="upg-v2-btn-sub">Total Upgrade</span>
+                        $250
+                    </div>
+                </div>
+                <div class="upg-v2-btn-right">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </div>
+            </button>
+        </div>
+    </div><div class="upgrade-card premium-upg-card">
+        <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
+        <div class="upg-v2-content-overlay">
+            <div class="upg-v2-header-row">
+                <div class="upg-v2-badge">תור</div>
+                <div class="upg-v2-main-title">Lv 1</div>
+            </div>
+            
+            <div class="upg-v2-desc-text">Increases lobby waiting capacity for more clients.</div>
+            
+            <div class="upg-v2-stats-glass-box">
+                <div class="upg-v2-stat">
+                    <div class="upg-v2-stat-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div class="upg-v2-stat-label">Queue Capacity</div>
+                    <div class="upg-v2-stat-val">5 <span class="arrow">➔</span> 10</div>
+                </div>
+            </div>
+            
+            <button class="upg-v2-buy-btn buy-btn " id="upgrade-queue-btn">
+                <div class="upg-v2-btn-left">
+                    <div class="upg-v2-btn-sparkles">✨</div>
+                    <div class="upg-v2-btn-lbl">Upgrade Lobby <span class="upg-v2-btn-amount"></span></div>
+                    <div class="upg-v2-btn-cost">
+                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        <span class="upg-v2-btn-sub">Total Upgrade</span>
+                        $2K
+                    </div>
+                </div>
+                <div class="upg-v2-btn-right">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </div>
+            </button>
+        </div>
+    </div></div><hr style="border-top: 1px solid var(--border-color); border-right: 0px; border-bottom: 0px; border-left: 0px; border-image: initial;"></div>
+
+                    <!-- Managers Tab Pane -->
+                    <div class="tab-pane" id="tab-managers" role="tabpanel" aria-labelledby="tab-btn-managers"><div class="managers-grid"><div class="upgrade-card manager-card feature-card theme-gold ">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col">
+                        <img src="images/manager-1.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">👑</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Customer Manager</div>
+                                <div class="mgr-stars"><span class="star gold-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 1</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">💎</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+6%</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Client Speed</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
+                                </div>
+                            </div>
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+6%</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Satisfaction</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val">$0</span>
+                                    <span class="per-hour-lbl">/ hr</span>
+                                </div>
+                            </div>
+                            
+                    <button class="buy-btn buy-mgr-btn mgr-buy-btn " data-mgr="customer" aria-label="Hire Customer Manager — $150">
+                        Hire<br>$150
+                    </button>
+                
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-purple active">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col">
+                        <img src="images/manager-3.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">🔮</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Operations Manager</div>
+                                <div class="mgr-stars"><span class="star gold-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 1</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">💎</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+4%</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Courier Speed</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+                                </div>
+                            </div>
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+20%</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Desk Capacity</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val">$0</span>
+                                    <span class="per-hour-lbl">/ hr</span>
+                                </div>
+                            </div>
+                            
+                    <button class="buy-btn upgrade-mgr-btn mgr-buy-btn disabled" data-mgr-type="operations" disabled="" aria-label="Upgrade Operations Manager — $45K">
+                        Upgrade<br>$45K
+                    </button>
+                
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-blue locked">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
+                        <img src="images/manager-2.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">💎</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Finance Manager</div>
+                                <div class="mgr-stars"><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">🔒</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    🔒 Requires unlocking: <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">Loans &amp; Mortgages</span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled="">
+                                Locked 🔒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-teal ">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col">
+                        <img src="images/manager-7.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">⏱️</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Chief Accountant</div>
+                                <div class="mgr-stars"><span class="star gold-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 1</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">💎</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+2h</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Max Offline Hours</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                                </div>
+                            </div>
+                            <div class="mgr-stat-pill">
+                                <div class="mgr-stat-val">+15%</div>
+                                <div class="mgr-stat-label-group">
+                                    <span class="mgr-stat-label">Offline Income</span>
+                                    <div class="mgr-stat-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val">$0</span>
+                                    <span class="per-hour-lbl">/ hr</span>
+                                </div>
+                            </div>
+                            
+                    <button class="buy-btn buy-mgr-btn mgr-buy-btn disabled" data-mgr="accountant" disabled="" aria-label="Hire Chief Accountant — $900K">
+                        Hire<br>$900K
+                    </button>
+                
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-amber locked">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
+                        <img src="images/manager-4.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">🔸</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Service Manager</div>
+                                <div class="mgr-stars"><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">🔒</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    🔒 Requires unlocking: <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">VIP Private Banking</span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled="">
+                                Locked 🔒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-red locked">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
+                        <img src="images/manager-5.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">💰</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">VIP Manager</div>
+                                <div class="mgr-stars"><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">🔒</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    🔒 Requires unlocking: <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">Stocks &amp; Crypto Trading</span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled="">
+                                Locked 🔒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="upgrade-card manager-card feature-card theme-green locked">
+                <div class="mgr-card-bg"></div>
+                <div class="mgr-layout-wrapper">
+                    <div class="mgr-portrait-col" style="filter: grayscale(1) brightness(0.5);">
+                        <img src="images/manager-6.png" class="mgr-portrait-img">
+                        <div class="mgr-gem-badge">🔹</div>
+                    </div>
+                    <div class="mgr-content-col">
+                        <div class="mgr-top-row">
+                            <div class="mgr-title-group">
+                                <div class="mgr-title">Marketing Manager</div>
+                                <div class="mgr-stars"><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span><span class="star gray-star">★</span></div>
+                                <div class="mgr-lvl-badge">Lv 0</div>
+                            </div>
+                            <div class="mgr-hex-icon"><div class="hex-inner">🔒</div></div>
+                        </div>
+                        <div class="mgr-stats-list">
+                            <div class="mgr-stat-pill" style="justify-content: center; padding: 1rem 0;">
+                                <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500; text-align: center;">
+                                    🔒 Requires unlocking: <br>
+                                    <span style="color: var(--primary-gold); margin-top: 0.2rem; display: inline-block;">"Creative" Tax Planning</span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="mgr-footer-row">
+                            <div class="mgr-footer-info">
+                                <div class="mgr-footer-lbl">Extra Yield:</div>
+                                <div class="mgr-footer-val-box">
+                                    <span class="mgr-footer-val" style="color: var(--text-muted);">-</span>
+                                </div>
+                            </div>
+                            <button class="buy-btn mgr-buy-btn disabled" disabled="">
+                                Locked 🔒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div></div></div>
+
+                    <!-- Departments Tab Pane -->
+                    <div class="tab-pane" id="tab-departments" role="tabpanel" aria-labelledby="tab-btn-departments"><div class="upgrade-card department-card feature-card active">
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="url(#goldGrad-0)" stroke="rgba(255, 223, 128, 0.5)" stroke-width="0.6" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(223, 171, 41, 0.75)) brightness(1.15);">
+                <defs>
+                    <linearGradient id="goldGrad-0" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d"></stop>
+                        <stop offset="50%" stop-color="#dfab29"></stop>
+                        <stop offset="100%" stop-color="#9a7211"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="M4 17h16v3H4v-3zm2-8h12v7H6v-7zm1-5h10v3H7V5zM9 11h2v2H9v-2zm4 0h2v2h-2v-2zm-4 3h2v2H9v-2zm4 0h2v2h-2v-2z"></path>
+            </svg>
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        <span class="dept-title-shield"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polygon points="12 8 13.5 10.5 16 11 14 13 14.5 15.5 12 14.5 9.5 15.5 10 13 8 11 10.5 10.5 12 8" fill="currentColor" stroke="none"></polygon></svg></span>
+                        <span class="dept-title-text">Basic Teller Services</span>
+                        
+            <span class="dept-active-badge">
+                <span class="badge-dot"></span>
+                <span>Active 🟢</span>
+            </span>
+        
+                    </div>
+                    <div class="dept-stats-row">
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Base Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$10</span>
+                </div>
+            </div>
+        
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Adjusted Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$10</span>
+                </div>
+            </div>
+        
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                
+                <div class="max-jewel-container">
+                    <div class="max-jewel">
+                        <div class="jewel-content">
+                            <div class="jewel-check">✓</div>
+                            <div class="jewel-text">MAX</div>
+                        </div>
+                    </div>
+                    <div class="max-jewel-label">Maximum</div>
+                </div>
+            
+            </div>
+        </div><div class="upgrade-card department-card feature-card locked">
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="url(#goldGrad-1)" style="filter: grayscale(1) opacity(0.3);">
+                <defs>
+                    <linearGradient id="goldGrad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d"></stop>
+                        <stop offset="50%" stop-color="#dfab29"></stop>
+                        <stop offset="100%" stop-color="#9a7211"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v-2zm0-4H8v-2h8v-2zm-3-5V3.5L17.5 8H13z"></path>
+                <path d="M16 16.5l3.5-3 3.5 3v4.5h-7v-4.5z"></path>
+            </svg>
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        
+                        <span class="dept-title-text">Loans &amp; Mortgages</span>
+                        
+                    </div>
+                    <div class="dept-stats-row">
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Base Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$60</span>
+                </div>
+            </div>
+        
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                
+                <button class="dept-action-btn buy-btn disabled" data-dept-idx="1" disabled="">
+                    <span class="btn-arrow">▲</span>
+                    <span class="btn-lbl">Unlock Dept</span>
+                    <span class="btn-cost">$10.5K</span>
+                </button>
+            
+            </div>
+        </div><div class="upgrade-card department-card feature-card locked">
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="url(#goldGrad-2)" style="filter: grayscale(1) opacity(0.3);">
+                <defs>
+                    <linearGradient id="goldGrad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d"></stop>
+                        <stop offset="50%" stop-color="#dfab29"></stop>
+                        <stop offset="100%" stop-color="#9a7211"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="M2 4l4 6 6-7 6 7 4-6-2 13H4L2 4zm2 15h16v2H4v-2z"></path>
+            </svg>
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        
+                        <span class="dept-title-text">VIP Private Banking</span>
+                        
+                    </div>
+                    <div class="dept-stats-row">
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Base Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$450</span>
+                </div>
+            </div>
+        
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                
+                <button class="dept-action-btn buy-btn disabled" data-dept-idx="2" disabled="">
+                    <span class="btn-arrow">▲</span>
+                    <span class="btn-lbl">Unlock Dept</span>
+                    <span class="btn-cost">$240K</span>
+                </button>
+            
+            </div>
+        </div><div class="upgrade-card department-card feature-card locked">
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="url(#goldGrad-3)" style="filter: grayscale(1) opacity(0.3);">
+                <defs>
+                    <linearGradient id="goldGrad-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d"></stop>
+                        <stop offset="50%" stop-color="#dfab29"></stop>
+                        <stop offset="100%" stop-color="#9a7211"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="M4 16h3v5H4v-5zm5-6h3v11H9V10zm5-4h3v15h-3V6zm5-4h3v19h-3V2z"></path>
+                <path d="M2 11l6-6 4 3 8-8h-4V1h6v6h-1l-9 9-4-3-7 7z"></path>
+            </svg>
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        
+                        <span class="dept-title-text">Stocks &amp; Crypto Trading</span>
+                        
+                    </div>
+                    <div class="dept-stats-row">
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Base Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$3.5K</span>
+                </div>
+            </div>
+        
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                
+                <button class="dept-action-btn buy-btn disabled" data-dept-idx="3" disabled="">
+                    <span class="btn-arrow">▲</span>
+                    <span class="btn-lbl">Unlock Dept</span>
+                    <span class="btn-cost">$3.6M</span>
+                </button>
+            
+            </div>
+        </div><div class="upgrade-card department-card feature-card locked">
+            <div class="dept-card-body">
+                <div class="dept-icon-frame">
+                    <div class="dept-ring dept-ring-1"></div>
+                    <div class="dept-ring dept-ring-2"></div>
+                    <div class="dept-ring dept-ring-3"></div>
+                    <div class="dept-icon-content">
+                        
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="url(#goldGrad-4)" style="filter: grayscale(1) opacity(0.3);">
+                <defs>
+                    <linearGradient id="goldGrad-4" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f5cf6d"></stop>
+                        <stop offset="50%" stop-color="#dfab29"></stop>
+                        <stop offset="100%" stop-color="#9a7211"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="M12 2L2 7v2h20V7L12 2zm-8 8v9h2v-9H4zm5 0v9h2v-9H9zm5 0v9h2v-9h-2zm5 0v9h2v-9h-2zM2 20v2h20v-2H2z"></path>
+            </svg>
+                    </div>
+                </div>
+                <div class="dept-details">
+                    <div class="dept-title-row">
+                        
+                        <span class="dept-title-text">"Creative" Tax Planning</span>
+                        
+                    </div>
+                    <div class="dept-stats-row">
+                        
+            <div class="dept-stat-item">
+                <span class="dept-stat-label">Base Yield:</span>
+                <div class="dept-stat-value-box">
+                    <span>$30K</span>
+                </div>
+            </div>
+        
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                
+                <button class="dept-action-btn buy-btn disabled" data-dept-idx="4" disabled="">
+                    <span class="btn-arrow">▲</span>
+                    <span class="btn-lbl">Unlock Dept</span>
+                    <span class="btn-cost">$75M</span>
+                </button>
+            
+            </div>
+        </div></div>
+
+                    <!-- Missions Tab Pane -->
+                    <div class="tab-pane" id="tab-missions" role="tabpanel" aria-labelledby="tab-btn-missions"><div class="missions-summary-header">
+        <div class="summary-badge">
+            <span class="trophy-icon">🏆</span>
+            <span>🏆 Completed Missions: 0</span>
+        </div>
+        <p class="summary-desc">Complete official tasks on behalf of the Board of Directors and receive instant cash grants!</p>
+    </div><div class="mission-card " data-mission-id="m_1_4206">
+            <div class="mission-reward-badge">
+                <span>Profit: +$600 💰</span>
+            </div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="./images/client-10.png" alt="">
+                </div>
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">Customer Service in Branch</div>
+                        <div class="mission-desc">Serve 63 more clients in the branch</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: 0%"></div>
+                            <div class="progress-text-overlay">
+                                0
+                                /
+                                63
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="24" stroke-width="5" fill="none"></circle>
+                        <circle class="circle-value" cx="32" cy="32" r="24" stroke-width="5" fill="none" stroke-dasharray="150.79644737231007" stroke-dashoffset="150.79644737231007"></circle>
+                    </svg>
+                    <div class="circle-text">0%</div>
+                </div>
+            </div>
+            
+        </div><div class="mission-card " data-mission-id="m_2_7852">
+            <div class="mission-reward-badge">
+                <span>Profit: +$720 💰</span>
+            </div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="./images/teller-7.png" alt="">
+                </div>
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">Upgrade Teller Desks</div>
+                        <div class="mission-desc">Upgrade Teller Desk 1 to level 6</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: 16.666666666666664%"></div>
+                            <div class="progress-text-overlay">
+                                1
+                                /
+                                6
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="24" stroke-width="5" fill="none"></circle>
+                        <circle class="circle-value" cx="32" cy="32" r="24" stroke-width="5" fill="none" stroke-dasharray="150.79644737231007" stroke-dashoffset="125.66370614359172"></circle>
+                    </svg>
+                    <div class="circle-text">17%</div>
+                </div>
+            </div>
+            
+        </div><div class="mission-card " data-mission-id="m_3_2651">
+            <div class="mission-reward-badge">
+                <span>Profit: +$720 💰</span>
+            </div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="./images/guard_circle.png" alt="">
+                </div>
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">Upgrade Security System</div>
+                        <div class="mission-desc">Upgrade Guard 1 to level 6</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: 16.666666666666664%"></div>
+                            <div class="progress-text-overlay">
+                                1
+                                /
+                                6
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="24" stroke-width="5" fill="none"></circle>
+                        <circle class="circle-value" cx="32" cy="32" r="24" stroke-width="5" fill="none" stroke-dasharray="150.79644737231007" stroke-dashoffset="125.66370614359172"></circle>
+                    </svg>
+                    <div class="circle-text">17%</div>
+                </div>
+            </div>
+            
+        </div><div class="mission-card " data-mission-id="m_4_4843">
+            <div class="mission-reward-badge">
+                <span>Profit: +$1.5K 💰</span>
+            </div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="./images/gold-truck.png" alt="">
+                </div>
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">Open New Departments</div>
+                        <div class="mission-desc">Unlock 2 departments in the bank</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: 50%"></div>
+                            <div class="progress-text-overlay">
+                                1
+                                /
+                                2
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="24" stroke-width="5" fill="none"></circle>
+                        <circle class="circle-value" cx="32" cy="32" r="24" stroke-width="5" fill="none" stroke-dasharray="150.79644737231007" stroke-dashoffset="75.39822368615503"></circle>
+                    </svg>
+                    <div class="circle-text">50%</div>
+                </div>
+            </div>
+            
+        </div><div class="mission-card " data-mission-id="m_5_6506">
+            <div class="mission-reward-badge">
+                <span>Profit: +$737 💰</span>
+            </div>
+            <div class="mission-card-top">
+                <div class="mission-image-box">
+                    <div class="mission-image-glow"></div>
+                    <img class="mission-illustration" src="./images/gold-bars.png" alt="">
+                </div>
+                <div class="mission-content-middle">
+                    <div class="mission-details">
+                        <div class="mission-title">Accumulate Cash</div>
+                        <div class="mission-desc">Earn a total of $2.91K</div>
+                    </div>
+                    <div class="mission-progress-row">
+                        <div class="mission-progress-outer">
+                            <div class="mission-progress-bar" style="width: 0%"></div>
+                            <div class="progress-text-overlay">
+                                $0
+                                /
+                                $2.91K
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-circle-progress">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle class="circle-bg" cx="32" cy="32" r="24" stroke-width="5" fill="none"></circle>
+                        <circle class="circle-value" cx="32" cy="32" r="24" stroke-width="5" fill="none" stroke-dasharray="150.79644737231007" stroke-dashoffset="150.79644737231007"></circle>
+                    </svg>
+                    <div class="circle-text">0%</div>
+                </div>
+            </div>
+            
+        </div></div>
+
+                    <!-- Daily Challenges Tab Pane (merged with Achievements below, separated by a light divider) -->
+                    <div class="tab-pane" id="tab-daily" role="tabpanel" aria-labelledby="tab-btn-daily">
+                        <div id="tab-achievements">
+                            <!-- Dynamic Achievements rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Branches & Prestige Tab Pane -->
+                    <div class="tab-pane" id="tab-branches" role="tabpanel" aria-labelledby="tab-btn-branches"><div class="prestige-panel">
+        <div class="prestige-title">Prestige Mechanics (Golden Shares)</div>
+        <div class="prestige-description">
+            Sell your current branch and establish a new one. In return, you receive (Golden Shares) which grant a permanent boost to all future earnings.
+            <br>
+            <span style="color: var(--primary-gold)">Each Golden Share grants a permanent 5% boost to earnings in all branches!</span>
+        </div>
+        
+        <div class="prestige-showcase-box">
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="prestige-particle"></div>
+            <div class="showcase-label">Golden Shares received on transfer:</div>
+            <div class="showcase-value">+ 83 Shares</div>
+        </div>
+
+        <button class="prestige-beveled-btn main-prestige-btn disabled" id="main-prestige-btn">
+            Sell &amp; Rebuild!
+        </button>
+        <div class="prestige-btn-subtext">
+            Minimum cash required for prestige in this branch: $300K
+        </div>
+    </div><div class="branch-card bg-branch-0 current">
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-name">CashUp (Local Branch)</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
+                </div>
+                <div class="branch-desc">Your first local bank branch. This is where it all begins.</div>
+                
+                
+            <div class="branch-status-pill">
+                <span class="pulse-dot"></span>
+                <span>Active Branch</span>
+            </div>
+        
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
+                    <div class="mult-val">1x</div>
+                    <div class="mult-lbl">Multiplier</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    
+                </div>
+            </div>
+        </div><div class="branch-card bg-branch-1 ">
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-name">NeoBank (Financial Branch)</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
+                </div>
+                <div class="branch-desc">A global financial giant. Wealthier clients and rapid cash flow.</div>
+                
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">דרישת כסף נוכחית:</span>
+                        <span class="req-val">$300K</span>
+                    </div>
+                    <div class="branch-req-pill-crown">👑</div>
+                </div>
+                
+                
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
+                    <div class="mult-val">5x</div>
+                    <div class="mult-lbl">Multiplier</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    
+                    <button class="branch-action-btn gold-gradient-btn disabled" data-prestige-branch="1">
+                        <i class="fas fa-university" style="margin-inline-end:6px"></i>Sell &amp; Rebuild
+                    </button>
+                
+                </div>
+            </div>
+        </div><div class="branch-card bg-branch-2 ">
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-name">Crypto X (Digital Exchange)</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
+                </div>
+                <div class="branch-desc">Heart of European finance. Real estate deals and international corporate banking.</div>
+                
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">דרישת כסף נוכחית:</span>
+                        <span class="req-val">$25M</span>
+                    </div>
+                    <div class="branch-req-pill-crown">👑</div>
+                </div>
+                
+                
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
+                    <div class="mult-val">15x</div>
+                    <div class="mult-lbl">Multiplier</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    
+                    <button class="branch-action-btn ghost-gold disabled" disabled="">
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>Locked
+                    </button>
+                
+                </div>
+            </div>
+        </div><div class="branch-card bg-branch-3 ">
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-name">MoonTrade (Trading Hub)</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
+                </div>
+                <div class="branch-desc">The heart of Wall Street business. Massive deals, huge loans, and giant profits.</div>
+                
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">דרישת כסף נוכחית:</span>
+                        <span class="req-val">$5B</span>
+                    </div>
+                    <div class="branch-req-pill-crown">👑</div>
+                </div>
+                
+                
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
+                    <div class="mult-val">30x</div>
+                    <div class="mult-lbl">Multiplier</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    
+                    <button class="branch-action-btn ghost-gold disabled" disabled="">
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>Locked
+                    </button>
+                
+                </div>
+            </div>
+        </div><div class="branch-card bg-branch-4 ">
+            <div class="branch-card-right">
+                <div class="branch-header-row">
+                    <div class="branch-name">Hype Capital (Investment Empire)</div>
+                    <div class="branch-nav-icons" dir="ltr">
+                        <!-- Removed branch-diamond-icon as requested -->
+                        <i class="fas fa-chevron-right chevron-icon"></i>
+                    </div>
+                </div>
+                <div class="branch-desc">The ultimate investment empire. Legendary earnings filling golden vaults in seconds.</div>
+                
+                <div class="branch-req-pill">
+                    <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="branch-req-pill-text">
+                        <span class="req-label">דרישת כסף נוכחית:</span>
+                        <span class="req-val">$2.5T</span>
+                    </div>
+                    <div class="branch-req-pill-crown">👑</div>
+                </div>
+                
+                
+            </div>
+            <div class="branch-card-left">
+                <div class="multiplier-hexagon-badge">
+                    <div class="hex-crown"><i class="fas fa-crown"></i></div>
+                    <div class="mult-val">200x</div>
+                    <div class="mult-lbl">Multiplier</div>
+                </div>
+                <div class="branch-action-wrapper">
+                    
+                    <button class="branch-action-btn ghost-gold disabled" disabled="">
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>Locked
+                    </button>
+                
+                </div>
+            </div>
+        </div><div class="gold-shop-panel">
+        <div class="prestige-shop-header">
+            <div class="prestige-shop-bg-stars"></div>
+            <div class="prestige-title-wrapper">
+                <img src="images/golden_temple.png" class="prestige-temple-img" alt="Temple">
+                <div class="prestige-title-text">Prestige Shop<br><span class="prestige-subtitle">(Golden Upgrades)</span></div>
+            </div>
+        </div>
+        <div class="gold-upgrades-grid">
+            
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/gold-chest.png" alt="💵 Starting Cash">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Starting Cash</div>
+                    <div class="gold-upgrade-desc">Start each round with more cash. (Starts with $1000)</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/4
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="startingCash" disabled="">
+                                5 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/gold-truck.png" alt="👮 Federal Escort">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Federal Escort</div>
+                    <div class="gold-upgrade-desc">Permanent +10% speed boost for guards per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="guardSpeed" disabled="">
+                                10 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/gold-vip.png" alt="📈 Premium Customer Service">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Premium Customer Service</div>
+                    <div class="gold-upgrade-desc">Permanent +10% income boost for tellers per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="premiumYield" disabled="">
+                                15 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/gold-bars.png" alt="🪙 Enhanced Share Yield">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Enhanced Share Yield</div>
+                    <div class="gold-upgrade-desc">Increase the yield of each Golden Share by +1% per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/4
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="shareEfficiency" disabled="">
+                                25 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/vault.png" alt="💤 Longer Shifts">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Longer Shifts</div>
+                    <div class="gold-upgrade-desc">Increase maximum offline earning time by +2 hours per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="offlineEarnings" disabled="">
+                                15 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/manager-4.png" alt="👔 Advanced Software">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Advanced Software</div>
+                    <div class="gold-upgrade-desc">Permanent +10% capacity for tellers per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="tellerCapacityBoost" disabled="">
+                                20 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/vault-door.png" alt="🏦 Compressed Storage">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Compressed Storage</div>
+                    <div class="gold-upgrade-desc">Permanent +10% capacity for the vault per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="vaultCapacityBoost" disabled="">
+                                20 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/client-9.png" alt="🎩 Charismatic PR">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Charismatic PR</div>
+                    <div class="gold-upgrade-desc">Permanent +20% rewards from all random events per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/5
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="eventBonus" disabled="">
+                                30 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="gold-upgrade-card ">
+                <div class="gold-card-right">
+                    <img class="gold-big-illustration" src="images/manager-1.png" alt="📉 Corporate Training">
+                </div>
+                <div class="gold-card-middle">
+                    <div class="gold-upgrade-title">Corporate Training</div>
+                    <div class="gold-upgrade-desc">Reduces manager upgrade costs by -5% per level.</div>
+                    <div class="gold-upgrade-action-row">
+                        <span class="gold-level-pill">
+                            0/4
+                        </span>
+                        
+                            <button class="buy-btn disabled buy-gold-btn" data-gold-up="managerDiscount" disabled="">
+                                50 🪙
+                            </button>
+                        
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        
+        <div class="gold-summary-box">
+            <div class="gold-summary-title">📈 Your Total Effect</div>
+            <div class="gold-summary-grid">
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">+0%</span>
+                    <span class="gold-stat-desc">Branch Profits</span>
+                </div>
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">+0%</span>
+                    <span class="gold-stat-desc">Courier Speed</span>
+                </div>
+                <div class="gold-stat-box">
+                    <span class="gold-stat-val">$180</span>
+                    <span class="gold-stat-desc">Starting Capital</span>
+                </div>
+            </div>
+            <div class="gold-grand-bonus-row">
+                Total boost from prestige upgrades: <span class="gold-grand-bonus-val">+0% to all branch profits ⬆</span>
+            </div>
+        </div>
+    
+    </div></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <footer role="contentinfo">
+            <p id="label-footer"><span id="footer-flavor">The board agreed: annual bonuses distributed in 2027. Maybe.</span></p>
+            <div class="footer-links">
+                <a href="privacy.html" class="footer-link" id="footer-privacy-link" target="_blank" rel="noopener">Privacy Policy</a> |
+                <a href="terms.html" class="footer-link" id="footer-terms-link" target="_blank" rel="noopener">Terms of Service</a> |
+                <span class="footer-version">v1.0.140</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Daily Login Reward Modal -->
+    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true" aria-labelledby="login-reward-title">
+        <div class="modal-box">
+            <div class="modal-icon" aria-hidden="true">🎁</div>
+            <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
+            <p class="modal-text" id="login-reward-streak-text">רצף: 1 ימים</p>
+            <div class="modal-amount" id="login-reward-amount">+$0</div>
+            <p class="modal-text modal-text-muted" id="login-reward-desc"></p>
+            <div class="login-streak-strip" id="login-streak-strip"></div>
+            <button class="modal-close-btn login-reward-collect-btn" id="login-reward-collect-btn">אסוף!</button>
+        </div>
+    </div>
+
+    <!-- Offline Earnings Welcome Modal -->
+    <div class="modal-overlay" id="offline-modal" role="dialog" aria-modal="true" aria-labelledby="offline-modal-title">
+        <div class="modal-box offline-modal-premium">
+            <div class="vault-particle vp-1" style="--tx: -120px; --ty: -180px; --rot: 120deg;">💵</div>
+            <div class="vault-particle vp-2" style="--tx: 140px; --ty: -160px; --rot: -140deg;">💵</div>
+            <div class="vault-particle vp-3" style="--tx: -160px; --ty: 100px; --rot: 240deg;">💰</div>
+            <div class="vault-particle vp-4" style="--tx: 150px; --ty: 120px; --rot: -220deg;">💰</div>
+            <div class="vault-particle vp-5" style="--tx: 0px; --ty: -200px; --rot: 360deg;">💵</div>
+            
+            <img src="premium_bag.png" class="offline-premium-icon-img" alt="Money Bag" aria-hidden="true">
+            <h2 class="offline-premium-title" id="offline-modal-title">Welcome back, CEO!</h2>
+            <p class="offline-premium-subtitle" id="offline-modal-text">Your staff and managers worked hard while you were away and earned profits for the bank!</p>
+            
+            <div class="offline-premium-divider">✧</div>
+
+            <div class="offline-premium-amount-box">
+                <div class="offline-premium-amount" id="modal-amount">$0</div>
+            </div>
+
+            <div class="prestige-options prestige-options-mt">
+                <button id="offline-double-btn" class="modal-close-btn offline-premium-btn-ad">🎬 Watch ad and get 3x!</button>
+                <button id="offline-claim-btn" class="modal-close-btn offline-premium-btn-claim">Claim Regular Amount</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Selection & Settings Modal -->
+    <div class="modal-overlay active" id="lang-modal" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
+        <div class="modal-box language-modal-box">
+            <div class="modal-icon" aria-hidden="true">🌐</div>
+            <h2 class="modal-title luxury-modal-title" id="lang-modal-title">Select Language</h2>
+            <p class="modal-text" id="lang-modal-text">Choose your preferred language:</p>
+
+            <div class="lang-options-grid">
+                <button class="lang-option-card" data-lang="he">
+                    <span class="lang-flag" aria-hidden="true">🇮🇱</span>
+                    <span class="lang-country-code">IL</span>
+                    <span class="lang-name">עברית</span>
+                    <span class="lang-check-badge">✓</span>
+                </button>
+                <button class="lang-option-card active" data-lang="en">
+                    <span class="lang-flag" aria-hidden="true">🇺🇸</span>
+                    <span class="lang-country-code">US</span>
+                    <span class="lang-name">English</span>
+                    <span class="lang-check-badge">✓</span>
+                </button>
+                <button class="lang-option-card" data-lang="es">
+                    <span class="lang-flag" aria-hidden="true">🇪🇸</span>
+                    <span class="lang-country-code">ES</span>
+                    <span class="lang-name">Español</span>
+                    <span class="lang-check-badge">✓</span>
+                </button>
+                <button class="lang-option-card" data-lang="ru">
+                    <span class="lang-flag" aria-hidden="true">🇷🇺</span>
+                    <span class="lang-country-code">RU</span>
+                    <span class="lang-name">Русский</span>
+                    <span class="lang-check-badge">✓</span>
+                </button>
+            </div>
+
+            <!-- Theme Selection -->
+            <div class="settings-theme-section">
+                <h3 id="settings-theme-title" class="settings-section-title luxury-section-title">Choose Background Color:</h3>
+                <div class="theme-options-row">
+                    <button class="theme-option-btn-choice active" data-theme="blue">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">כחול / Blue</span>
+                        <span class="theme-check-badge">✓</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="white">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">לבן / Light</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="dark">
+                        <span class="theme-icon">🌙</span>
+                        <span class="theme-label">שחור / Dark</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications Toggle -->
+            <div class="settings-theme-section" style="margin-top: 0.5rem;">
+                <div class="reset-confirm-wrapper" style="justify-content: center; margin-bottom: 0;">
+                    <input type="checkbox" id="settings-notif-checkbox" checked="" class="luxury-checkbox" style="">
+                    <label for="settings-notif-checkbox" id="settings-notif-label">Push Notifications</label>
+                </div>
+            </div>
+
+            <div class="settings-danger-section luxury-danger-card">
+                <h3 id="settings-danger-title" class="settings-danger-title">Danger Zone <span aria-hidden="true">⚠️</span></h3>
+                <div class="reset-confirm-wrapper">
+                    <input type="checkbox" id="reset-confirm-checkbox" class="luxury-checkbox" style="">
+                    <label for="reset-confirm-checkbox" id="reset-confirm-label">I confirm full reset</label>
+                </div>
+                <button class="collect-vault-btn reset-game-btn luxury-danger-btn" id="reset-game-btn" disabled=""><span aria-hidden="true">⚠️</span> Complete Reset</button>
+            </div>
+
+            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 Analytics Summary</button>
+            <div class="settings-privacy-row">
+                <a href="privacy.html" target="_blank" id="settings-privacy-link" class="settings-privacy-link">🔒 Privacy Policy</a>
+                <span aria-hidden="true"> | </span>
+                <a href="terms.html" target="_blank" id="settings-terms-link" class="settings-privacy-link">📜 Terms of Service</a>
+            </div>
+            <button class="modal-close-btn lang-modal-close-btn luxury-close-btn" id="lang-modal-close" style="display: none;">Close Settings</button>
+        </div>
+    </div>
+
+    <!-- Prestige Confirmation Modal -->
+    <div class="modal-overlay" id="prestige-modal" role="dialog" aria-modal="true" aria-labelledby="prestige-modal-title">
+        <div class="modal-box">
+            <div class="modal-icon" aria-hidden="true">🚀</div>
+            <h2 class="modal-title" id="prestige-modal-title">מכור והקם סניף חדש!</h2>
+            <p class="modal-text" id="prestige-modal-text">הקמת סניף חדש תאפס את המזומנים, עמדות השדרוג והמחלקות שלך, אך
+                תעניק לך מניות זהב קבועות שישפרו את כל רווחיך!</p>
+            <div class="prestige-reward-box">
+                <span id="prestige-reward-label">מניות זהב שתקבל:</span>
+                <span class="modal-amount" id="prestige-shares-gained">+0</span>
+            </div>
+            <div class="prestige-options">
+                <button class="modal-close-btn prestige-double-btn" id="prestige-ad-btn"><span aria-hidden="true">🎬</span> הכפל ל-<span id="prestige-shares-doubled">0</span> מניות!</button>
+                <button class="modal-close-btn secondary-btn" id="prestige-regular-btn">איפוס רגיל</button>
+            </div>
+            <button class="modal-cancel-btn" id="prestige-cancel-btn">ביטול</button>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard Modal -->
+    <div class="modal-overlay" id="analytics-modal" role="dialog" aria-modal="true" aria-labelledby="analytics-modal-title">
+        <div class="modal-box analytics-modal-box">
+            <div class="modal-icon" aria-hidden="true">📊</div>
+            <h2 class="modal-title" id="analytics-modal-title">דוח ביצועים אנליטי</h2>
+            <div class="analytics-content">
+                <div class="analytic-group">
+                    <h3 id="analytics-title-general">נתונים כלליים</h3>
+                    <div class="analytic-stat"><span id="analytics-label-eps">סך רווח לשנייה:</span> <strong id="analytics-total-eps">$0</strong></div>
+                    <div class="analytic-stat"><span id="analytics-label-vault">ניצולת כספת:</span> <strong id="analytics-vault-util">0%</strong></div>
+                </div>
+                <div class="analytic-group">
+                    <h3 id="analytics-title-tellers">תפוקת כספרים</h3>
+                    <div id="analytics-tellers-list">
+                        <!-- Tellers EPS inserted dynamically -->
+                    </div>
+                </div>
+                <div class="analytic-group">
+                    <h3 id="analytics-title-warnings">אזהרות וצווארי בקבוק</h3>
+                    <div id="analytics-warnings-list">
+                        <!-- Warnings inserted dynamically -->
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close-btn" id="analytics-close-btn">סגור</button>
+        </div>
+    </div>
+
+    <!-- Random Dynamic Events Modal -->
+    <div class="modal-overlay" id="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-title">
+        <div class="modal-box event-modal-box">
+            <div class="modal-icon" id="event-icon" aria-hidden="true">📢</div>
+            <h2 class="modal-title" id="event-title">אירוע חירום בבנק</h2>
+            <div class="modal-event-cash-wrapper event-cash-display-box" id="event-cash-display-box">
+                יתרת מזומנים: <span id="event-cash-val" class="event-cash-val">$0</span>
+            </div>
+            <p class="modal-text" id="event-text">תיאור האירוע יופיע כאן בהתאם להחלטת המנהל.</p>
+            <div class="event-options-list" id="event-options-container">
+                <!-- Buttons dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Numbers Animation Layer -->
+    <div class="floating-container" id="floating-container" aria-hidden="true"><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div><div class="flying-coin" style="display: none; opacity: 0;"></div></div>
+
+    <!-- Portrait Bottom Navigation -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Bottom navigation">
+        <button class="bottom-nav-btn active" data-tab="upgrades" id="bnav-upgrades" aria-label="Counters" aria-current="page" style="position: relative;">
+            <div class="nav-icon-wrapper">
+                <img src="images/nav_bank.png" class="nav-3d-icon" alt="">
+            </div>
+            <span class="bnav-label" data-i18n="tab_upgrades">Counters</span>
+            <div class="active-star">✨</div>
+        <div class="notification-dot"></div></button>
+        <button class="bottom-nav-btn" data-tab="managers" id="bnav-managers" aria-label="Managers">
+            <div class="nav-icon-wrapper">
+                <img src="images/nav_suit.png" class="nav-3d-icon" alt="">
+            </div>
+            <span class="bnav-label" data-i18n="tab_managers">Managers</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="departments" id="bnav-departments" aria-label="Depts">
+            <div class="nav-icon-wrapper">
+                <img src="images/nav_building.png" class="nav-3d-icon" alt="">
+            </div>
+            <span class="bnav-label" data-i18n="tab_departments">Depts</span>
+            <div class="active-star">✨</div>
+        </button>
+        <button class="bottom-nav-btn" data-tab="missions" id="bnav-missions" aria-label="Missions">
+            <div class="nav-icon-wrapper">
+                <img src="images/nav_trophy.png" class="nav-3d-icon" alt="">
+            </div>
+            <span class="bnav-label" data-i18n="tab_missions">Missions</span>
+            <div class="active-star">✨</div>
+        </button>
+
+        <button class="bottom-nav-btn" data-tab="branches" id="bnav-branches" aria-label="Branches">
+            <div class="nav-icon-wrapper">
+                <img src="images/nav_globe.png" class="nav-3d-icon" alt="">
+            </div>
+            <span class="bnav-label" data-i18n="tab_branches">Branches</span>
+            <div class="active-star">✨</div>
+        </button>
+    </nav>
+
+    <!-- Fortune Wheel Modal -->
+    <div class="modal-overlay" id="fortune-wheel-modal" role="dialog" aria-modal="true" aria-labelledby="fortune-wheel-title">
+        <div class="modal-box fortune-wheel-box">
+            <h2 class="modal-title" id="fortune-wheel-title">גלגל המזל היומי</h2>
+            <p class="modal-text fortune-wheel-subtitle" id="fortune-wheel-subtitle">סובב פעם ביום וזכה בפרס!</p>
+            
+            <div class="wheel-separator-line">
+                <span class="diamond">✦</span>
+            </div>
+
+            <div class="fortune-wheel-container" style="position: relative; width: 100%; display: flex; justify-content: center; margin: 1.5rem auto;">
+                <div class="fortune-wheel-graphic" id="fortune-wheel-graphic" aria-hidden="true" style="margin: 0;">
+                    <div class="wheel-segments" id="wheel-segments-container">
+                    </div>
+                </div>
+                <div class="wheel-pointer" aria-hidden="true">
+                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="pointerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fef08a"></stop>
+                                <stop offset="50%" stop-color="#eab308"></stop>
+                                <stop offset="100%" stop-color="#854d0e"></stop>
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"></feGaussianBlur>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"></feMergeNode>
+                                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <polygon points="10,10 90,10 50,110" fill="url(#pointerGrad)" stroke="#fef08a" stroke-width="4" stroke-linejoin="round"></polygon>
+                        <polygon points="50,20 70,25 50,80 30,25" fill="#ffffff" filter="url(#glow)"></polygon>
+                        <circle cx="50" cy="15" r="5" fill="#ffffff" filter="url(#glow)"></circle>
+                    </svg>
+                </div>
+            </div>
+
+            <p class="fortune-spin-hint" id="fortune-spin-hint">👇 לחץ על הכפתור למטה כדי לסובב את הגלגל</p>
+
+            <div id="fortune-result" class="fortune-result"></div>
+            <button id="fortune-ad-spin-btn" class="fortune-ad-spin-btn">📺 סיבוב נוסף — צפה בפרסומת</button>
+            
+            <div id="fortune-cooldown" class="fortune-cooldown"></div>
+
+            <button class="modal-close-btn fortune-spin-btn" id="fortune-spin-btn">סובב!</button>
+            <button class="fortune-close-btn-styled" id="fortune-close-btn">✕ סגור וחזור למשחק</button>
+        </div>
+    </div>
+
+    <!-- Weekly Reward Modal -->
+    <div class="modal-overlay" id="weekly-modal" role="dialog" aria-modal="true" aria-labelledby="weekly-modal-title">
+        <div class="modal-box">
+            <div class="modal-icon" aria-hidden="true">🏆</div>
+            <h2 class="modal-title" id="weekly-modal-title">שבוע מצוין!</h2>
+            <p class="modal-text" id="weekly-modal-text">עברת שבוע מלא של ניהול אימפריה. הצוות שלך מחכה לדחיפה הבאה שלך!</p>
+            <div id="weekly-stats-box" class="weekly-stats-box"></div>
+            <div class="prestige-options weekly-prestige-options">
+                <button id="weekly-ad-btn" class="modal-close-btn prestige-double-btn"><span aria-hidden="true">🎬</span> קבל בוסט x2 ל-8 שעות!</button>
+                <button id="weekly-close-btn" class="modal-close-btn secondary-btn">סגור</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="audio.js?v=20260716_4" defer=""></script>
+    <script src="notification-queue.js?v=20260716_4" defer=""></script>
+    <!-- Discovery Tip Panel -->
+    <div id="discovery-tip-panel" class="discovery-tip-panel" role="status" aria-live="polite">
+        <div class="discovery-tip-inner">
+            <span class="discovery-tip-icon" id="discovery-tip-icon">💡</span>
+            <div class="discovery-tip-content">
+                <div class="discovery-tip-title" id="discovery-tip-title"></div>
+                <div class="discovery-tip-body" id="discovery-tip-body"></div>
+            </div>
+        </div>
+        <button class="discovery-tip-btn" id="discovery-tip-btn">הבנתי!</button>
+    </div>
+
+    <!-- GDPR / Privacy Consent Banner -->
+    <div id="gdpr-banner" class="gdpr-banner" style="display:none;" role="status" aria-live="polite">
+        <p id="gdpr-text" class="gdpr-text">Your data is stored on your device only — no server, no tracking.</p>
+        <div class="gdpr-actions">
+            <a id="gdpr-privacy-link" href="privacy.html" target="_blank" class="gdpr-privacy-link">🔒 Privacy Policy</a>
+            <button id="gdpr-accept-btn" class="gdpr-accept-btn">Got it ✓</button>
+        </div>
+    </div>
+
+    <script src="config.js?v=20260718_1" defer=""></script>
+    <script src="locales.js?v=20260718_1" defer=""></script>
+    <script src="economy-manager.js?v=20260718_1" defer=""></script>
+    <script src="save-manager.js?v=20260718_2" defer=""></script>
+    <script src="mission-controller.js?v=20260718_1" defer=""></script>
+    <script src="achievement-controller.js?v=20260718_1" defer=""></script>
+    <script src="guard-controller.js?v=20260718_2" defer=""></script>
+    <script src="customer-flow-controller.js?v=20260718_3" defer=""></script>
+    <script src="prestige-controller.js?v=20260718_4" defer=""></script>
+    <script src="shop-controller.js?v=20260718_5" defer=""></script>
+    <script src="performance-manager.js?v=2" defer=""></script>
+    <script src="game.js?v=20260718_5" defer=""></script>
+    <script src="app.bundle.js?v=4823105af1" defer=""></script>
+    
+
+
+
+</body></html>
