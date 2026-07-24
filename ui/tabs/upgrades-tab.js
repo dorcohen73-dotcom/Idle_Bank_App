@@ -115,7 +115,7 @@ export function renderUpgradesTab() {
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${tObj.queueMaxTitle}</div>
             </div>
             
@@ -137,7 +137,7 @@ export function renderUpgradesTab() {
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || 'תור'}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${translations[lang].levelAbbr || 'רמה'} ${queueLvl}</div>
             </div>
             

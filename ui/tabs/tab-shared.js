@@ -351,7 +351,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
             <div class="upg-v2-content-overlay">
                 <div class="upg-v2-header-row">
-                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].locked || 'נעול'}</div>
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].lockedLabel}</div>
                     <div class="upg-v2-main-title" style="color: #cbd5e1;">${title}</div>
                 </div>
                 

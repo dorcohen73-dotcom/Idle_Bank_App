@@ -12946,6 +12946,93 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   box-shadow: 0 8px 28px rgba(245, 158, 11, 0.6) !important;
 }
 
+/* ===================================================
+   MOBILE PHONE OPTIMIZATIONS FOR SETTINGS MODAL
+   =================================================== */
+@media (max-width: 550px), (max-height: 750px) {
+  .language-modal-box {
+    padding: 1.1rem 0.9rem !important;
+    gap: 0.7rem !important;
+    border-radius: 20px !important;
+    max-height: 90vh !important;
+    max-height: 90dvh !important;
+  }
+  .language-modal-box .modal-icon {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 2.2rem !important;
+    margin-bottom: 0 !important;
+  }
+  .luxury-modal-title, .luxury-section-title {
+    font-size: 1.05rem !important;
+  }
+  #lang-modal-text {
+    font-size: 0.78rem !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+  }
+  .lang-options-grid {
+    gap: 0.5rem !important;
+    margin: 0.1rem 0 !important;
+  }
+  .lang-option-card {
+    padding: 0.6rem 0.35rem !important;
+    border-radius: 14px !important;
+    gap: 0.15rem !important;
+  }
+  .lang-flag {
+    font-size: 1.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  .lang-country-code {
+    font-size: 1.15rem !important;
+  }
+  .lang-name {
+    font-size: 0.72rem !important;
+  }
+  .lang-check-badge {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.65rem !important;
+    top: 5px !important;
+    right: 5px !important;
+  }
+  [dir=rtl] .lang-check-badge {
+    right: auto !important;
+    left: 5px !important;
+  }
+  .theme-option-btn-choice {
+    padding: 0.5rem 0.3rem !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+  .luxury-danger-card {
+    padding: 0.65rem !important;
+    gap: 0.5rem !important;
+    border-radius: 14px !important;
+  }
+  .settings-danger-title {
+    font-size: 0.85rem !important;
+  }
+  .luxury-danger-btn {
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 10px !important;
+  }
+  .analytics-shortcut-btn {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 0.85rem !important;
+    border-radius: 12px !important;
+  }
+  .settings-privacy-row {
+    font-size: 0.75rem !important;
+  }
+  .luxury-close-btn {
+    padding: 0.7rem 1rem !important;
+    font-size: 0.95rem !important;
+    border-radius: 14px !important;
+  }
+}
 /* 
  * Premium Departments Tab Styles 
  * Ultra-premium design exactly matching the 3D depth and glassmorphism of the reference

@@ -75,7 +75,7 @@ export function renderBranchesTab() {
             } else {
                 actionBtnHtml = `
                     <button class="branch-action-btn ghost-gold disabled" disabled>
-                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${translations[lang].locked || (lang === 'he' ? 'נעול' : 'Locked')}
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${tObj.locked}
                     </button>
                 `;
             }
@@ -104,7 +104,7 @@ export function renderBranchesTab() {
                 <div class="branch-req-pill">
                     <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <div class="branch-req-pill-text">
-                        <span class="req-label">${translations[lang].branches.minCashLabel || 'דרישת כסף נוכחית:'}</span>
+                        <span class="req-label">${tObj.minCashLabel}</span>
                         <span class="req-val">${isSold ? translations[lang].branches.sold : (idx === 0 ? translations[lang].branches.active.replace(' 🏛', '') : formatMoney(costToEnter))}</span>
                     </div>
                     <div class="branch-req-pill-crown">👑</div>

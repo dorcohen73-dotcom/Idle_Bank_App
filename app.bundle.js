@@ -3405,7 +3405,7 @@
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
             <div class="upg-v2-content-overlay">
                 <div class="upg-v2-header-row">
-                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].locked || "\u05E0\u05E2\u05D5\u05DC"}</div>
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].lockedLabel}</div>
                     <div class="upg-v2-main-title" style="color: #cbd5e1;">${title}</div>
                 </div>
                 
@@ -3533,7 +3533,7 @@
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${tObj.queueMaxTitle}</div>
             </div>
             
@@ -3555,7 +3555,7 @@
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${translations[lang].levelAbbr || "\u05E8\u05DE\u05D4"} ${queueLvl}</div>
             </div>
             
@@ -4136,7 +4136,7 @@
         } else {
           actionBtnHtml = `
                     <button class="branch-action-btn ghost-gold disabled" disabled>
-                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${translations[lang].locked || (lang === "he" ? "\u05E0\u05E2\u05D5\u05DC" : "Locked")}
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${tObj.locked}
                     </button>
                 `;
         }
@@ -4163,7 +4163,7 @@
                 <div class="branch-req-pill">
                     <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <div class="branch-req-pill-text">
-                        <span class="req-label">${translations[lang].branches.minCashLabel || "\u05D3\u05E8\u05D9\u05E9\u05EA \u05DB\u05E1\u05E3 \u05E0\u05D5\u05DB\u05D7\u05D9\u05EA:"}</span>
+                        <span class="req-label">${tObj.minCashLabel}</span>
                         <span class="req-val">${isSold ? translations[lang].branches.sold : idx === 0 ? translations[lang].branches.active.replace(" \u{1F3DB}", "") : formatMoney(costToEnter)}</span>
                     </div>
                     <div class="branch-req-pill-crown">\u{1F451}</div>

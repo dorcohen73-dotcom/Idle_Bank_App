@@ -194,6 +194,7 @@ const translations = {
             sellAndBuild: "מכור והקם סניף!",
             locked: "נעול (פתח קודם סניף קודם)",
             minCash: (val) => `דרישת כסף נוכחית: ${val}`,
+            minCashLabel: "דרישת כסף נוכחית:",
             notEnoughCashToast: "עדיין אין מספיק כסף כדי לעבור סניף",
             screenErrorToast: "שגיאה בפתיחת המסך"
         },
@@ -494,6 +495,7 @@ const translations = {
             sellAndBuild: "Sell & Rebuild!",
             locked: "Locked (Open previous branch first)",
             minCash: (val) => `Current cash requirement: ${val}`,
+            minCashLabel: "Current cash requirement:",
             notEnoughCashToast: "Not enough cash yet to switch branches",
             screenErrorToast: "Error opening screen"
         },
@@ -794,6 +796,7 @@ const translations = {
             sellAndBuild: "¡Vender y Reconstruir!",
             locked: "Bloqueado (Abre la sucursal anterior primero)",
             minCash: (val) => `Requisito de efectivo actual: ${val}`,
+            minCashLabel: "Requisito de efectivo actual:",
             notEnoughCashToast: "Todavía no hay suficiente efectivo para cambiar de sucursal",
             screenErrorToast: "Error al abrir la pantalla"
         },
@@ -1094,6 +1097,7 @@ const translations = {
             sellAndBuild: "Продать и Переехать!",
             locked: "Закрыто (Сначала откройте предыдущий филиал)",
             minCash: (val) => `Текущее требование капитала: ${val}`,
+            minCashLabel: "Текущее требование капитала:",
             notEnoughCashToast: "Пока недостаточно денег для перехода в другой филиал",
             screenErrorToast: "Ошибка при открытии экрана"
         },
