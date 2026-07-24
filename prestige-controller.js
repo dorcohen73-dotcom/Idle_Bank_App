@@ -111,6 +111,11 @@ class PrestigeController {
         const savedGoldUpgrades = game.state.goldUpgrades;
         const savedLanguage = game.state.language;
         const savedStats = game.state.stats;
+        // Achievements are documented as permanent ("never resets on prestige" — see
+        // ACHIEVEMENTS in config.js) but were missing from this save/restore list, so
+        // initDefaultState() below was silently wiping unlocked achievements (and the
+        // permanent income bonus they grant) on every single prestige.
+        const savedAchievements = game.state.achievements;
         const savedMissionsCompleted = game.state.missionsCompleted;
         const savedLastWeeklyReward = game.state.lastWeeklyReward;
         const savedLastSpinTime = game.state.lastSpinTime;
@@ -137,6 +142,7 @@ class PrestigeController {
         game.state.goldUpgrades = savedGoldUpgrades;
         game.state.language = savedLanguage;
         game.state.stats = savedStats;
+        game.state.achievements = savedAchievements;
         game.state.missionsCompleted = savedMissionsCompleted;
         game.state.lastWeeklyReward = savedLastWeeklyReward;
         game.state.lastSpinTime = savedLastSpinTime;
