@@ -186,27 +186,6 @@ function initUIEvents() {
         });
     });
 
-    document.querySelectorAll('.perf-option-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            initSound();
-            const mode = btn.getAttribute('data-perf');
-            if (window.game && window.game.state) {
-                window.game.state.perfMode = mode;
-                window.game.saveGame();
-            }
-            if (window.PerformanceManager) {
-                window.PerformanceManager.apply(mode, window.game && window.game.state ? window.game.state.lastMeasuredFps : 60);
-            }
-            
-            document.querySelectorAll('.perf-option-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (window.gameAudio && typeof window.gameAudio.playClick === 'function') {
-                window.gameAudio.playClick();
-            }
-        });
-    });
-
     const notifToggle = document.getElementById('settings-notif-checkbox');
     if (notifToggle) {
         notifToggle.addEventListener('change', (e) => {
