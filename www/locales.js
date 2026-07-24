@@ -119,7 +119,7 @@ const translations = {
             tellerLockedDesc: "פתח דלפק שירות נוסף להגברת תזרים הלקוחות שלך.",
             guardTitle: (id, lvl) => `בלדר ${id} - רמה ${lvl}`,
             guardDesc: "אוסף כסף מהדלפקים ומעביר לכספת הראשית.",
-            guardSpeed: "זמן סבב",
+            guardSpeed: "מהירות",
             guardCap: "קיבולת",
             guardLocked: (id) => `בלדר ${id} - [נעול]`,
             guardLockedDesc: "גייס בלדר נוסף כדי לשנע כסף מהר יותר.",
@@ -194,6 +194,7 @@ const translations = {
             sellAndBuild: "מכור והקם סניף!",
             locked: "נעול (פתח קודם סניף קודם)",
             minCash: (val) => `דרישת כסף נוכחית: ${val}`,
+            minCashLabel: "דרישת כסף נוכחית:",
             notEnoughCashToast: "עדיין אין מספיק כסף כדי לעבור סניף",
             screenErrorToast: "שגיאה בפתיחת המסך"
         },
@@ -419,7 +420,7 @@ const translations = {
             tellerLockedDesc: "Unlock an extra desk to boost customer flow.",
             guardTitle: (id, lvl) => `Guard ${id} - Lvl ${lvl}`,
             guardDesc: "Collects cash from desks and transfers to main vault.",
-            guardSpeed: "Round Speed",
+            guardSpeed: "Speed",
             guardCap: "Capacity",
             guardLocked: (id) => `Guard ${id} - [Locked]`,
             guardLockedDesc: "Hire another guard to move cash faster.",
@@ -494,6 +495,7 @@ const translations = {
             sellAndBuild: "Sell & Rebuild!",
             locked: "Locked (Open previous branch first)",
             minCash: (val) => `Current cash requirement: ${val}`,
+            minCashLabel: "Current cash requirement:",
             notEnoughCashToast: "Not enough cash yet to switch branches",
             screenErrorToast: "Error opening screen"
         },
@@ -719,7 +721,7 @@ const translations = {
             tellerLockedDesc: "Desbloquea un cajero adicional para aumentar el flujo de clientes.",
             guardTitle: (id, lvl) => `Guardia ${id} - Nivel ${lvl}`,
             guardDesc: "Recoge efectivo de las cajas y lo transfiere a la bóveda.",
-            guardSpeed: "Tiempo Ronda",
+            guardSpeed: "Velocidad",
             guardCap: "Capacidad",
             guardLocked: (id) => `Guardia ${id} - [Bloqueado]`,
             guardLockedDesc: "Contrata otro guardia para mover el efectivo más rápido.",
@@ -794,6 +796,7 @@ const translations = {
             sellAndBuild: "¡Vender y Reconstruir!",
             locked: "Bloqueado (Abre la sucursal anterior primero)",
             minCash: (val) => `Requisito de efectivo actual: ${val}`,
+            minCashLabel: "Requisito de efectivo actual:",
             notEnoughCashToast: "Todavía no hay suficiente efectivo para cambiar de sucursal",
             screenErrorToast: "Error al abrir la pantalla"
         },
@@ -1019,7 +1022,7 @@ const translations = {
             tellerLockedDesc: "Откройте дополнительную кассу, чтобы увеличить поток клиентов.",
             guardTitle: (id, lvl) => `Инкассатор ${id} - Ур. ${lvl}`,
             guardDesc: "Собирает деньги с касс и перевозит в главный сейф.",
-            guardSpeed: "Время круга",
+            guardSpeed: "Скорость",
             guardCap: "Вместимость",
             guardLocked: (id) => `Инкассатор ${id} - [Закрыто]`,
             guardLockedDesc: "Наймите дополнительного инкассатора для быстрого сбора средств.",
@@ -1094,6 +1097,7 @@ const translations = {
             sellAndBuild: "Продать и Переехать!",
             locked: "Закрыто (Сначала откройте предыдущий филиал)",
             minCash: (val) => `Текущее требование капитала: ${val}`,
+            minCashLabel: "Текущее требование капитала:",
             notEnoughCashToast: "Пока недостаточно денег для перехода в другой филиал",
             screenErrorToast: "Ошибка при открытии экрана"
         },
@@ -2882,8 +2886,8 @@ Object.assign(translations.ru, {
 Object.assign(translations.he, {
     notifOfflineTitle: "🏦 הכספת עולה על גדותיה!",
     notifOfflineBody: "רווחי ה-offline שלך הגיעו למקסימום — בוא לאסוף אותם",
-    notifDailyTitle: "🎁 התגמול היומי מחכה לך",
-    notifDailyBody: "שמור על רצף הכניסות שלך וקבל את הבונוס",
+    notifDailyTitle: (streak) => `🔥 רצף של ${streak} ימים!`,
+    notifDailyBody: (rewardText) => `אל תשבור את הרצף — חזור היום ותקבל מחר ${rewardText}`,
     notifComebackTitle: "😴 הבנק שלך מתגעגע",
     notifComebackBody: "העובדים משתעממים בלעדיך — חזרה מהירה?",
     settingsNotifLabel: "התראות דחיפה"
@@ -2891,8 +2895,8 @@ Object.assign(translations.he, {
 Object.assign(translations.en, {
     notifOfflineTitle: "🏦 Vault is full!",
     notifOfflineBody: "Your offline earnings have reached maximum capacity — come collect them",
-    notifDailyTitle: "🎁 Daily Reward waiting",
-    notifDailyBody: "Keep up your login streak and claim your bonus",
+    notifDailyTitle: (streak) => `🔥 ${streak}-Day Streak!`,
+    notifDailyBody: (rewardText) => `Don't break your streak — come back today to unlock ${rewardText} tomorrow`,
     notifComebackTitle: "😴 Your bank misses you",
     notifComebackBody: "The employees are getting bored — quick check-in?",
     settingsNotifLabel: "Push Notifications"
@@ -2900,8 +2904,8 @@ Object.assign(translations.en, {
 Object.assign(translations.es, {
     notifOfflineTitle: "🏦 ¡La bóveda está llena!",
     notifOfflineBody: "Tus ganancias sin conexión han alcanzado su capacidad máxima — ven a recogerlas",
-    notifDailyTitle: "🎁 Recompensa diaria esperando",
-    notifDailyBody: "Mantén tu racha de inicios de sesión y reclama tu bono",
+    notifDailyTitle: (streak) => `🔥 ¡Racha de ${streak} días!`,
+    notifDailyBody: (rewardText) => `No rompas tu racha — vuelve hoy para desbloquear ${rewardText} mañana`,
     notifComebackTitle: "😴 Tu banco te extraña",
     notifComebackBody: "Los empleados se aburren sin ti — ¿un vistazo rápido?",
     settingsNotifLabel: "Notificaciones"
@@ -2909,8 +2913,8 @@ Object.assign(translations.es, {
 Object.assign(translations.ru, {
     notifOfflineTitle: "🏦 Хранилище переполнено!",
     notifOfflineBody: "Ваша офлайн-прибыль достигла максимума — заберите её",
-    notifDailyTitle: "🎁 Ежедневная награда ждет",
-    notifDailyBody: "Продолжайте серию входов в игру и заберите бонус",
+    notifDailyTitle: (streak) => `🔥 Серия ${streak} дней!`,
+    notifDailyBody: (rewardText) => `Не теряй серию — зайди сегодня, чтобы получить завтра ${rewardText}`,
     notifComebackTitle: "😴 Ваш банк скучает",
     notifComebackBody: "Сотрудники скучают без вас — заглянете?",
     settingsNotifLabel: "Уведомления"

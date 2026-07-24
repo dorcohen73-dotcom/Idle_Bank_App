@@ -2842,20 +2842,25 @@ footer {
 }
 /* Offline Welcome Overlay Modal */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
   overscroll-behavior: contain;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
 }
 
 .modal-overlay.active {
@@ -2864,19 +2869,24 @@ footer {
 }
 
 .modal-box {
-  background: radial-gradient(circle at top, rgba(30, 35, 52, 0.95) 0%, rgba(10, 12, 18, 0.98) 100%);
+  background: radial-gradient(circle at top, rgba(30, 35, 52, 0.98) 0%, rgba(10, 12, 18, 0.99) 100%);
   border: 1px solid rgba(223, 171, 41, 0.35);
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(223, 171, 41, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border-radius: 24px;
-  padding: 2.25rem 2rem;
-  max-width: 450px;
-  width: 90%;
+  padding: 2rem 1.5rem;
+  max-width: 480px !important;
+  width: calc(100% - 1.5rem) !important;
+  margin: 0 auto !important;
+  max-height: 85vh !important;
+  max-height: 85dvh !important;
+  overflow-y: auto !important;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
   overscroll-behavior: contain;
+  box-sizing: border-box !important;
 }
 
 .modal-icon {
@@ -4063,17 +4073,10 @@ footer {
   }
   .header-buttons-row {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  .sound-toggle-btn {
-    width: 48px;
-    height: 48px;
-  }
-  .boost-toggle-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
   }
   /* Tabs Navigation as Horizontal Swipable Row */
   .tabs-nav {
@@ -4741,14 +4744,21 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
   .header-buttons-row {
     gap: 0.35rem !important;
   }
-  .sound-toggle-btn {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 0.95rem !important;
-  }
+  .topbar-action-btn,
+  .sound-toggle-btn,
   .boost-toggle-btn {
-    font-size: 0.78rem !important;
-    padding: 0.35rem 0.65rem !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    font-size: 1.15rem !important;
+  }
+  .topbar-action-btn span,
+  .sound-toggle-btn span,
+  .boost-toggle-btn span {
+    font-size: 1.15rem !important;
   }
   /* Control upgrades card layout optimization */
   .upgrade-card {
@@ -5814,47 +5824,48 @@ header, .control-panel, .bank-floor {
 
 /* Restored Boost Toggle Button */
 .boost-toggle-btn {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0 0.6rem;
-  width: auto;
-  min-width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  position: relative;
-  white-space: nowrap;
-  gap: 0.3rem;
+  background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
+  border: 1.5px solid #fb923c !important;
+  color: #fb923c !important;
+  padding: 0 !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  position: relative !important;
+  white-space: nowrap !important;
 }
 
 @media (min-width: 650px) {
   .boost-toggle-btn {
-    width: auto;
-    min-width: 60px;
-    height: 60px;
-    padding: 0 0.9rem;
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    padding: 0 !important;
   }
   .boost-toggle-btn span {
-    font-size: 2.05rem;
+    font-size: 1.45rem !important;
   }
 }
 .boost-toggle-btn span {
-  font-size: 1.6rem;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+  font-size: 1.3rem !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)) !important;
 }
 
 .boost-toggle-btn::after {
   content: "";
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   width: 10px;
   height: 10px;
   background: #ef4444;
@@ -5864,25 +5875,26 @@ header, .control-panel, .bank-floor {
 }
 
 .boost-toggle-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(251, 146, 60, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4) !important;
 }
 
 .boost-toggle-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 10px rgba(251, 146, 60, 0.3) !important;
 }
 
 .boost-toggle-btn.active {
-  background: linear-gradient(135deg, #10b981, #059669);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.5) !important;
 }
 
 .boost-toggle-btn.offer {
-  background: linear-gradient(135deg, #b45309, #d97706);
-  border-color: #f59e0b;
-  color: #fff;
-  animation: boostOfferPulse 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, #b45309, #d97706) !important;
+  border-color: #f59e0b !important;
+  color: #fff !important;
+  animation: boostOfferPulse 1.5s ease-in-out infinite !important;
 }
 
 @keyframes boostOfferPulse {
@@ -6823,45 +6835,48 @@ header, .control-panel, .bank-floor {
   /* Using position: sticky makes it "built-in" (part of the normal DOM flow), avoiding WebView fixed-position bugs! */
   .bottom-nav {
     display: flex !important;
-    position: sticky !important;
-    bottom: 45px !important; /* Raised significantly to avoid Android gesture bar */
-    bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
-    left: 20px !important; /* Move away from edge swipe zone */
-    right: 20px !important; /* Move away from edge swipe zone */
-    margin: auto 20px 45px 20px !important; /* Forces it to the bottom if content is short, and matches left/right/bottom constraints */
-    margin-bottom: max(45px, env(safe-area-inset-bottom, 45px)) !important;
-    height: 70px !important;
-    background: rgba(15, 18, 28, 0.98) !important; /* Removed backdrop-filter to prevent WebView repainting issues */
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 35px !important;
-    z-index: 9999 !important; /* Extremely high to ensure visibility */
-    padding: 0 10px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.05) !important;
-    justify-content: space-around !important;
+    position: fixed !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100% - 20px) !important;
+    max-width: 550px !important;
+    margin: 0 auto !important;
+    height: 64px !important;
+    background: rgba(15, 18, 28, 0.97) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.35) !important;
+    border-radius: 20px !important;
+    z-index: 9990 !important;
+    padding: 2px 6px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+    justify-content: space-between !important;
     align-items: center !important;
-    overflow: visible !important;
-    gap: 0 !important;
+    overflow: hidden !important;
+    gap: 2px !important;
     box-sizing: border-box !important;
   }
   .bottom-nav::-webkit-scrollbar {
     display: none;
   }
   .bottom-nav-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 1;
-    height: 100%;
-    background: transparent;
-    border: none;
-    color: rgba(180, 183, 200, 0.9);
-    font-size: 0.72rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-tap-highlight-color: transparent;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(180, 183, 200, 0.9) !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    padding: 2px 2px !important;
+    box-sizing: border-box !important;
   }
   .bottom-nav-btn:active {
     transform: scale(0.95);
@@ -7877,6 +7892,97 @@ header {
   flex-wrap: wrap;
 }
 
+/* ── Unified Topbar Action Buttons ── */
+.header-buttons-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.45rem !important;
+  flex-wrap: nowrap !important;
+}
+
+.topbar-action-btn,
+.sound-toggle-btn,
+.boost-toggle-btn {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: linear-gradient(145deg, rgba(24, 34, 58, 0.95) 0%, rgba(12, 17, 30, 0.98) 100%) !important;
+  border: 1.5px solid rgba(223, 171, 41, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1.3rem !important;
+  line-height: 1 !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.topbar-action-btn:hover,
+.sound-toggle-btn:hover,
+.boost-toggle-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(234, 179, 8, 0.8) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(234, 179, 8, 0.35) !important;
+}
+
+.topbar-action-btn span,
+.sound-toggle-btn span,
+.boost-toggle-btn span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  font-size: 1.3rem !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* Fortune Wheel Header Button Accent */
+.fortune-wheel-header-btn {
+  border: 2px solid #eab308 !important;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Header Daily Achievements Accent */
+.header-daily-btn {
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Boost Button Accent (Circular, Matching the Set!) */
+.boost-toggle-btn {
+  border: 2px solid #fb923c !important;
+  background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  color: #fb923c !important;
+}
+
+@media (min-width: 650px) {
+  .header-buttons-row {
+    gap: 0.6rem !important;
+  }
+  .topbar-action-btn,
+  .sound-toggle-btn {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.45rem !important;
+  }
+  .topbar-action-btn span,
+  .sound-toggle-btn span {
+    font-size: 1.45rem !important;
+  }
+}
 /* ── Dashboard grid ──
    Mobile: cash full-width top row, secondary cards side-by-side below
    Desktop: cash takes 60%, secondary cards take 40% on the right
@@ -7943,6 +8049,53 @@ header {
   .secondary-card .secondary-card-top {
     padding-left: 0;
     z-index: 2;
+  }
+  /* Enlarge desktop card text for high readability */
+  .cash-label {
+    font-size: 0.85rem !important;
+    letter-spacing: 0.08em;
+  }
+  .cash-amount {
+    font-size: 2.8rem !important;
+  }
+  .cash-eps {
+    font-size: 1rem !important;
+  }
+  .secondary-label {
+    font-size: 0.95rem !important;
+    letter-spacing: 0.03em;
+  }
+  .secondary-value {
+    font-size: 1.7rem !important;
+  }
+  .huge-multiplier {
+    font-size: 1.85rem !important;
+  }
+  .small-multiplier-label {
+    font-size: 0.92rem !important;
+  }
+  .prestige-hint-text {
+    font-size: 0.82rem !important;
+  }
+}
+@media (min-width: 1050px) {
+  .cash-amount {
+    font-size: 3.2rem !important;
+  }
+  .cash-label {
+    font-size: 0.95rem !important;
+  }
+  .cash-eps {
+    font-size: 1.1rem !important;
+  }
+  .secondary-label {
+    font-size: 1.05rem !important;
+  }
+  .secondary-value {
+    font-size: 2rem !important;
+  }
+  .huge-multiplier {
+    font-size: 2.2rem !important;
   }
 }
 /* ════════════════════════════════
@@ -8269,12 +8422,13 @@ header {
 }
 
 .secondary-label {
-  font-size: 0.9rem;
+  font-size: clamp(0.68rem, 2.4vw, 0.85rem);
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
 }
 
 /* Main value in secondary card */
@@ -11437,16 +11591,25 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     font-size: 0.8rem;
     flex-direction: row; /* Horizontal! */
     flex-wrap: wrap;
-    gap: 0.2rem;
+    justify-content: center;
+    gap: 0.15rem;
     margin-top: 0;
+    line-height: 1.2;
+  }
+  /* Force "current" onto its own line so arrow+next always wrap together
+     underneath — otherwise a 3-part value (current/arrow/next) wraps
+     unpredictably per-column and the row heights go crooked. */
+  .val-current {
+    flex: 0 0 100%;
   }
   .val-arrow {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     margin: 0;
   }
   .val-next {
-    padding: 0 0.3rem;
+    padding: 0 0.25rem;
     border-radius: 4px;
+    font-size: 0.7rem;
   }
   /* Button */
   .upg-v2-buy-btn {
@@ -11988,34 +12151,7 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
    =================================================== */
 @media (max-height: 500px) and (orientation: landscape) {
   html, body {
-    padding-bottom: 0 !important;
-    padding-right: calc(95px + env(safe-area-inset-right)) !important;
-    padding-left: env(safe-area-inset-left) !important;
-  }
-  .bottom-nav {
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 5px !important;
-    right: calc(5px + env(safe-area-inset-right)) !important;
-    left: auto !important;
-    bottom: env(safe-area-inset-bottom, 5px) !important;
-    top: env(safe-area-inset-top, 5px) !important;
-    width: 80px !important;
-    height: auto !important;
-    border-radius: 15px !important;
-    padding: 10px 0 !important;
-    overflow-y: auto !important;
-  }
-  .bottom-nav-btn {
-    height: auto !important;
-    padding: 5px 0 !important;
-    flex: 0 0 auto !important;
-  }
-  .bnav-label {
-    font-size: 0.65rem !important;
-    white-space: normal !important;
-    line-height: 1.1 !important;
-    padding: 0 2px !important;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
   }
   #toast-container {
     max-width: 75vw !important; /* Leave room for nav */
@@ -12586,6 +12722,731 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   .modal-icon#event-icon {
     font-size: 2.2rem;
     margin-bottom: 0.25rem;
+  }
+}
+/* ===================================================
+   LUXURY SETTINGS MODAL (AI MOCKUP PARITY)
+   =================================================== */
+.language-modal-box {
+  position: relative !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  max-height: 88vh !important;
+  max-height: 88dvh !important;
+  background: radial-gradient(circle at top, rgba(20, 28, 50, 0.99) 0%, rgba(7, 11, 20, 0.99) 100%) !important;
+  border: 1.5px solid rgba(223, 171, 41, 0.55) !important;
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 55px rgba(223, 171, 41, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+  border-radius: 28px !important;
+  padding: 1.6rem 1.3rem 1.8rem 1.3rem !important;
+  max-width: 460px !important;
+  width: calc(100% - 1.5rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+/* Subtle top glow spotlight behind globe icon */
+.language-modal-box::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 290px;
+  height: 190px;
+  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.22) 0%, rgba(234, 179, 8, 0.1) 45%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glowing Top Globe Icon */
+.language-modal-box .modal-icon {
+  position: relative !important;
+  z-index: 1 !important;
+  font-size: 3rem !important;
+  width: 70px !important;
+  height: 70px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 2px solid rgba(234, 179, 8, 0.75) !important;
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.6), inset 0 0 16px rgba(234, 179, 8, 0.4) !important;
+  margin: 0 auto 0.1rem auto !important;
+}
+
+/* Luxury Section Titles with Decorative Diamonds */
+.luxury-modal-title, .luxury-section-title {
+  position: relative !important;
+  z-index: 1 !important;
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  margin: 0 !important;
+}
+
+.modal-title-decor {
+  color: #eab308 !important;
+  font-size: 0.9rem !important;
+  text-shadow: 0 0 10px rgba(234, 179, 8, 0.7) !important;
+}
+
+/* 2x2 Language Grid */
+.lang-options-grid {
+  position: relative !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0.85rem !important;
+  margin: 0.2rem 0 !important;
+  width: 100% !important;
+}
+
+.lang-option-card {
+  position: relative !important;
+  background: linear-gradient(145deg, rgba(20, 32, 58, 0.85) 0%, rgba(10, 16, 32, 0.96) 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  padding: 0.9rem 0.6rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+.lang-option-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(234, 179, 8, 0.45) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(234, 179, 8, 0.25) !important;
+}
+
+/* Active Language Card (Gold Glow + Badge) */
+.lang-option-card.active {
+  border: 2px solid #f59e0b !important;
+  background: linear-gradient(145deg, rgba(38, 50, 85, 0.95) 0%, rgba(18, 26, 52, 0.98) 100%) !important;
+  box-shadow: 0 0 26px rgba(245, 158, 11, 0.5), inset 0 0 16px rgba(245, 158, 11, 0.22) !important;
+}
+
+.lang-flag {
+  font-size: 1.85rem !important;
+  line-height: 1 !important;
+  margin-bottom: 0.15rem !important;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45)) !important;
+}
+
+.lang-country-code {
+  font-size: 1.4rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.06em !important;
+  line-height: 1.1 !important;
+}
+
+.lang-option-card.active .lang-country-code {
+  color: #facc15 !important;
+  text-shadow: 0 0 14px rgba(250, 204, 21, 0.7) !important;
+}
+
+.lang-name {
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: rgba(226, 232, 240, 0.88) !important;
+}
+
+/* Checkmark Badge on Active Card */
+.lang-check-badge {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 22px !important;
+  height: 22px !important;
+  background: #eab308 !important;
+  color: #0f172a !important;
+  border-radius: 50% !important;
+  font-size: 0.75rem !important;
+  font-weight: 900 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.85) !important;
+}
+
+[dir=rtl] .lang-check-badge {
+  right: auto !important;
+  left: 8px !important;
+}
+
+.lang-option-card.active .lang-check-badge {
+  display: flex !important;
+}
+
+/* Theme Selection Row */
+.settings-theme-section {
+  position: relative !important;
+  z-index: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.65rem !important;
+  width: 100% !important;
+}
+
+.theme-options-row {
+  display: flex !important;
+  gap: 0.6rem !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.theme-option-btn-choice {
+  flex: 1 !important;
+  padding: 0.7rem 0.5rem !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  transition: all 0.25s ease !important;
+}
+
+.theme-option-btn-choice.active[data-theme=blue] {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
+  color: #ffffff !important;
+}
+
+.theme-option-btn-choice.active[data-theme=white] {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4) !important;
+}
+
+.theme-option-btn-choice.active[data-theme=dark] {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: 2px solid #94a3b8 !important;
+  box-shadow: 0 0 20px rgba(148, 163, 184, 0.4) !important;
+}
+
+.theme-check-badge {
+  font-size: 0.85rem !important;
+  font-weight: 900 !important;
+  margin-left: 2px !important;
+}
+
+/* Danger Zone Card */
+.luxury-danger-card {
+  position: relative !important;
+  z-index: 1 !important;
+  background: rgba(220, 38, 38, 0.06) !important;
+  border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: 18px !important;
+  padding: 0.9rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-danger-title {
+  color: #ef4444 !important;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+  border-bottom: 1px dashed rgba(239, 68, 68, 0.25) !important;
+  padding-bottom: 0.4rem !important;
+}
+
+.luxury-danger-btn {
+  background: linear-gradient(135deg, rgba(153, 27, 27, 0.85) 0%, rgba(185, 28, 28, 0.95) 100%) !important;
+  border: 1.5px solid #ef4444 !important;
+  color: #fef2f2 !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+}
+
+.luxury-danger-btn:disabled {
+  opacity: 0.45 !important;
+  filter: grayscale(0.6) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Analytics Shortcut Card */
+.analytics-shortcut-btn {
+  position: relative !important;
+  z-index: 1 !important;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 1.5px solid rgba(234, 179, 8, 0.4) !important;
+  border-radius: 16px !important;
+  color: #facc15 !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  padding: 0.75rem 1rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.25s ease !important;
+  width: 100% !important;
+  cursor: pointer !important;
+}
+
+.analytics-shortcut-btn:hover {
+  border-color: rgba(234, 179, 8, 0.8) !important;
+  box-shadow: 0 6px 20px rgba(234, 179, 8, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Close Settings Button */
+.luxury-close-btn {
+  position: relative !important;
+  z-index: 1 !important;
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  font-size: 1.05rem !important;
+  padding: 0.85rem 1.2rem !important;
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.luxury-close-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(245, 158, 11, 0.6) !important;
+}
+
+/* ===================================================
+   MOBILE PHONE OPTIMIZATIONS FOR SETTINGS MODAL
+   =================================================== */
+@media (max-width: 550px), (max-height: 750px) {
+  .language-modal-box {
+    padding: 1.1rem 0.85rem 1.6rem 0.85rem !important;
+    gap: 0.65rem !important;
+    border-radius: 20px !important;
+    max-height: 85vh !important;
+    max-height: 85dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .language-modal-box .modal-icon {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 2.2rem !important;
+    margin-bottom: 0 !important;
+  }
+  .luxury-modal-title, .luxury-section-title {
+    font-size: 1.05rem !important;
+  }
+  #lang-modal-text {
+    font-size: 0.78rem !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+  }
+  .lang-options-grid {
+    gap: 0.5rem !important;
+    margin: 0.1rem 0 !important;
+  }
+  .lang-option-card {
+    padding: 0.6rem 0.35rem !important;
+    border-radius: 14px !important;
+    gap: 0.15rem !important;
+  }
+  .lang-flag {
+    font-size: 1.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  .lang-country-code {
+    font-size: 1.15rem !important;
+  }
+  .lang-name {
+    font-size: 0.72rem !important;
+  }
+  .lang-check-badge {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.65rem !important;
+    top: 5px !important;
+    right: 5px !important;
+  }
+  [dir=rtl] .lang-check-badge {
+    right: auto !important;
+    left: 5px !important;
+  }
+  .theme-option-btn-choice {
+    padding: 0.5rem 0.3rem !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+  .luxury-danger-card {
+    padding: 0.65rem !important;
+    gap: 0.5rem !important;
+    border-radius: 14px !important;
+  }
+  .settings-danger-title {
+    font-size: 0.85rem !important;
+  }
+  .luxury-danger-btn {
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 10px !important;
+  }
+  .analytics-shortcut-btn {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 0.85rem !important;
+    border-radius: 12px !important;
+  }
+  .settings-privacy-row {
+    font-size: 0.75rem !important;
+  }
+  .luxury-close-btn {
+    padding: 0.7rem 1rem !important;
+    font-size: 0.95rem !important;
+    border-radius: 14px !important;
+  }
+}
+/* ===================================================
+   LUXURY DAILY LOGIN REWARD MODAL (AI MOCKUP PARITY)
+   =================================================== */
+.luxury-daily-modal-box {
+  position: relative !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: radial-gradient(circle at top, rgba(22, 30, 52, 0.99) 0%, rgba(7, 11, 20, 0.99) 100%) !important;
+  border: 1.5px solid rgba(223, 171, 41, 0.6) !important;
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 55px rgba(223, 171, 41, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  border-radius: 28px !important;
+  padding: 1.8rem 1.4rem !important;
+  max-width: 480px !important;
+  width: calc(100% - 1.5rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+/* Close X button */
+.daily-modal-close-x {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  transition: all 0.2s ease !important;
+}
+
+[dir=rtl] .daily-modal-close-x {
+  right: auto !important;
+  left: 14px !important;
+}
+
+.daily-modal-close-x:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+/* Top Gift Box Hero Header & Confetti */
+.daily-reward-hero-header {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.daily-gift-box-icon {
+  font-size: 4rem !important;
+  filter: drop-shadow(0 8px 24px rgba(234, 179, 8, 0.55)) drop-shadow(0 0 40px rgba(250, 204, 21, 0.4)) !important;
+  animation: giftBoxFloat 3s ease-in-out infinite !important;
+}
+
+@keyframes giftBoxFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+  }
+}
+.daily-confetti-particle {
+  position: absolute !important;
+  font-size: 1.3rem !important;
+  pointer-events: none !important;
+  opacity: 0.8 !important;
+  animation: confettiFloat 2.5s ease-in-out infinite alternate !important;
+}
+
+.dcp-1 {
+  top: -5px;
+  left: -30px;
+  animation-delay: 0s;
+}
+
+.dcp-2 {
+  top: 10px;
+  right: -35px;
+  animation-delay: 0.7s;
+}
+
+.dcp-3 {
+  bottom: 0px;
+  left: -25px;
+  animation-delay: 1.3s;
+}
+
+@keyframes confettiFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-12px) rotate(15deg);
+    opacity: 0.95;
+  }
+}
+/* Streak Text with Clock Icon */
+.luxury-streak-text {
+  color: rgba(226, 232, 240, 0.8) !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+.streak-clock-icon {
+  color: #facc15 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Hero Reward Card (Green Glow + Sublabel) */
+.luxury-reward-hero-card {
+  background: linear-gradient(145deg, rgba(14, 23, 42, 0.9) 0%, rgba(8, 14, 28, 0.95) 100%) !important;
+  border: 1.5px solid rgba(74, 222, 128, 0.35) !important;
+  border-radius: 22px !important;
+  padding: 1.2rem 1.6rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(74, 222, 128, 0.08) !important;
+}
+
+.luxury-green-amount {
+  color: #4ade80 !important;
+  font-size: 2.3rem !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 25px rgba(74, 222, 128, 0.7), 0 0 50px rgba(74, 222, 128, 0.3) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+}
+
+.luxury-reward-sublabel {
+  color: rgba(226, 232, 240, 0.85) !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  margin-top: 0.2rem !important;
+}
+
+/* 7-Day Rewards Strip (.login-streak-strip) */
+.login-streak-strip {
+  display: flex !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 0.4rem 0.2rem !important;
+  margin: 0.3rem 0 !important;
+  scrollbar-width: none !important;
+}
+
+.login-streak-strip::-webkit-scrollbar {
+  display: none !important;
+}
+
+.login-streak-day {
+  flex: 1 !important;
+  min-width: 58px !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  padding: 0.65rem 0.3rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.2rem !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Today's Card (Golden Highlight) */
+.login-streak-day.is-today {
+  border: 2px solid #facc15 !important;
+  background: linear-gradient(145deg, rgba(38, 48, 78, 0.95) 0%, rgba(18, 26, 48, 0.98) 100%) !important;
+  box-shadow: 0 0 22px rgba(250, 204, 21, 0.5), inset 0 0 12px rgba(250, 204, 21, 0.2) !important;
+  transform: scale(1.04) !important;
+}
+
+.login-streak-day.is-today .login-streak-day-label {
+  color: #facc15 !important;
+  font-weight: 900 !important;
+}
+
+/* Tomorrow's Card (Teal Highlight) */
+.login-streak-day.is-tomorrow {
+  border: 1.5px solid #2dd4bf !important;
+  background: linear-gradient(145deg, rgba(15, 45, 50, 0.9) 0%, rgba(8, 25, 32, 0.95) 100%) !important;
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.35) !important;
+}
+
+.login-streak-day.is-tomorrow .login-streak-day-label {
+  color: #2dd4bf !important;
+  font-weight: 800 !important;
+}
+
+.login-streak-day-label {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: rgba(226, 232, 240, 0.8) !important;
+}
+
+.login-streak-day-icon {
+  font-size: 1.45rem !important;
+  line-height: 1 !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) !important;
+}
+
+.login-streak-day-value {
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+
+/* Collect Button (Gold Gradient + Crown Badge) */
+.luxury-daily-collect-btn {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  font-size: 1.35rem !important;
+  padding: 0.85rem 1.6rem !important;
+  border-radius: 20px !important;
+  border: none !important;
+  box-shadow: 0 8px 26px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.6rem !important;
+  width: 100% !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  margin-top: 0.3rem !important;
+}
+
+.luxury-daily-collect-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 32px rgba(245, 158, 11, 0.65) !important;
+}
+
+.collect-btn-badge {
+  background: rgba(15, 23, 42, 0.25) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.1rem !important;
+}
+
+/* Mobile Phone Optimizations for Daily Bonus Modal */
+@media (max-width: 550px), (max-height: 750px) {
+  .luxury-daily-modal-box {
+    padding: 1.2rem 0.9rem !important;
+    gap: 0.65rem !important;
+    border-radius: 22px !important;
+  }
+  .daily-gift-box-icon {
+    font-size: 3.2rem !important;
+  }
+  .luxury-green-amount {
+    font-size: 1.85rem !important;
+  }
+  .luxury-reward-hero-card {
+    padding: 0.9rem 1rem !important;
+  }
+  .login-streak-day {
+    min-width: 50px !important;
+    padding: 0.5rem 0.2rem !important;
+  }
+  .login-streak-day-icon {
+    font-size: 1.25rem !important;
+  }
+  .login-streak-day-value {
+    font-size: 0.68rem !important;
+  }
+  .luxury-daily-collect-btn {
+    padding: 0.75rem 1.2rem !important;
+    font-size: 1.15rem !important;
+    border-radius: 16px !important;
   }
 }
 /* 

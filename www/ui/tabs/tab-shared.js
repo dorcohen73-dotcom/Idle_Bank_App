@@ -203,14 +203,13 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
         const canBuy = details.canAfford;
 
         card.className = 'upgrade-card premium-upg-card';
-        let eps = 0;
+        let eps = 0, nextEps = 0;
         if (type === 'teller') {
             const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
             eps = reward / speed;
-        } else {
-            eps = capacity / speed;
+            nextEps = reward / nextSpeed;
         }
-        
+
         card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
             <div class="upg-v2-content-overlay">
@@ -236,6 +235,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                             <span class="val-next">${formatMoney(nextCapacity)}</span>
                         </div>
                     </div>
+                    ${type === 'teller' ? `
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
@@ -243,17 +243,20 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
                         <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
                         <div class="upg-v2-stat-val">
                             <span class="val-current">${formatMoney(eps)}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">➔</span>
+                            <span class="val-next">${formatMoney(nextEps)}</span>
                         </div>
                     </div>
+                    ` : ''}
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
                         <div class="upg-v2-stat-label">${speedLabel}</div>
                         <div class="upg-v2-stat-val">
-                            <span class="val-current">${speed}</span>
+                            <span class="val-current">${speed}${translations[lang].secAbbr || ''}</span>
                             <span class="val-arrow arrow" style="color: #4ade80;">➔</span>
-                            <span class="val-next">${nextSpeed}</span>
+                            <span class="val-next">${nextSpeed}${translations[lang].secAbbr || ''}</span>
                         </div>
                     </div>
                 </div>
@@ -347,7 +350,7 @@ export function buildEntityCard(type, entity, lang, tObj, currentUpgradeMode) {
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
             <div class="upg-v2-content-overlay">
                 <div class="upg-v2-header-row">
-                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].locked || 'נעול'}</div>
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].lockedLabel}</div>
                     <div class="upg-v2-main-title" style="color: #cbd5e1;">${title}</div>
                 </div>
                 

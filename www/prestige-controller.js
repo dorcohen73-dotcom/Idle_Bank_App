@@ -1,43 +1,11 @@
 // Prestige & branch progression — extracted verbatim from IdleBankGame
-// (REFACTOR_PLAN phase 3): total-assets valuation, gold-share calculation,
-// daily-login reward table, the full prestige reset flow, and branch travel.
+// (REFACTOR_PLAN phase 3): gold-share calculation, daily-login reward table,
+// the full prestige reset flow, and branch travel.
 // Operates directly on game.state; no state-shape or save-format changes.
 // game.js keeps thin facades for the UI layer and SaveManager.
 class PrestigeController {
     constructor(game) {
         this.game = game;
-    }
-
-    calculateTotalAssets() {
-        const game = this.game;
-        let total = 0;
-        if (game.state.tellers) {
-            game.state.tellers.forEach(t => {
-                if (t.unlocked) total += t.level;
-            });
-        }
-        if (game.state.guards) {
-            game.state.guards.forEach(g => {
-                if (g.unlocked) total += g.level;
-            });
-        }
-        if (game.state.vault) {
-            total += game.state.vault.level || 1;
-        }
-        total += game.state.queueUpgradeLevel || 1;
-        if (game.state.departments) {
-            game.state.departments.forEach(d => {
-                if (d.unlocked) total += 5;
-            });
-        }
-        if (game.state.managers) {
-            Object.keys(game.state.managers).forEach(k => {
-                if (k !== 'operations' && game.state.managers[k]) {
-                    total += 5;
-                }
-            });
-        }
-        return total;
     }
 
     calculatePrestigeShares() {
@@ -90,13 +58,13 @@ class PrestigeController {
         // used elsewhere) so late-game players still get a meaningful daily reward, while the
         // Math.max floor keeps new players' rewards identical to the old fixed values.
         const prestigeShares = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 0;
-        if (streak >= 30) return { type: 'shares', value: Math.max(10, Math.ceil(prestigeShares * 0.05)) };
-        if (streak >= 14) return { type: 'shares', value: Math.max(3, Math.ceil(prestigeShares * 0.02)) };
-        if (streak >= 7)  return { type: 'shares', value: Math.max(1, Math.ceil(prestigeShares * 0.01)) };
-        if (streak >= 5)  return { type: 'boost', value: 1800 };
-        if (streak >= 3)  return { type: 'gold', value: Math.max(1, Math.ceil(prestigeShares * 0.005)) };
-        if (streak >= 2)  return { type: 'cash', value: Math.max(500, eps * 1800) };
-        return { type: 'cash', value: Math.max(180, eps * 300) };
+        if (streak >= 30) return { type: 'shares', value: Math.max(20, Math.ceil(prestigeShares * 0.10)) };
+        if (streak >= 14) return { type: 'shares', value: Math.max(6, Math.ceil(prestigeShares * 0.04)) };
+        if (streak >= 7)  return { type: 'shares', value: Math.max(2, Math.ceil(prestigeShares * 0.02)) };
+        if (streak >= 5)  return { type: 'boost', value: 3600 };
+        if (streak >= 3)  return { type: 'gold', value: Math.max(2, Math.ceil(prestigeShares * 0.01)) };
+        if (streak >= 2)  return { type: 'cash', value: Math.max(1000, eps * 3600) };
+        return { type: 'cash', value: Math.max(360, eps * 600) };
     }
 
     prestige(targetBranchIndex, doubleShares = false, bypassCashCheck = false) {
@@ -143,6 +111,11 @@ class PrestigeController {
         const savedGoldUpgrades = game.state.goldUpgrades;
         const savedLanguage = game.state.language;
         const savedStats = game.state.stats;
+        // Achievements are documented as permanent ("never resets on prestige" — see
+        // ACHIEVEMENTS in config.js) but were missing from this save/restore list, so
+        // initDefaultState() below was silently wiping unlocked achievements (and the
+        // permanent income bonus they grant) on every single prestige.
+        const savedAchievements = game.state.achievements;
         const savedMissionsCompleted = game.state.missionsCompleted;
         const savedLastWeeklyReward = game.state.lastWeeklyReward;
         const savedLastSpinTime = game.state.lastSpinTime;
@@ -169,6 +142,7 @@ class PrestigeController {
         game.state.goldUpgrades = savedGoldUpgrades;
         game.state.language = savedLanguage;
         game.state.stats = savedStats;
+        game.state.achievements = savedAchievements;
         game.state.missionsCompleted = savedMissionsCompleted;
         game.state.lastWeeklyReward = savedLastWeeklyReward;
         game.state.lastSpinTime = savedLastSpinTime;
@@ -220,6 +194,21 @@ class PrestigeController {
         
         window.gameAudio.playUnlock();
         game.recalculateEps();
+
+        // Vault floor: size this branch's level-1 vault capacity so it can absorb at least
+        // 1.5x a single guard delivery right after the reset. Branch multiplier can jump
+        // 5x-200x between branches, but getVaultCapacity()'s formula deliberately has zero
+        // live coupling to it (see economy-manager.js) — without this, a fresh level-1 vault
+        // can be smaller than one guard's carry capacity, freezing the guard the moment it
+        // tries to deposit (guard-controller.js: vaultSpaceLeft <= 0 -> guard goes idle).
+        // Computed once, here, from the just-reset state (new branch, restored shares,
+        // default managers) — NOT recomputed afterward, so vault leveling for the rest of
+        // this branch stays pure per-level investment like before.
+        game.state.vault.branchBaseCapacity = Math.max(
+            GAME_CONFIG.VAULT_BASE_CAPACITY,
+            Math.round(game.economyManager.getGuardCapacity(1) * 1.5)
+        );
+        game.economyManager._cachedVaultCap = new Map();
 
         // Branch Welcome Bonus: computed here so EPS reflects the new branch
         const welcomeBonusCash = isNewBranch ? (game.getEarningsPerSecond() * 60) : 0;

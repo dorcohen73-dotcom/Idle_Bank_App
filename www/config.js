@@ -1,8 +1,8 @@
 // Game Configuration Constants for Idle Bank Empire
 const GAME_CONFIG = {
     // Tellers Formulas
-    TELLER_BASE_SPEED: 5.0,
-    TELLER_SPEED_DECAY: 0.93,
+    TELLER_BASE_SPEED: 10.0,
+    TELLER_SPEED_LEVEL_STEP: 0.1, // linear processing-time reduction per teller level
     TELLER_MIN_SPEED: 0.2,
     TELLER_ABSOLUTE_MIN_SPEED: 0.05,
     TELLER_AUTO_SPEED_FACTOR: 0.7,
@@ -15,13 +15,16 @@ const GAME_CONFIG = {
     TELLER_UPGRADE_COST_GROWTH: 1.13,
 
     // Guards Formulas
-    GUARD_BASE_SPEED: 8.0,
-    GUARD_SPEED_DECAY: 0.92,
+    GUARD_BASE_SPEED: 10.0,
+    GUARD_SPEED_LEVEL_STEP: 0.1, // linear cooldown reduction per guard level (idle wait between rounds)
     GUARD_MIN_SPEED: 0.8,
     GUARD_ABSOLUTE_MIN_SPEED: 1.0,
     GUARD_AUTO_SPEED_FACTOR: 0.7,
     GUARD_SKILL_SPEED_DECAY: 0.04, // Alon's level upgrades: -4% per level
     GUARD_SPEED_GOLD_UPGRADE_FACTOR: 0.10, // Guard speed gold upgrade: -10% per level
+    GUARD_WALK_ANIM_DURATION: 0.6, // fixed cosmetic per-leg walk time — NOT upgradeable; "speed" is the cooldown, not the walk
+    GUARD_COLLECT_MIN_DURATION: 0.3, // loading time floor — near-empty pickups
+    GUARD_COLLECT_MAX_DURATION: 1.5, // loading time when the pickup fills the guard's whole capacity
 
     // Base tuned so a level-1 guard's EFFECTIVE capacity (this base x GUARD_AUTO_CAPACITY_FACTOR
     // 1.5 x the operations manager's guardCapBoost, both of which apply out of the box since
@@ -53,7 +56,12 @@ const GAME_CONFIG = {
     VAULT_BASE_CAPACITY: 1500,
     VAULT_CAPACITY_GROWTH: 1.10,
 
-    VAULT_BASE_UPGRADE_COST: 250,
+    // Base was 250 - nearly double the guard's 130 and >4x the teller's 60 at level 1,
+    // on top of getVaultCapacity() completely ignoring vault level once EPS-based scaling
+    // kicked in (see economy-manager.js), so the very first vault upgrades cost the most
+    // of any building while doing the least. Brought down closer to the guard's cost now
+    // that vault level always compounds capacity again.
+    VAULT_BASE_UPGRADE_COST: 150,
     VAULT_UPGRADE_COST_GROWTH: 1.14,
 
     // Queue Lobby Formulas
@@ -132,7 +140,6 @@ const GAME_CONFIG = {
         managerDiscount: 50
     },
     STARTING_CASH_OPTIONS: [180, 1000, 5000, 25000, 100000],
-    PRESTIGE_ASSETS_DIVIDER: 8,
     DEPT_ID_CASH: 0,
     DEPT_ID_LOANS: 1,
     DEPT_ID_VIP: 2,

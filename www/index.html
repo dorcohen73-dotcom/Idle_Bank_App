@@ -89,7 +89,7 @@
 
     <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
          includes what used to be premium_depts.css and premium_managers.css. -->
-    <link rel="stylesheet" href="style.css?v=883183e629">
+    <link rel="stylesheet" href="style.css?v=75fc17ea53">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -193,17 +193,17 @@
                     </div>
                 </div>
                 <div class="header-buttons-row">
-                    <button class="sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה"
+                    <button class="topbar-action-btn sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה"
                         aria-label="דוח ביצועים ואנליטיקה"><span aria-hidden="true">📊</span></button>
-                    <button class="boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
+                    <button class="topbar-action-btn sound-toggle-btn boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
                         aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span></button>
-                    <button class="sound-toggle-btn header-daily-btn" id="header-daily-btn" data-tab="daily" title="הישגים"
+                    <button class="topbar-action-btn sound-toggle-btn header-daily-btn" id="header-daily-btn" data-tab="daily" title="הישגים"
                         aria-label="הישגים"><span aria-hidden="true">🏆</span></button>
-                    <button class="sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn"
+                    <button class="topbar-action-btn sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn"
                         title="גלגל המזל היומי" aria-label="גלגל המזל היומי"><span aria-hidden="true">🎡</span></button>
-                    <button class="sound-toggle-btn" id="lang-btn" title="הגדרות ושפה / Settings & Language"
+                    <button class="topbar-action-btn sound-toggle-btn" id="lang-btn" title="הגדרות ושפה / Settings & Language"
                         aria-label="הגדרות ושפה"><span aria-hidden="true">⚙️</span></button>
-                    <button class="sound-toggle-btn" id="mute-btn" title="השתק"
+                    <button class="topbar-action-btn sound-toggle-btn" id="mute-btn" title="השתק"
                         aria-label="השתק והפעלת סאונד">🔊</button>
                 </div>
             </div>
@@ -517,16 +517,41 @@
     </div>
 
     <!-- Daily Login Reward Modal -->
-    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true"
-        aria-labelledby="login-reward-title">
-        <div class="modal-box">
-            <div class="modal-icon" aria-hidden="true">🎁</div>
-            <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
-            <p class="modal-text" id="login-reward-streak-text">רצף: 1 ימים</p>
-            <div class="modal-amount" id="login-reward-amount">+$0</div>
-            <p class="modal-text modal-text-muted" id="login-reward-desc"></p>
+    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true" aria-labelledby="login-reward-title">
+        <div class="modal-box luxury-daily-modal-box">
+            <button class="daily-modal-close-x" id="login-reward-close-x" aria-label="סגור">✕</button>
+            <div class="daily-reward-hero-header">
+                <div class="daily-confetti-particle dcp-1">✨</div>
+                <div class="daily-confetti-particle dcp-2">🎉</div>
+                <div class="daily-confetti-particle dcp-3">✨</div>
+                <div class="daily-gift-box-icon" aria-hidden="true">🎁</div>
+            </div>
+            
+            <h2 class="modal-title luxury-modal-title" id="login-reward-title">
+                <span class="modal-title-decor">✧</span>
+                <span id="login-reward-title-text">בונוס כניסה יומי!</span>
+                <span class="modal-title-decor">✧</span>
+            </h2>
+            
+            <p class="modal-text luxury-streak-text" id="login-reward-streak-text">
+                <span class="streak-clock-icon">🕒</span> רצף: 1 ימים
+            </p>
+
+            <div class="luxury-reward-hero-card">
+                <div class="modal-amount luxury-green-amount" id="login-reward-amount">+$0</div>
+                <div class="luxury-reward-sublabel">
+                    <span class="modal-title-decor">✦</span>
+                    <span id="login-reward-desc">מזומן לחשבון</span>
+                    <span class="modal-title-decor">✦</span>
+                </div>
+            </div>
+
             <div class="login-streak-strip" id="login-streak-strip"></div>
-            <button class="modal-close-btn login-reward-collect-btn" id="login-reward-collect-btn">אסוף!</button>
+
+            <button class="modal-close-btn login-reward-collect-btn luxury-daily-collect-btn" id="login-reward-collect-btn">
+                <span class="collect-btn-badge">👑</span>
+                <span id="login-reward-collect-text">אסוף!</span>
+            </button>
         </div>
     </div>
 
@@ -562,74 +587,98 @@
     <div class="modal-overlay" id="lang-modal" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
         <div class="modal-box language-modal-box">
             <div class="modal-icon" aria-hidden="true">🌐</div>
-            <h2 class="modal-title" id="lang-modal-title">בחר שפה / Choose Language</h2>
-            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred
-                language:</p>
+            <h2 class="modal-title luxury-modal-title" id="lang-modal-title">
+                <span class="modal-title-decor">✧</span>
+                <span id="lang-modal-title-text">בחר שפת ממשק / Choose Language</span>
+                <span class="modal-title-decor">✧</span>
+            </h2>
+            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred language:</p>
 
             <div class="lang-options-grid">
-                <button class="lang-option-card" data-lang="he">
+                <button class="lang-option-card active" data-lang="he">
                     <span class="lang-flag" aria-hidden="true">🇮🇱</span>
+                    <span class="lang-country-code">IL</span>
                     <span class="lang-name">עברית</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="en">
                     <span class="lang-flag" aria-hidden="true">🇺🇸</span>
+                    <span class="lang-country-code">US</span>
                     <span class="lang-name">English</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="es">
                     <span class="lang-flag" aria-hidden="true">🇪🇸</span>
+                    <span class="lang-country-code">ES</span>
                     <span class="lang-name">Español</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="ru">
                     <span class="lang-flag" aria-hidden="true">🇷🇺</span>
+                    <span class="lang-country-code">RU</span>
                     <span class="lang-name">Русский</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
             </div>
 
             <!-- Theme Selection -->
             <div class="settings-theme-section">
-                <h3 id="settings-theme-title" class="settings-section-title">בחר צבע רקע / Select Background</h3>
+                <h3 id="settings-theme-title" class="settings-section-title luxury-section-title">
+                    <span class="modal-title-decor">✦</span>
+                    <span id="settings-theme-title-text">בחר צבע רקע:</span>
+                    <span class="modal-title-decor">✦</span>
+                </h3>
                 <div class="theme-options-row">
-                    <button class="theme-option-btn-choice" data-theme="dark">שחור / Dark</button>
-                    <button class="theme-option-btn-choice" data-theme="white">לבן / Light</button>
-                    <button class="theme-option-btn-choice active" data-theme="blue">כחול / Blue</button>
+                    <button class="theme-option-btn-choice active" data-theme="blue">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">כחול / Blue</span>
+                        <span class="theme-check-badge">✓</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="white">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">לבן / Light</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="dark">
+                        <span class="theme-icon">🌙</span>
+                        <span class="theme-label">שחור / Dark</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Performance Selection -->
-            <div class="settings-theme-section" style="margin-top: 1.5rem;">
-                <h3 id="settings-perf-title" class="settings-section-title" title="">מצב ביצועים:</h3>
-                <div class="theme-options-row">
-                    <button class="theme-option-btn-choice perf-option-btn" data-perf="auto" id="perf-auto-btn">אוטומטי</button>
-                    <button class="theme-option-btn-choice perf-option-btn" data-perf="full" id="perf-full-btn">מלא</button>
-                    <button class="theme-option-btn-choice perf-option-btn" data-perf="eco" id="perf-eco-btn">חסכוני</button>
-                </div>
-
             <!-- Notifications Toggle -->
-            <div class="settings-theme-section" style="margin-top: 1.5rem;">
+            <div class="settings-theme-section" style="margin-top: 0.5rem;">
                 <div class="reset-confirm-wrapper" style="justify-content: center; margin-bottom: 0;">
-                    <input type="checkbox" id="settings-notif-checkbox" checked>
+                    <input type="checkbox" id="settings-notif-checkbox" checked class="luxury-checkbox">
                     <label for="settings-notif-checkbox" id="settings-notif-label">התראות דחיפה</label>
                 </div>
             </div>
 
-            <div class="settings-danger-section">
-                <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
+            <div class="settings-danger-section luxury-danger-card">
+                <h3 id="settings-danger-title" class="settings-danger-title">
+                    <span class="danger-icon">⚠️</span>
+                    <span id="settings-danger-title-text">אזור מסוכן</span>
+                </h3>
                 <div class="reset-confirm-wrapper">
-                    <input type="checkbox" id="reset-confirm-checkbox">
+                    <input type="checkbox" id="reset-confirm-checkbox" class="luxury-checkbox">
                     <label for="reset-confirm-checkbox" id="reset-confirm-label">אני מאשר איפוס מלא</label>
                 </div>
-                <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span
-                        aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
+                <button class="collect-vault-btn reset-game-btn luxury-danger-btn" id="reset-game-btn" disabled>
+                    <span class="danger-btn-icon">⚠️</span>
+                    <span id="reset-btn-text">איפוס משחק מוחלט</span>
+                    <span class="danger-trash-icon">🗑️</span>
+                </button>
             </div>
 
-            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים
-                מסכם</button>
+            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים מסכמים</button>
             <div class="settings-privacy-row">
                 <a href="privacy.html" target="_blank" id="settings-privacy-link" class="settings-privacy-link">🔒 מדיניות פרטיות</a>
-                <span aria-hidden="true"> · </span>
+                <span aria-hidden="true"> | </span>
                 <a href="terms.html" target="_blank" id="settings-terms-link" class="settings-privacy-link">📜 תנאי שימוש</a>
             </div>
-            <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
+            <button class="modal-close-btn lang-modal-close-btn luxury-close-btn" id="lang-modal-close">
+                <span class="close-shield-icon">🛡️</span>
+                <span id="lang-modal-close-text">סגור הגדרות / Close Settings</span>
+            </button>
         </div>
     </div>
 
@@ -832,19 +881,19 @@
         </div>
     </div>
 
-    <script src="config.js?v=20260718_1" defer></script>
-    <script src="locales.js?v=20260718_1" defer></script>
-    <script src="economy-manager.js?v=20260718_1" defer></script>
-    <script src="save-manager.js?v=20260718_2" defer></script>
+    <script src="config.js?v=20260724_3" defer></script>
+    <script src="locales.js?v=20260724_1" defer></script>
+    <script src="economy-manager.js?v=20260724_1" defer></script>
+    <script src="save-manager.js?v=20260724_2" defer></script>
     <script src="mission-controller.js?v=20260718_1" defer></script>
     <script src="achievement-controller.js?v=20260718_1" defer></script>
-    <script src="guard-controller.js?v=20260718_2" defer></script>
+    <script src="guard-controller.js?v=20260724_2" defer></script>
     <script src="customer-flow-controller.js?v=20260718_3" defer></script>
     <script src="prestige-controller.js?v=20260718_4" defer></script>
     <script src="shop-controller.js?v=20260718_5" defer></script>
     <script src="performance-manager.js?v=2" defer></script>
     <script src="game.js?v=20260718_5" defer></script>
-    <script src="app.bundle.js?v=883183e629" defer></script>
+    <script src="app.bundle.js?v=75fc17ea53" defer></script>
     
 </body>
 

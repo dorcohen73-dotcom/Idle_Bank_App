@@ -104,7 +104,8 @@ class IdleBankGame {
 
             vault: {
                 level: 1,
-                cashStored: 0
+                cashStored: 0,
+                branchBaseCapacity: GAME_CONFIG.VAULT_BASE_CAPACITY
             },
 
             tellers: [
@@ -539,10 +540,6 @@ class IdleBankGame {
         window.gameAudio.playChaChing();
         this.saveGame();
         return amount;
-    }
-
-    calculateTotalAssets() {
-        return this.prestigeController.calculateTotalAssets();
     }
 
     calculatePrestigeShares() {

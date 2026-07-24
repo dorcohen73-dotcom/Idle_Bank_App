@@ -505,11 +505,14 @@ class SaveManager {
 
         // vault
         if (!state.vault || typeof state.vault !== 'object') {
-            state.vault = { level: 1, cashStored: 0 };
+            state.vault = { level: 1, cashStored: 0, branchBaseCapacity: GAME_CONFIG.VAULT_BASE_CAPACITY };
         } else {
             if (!isNum(state.vault.level) || state.vault.level < 1) state.vault.level = 1;
             if (!isNum(state.vault.cashStored) || state.vault.cashStored < 0) state.vault.cashStored = 0;
             else state.vault.cashStored = roundCents(state.vault.cashStored);
+            if (!isNum(state.vault.branchBaseCapacity) || state.vault.branchBaseCapacity < GAME_CONFIG.VAULT_BASE_CAPACITY) {
+                state.vault.branchBaseCapacity = GAME_CONFIG.VAULT_BASE_CAPACITY;
+            }
         }
 
         // tellers
@@ -539,7 +542,8 @@ class SaveManager {
         // guards
         const _defaultGuard = (i) => ({
             id: i, unlocked: (i === 0), level: 1, loadedCash: 0, position: 0, state: 'idle', timer: 0,
-            targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0
+            targetTellerIndex: 0, tellerVisitQueue: [], segmentPosition: 0, carriedAmount: 0, cooldownTimer: 0,
+            pendingCollectAmount: 0
         });
         if (!Array.isArray(state.guards)) {
             state.guards = [_defaultGuard(0), _defaultGuard(1), _defaultGuard(2)];
@@ -562,6 +566,8 @@ class SaveManager {
                     if (!isNum(g.segmentPosition) || g.segmentPosition < 0) g.segmentPosition = g.position;
                     if (!isNum(g.carriedAmount) || g.carriedAmount < 0) g.carriedAmount = g.loadedCash;
                     else g.carriedAmount = roundCents(g.carriedAmount);
+                    if (!isNum(g.cooldownTimer) || g.cooldownTimer < 0) g.cooldownTimer = 0;
+                    if (!isNum(g.pendingCollectAmount) || g.pendingCollectAmount < 0) g.pendingCollectAmount = 0;
                     // Normalise states that no longer exist in new machine → idle so game.js rebuilds them
                     const validStates = ['idle', 'moving_to_vault', 'depositing'];
                     const isMultiStop = g.state.startsWith('moving_to_teller_') || g.state.startsWith('collecting_from_teller_');

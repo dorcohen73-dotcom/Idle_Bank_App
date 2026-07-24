@@ -4,7 +4,7 @@
   var cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
   var cachedFallback = " \u05E2\u05E6\u05D5\u05DD";
   var cachedLang = "he";
-  function updateCachedSuffixes2(lang) {
+  function updateCachedSuffixes(lang) {
     cachedLang = lang || "en";
     if (cachedLang === "en") {
       cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
@@ -19,6 +19,9 @@
       cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
       cachedFallback = " \u05E2\u05E6\u05D5\u05DD";
     }
+  }
+  if (typeof window !== "undefined") {
+    window.updateCachedSuffixes = updateCachedSuffixes;
   }
   function fastFormat(num, lang) {
     const separator = lang === "ru" ? " " : ",";
@@ -849,9 +852,14 @@
   }
   function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
+      if (DOM_CACHE.boostBtn.innerHTML !== '<span aria-hidden="true">\u26A1</span>') {
+        DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">\u26A1</span>';
+      }
       if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
-        DOM_CACHE.boostBtn.innerText = tObj.boostActive(formatTime(game.state.boost2xTimeLeft));
-        DOM_CACHE.boostBtn.setAttribute("data-time", formatTime(game.state.boost2xTimeLeft));
+        const timeStr = formatTime(game.state.boost2xTimeLeft);
+        const activeText = tObj && typeof tObj.boostActive === "function" ? tObj.boostActive(timeStr) : `\u26A1 Boost: ${timeStr}`;
+        DOM_CACHE.boostBtn.title = activeText;
+        DOM_CACHE.boostBtn.setAttribute("data-time", timeStr);
         DOM_CACHE.boostBtn.classList.add("active");
         DOM_CACHE.boostBtn.classList.remove("offer");
       } else {
@@ -860,12 +868,14 @@
         const offerEnd = window._boostOfferEndTime || 0;
         if (offerEnd > nowMs) {
           const offerSec = Math.ceil((offerEnd - nowMs) / 1e3);
-          const boostOfferFn = tObj.boostOfferText;
-          DOM_CACHE.boostBtn.innerText = typeof boostOfferFn === "function" ? boostOfferFn(formatTime(offerSec)) : `\u26A1 OFFER! ${formatTime(offerSec)}`;
+          const timeStr = formatTime(offerSec);
+          const boostOfferFn = tObj ? tObj.boostOfferText : null;
+          const offerText = typeof boostOfferFn === "function" ? boostOfferFn(timeStr) : `\u26A1 OFFER! ${timeStr}`;
+          DOM_CACHE.boostBtn.title = offerText;
           DOM_CACHE.boostBtn.classList.add("offer");
           DOM_CACHE.boostBtn.classList.remove("active");
         } else {
-          DOM_CACHE.boostBtn.innerText = tObj.boostBtn || "\u26A1 BOOST x2";
+          DOM_CACHE.boostBtn.title = tObj && tObj.boostBtn || "\u26A1 BOOST x2";
           DOM_CACHE.boostBtn.classList.remove("active", "offer");
         }
       }
@@ -1040,7 +1050,7 @@
     updateTellersDisplay(tObj, vaultData);
     updateGuardsDisplay(lang);
   }
-  window.updateCachedSuffixes = updateCachedSuffixes2;
+  window.updateCachedSuffixes = updateCachedSuffixes;
   window.showToast = showToast2;
   window.fastFormat = fastFormat;
   window.formatMoney = formatMoney2;
@@ -1779,11 +1789,17 @@
     const streakTextEl = document.getElementById("login-reward-streak-text");
     const amountEl = document.getElementById("login-reward-amount");
     const descEl = document.getElementById("login-reward-desc");
+    const titleTextEl = document.getElementById("login-reward-title-text");
     const titleEl = document.getElementById("login-reward-title");
     const lm = typeof translations !== "undefined" && translations[lang] && translations[lang].loginModal ? translations[lang].loginModal : translations.he.loginModal;
-    if (titleEl) titleEl.innerText = lm.title;
+    if (titleTextEl) {
+      titleTextEl.innerText = lm.title;
+    } else if (titleEl) {
+      titleEl.innerText = lm.title;
+    }
     if (streakTextEl) {
-      streakTextEl.textContent = typeof lm.streakLabel === "function" ? lm.streakLabel(streak) : "Streak: " + streak + " days";
+      const labelStr = typeof lm.streakLabel === "function" ? lm.streakLabel(streak) : "Streak: " + streak + " days";
+      streakTextEl.innerHTML = `<span class="streak-clock-icon">\u{1F552}</span> ${labelStr}`;
     }
     let displayText = "";
     let descText = "";
@@ -1802,9 +1818,22 @@
     if (descEl) descEl.innerText = descText;
     _renderLoginStreakStrip(streak, lm);
     const collectBtn = document.getElementById("login-reward-collect-btn");
-    if (collectBtn) {
+    const collectTextEl = document.getElementById("login-reward-collect-text");
+    if (collectTextEl) {
+      collectTextEl.innerText = lm.collectBtn;
+    } else if (collectBtn) {
       collectBtn.innerText = lm.collectBtn;
+    }
+    if (collectBtn) {
       collectBtn.onclick = () => {
+        initSound2();
+        modal.classList.remove("active");
+        _applyLoginReward(reward);
+      };
+    }
+    const closeXBtn = document.getElementById("login-reward-close-x");
+    if (closeXBtn) {
+      closeXBtn.onclick = () => {
         initSound2();
         modal.classList.remove("active");
         _applyLoginReward(reward);
@@ -2635,8 +2664,9 @@
   // ui/events/i18n-theme.js
   function applyLanguage(lang) {
     window.gameLanguage = lang;
-    if (typeof updateCachedSuffixes === "function") {
-      updateCachedSuffixes(lang);
+    updateCachedSuffixes(lang);
+    if (typeof window.updateCachedSuffixes === "function") {
+      window.updateCachedSuffixes(lang);
     }
     document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
     document.documentElement.lang = lang;
@@ -2746,19 +2776,6 @@
     if (notifLabel) {
       notifLabel.innerText = tObj.settingsNotifLabel || "\u05D4\u05EA\u05E8\u05D0\u05D5\u05EA \u05D3\u05D7\u05D9\u05E4\u05D4";
     }
-    const perfTitle = document.getElementById("settings-perf-title");
-    if (perfTitle) {
-      perfTitle.innerText = tObj.perfModeTitle || "\u05DE\u05E6\u05D1 \u05D1\u05D9\u05E6\u05D5\u05E2\u05D9\u05DD:";
-      if (tObj.perfModeHint) {
-        perfTitle.title = tObj.perfModeHint;
-      }
-    }
-    const perfAutoBtn = document.getElementById("perf-auto-btn");
-    if (perfAutoBtn) perfAutoBtn.innerText = tObj.perfModeAuto || "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9";
-    const perfFullBtn = document.getElementById("perf-full-btn");
-    if (perfFullBtn) perfFullBtn.innerText = tObj.perfModeFull || "\u05DE\u05DC\u05D0";
-    const perfEcoBtn = document.getElementById("perf-eco-btn");
-    if (perfEcoBtn) perfEcoBtn.innerText = tObj.perfModeEco || "\u05D7\u05E1\u05DB\u05D5\u05E0\u05D9";
     if (DOM_CACHE.resetBtn) {
       const base = (tObj.resetGameBtn || "\u05D0\u05D9\u05E4\u05D5\u05E1 \u05DE\u05E9\u05D7\u05E7 \u05DE\u05D5\u05D7\u05DC\u05D8").replace("\u26A0\uFE0F", "").trim();
       DOM_CACHE.resetBtn.innerHTML = `<span aria-hidden="true">\u26A0\uFE0F</span> ${base}`;
@@ -2875,7 +2892,7 @@
       root.style.setProperty("--glass-blur", "blur(12px)");
       document.body.style.backgroundImage = "radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(223, 171, 41, 0.12) 0px, transparent 50%)";
     }
-    document.querySelectorAll(".theme-option-btn-choice:not(.perf-option-btn)").forEach((btn) => {
+    document.querySelectorAll(".theme-option-btn-choice").forEach((btn) => {
       if (btn.getAttribute("data-theme") === themeName) {
         btn.classList.add("active");
       } else {
@@ -3265,12 +3282,11 @@
       }
       const canBuy = details.canAfford;
       card.className = "upgrade-card premium-upg-card";
-      let eps = 0;
+      let eps = 0, nextEps = 0;
       if (type === "teller") {
         const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
         eps = reward / speed;
-      } else {
-        eps = capacity / speed;
+        nextEps = reward / nextSpeed;
       }
       card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
@@ -3297,6 +3313,7 @@
                             <span class="val-next">${formatMoney(nextCapacity)}</span>
                         </div>
                     </div>
+                    ${type === "teller" ? `
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
@@ -3304,17 +3321,20 @@
                         <div class="upg-v2-stat-label">${(statLabels[lang] || statLabels.en).totalYield}</div>
                         <div class="upg-v2-stat-val">
                             <span class="val-current">${formatMoney(eps)}</span>
+                            <span class="val-arrow arrow" style="color: #4ade80;">\u2794</span>
+                            <span class="val-next">${formatMoney(nextEps)}</span>
                         </div>
                     </div>
+                    ` : ""}
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
                         <div class="upg-v2-stat-label">${speedLabel}</div>
                         <div class="upg-v2-stat-val">
-                            <span class="val-current">${speed}</span>
+                            <span class="val-current">${speed}${translations[lang].secAbbr || ""}</span>
                             <span class="val-arrow arrow" style="color: #4ade80;">\u2794</span>
-                            <span class="val-next">${nextSpeed}</span>
+                            <span class="val-next">${nextSpeed}${translations[lang].secAbbr || ""}</span>
                         </div>
                     </div>
                 </div>
@@ -3410,7 +3430,7 @@
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl2}'); background-position: ${avatarBgPos2}; background-size: ${avatarBgSize2};"></div>
             <div class="upg-v2-content-overlay">
                 <div class="upg-v2-header-row">
-                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].locked || "\u05E0\u05E2\u05D5\u05DC"}</div>
+                    <div class="upg-v2-badge" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">${translations[lang].lockedLabel}</div>
                     <div class="upg-v2-main-title" style="color: #cbd5e1;">${title}</div>
                 </div>
                 
@@ -3538,7 +3558,7 @@
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${tObj.queueMaxTitle}</div>
             </div>
             
@@ -3560,7 +3580,7 @@
         <div class="upg-v2-avatar-large" style="background-image: url('images/client-1.png'); background-position: center; background-size: cover;"></div>
         <div class="upg-v2-content-overlay">
             <div class="upg-v2-header-row">
-                <div class="upg-v2-badge">${translations[lang].queueTitle || "\u05EA\u05D5\u05E8"}</div>
+                <div class="upg-v2-badge">${translations[lang].alertQueueLabel}</div>
                 <div class="upg-v2-main-title">${translations[lang].levelAbbr || "\u05E8\u05DE\u05D4"} ${queueLvl}</div>
             </div>
             
@@ -4141,7 +4161,7 @@
         } else {
           actionBtnHtml = `
                     <button class="branch-action-btn ghost-gold disabled" disabled>
-                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${translations[lang].locked || (lang === "he" ? "\u05E0\u05E2\u05D5\u05DC" : "Locked")}
+                        <i class="fas fa-lock" style="margin-inline-end:6px"></i>${tObj.locked}
                     </button>
                 `;
         }
@@ -4168,7 +4188,7 @@
                 <div class="branch-req-pill">
                     <div class="branch-req-pill-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <div class="branch-req-pill-text">
-                        <span class="req-label">${translations[lang].branches.minCashLabel || "\u05D3\u05E8\u05D9\u05E9\u05EA \u05DB\u05E1\u05E3 \u05E0\u05D5\u05DB\u05D7\u05D9\u05EA:"}</span>
+                        <span class="req-label">${tObj.minCashLabel}</span>
                         <span class="req-val">${isSold ? translations[lang].branches.sold : idx === 0 ? translations[lang].branches.active.replace(" \u{1F3DB}", "") : formatMoney(costToEnter)}</span>
                     </div>
                     <div class="branch-req-pill-crown">\u{1F451}</div>
@@ -4815,14 +4835,16 @@
                 if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
                 const statVals = card.querySelectorAll(".upg-v2-stat-val");
                 if (statVals.length >= 2) {
+                  const lang = game.state.language || "en";
+                  const secAbbr = translations[lang] && translations[lang].secAbbr || "";
                   const capacity = game.getTellerCapacity(t.level);
                   const speed = game.getTellerSpeed(t.level).toFixed(1);
                   const nextCapacity = game.getTellerCapacity(t.level + details.levels);
                   const nextSpeed = game.getTellerSpeed(t.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
                   const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
-                  const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + "</span>";
-                  const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
+                  const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(reward / nextSpeed) + "</span>";
+                  const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + secAbbr + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                   if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
                   if (statVals[2]) {
@@ -4860,18 +4882,16 @@
                 if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
                 const statVals = card.querySelectorAll(".upg-v2-stat-val");
                 if (statVals.length >= 2) {
+                  const lang = game.state.language || "en";
+                  const secAbbr = translations[lang] && translations[lang].secAbbr || "";
                   const capacity = game.getGuardCapacity(g.level);
                   const speed = game.getGuardSpeed(g.level).toFixed(1);
                   const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                   const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
-                  const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + "</span>";
-                  const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
+                  const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + secAbbr + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
-                  if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
-                  if (statVals[2]) {
-                    if (statVals[2].innerHTML !== newStatSpeed) statVals[2].innerHTML = newStatSpeed;
-                  }
+                  if (statVals[1].innerHTML !== newStatSpeed) statVals[1].innerHTML = newStatSpeed;
                 }
               }
             }
@@ -5128,10 +5148,13 @@
             schedule: { at: new Date(now + msUntilFull) }
           });
         }
+        const streak = game2.state.loginStreak || 1;
+        const nextReward = typeof game2.getDailyLoginReward === "function" ? game2.getDailyLoginReward(streak + 1) : null;
+        const rewardText = nextReward ? _rewardIcon(nextReward.type) + " " + _rewardShortText(nextReward) : "";
         notifications.push({
           id: 102,
-          title: t.notifDailyTitle || "\u{1F381} Daily Reward waiting",
-          body: t.notifDailyBody || "Keep up your login streak and claim your bonus",
+          title: typeof t.notifDailyTitle === "function" ? t.notifDailyTitle(streak) : t.notifDailyTitle || "\u{1F525} Daily Streak!",
+          body: typeof t.notifDailyBody === "function" ? t.notifDailyBody(rewardText) : t.notifDailyBody || "Keep up your login streak and claim your bonus",
           schedule: { at: new Date(now + 24 * 3600 * 1e3) }
         });
         notifications.push({
@@ -5350,24 +5373,6 @@
           }
         } catch (err) {
           console.error("Error inside theme options selection click handler:", err);
-        }
-      });
-    });
-    document.querySelectorAll(".perf-option-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        initSound2();
-        const mode = btn.getAttribute("data-perf");
-        if (window.game && window.game.state) {
-          window.game.state.perfMode = mode;
-          window.game.saveGame();
-        }
-        if (window.PerformanceManager) {
-          window.PerformanceManager.apply(mode, window.game && window.game.state ? window.game.state.lastMeasuredFps : 60);
-        }
-        document.querySelectorAll(".perf-option-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        if (window.gameAudio && typeof window.gameAudio.playClick === "function") {
-          window.gameAudio.playClick();
         }
       });
     });
@@ -6064,17 +6069,6 @@ ${stack}` : String(message);
         }
         const savedTheme = window.localStorage.getItem("idle_bank_theme") || "blue";
         applyTheme(savedTheme);
-        const savedPerfMode = window.game.state.perfMode || "auto";
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlMode = urlParams.get("perf");
-        const activeMode = urlMode === "eco" || urlMode === "full" ? urlMode : savedPerfMode;
-        document.querySelectorAll(".perf-option-btn").forEach((b) => {
-          if (b.getAttribute("data-perf") === activeMode) {
-            b.classList.add("active");
-          } else {
-            b.classList.remove("active");
-          }
-        });
         const notifCheckbox = document.getElementById("settings-notif-checkbox");
         if (notifCheckbox) {
           notifCheckbox.checked = window.game.state.notificationsEnabled !== false;
@@ -6205,8 +6199,8 @@ ${stack}` : String(message);
         cancelAnimationFrame(window.rafId);
         window.rafId = requestAnimationFrame(tick);
         if (window.PerformanceManager) {
-          const urlParams2 = new URLSearchParams(window.location.search);
-          const forcePerf = urlParams2.get("perf");
+          const urlParams = new URLSearchParams(window.location.search);
+          const forcePerf = urlParams.get("perf");
           window.PerformanceManager.apply(forcePerf || window.game.state.perfMode);
           window.PerformanceManager.probe().then((fps) => {
             if (typeof fps === "number") window.game.state.lastMeasuredFps = fps;

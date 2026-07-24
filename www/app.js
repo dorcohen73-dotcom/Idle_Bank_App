@@ -270,20 +270,6 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         const savedTheme = window.localStorage.getItem('idle_bank_theme') || 'blue';
         applyTheme(savedTheme);
 
-        // Set up performance mode UI on load
-        const savedPerfMode = window.game.state.perfMode || 'auto';
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlMode = urlParams.get('perf');
-        const activeMode = (urlMode === 'eco' || urlMode === 'full') ? urlMode : savedPerfMode;
-        
-        document.querySelectorAll('.perf-option-btn').forEach(b => {
-            if (b.getAttribute('data-perf') === activeMode) {
-                b.classList.add('active');
-            } else {
-                b.classList.remove('active');
-            }
-        });
-
         const notifCheckbox = document.getElementById('settings-notif-checkbox');
         if (notifCheckbox) {
             notifCheckbox.checked = window.game.state.notificationsEnabled !== false;

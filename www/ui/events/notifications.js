@@ -1,3 +1,5 @@
+import { _rewardIcon, _rewardShortText } from './modals.js';
+
 export const NotificationService = {
     available: false,
 
@@ -69,10 +71,16 @@ export const NotificationService = {
             // So next daily reward is at lastLoginDate + 24 hours.
             // Wait, streak uses calendar days. Let's schedule it for 24h from now, or midnight next day?
             // "בחצות הבא / +~20-24 שעות" - 24h from now is safe and encourages streak.
+            // Content is personalized (current streak + tomorrow's actual reward) instead of a generic
+            // "gift waiting" line, so the loss-aversion framing ("don't break your streak") has real
+            // numbers behind it — reuses the same getDailyLoginReward() the in-app streak strip shows.
+            const streak = game.state.loginStreak || 1;
+            const nextReward = typeof game.getDailyLoginReward === 'function' ? game.getDailyLoginReward(streak + 1) : null;
+            const rewardText = nextReward ? (_rewardIcon(nextReward.type) + ' ' + _rewardShortText(nextReward)) : '';
             notifications.push({
                 id: 102,
-                title: t.notifDailyTitle || '🎁 Daily Reward waiting',
-                body: t.notifDailyBody || 'Keep up your login streak and claim your bonus',
+                title: typeof t.notifDailyTitle === 'function' ? t.notifDailyTitle(streak) : (t.notifDailyTitle || '🔥 Daily Streak!'),
+                body: typeof t.notifDailyBody === 'function' ? t.notifDailyBody(rewardText) : (t.notifDailyBody || 'Keep up your login streak and claim your bonus'),
                 schedule: { at: new Date(now + (24 * 3600 * 1000)) }
             });
 
