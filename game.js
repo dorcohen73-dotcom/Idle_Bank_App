@@ -542,10 +542,6 @@ class IdleBankGame {
         return amount;
     }
 
-    calculateTotalAssets() {
-        return this.prestigeController.calculateTotalAssets();
-    }
-
     calculatePrestigeShares() {
         return this.prestigeController.calculatePrestigeShares();
     }

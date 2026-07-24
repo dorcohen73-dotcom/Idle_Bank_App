@@ -1,43 +1,11 @@
 // Prestige & branch progression — extracted verbatim from IdleBankGame
-// (REFACTOR_PLAN phase 3): total-assets valuation, gold-share calculation,
-// daily-login reward table, the full prestige reset flow, and branch travel.
+// (REFACTOR_PLAN phase 3): gold-share calculation, daily-login reward table,
+// the full prestige reset flow, and branch travel.
 // Operates directly on game.state; no state-shape or save-format changes.
 // game.js keeps thin facades for the UI layer and SaveManager.
 class PrestigeController {
     constructor(game) {
         this.game = game;
-    }
-
-    calculateTotalAssets() {
-        const game = this.game;
-        let total = 0;
-        if (game.state.tellers) {
-            game.state.tellers.forEach(t => {
-                if (t.unlocked) total += t.level;
-            });
-        }
-        if (game.state.guards) {
-            game.state.guards.forEach(g => {
-                if (g.unlocked) total += g.level;
-            });
-        }
-        if (game.state.vault) {
-            total += game.state.vault.level || 1;
-        }
-        total += game.state.queueUpgradeLevel || 1;
-        if (game.state.departments) {
-            game.state.departments.forEach(d => {
-                if (d.unlocked) total += 5;
-            });
-        }
-        if (game.state.managers) {
-            Object.keys(game.state.managers).forEach(k => {
-                if (k !== 'operations' && game.state.managers[k]) {
-                    total += 5;
-                }
-            });
-        }
-        return total;
     }
 
     calculatePrestigeShares() {

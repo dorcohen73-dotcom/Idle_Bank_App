@@ -137,7 +137,6 @@ const GAME_CONFIG = {
         managerDiscount: 50
     },
     STARTING_CASH_OPTIONS: [180, 1000, 5000, 25000, 100000],
-    PRESTIGE_ASSETS_DIVIDER: 8,
     DEPT_ID_CASH: 0,
     DEPT_ID_LOANS: 1,
     DEPT_ID_VIP: 2,
