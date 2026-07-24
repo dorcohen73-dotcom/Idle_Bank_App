@@ -4,7 +4,7 @@
   var cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
   var cachedFallback = " \u05E2\u05E6\u05D5\u05DD";
   var cachedLang = "he";
-  function updateCachedSuffixes2(lang) {
+  function updateCachedSuffixes(lang) {
     cachedLang = lang || "en";
     if (cachedLang === "en") {
       cachedSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
@@ -19,6 +19,9 @@
       cachedSuffixes = ["", " \u05D0\u05DC\u05E3", " \u05DE\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05DE\u05D9\u05DC\u05D9\u05D0\u05E8\u05D3", " \u05D8\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D3\u05E8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E7\u05D5\u05D5\u05D9\u05E0\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E7\u05E1\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E1\u05E4\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D0\u05D5\u05E7\u05D8\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05E0\u05D5\u05E0\u05D9\u05DC\u05D9\u05D5\u05DF", " \u05D3\u05E6\u05D9\u05DC\u05D9\u05D5\u05DF"];
       cachedFallback = " \u05E2\u05E6\u05D5\u05DD";
     }
+  }
+  if (typeof window !== "undefined") {
+    window.updateCachedSuffixes = updateCachedSuffixes;
   }
   function fastFormat(num, lang) {
     const separator = lang === "ru" ? " " : ",";
@@ -1040,7 +1043,7 @@
     updateTellersDisplay(tObj, vaultData);
     updateGuardsDisplay(lang);
   }
-  window.updateCachedSuffixes = updateCachedSuffixes2;
+  window.updateCachedSuffixes = updateCachedSuffixes;
   window.showToast = showToast2;
   window.fastFormat = fastFormat;
   window.formatMoney = formatMoney2;
@@ -2635,8 +2638,9 @@
   // ui/events/i18n-theme.js
   function applyLanguage(lang) {
     window.gameLanguage = lang;
-    if (typeof updateCachedSuffixes === "function") {
-      updateCachedSuffixes(lang);
+    updateCachedSuffixes(lang);
+    if (typeof window.updateCachedSuffixes === "function") {
+      window.updateCachedSuffixes(lang);
     }
     document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
     document.documentElement.lang = lang;

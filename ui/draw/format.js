@@ -19,6 +19,9 @@ export function updateCachedSuffixes(lang) {
         cachedFallback = ' עצום';
     }
 }
+if (typeof window !== 'undefined') {
+    window.updateCachedSuffixes = updateCachedSuffixes;
+}
 
 export function fastFormat(num, lang) {
     const separator = (lang === 'ru') ? ' ' : ',';

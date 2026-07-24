@@ -1,9 +1,11 @@
 import { updateMuteButton } from './ads.js';
+import { updateCachedSuffixes } from '../draw/format.js';
 
 export function applyLanguage(lang) {
     window.gameLanguage = lang;
-    if (typeof updateCachedSuffixes === 'function') {
-        updateCachedSuffixes(lang);
+    updateCachedSuffixes(lang);
+    if (typeof window.updateCachedSuffixes === 'function') {
+        window.updateCachedSuffixes(lang);
     }
     document.documentElement.dir = (lang === 'he') ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
