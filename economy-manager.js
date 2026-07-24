@@ -155,7 +155,7 @@ class EconomyManager {
 
     // Guards Formulas
     getGuardSpeed(level) {
-        const baseSpeed = Math.max(GAME_CONFIG.GUARD_MIN_SPEED, GAME_CONFIG.GUARD_BASE_SPEED * Math.pow(GAME_CONFIG.GUARD_SPEED_DECAY, level - 1));
+        const baseSpeed = Math.max(GAME_CONFIG.GUARD_MIN_SPEED, GAME_CONFIG.GUARD_BASE_SPEED - (level - 1) * GAME_CONFIG.GUARD_SPEED_LEVEL_STEP);
         let speedFactor = 1.0;
         
         if (this.game.state.managers && this.game.state.managers.operations && this.game.state.managerUpgrades && this.game.state.managerUpgrades.operations) {

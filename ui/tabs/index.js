@@ -76,6 +76,8 @@ function updateButtonAffordability() {
 
                             const statVals = card.querySelectorAll('.upg-v2-stat-val');
                             if (statVals.length >= 2) {
+                                const lang = game.state.language || 'en';
+                                const secAbbr = (translations[lang] && translations[lang].secAbbr) || '';
                                 const capacity = game.getTellerCapacity(t.level);
                                 const speed = game.getTellerSpeed(t.level).toFixed(1);
                                 const nextCapacity = game.getTellerCapacity(t.level + details.levels);
@@ -83,7 +85,7 @@ function updateButtonAffordability() {
                                 const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
                                 const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
                                 const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(reward / nextSpeed) + '</span>';
-                                const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + '</span>';
+                                const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + secAbbr + '</span>';
                                 if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                                 if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
                                 if (statVals[2]) {
@@ -124,18 +126,16 @@ function updateButtonAffordability() {
 
                             const statVals = card.querySelectorAll('.upg-v2-stat-val');
                             if (statVals.length >= 2) {
+                                const lang = game.state.language || 'en';
+                                const secAbbr = (translations[lang] && translations[lang].secAbbr) || '';
                                 const capacity = game.getGuardCapacity(g.level);
                                 const speed = game.getGuardSpeed(g.level).toFixed(1);
                                 const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                                 const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
                                 const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity) + '</span>';
-                                const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + formatMoney(nextCapacity / nextSpeed) + '</span>';
-                                const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + '</span>';
+                                const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">➔</span><span class="val-next">' + nextSpeed + secAbbr + '</span>';
                                 if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
-                                if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
-                                if (statVals[2]) {
-                                    if (statVals[2].innerHTML !== newStatSpeed) statVals[2].innerHTML = newStatSpeed;
-                                }
+                                if (statVals[1].innerHTML !== newStatSpeed) statVals[1].innerHTML = newStatSpeed;
                             }
                         }
                     }

@@ -3287,9 +3287,6 @@
         const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
         eps = reward / speed;
         nextEps = reward / nextSpeed;
-      } else {
-        eps = capacity / speed;
-        nextEps = nextCapacity / nextSpeed;
       }
       card.innerHTML = `
             <div class="upg-v2-avatar-large" style="background-image: url('${avatarBgUrl}'); background-position: ${avatarBgPos}; background-size: ${avatarBgSize};"></div>
@@ -3316,6 +3313,7 @@
                             <span class="val-next">${formatMoney(nextCapacity)}</span>
                         </div>
                     </div>
+                    ${type === "teller" ? `
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
@@ -3327,15 +3325,16 @@
                             <span class="val-next">${formatMoney(nextEps)}</span>
                         </div>
                     </div>
+                    ` : ""}
                     <div class="upg-v2-stat">
                         <div class="upg-v2-stat-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
                         <div class="upg-v2-stat-label">${speedLabel}</div>
                         <div class="upg-v2-stat-val">
-                            <span class="val-current">${speed}</span>
+                            <span class="val-current">${speed}${translations[lang].secAbbr || ""}</span>
                             <span class="val-arrow arrow" style="color: #4ade80;">\u2794</span>
-                            <span class="val-next">${nextSpeed}</span>
+                            <span class="val-next">${nextSpeed}${translations[lang].secAbbr || ""}</span>
                         </div>
                     </div>
                 </div>
@@ -4836,6 +4835,8 @@
                 if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
                 const statVals = card.querySelectorAll(".upg-v2-stat-val");
                 if (statVals.length >= 2) {
+                  const lang = game.state.language || "en";
+                  const secAbbr = translations[lang] && translations[lang].secAbbr || "";
                   const capacity = game.getTellerCapacity(t.level);
                   const speed = game.getTellerSpeed(t.level).toFixed(1);
                   const nextCapacity = game.getTellerCapacity(t.level + details.levels);
@@ -4843,7 +4844,7 @@
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
                   const reward = game.economyManager.getCurrentBaseReward() * (game.economyManager.getTotalMultiplier() || 1);
                   const newStatYield = '<span class="val-current">' + formatMoney(reward / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(reward / nextSpeed) + "</span>";
-                  const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
+                  const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + secAbbr + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
                   if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
                   if (statVals[2]) {
@@ -4881,18 +4882,16 @@
                 if (titleAmtEl && titleAmtEl.innerText !== newTitleAmt) titleAmtEl.innerText = newTitleAmt;
                 const statVals = card.querySelectorAll(".upg-v2-stat-val");
                 if (statVals.length >= 2) {
+                  const lang = game.state.language || "en";
+                  const secAbbr = translations[lang] && translations[lang].secAbbr || "";
                   const capacity = game.getGuardCapacity(g.level);
                   const speed = game.getGuardSpeed(g.level).toFixed(1);
                   const nextCapacity = game.getGuardCapacity(g.level + details.levels);
                   const nextSpeed = game.getGuardSpeed(g.level + details.levels).toFixed(1);
                   const newStatCap = '<span class="val-current">' + formatMoney(capacity) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity) + "</span>";
-                  const newStatYield = '<span class="val-current">' + formatMoney(capacity / speed) + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + formatMoney(nextCapacity / nextSpeed) + "</span>";
-                  const newStatSpeed = '<span class="val-current">' + speed + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + "</span>";
+                  const newStatSpeed = '<span class="val-current">' + speed + secAbbr + '</span><span class="val-arrow arrow" style="color: #4ade80;">\u2794</span><span class="val-next">' + nextSpeed + secAbbr + "</span>";
                   if (statVals[0].innerHTML !== newStatCap) statVals[0].innerHTML = newStatCap;
-                  if (statVals[1].innerHTML !== newStatYield) statVals[1].innerHTML = newStatYield;
-                  if (statVals[2]) {
-                    if (statVals[2].innerHTML !== newStatSpeed) statVals[2].innerHTML = newStatSpeed;
-                  }
+                  if (statVals[1].innerHTML !== newStatSpeed) statVals[1].innerHTML = newStatSpeed;
                 }
               }
             }

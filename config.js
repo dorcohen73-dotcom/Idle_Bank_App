@@ -15,8 +15,8 @@ const GAME_CONFIG = {
     TELLER_UPGRADE_COST_GROWTH: 1.13,
 
     // Guards Formulas
-    GUARD_BASE_SPEED: 8.0,
-    GUARD_SPEED_DECAY: 0.92,
+    GUARD_BASE_SPEED: 10.0,
+    GUARD_SPEED_LEVEL_STEP: 0.1, // linear round-trip time reduction per guard level
     GUARD_MIN_SPEED: 0.8,
     GUARD_ABSOLUTE_MIN_SPEED: 1.0,
     GUARD_AUTO_SPEED_FACTOR: 0.7,
