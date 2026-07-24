@@ -11498,16 +11498,25 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     font-size: 0.8rem;
     flex-direction: row; /* Horizontal! */
     flex-wrap: wrap;
-    gap: 0.2rem;
+    justify-content: center;
+    gap: 0.15rem;
     margin-top: 0;
+    line-height: 1.2;
+  }
+  /* Force "current" onto its own line so arrow+next always wrap together
+     underneath — otherwise a 3-part value (current/arrow/next) wraps
+     unpredictably per-column and the row heights go crooked. */
+  .val-current {
+    flex: 0 0 100%;
   }
   .val-arrow {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     margin: 0;
   }
   .val-next {
-    padding: 0 0.3rem;
+    padding: 0 0.25rem;
     border-radius: 4px;
+    font-size: 0.7rem;
   }
   /* Button */
   .upg-v2-buy-btn {
