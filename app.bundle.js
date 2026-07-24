@@ -852,7 +852,7 @@
   }
   function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
-      if (!DOM_CACHE.boostBtn.querySelector("span")) {
+      if (DOM_CACHE.boostBtn.innerHTML !== '<span aria-hidden="true">\u26A1</span>') {
         DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">\u26A1</span>';
       }
       if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {

@@ -848,14 +848,22 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
     .header-buttons-row {
         gap: 0.35rem !important;
     }
-    .sound-toggle-btn {
-        width: 34px !important;
-        height: 34px !important;
-        font-size: 0.95rem !important;
-    }
+    .topbar-action-btn,
+    .sound-toggle-btn,
     .boost-toggle-btn {
-        font-size: 0.78rem !important;
-        padding: 0.35rem 0.65rem !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        font-size: 1.15rem !important;
+    }
+
+    .topbar-action-btn span,
+    .sound-toggle-btn span,
+    .boost-toggle-btn span {
+        font-size: 1.15rem !important;
     }
     
     /* Control upgrades card layout optimization */

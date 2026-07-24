@@ -62,8 +62,8 @@ export function updateAdCampaignDisplay() {
 // Refresh the 2x boost button — active countdown, offer countdown, or idle label.
 export function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
-        // Ensure inner icon span exists and is preserved
-        if (!DOM_CACHE.boostBtn.querySelector('span')) {
+        // Strictly reset innerHTML so no extra text or duplicate icons can ever exist inside boostBtn
+        if (DOM_CACHE.boostBtn.innerHTML !== '<span aria-hidden="true">⚡</span>') {
             DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">⚡</span>';
         }
 

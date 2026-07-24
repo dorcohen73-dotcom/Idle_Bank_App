@@ -4744,14 +4744,21 @@ button, .buy-btn, .tab-btn, .collect-vault-btn,
   .header-buttons-row {
     gap: 0.35rem !important;
   }
-  .sound-toggle-btn {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 0.95rem !important;
-  }
+  .topbar-action-btn,
+  .sound-toggle-btn,
   .boost-toggle-btn {
-    font-size: 0.78rem !important;
-    padding: 0.35rem 0.65rem !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    font-size: 1.15rem !important;
+  }
+  .topbar-action-btn span,
+  .sound-toggle-btn span,
+  .boost-toggle-btn span {
+    font-size: 1.15rem !important;
   }
   /* Control upgrades card layout optimization */
   .upgrade-card {
@@ -5817,47 +5824,48 @@ header, .control-panel, .bank-floor {
 
 /* Restored Boost Toggle Button */
 .boost-toggle-btn {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0 0.6rem;
-  width: auto;
-  min-width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  position: relative;
-  white-space: nowrap;
-  gap: 0.3rem;
+  background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
+  border: 1.5px solid #fb923c !important;
+  color: #fb923c !important;
+  padding: 0 !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  position: relative !important;
+  white-space: nowrap !important;
 }
 
 @media (min-width: 650px) {
   .boost-toggle-btn {
-    width: auto;
-    min-width: 60px;
-    height: 60px;
-    padding: 0 0.9rem;
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    padding: 0 !important;
   }
   .boost-toggle-btn span {
-    font-size: 2.05rem;
+    font-size: 1.45rem !important;
   }
 }
 .boost-toggle-btn span {
-  font-size: 1.6rem;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+  font-size: 1.3rem !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)) !important;
 }
 
 .boost-toggle-btn::after {
   content: "";
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   width: 10px;
   height: 10px;
   background: #ef4444;
@@ -5867,25 +5875,26 @@ header, .control-panel, .bank-floor {
 }
 
 .boost-toggle-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(251, 146, 60, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4) !important;
 }
 
 .boost-toggle-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 10px rgba(251, 146, 60, 0.3) !important;
 }
 
 .boost-toggle-btn.active {
-  background: linear-gradient(135deg, #10b981, #059669);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.5) !important;
 }
 
 .boost-toggle-btn.offer {
-  background: linear-gradient(135deg, #b45309, #d97706);
-  border-color: #f59e0b;
-  color: #fff;
-  animation: boostOfferPulse 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, #b45309, #d97706) !important;
+  border-color: #f59e0b !important;
+  color: #fff !important;
+  animation: boostOfferPulse 1.5s ease-in-out infinite !important;
 }
 
 @keyframes boostOfferPulse {
@@ -7893,7 +7902,8 @@ header {
 }
 
 .topbar-action-btn,
-.sound-toggle-btn {
+.sound-toggle-btn,
+.boost-toggle-btn {
   width: 44px !important;
   height: 44px !important;
   min-width: 44px !important;
@@ -7918,14 +7928,16 @@ header {
 }
 
 .topbar-action-btn:hover,
-.sound-toggle-btn:hover {
+.sound-toggle-btn:hover,
+.boost-toggle-btn:hover {
   transform: translateY(-2px) !important;
   border-color: rgba(234, 179, 8, 0.8) !important;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(234, 179, 8, 0.35) !important;
 }
 
 .topbar-action-btn span,
-.sound-toggle-btn span {
+.sound-toggle-btn span,
+.boost-toggle-btn span {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;

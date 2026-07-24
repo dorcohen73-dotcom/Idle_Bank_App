@@ -103,7 +103,8 @@ header {
 }
 
 .topbar-action-btn,
-.sound-toggle-btn {
+.sound-toggle-btn,
+.boost-toggle-btn {
     width: 44px !important;
     height: 44px !important;
     min-width: 44px !important;
@@ -128,14 +129,16 @@ header {
 }
 
 .topbar-action-btn:hover,
-.sound-toggle-btn:hover {
+.sound-toggle-btn:hover,
+.boost-toggle-btn:hover {
     transform: translateY(-2px) !important;
     border-color: rgba(234, 179, 8, 0.8) !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(234, 179, 8, 0.35) !important;
 }
 
 .topbar-action-btn span,
-.sound-toggle-btn span {
+.sound-toggle-btn span,
+.boost-toggle-btn span {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
