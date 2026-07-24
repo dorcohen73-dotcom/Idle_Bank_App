@@ -12636,17 +12636,21 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
    =================================================== */
 .language-modal-box {
   position: relative !important;
-  overflow: hidden !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  max-height: 88vh !important;
+  max-height: 88dvh !important;
   background: radial-gradient(circle at top, rgba(20, 28, 50, 0.99) 0%, rgba(7, 11, 20, 0.99) 100%) !important;
   border: 1.5px solid rgba(223, 171, 41, 0.55) !important;
   box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 55px rgba(223, 171, 41, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
   border-radius: 28px !important;
-  padding: 1.8rem 1.4rem !important;
+  padding: 1.6rem 1.3rem 1.8rem 1.3rem !important;
   max-width: 460px !important;
   width: calc(100% - 1.5rem) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 1.15rem !important;
+  gap: 1rem !important;
 }
 
 /* Subtle top glow spotlight behind globe icon */
@@ -12960,11 +12964,14 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
    =================================================== */
 @media (max-width: 550px), (max-height: 750px) {
   .language-modal-box {
-    padding: 1.1rem 0.9rem !important;
-    gap: 0.7rem !important;
+    padding: 1.1rem 0.85rem 1.6rem 0.85rem !important;
+    gap: 0.65rem !important;
     border-radius: 20px !important;
-    max-height: 90vh !important;
-    max-height: 90dvh !important;
+    max-height: 85vh !important;
+    max-height: 85dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
   }
   .language-modal-box .modal-icon {
     width: 52px !important;
