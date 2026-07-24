@@ -4073,17 +4073,10 @@ footer {
   }
   .header-buttons-row {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  .sound-toggle-btn {
-    width: 48px;
-    height: 48px;
-  }
-  .boost-toggle-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
   }
   /* Tabs Navigation as Horizontal Swipable Row */
   .tabs-nav {
@@ -7890,6 +7883,93 @@ header {
   flex-wrap: wrap;
 }
 
+/* ── Unified Topbar Action Buttons ── */
+.header-buttons-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.45rem !important;
+  flex-wrap: nowrap !important;
+}
+
+.topbar-action-btn,
+.sound-toggle-btn {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg, rgba(24, 34, 58, 0.95) 0%, rgba(12, 17, 30, 0.98) 100%) !important;
+  border: 1.5px solid rgba(223, 171, 41, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1.3rem !important;
+  line-height: 1 !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.topbar-action-btn:hover,
+.sound-toggle-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(234, 179, 8, 0.8) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(234, 179, 8, 0.35) !important;
+}
+
+.topbar-action-btn span,
+.sound-toggle-btn span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  font-size: 1.3rem !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* Fortune Wheel Header Button Accent */
+.fortune-wheel-header-btn {
+  border: 2px solid #eab308 !important;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Header Daily Achievements Accent */
+.header-daily-btn {
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Boost Button Accent (Circular, Matching the Set!) */
+.boost-toggle-btn {
+  border: 2px solid #fb923c !important;
+  background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  color: #fb923c !important;
+}
+
+@media (min-width: 650px) {
+  .header-buttons-row {
+    gap: 0.6rem !important;
+  }
+  .topbar-action-btn,
+  .sound-toggle-btn {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.45rem !important;
+  }
+  .topbar-action-btn span,
+  .sound-toggle-btn span {
+    font-size: 1.45rem !important;
+  }
+}
 /* ── Dashboard grid ──
    Mobile: cash full-width top row, secondary cards side-by-side below
    Desktop: cash takes 60%, secondary cards take 40% on the right
