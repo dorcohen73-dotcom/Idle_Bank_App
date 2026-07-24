@@ -16,12 +16,15 @@ const GAME_CONFIG = {
 
     // Guards Formulas
     GUARD_BASE_SPEED: 10.0,
-    GUARD_SPEED_LEVEL_STEP: 0.1, // linear round-trip time reduction per guard level
+    GUARD_SPEED_LEVEL_STEP: 0.1, // linear cooldown reduction per guard level (idle wait between rounds)
     GUARD_MIN_SPEED: 0.8,
     GUARD_ABSOLUTE_MIN_SPEED: 1.0,
     GUARD_AUTO_SPEED_FACTOR: 0.7,
     GUARD_SKILL_SPEED_DECAY: 0.04, // Alon's level upgrades: -4% per level
     GUARD_SPEED_GOLD_UPGRADE_FACTOR: 0.10, // Guard speed gold upgrade: -10% per level
+    GUARD_WALK_ANIM_DURATION: 0.6, // fixed cosmetic per-leg walk time — NOT upgradeable; "speed" is the cooldown, not the walk
+    GUARD_COLLECT_MIN_DURATION: 0.3, // loading time floor — near-empty pickups
+    GUARD_COLLECT_MAX_DURATION: 1.5, // loading time when the pickup fills the guard's whole capacity
 
     // Base tuned so a level-1 guard's EFFECTIVE capacity (this base x GUARD_AUTO_CAPACITY_FACTOR
     // 1.5 x the operations manager's guardCapBoost, both of which apply out of the box since

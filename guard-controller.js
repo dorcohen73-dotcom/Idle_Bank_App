@@ -56,7 +56,12 @@ class GuardController {
         game.state.guards.forEach(g => {
             if (!g.unlocked) return;
 
-            const transitDuration = game.getGuardSpeed(g.level);
+            // "Speed" is the idle cooldown between rounds, not the walk itself — the walk
+            // animation runs at a fixed cosmetic pace (GUARD_WALK_ANIM_DURATION) so upgrading
+            // a guard visibly and predictably shortens the real-world wait between rounds,
+            // exactly matching the number shown on the upgrade card.
+            const roundCooldown = game.getGuardSpeed(g.level);
+            const walkDuration = GAME_CONFIG.GUARD_WALK_ANIM_DURATION;
             const capacity = game.getGuardCapacity(g.level);
             const vaultSpaceLeft = vaultCapacity - game.state.vault.cashStored;
 
@@ -72,6 +77,8 @@ class GuardController {
             if (typeof g.segmentPosition !== 'number' || isNaN(g.segmentPosition)) g.segmentPosition = g.position || 0;
             if (typeof g.carriedAmount !== 'number' || isNaN(g.carriedAmount))   g.carriedAmount = g.loadedCash || 0;
             if (typeof g.targetTellerIndex !== 'number' || isNaN(g.targetTellerIndex)) g.targetTellerIndex = 0;
+            if (typeof g.cooldownTimer !== 'number' || isNaN(g.cooldownTimer)) g.cooldownTimer = 0;
+            if (typeof g.pendingCollectAmount !== 'number' || isNaN(g.pendingCollectAmount)) g.pendingCollectAmount = 0;
 
             // Normalise legacy states that no longer exist
             if (g.state === 'moving_to_tellers' || g.state === 'collecting') {
@@ -80,7 +87,10 @@ class GuardController {
 
             if (g.state === 'idle') {
                 // ── IDLE ──────────────────────────────────────────────────────
-                if (g.carriedAmount > 0) {
+                if (g.cooldownTimer > 0) {
+                    // Waiting out the round cooldown ("speed") before the next trip can start
+                    g.cooldownTimer = Math.max(0, g.cooldownTimer - dt);
+                } else if (g.carriedAmount > 0) {
                     // Had leftover cargo (e.g. vault was full) — try depositing now
                     if (vaultSpaceLeft > 0) {
                         g.state = 'moving_to_vault';
@@ -111,7 +121,7 @@ class GuardController {
                 const targetAnchor = _getTellerAnchor(ti);
                 const curPos = g.segmentPosition;
                 const dir = targetAnchor > curPos ? 1 : -1;
-                const step = dt / transitDuration;
+                const step = dt / walkDuration;
                 g.segmentPosition = curPos + dir * step;
 
                 const reached = dir > 0 ? g.segmentPosition >= targetAnchor
@@ -120,7 +130,15 @@ class GuardController {
                     g.segmentPosition = targetAnchor;
                     g.targetTellerIndex = ti;
                     g.state = 'collecting_from_teller_' + ti;
-                    g.timer = 0.4;
+                    // Loading time scales with how much of his capacity this pickup fills —
+                    // a small top-up is quick, a near-full load visibly takes longer.
+                    const teller = game.state.tellers[ti];
+                    const spaceLeft = capacity - g.carriedAmount;
+                    const pendingTaken = (teller && teller.unlocked) ? Math.max(0, Math.min(teller.cashStored, spaceLeft)) : 0;
+                    g.pendingCollectAmount = pendingTaken;
+                    const loadRatio = capacity > 0 ? pendingTaken / capacity : 0;
+                    g.timer = GAME_CONFIG.GUARD_COLLECT_MIN_DURATION
+                        + loadRatio * (GAME_CONFIG.GUARD_COLLECT_MAX_DURATION - GAME_CONFIG.GUARD_COLLECT_MIN_DURATION);
                 }
                 g.position = g.segmentPosition;
 
@@ -130,9 +148,14 @@ class GuardController {
                 if (g.timer <= 0) {
                     const ti = parseInt(g.state.slice('collecting_from_teller_'.length), 10);
                     const teller = game.state.tellers[ti];
-                    if (teller && teller.unlocked && teller.cashStored > 0) {
-                        const spaceLeft = capacity - g.carriedAmount;
-                        const taken = Math.min(teller.cashStored, spaceLeft);
+                    // Normally set on arrival (see moving_to_teller_ above); recompute fresh if
+                    // this guard was dropped straight into a collecting_* state without going
+                    // through that transition (old saves, tests, dev tools).
+                    const spaceLeft = capacity - g.carriedAmount;
+                    const taken = g.pendingCollectAmount > 0
+                        ? g.pendingCollectAmount
+                        : Math.max(0, Math.min(teller && teller.unlocked ? teller.cashStored : 0, spaceLeft));
+                    if (teller && teller.unlocked && taken > 0) {
                         teller.cashStored = Math.round((teller.cashStored - taken + Number.EPSILON) * 100) / 100;
                         g.carriedAmount = Math.round((g.carriedAmount + taken + Number.EPSILON) * 100) / 100;
                         // Store actual collected amount and source teller so ui-draw can display
@@ -144,6 +167,7 @@ class GuardController {
                         g.lastCollectedAmount = 0;
                         g.lastCollectedTellerIndex = ti;
                     }
+                    g.pendingCollectAmount = 0;
                     // Remove this teller from the visit queue
                     g.tellerVisitQueue = g.tellerVisitQueue.filter(idx => idx !== ti);
 
@@ -179,7 +203,7 @@ class GuardController {
                 // ── MOVING TO VAULT ───────────────────────────────────────────
                 const curPos = g.segmentPosition;
                 const dir = VAULT_ANCHOR > curPos ? 1 : -1;
-                const step = dt / transitDuration;
+                const step = dt / walkDuration;
                 g.segmentPosition = curPos + dir * step;
 
                 const reached = dir > 0 ? g.segmentPosition >= VAULT_ANCHOR
@@ -213,6 +237,7 @@ class GuardController {
                                 g.timer = 0.5;
                             } else {
                                 g.state = 'idle';
+                                g.cooldownTimer = roundCooldown;
                                 // guard_trips tracking: count completed deposit trips
                                 game.state.guardTripsTotal = (game.state.guardTripsTotal || 0) + 1;
                             }
