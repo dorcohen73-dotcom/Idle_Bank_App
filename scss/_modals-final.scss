@@ -458,3 +458,274 @@
         margin-bottom: 0.25rem;
     }
 }
+
+/* ===================================================
+   LUXURY SETTINGS MODAL (AI MOCKUP PARITY)
+   =================================================== */
+
+.language-modal-box {
+    background: radial-gradient(circle at top, rgba(18, 26, 46, 0.98) 0%, rgba(8, 12, 22, 0.99) 100%) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.5) !important;
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(223, 171, 41, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    border-radius: 28px !important;
+    padding: 1.8rem 1.4rem !important;
+    max-width: 460px !important;
+    width: calc(100% - 1.5rem) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.15rem !important;
+}
+
+/* Glowing Top Globe Icon */
+.language-modal-box .modal-icon {
+    font-size: 3rem !important;
+    width: 68px !important;
+    height: 68px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+    border: 2px solid rgba(234, 179, 8, 0.7) !important;
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.55), inset 0 0 15px rgba(234, 179, 8, 0.35) !important;
+    margin: 0 auto 0.1rem auto !important;
+}
+
+/* Luxury Section Titles with Decorative Diamonds */
+.luxury-modal-title, .luxury-section-title {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    margin: 0 !important;
+}
+
+.modal-title-decor {
+    color: #eab308 !important;
+    font-size: 0.9rem !important;
+    text-shadow: 0 0 8px rgba(234, 179, 8, 0.6) !important;
+}
+
+/* 2x2 Language Grid */
+.lang-options-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.85rem !important;
+    margin: 0.2rem 0 !important;
+    width: 100% !important;
+}
+
+.lang-option-card {
+    position: relative !important;
+    background: linear-gradient(145deg, rgba(20, 30, 55, 0.85) 0%, rgba(10, 16, 32, 0.95) 100%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 18px !important;
+    padding: 0.9rem 0.6rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+.lang-option-card:hover {
+    transform: translateY(-2px) !important;
+    border-color: rgba(234, 179, 8, 0.4) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(234, 179, 8, 0.2) !important;
+}
+
+/* Active Language Card (Gold Glow + Badge) */
+.lang-option-card.active {
+    border: 2px solid #eab308 !important;
+    background: linear-gradient(145deg, rgba(35, 45, 75, 0.95) 0%, rgba(18, 25, 48, 0.98) 100%) !important;
+    box-shadow: 0 0 24px rgba(234, 179, 8, 0.45), inset 0 0 15px rgba(234, 179, 8, 0.2) !important;
+}
+
+.lang-flag {
+    font-size: 1.8rem !important;
+    line-height: 1 !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.lang-country-code {
+    font-size: 1.35rem !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.05em !important;
+    line-height: 1.1 !important;
+}
+
+.lang-option-card.active .lang-country-code {
+    color: #facc15 !important;
+    text-shadow: 0 0 12px rgba(250, 204, 21, 0.6) !important;
+}
+
+.lang-name {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: rgba(226, 232, 240, 0.85) !important;
+}
+
+/* Checkmark Badge on Active Card */
+.lang-check-badge {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 22px !important;
+    height: 22px !important;
+    background: #eab308 !important;
+    color: #0f172a !important;
+    border-radius: 50% !important;
+    font-size: 0.75rem !important;
+    font-weight: 900 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.8) !important;
+}
+
+[dir="rtl"] .lang-check-badge {
+    right: auto !important;
+    left: 8px !important;
+}
+
+.lang-option-card.active .lang-check-badge {
+    display: flex !important;
+}
+
+/* Theme Selection Row */
+.settings-theme-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+}
+
+.theme-options-row {
+    display: flex !important;
+    gap: 0.6rem !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+.theme-option-btn-choice {
+    flex: 1 !important;
+    padding: 0.7rem 0.5rem !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(15, 23, 42, 0.8) !important;
+    color: #e2e8f0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    transition: all 0.25s ease !important;
+}
+
+.theme-option-btn-choice.active[data-theme="blue"] {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+    border: 2px solid #3b82f6 !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
+    color: #ffffff !important;
+}
+
+.theme-option-btn-choice.active[data-theme="white"] {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4) !important;
+}
+
+.theme-option-btn-choice.active[data-theme="dark"] {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: 2px solid #94a3b8 !important;
+    box-shadow: 0 0 20px rgba(148, 163, 184, 0.4) !important;
+}
+
+.theme-check-badge {
+    font-size: 0.85rem !important;
+    font-weight: 900 !important;
+    margin-left: 2px !important;
+}
+
+/* Danger Zone Card */
+.luxury-danger-card {
+    background: rgba(220, 38, 38, 0.06) !important;
+    border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
+    border-radius: 18px !important;
+    padding: 0.9rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.settings-danger-title {
+    color: #ef4444 !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+}
+
+.luxury-danger-btn {
+    background: linear-gradient(135deg, rgba(153, 27, 27, 0.85) 0%, rgba(185, 28, 28, 0.95) 100%) !important;
+    border: 1.5px solid #ef4444 !important;
+    color: #fef2f2 !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+}
+
+.luxury-danger-btn:disabled {
+    opacity: 0.45 !important;
+    filter: grayscale(0.6) !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}
+
+/* Close Settings Button */
+.luxury-close-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: #0f172a !important;
+    font-weight: 900 !important;
+    font-size: 1.05rem !important;
+    padding: 0.85rem 1.2rem !important;
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.luxury-close-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 28px rgba(245, 158, 11, 0.6) !important;
+}

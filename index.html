@@ -89,7 +89,7 @@
 
     <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
          includes what used to be premium_depts.css and premium_managers.css. -->
-    <link rel="stylesheet" href="style.css?v=aade658a51">
+    <link rel="stylesheet" href="style.css?v=a28fd0d862">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -562,65 +562,98 @@
     <div class="modal-overlay" id="lang-modal" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
         <div class="modal-box language-modal-box">
             <div class="modal-icon" aria-hidden="true">🌐</div>
-            <h2 class="modal-title" id="lang-modal-title">בחר שפה / Choose Language</h2>
-            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred
-                language:</p>
+            <h2 class="modal-title luxury-modal-title" id="lang-modal-title">
+                <span class="modal-title-decor">✧</span>
+                <span id="lang-modal-title-text">בחר שפת ממשק / Choose Language</span>
+                <span class="modal-title-decor">✧</span>
+            </h2>
+            <p class="modal-text" id="lang-modal-text">אנא בחר את שפת הממשק המועדפת עליך / Please select your preferred language:</p>
 
             <div class="lang-options-grid">
-                <button class="lang-option-card" data-lang="he">
+                <button class="lang-option-card active" data-lang="he">
                     <span class="lang-flag" aria-hidden="true">🇮🇱</span>
+                    <span class="lang-country-code">IL</span>
                     <span class="lang-name">עברית</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="en">
                     <span class="lang-flag" aria-hidden="true">🇺🇸</span>
+                    <span class="lang-country-code">US</span>
                     <span class="lang-name">English</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="es">
                     <span class="lang-flag" aria-hidden="true">🇪🇸</span>
+                    <span class="lang-country-code">ES</span>
                     <span class="lang-name">Español</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
                 <button class="lang-option-card" data-lang="ru">
                     <span class="lang-flag" aria-hidden="true">🇷🇺</span>
+                    <span class="lang-country-code">RU</span>
                     <span class="lang-name">Русский</span>
+                    <span class="lang-check-badge">✓</span>
                 </button>
             </div>
 
             <!-- Theme Selection -->
             <div class="settings-theme-section">
-                <h3 id="settings-theme-title" class="settings-section-title">בחר צבע רקע / Select Background</h3>
+                <h3 id="settings-theme-title" class="settings-section-title luxury-section-title">
+                    <span class="modal-title-decor">✦</span>
+                    <span id="settings-theme-title-text">בחר צבע רקע:</span>
+                    <span class="modal-title-decor">✦</span>
+                </h3>
                 <div class="theme-options-row">
-                    <button class="theme-option-btn-choice" data-theme="dark">שחור / Dark</button>
-                    <button class="theme-option-btn-choice" data-theme="white">לבן / Light</button>
-                    <button class="theme-option-btn-choice active" data-theme="blue">כחול / Blue</button>
+                    <button class="theme-option-btn-choice active" data-theme="blue">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">כחול / Blue</span>
+                        <span class="theme-check-badge">✓</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="white">
+                        <span class="theme-icon">🖌️</span>
+                        <span class="theme-label">לבן / Light</span>
+                    </button>
+                    <button class="theme-option-btn-choice" data-theme="dark">
+                        <span class="theme-icon">🌙</span>
+                        <span class="theme-label">שחור / Dark</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Notifications Toggle -->
-            <div class="settings-theme-section" style="margin-top: 1.5rem;">
+            <div class="settings-theme-section" style="margin-top: 0.5rem;">
                 <div class="reset-confirm-wrapper" style="justify-content: center; margin-bottom: 0;">
-                    <input type="checkbox" id="settings-notif-checkbox" checked>
+                    <input type="checkbox" id="settings-notif-checkbox" checked class="luxury-checkbox">
                     <label for="settings-notif-checkbox" id="settings-notif-label">התראות דחיפה</label>
                 </div>
             </div>
 
-            <div class="settings-danger-section">
-                <h3 id="settings-danger-title" class="settings-danger-title">אזור מסוכן / Danger Zone</h3>
+            <div class="settings-danger-section luxury-danger-card">
+                <h3 id="settings-danger-title" class="settings-danger-title">
+                    <span class="danger-icon">⚠️</span>
+                    <span id="settings-danger-title-text">אזור מסוכן</span>
+                </h3>
                 <div class="reset-confirm-wrapper">
-                    <input type="checkbox" id="reset-confirm-checkbox">
+                    <input type="checkbox" id="reset-confirm-checkbox" class="luxury-checkbox">
                     <label for="reset-confirm-checkbox" id="reset-confirm-label">אני מאשר איפוס מלא</label>
                 </div>
-                <button class="collect-vault-btn reset-game-btn" id="reset-game-btn" disabled><span
-                        aria-hidden="true">⚠️</span> איפוס משחק / Reset Game</button>
+                <button class="collect-vault-btn reset-game-btn luxury-danger-btn" id="reset-game-btn" disabled>
+                    <span class="danger-btn-icon">⚠️</span>
+                    <span id="reset-btn-text">איפוס משחק מוחלט</span>
+                    <span class="danger-trash-icon">🗑️</span>
+                </button>
             </div>
 
-            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים
-                מסכם</button>
+            <button class="modal-close-btn analytics-shortcut-btn" id="analytics-from-settings-btn">📊 נתונים מסכמים</button>
             <div class="settings-privacy-row">
                 <a href="privacy.html" target="_blank" id="settings-privacy-link" class="settings-privacy-link">🔒 מדיניות פרטיות</a>
-                <span aria-hidden="true"> · </span>
+                <span aria-hidden="true"> | </span>
                 <a href="terms.html" target="_blank" id="settings-terms-link" class="settings-privacy-link">📜 תנאי שימוש</a>
             </div>
-            <button class="modal-close-btn lang-modal-close-btn" id="lang-modal-close">סגור / Close</button>
+            <button class="modal-close-btn lang-modal-close-btn luxury-close-btn" id="lang-modal-close">
+                <span class="close-shield-icon">🛡️</span>
+                <span id="lang-modal-close-text">סגור הגדרות / Close Settings</span>
+            </button>
         </div>
     </div>
 
@@ -835,7 +868,7 @@
     <script src="shop-controller.js?v=20260718_5" defer></script>
     <script src="performance-manager.js?v=2" defer></script>
     <script src="game.js?v=20260718_5" defer></script>
-    <script src="app.bundle.js?v=aade658a51" defer></script>
+    <script src="app.bundle.js?v=a28fd0d862" defer></script>
     
 </body>
 
