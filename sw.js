@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bank-empire-3a769f86ae';
+const CACHE_NAME = 'bank-empire-bb8b7b2b4e';
 
 const SHELL_URLS = [
   './',

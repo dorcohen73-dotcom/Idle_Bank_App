@@ -895,3 +895,297 @@
         border-radius: 14px !important;
     }
 }
+
+/* ===================================================
+   LUXURY DAILY LOGIN REWARD MODAL (AI MOCKUP PARITY)
+   =================================================== */
+
+.luxury-daily-modal-box {
+    position: relative !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    background: radial-gradient(circle at top, rgba(22, 30, 52, 0.99) 0%, rgba(7, 11, 20, 0.99) 100%) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.6) !important;
+    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 55px rgba(223, 171, 41, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+    border-radius: 28px !important;
+    padding: 1.8rem 1.4rem !important;
+    max-width: 480px !important;
+    width: calc(100% - 1.5rem) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+/* Close X button */
+.daily-modal-close-x {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    transition: all 0.2s ease !important;
+}
+
+[dir="rtl"] .daily-modal-close-x {
+    right: auto !important;
+    left: 14px !important;
+}
+
+.daily-modal-close-x:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+/* Top Gift Box Hero Header & Confetti */
+.daily-reward-hero-header {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.daily-gift-box-icon {
+    font-size: 4rem !important;
+    filter: drop-shadow(0 8px 24px rgba(234, 179, 8, 0.55)) drop-shadow(0 0 40px rgba(250, 204, 21, 0.4)) !important;
+    animation: giftBoxFloat 3s ease-in-out infinite !important;
+}
+
+@keyframes giftBoxFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.05); }
+}
+
+.daily-confetti-particle {
+    position: absolute !important;
+    font-size: 1.3rem !important;
+    pointer-events: none !important;
+    opacity: 0.8 !important;
+    animation: confettiFloat 2.5s ease-in-out infinite alternate !important;
+}
+
+.dcp-1 { top: -5px; left: -30px; animation-delay: 0s; }
+.dcp-2 { top: 10px; right: -35px; animation-delay: 0.7s; }
+.dcp-3 { bottom: 0px; left: -25px; animation-delay: 1.3s; }
+
+@keyframes confettiFloat {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+    100% { transform: translateY(-12px) rotate(15deg); opacity: 0.95; }
+}
+
+/* Streak Text with Clock Icon */
+.luxury-streak-text {
+    color: rgba(226, 232, 240, 0.8) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+}
+
+.streak-clock-icon {
+    color: #facc15 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Hero Reward Card (Green Glow + Sublabel) */
+.luxury-reward-hero-card {
+    background: linear-gradient(145deg, rgba(14, 23, 42, 0.9) 0%, rgba(8, 14, 28, 0.95) 100%) !important;
+    border: 1.5px solid rgba(74, 222, 128, 0.35) !important;
+    border-radius: 22px !important;
+    padding: 1.2rem 1.6rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(74, 222, 128, 0.08) !important;
+}
+
+.luxury-green-amount {
+    color: #4ade80 !important;
+    font-size: 2.3rem !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 25px rgba(74, 222, 128, 0.7), 0 0 50px rgba(74, 222, 128, 0.3) !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+}
+
+.luxury-reward-sublabel {
+    color: rgba(226, 232, 240, 0.85) !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    margin-top: 0.2rem !important;
+}
+
+/* 7-Day Rewards Strip (.login-streak-strip) */
+.login-streak-strip {
+    display: flex !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0.4rem 0.2rem !important;
+    margin: 0.3rem 0 !important;
+    scrollbar-width: none !important;
+}
+
+.login-streak-strip::-webkit-scrollbar {
+    display: none !important;
+}
+
+.login-streak-day {
+    flex: 1 !important;
+    min-width: 58px !important;
+    background: rgba(15, 23, 42, 0.8) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    padding: 0.65rem 0.3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.2rem !important;
+    transition: all 0.25s ease !important;
+}
+
+/* Today's Card (Golden Highlight) */
+.login-streak-day.is-today {
+    border: 2px solid #facc15 !important;
+    background: linear-gradient(145deg, rgba(38, 48, 78, 0.95) 0%, rgba(18, 26, 48, 0.98) 100%) !important;
+    box-shadow: 0 0 22px rgba(250, 204, 21, 0.5), inset 0 0 12px rgba(250, 204, 21, 0.2) !important;
+    transform: scale(1.04) !important;
+}
+
+.login-streak-day.is-today .login-streak-day-label {
+    color: #facc15 !important;
+    font-weight: 900 !important;
+}
+
+/* Tomorrow's Card (Teal Highlight) */
+.login-streak-day.is-tomorrow {
+    border: 1.5px solid #2dd4bf !important;
+    background: linear-gradient(145deg, rgba(15, 45, 50, 0.9) 0%, rgba(8, 25, 32, 0.95) 100%) !important;
+    box-shadow: 0 0 16px rgba(45, 212, 191, 0.35) !important;
+}
+
+.login-streak-day.is-tomorrow .login-streak-day-label {
+    color: #2dd4bf !important;
+    font-weight: 800 !important;
+}
+
+.login-streak-day-label {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: rgba(226, 232, 240, 0.8) !important;
+}
+
+.login-streak-day-icon {
+    font-size: 1.45rem !important;
+    line-height: 1 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) !important;
+}
+
+.login-streak-day-value {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+}
+
+/* Collect Button (Gold Gradient + Crown Badge) */
+.luxury-daily-collect-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
+    color: #0f172a !important;
+    font-weight: 900 !important;
+    font-size: 1.35rem !important;
+    padding: 0.85rem 1.6rem !important;
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: 0 8px 26px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    margin-top: 0.3rem !important;
+}
+
+.luxury-daily-collect-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 32px rgba(245, 158, 11, 0.65) !important;
+}
+
+.collect-btn-badge {
+    background: rgba(15, 23, 42, 0.25) !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.1rem !important;
+}
+
+/* Mobile Phone Optimizations for Daily Bonus Modal */
+@media (max-width: 550px), (max-height: 750px) {
+    .luxury-daily-modal-box {
+        padding: 1.2rem 0.9rem !important;
+        gap: 0.65rem !important;
+        border-radius: 22px !important;
+    }
+
+    .daily-gift-box-icon {
+        font-size: 3.2rem !important;
+    }
+
+    .luxury-green-amount {
+        font-size: 1.85rem !important;
+    }
+
+    .luxury-reward-hero-card {
+        padding: 0.9rem 1rem !important;
+    }
+
+    .login-streak-day {
+        min-width: 50px !important;
+        padding: 0.5rem 0.2rem !important;
+    }
+
+    .login-streak-day-icon {
+        font-size: 1.25rem !important;
+    }
+
+    .login-streak-day-value {
+        font-size: 0.68rem !important;
+    }
+
+    .luxury-daily-collect-btn {
+        padding: 0.75rem 1.2rem !important;
+        font-size: 1.15rem !important;
+        border-radius: 16px !important;
+    }
+}

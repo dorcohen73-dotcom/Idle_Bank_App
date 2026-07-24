@@ -315,15 +315,22 @@ export function showLoginRewardModal() {
     const streakTextEl = document.getElementById('login-reward-streak-text');
     const amountEl = document.getElementById('login-reward-amount');
     const descEl = document.getElementById('login-reward-desc');
+    const titleTextEl = document.getElementById('login-reward-title-text');
     const titleEl = document.getElementById('login-reward-title');
 
     const lm = (typeof translations !== 'undefined' && translations[lang] && translations[lang].loginModal)
         ? translations[lang].loginModal
         : translations.he.loginModal;
 
-    if (titleEl) titleEl.innerText = lm.title;
+    if (titleTextEl) {
+        titleTextEl.innerText = lm.title;
+    } else if (titleEl) {
+        titleEl.innerText = lm.title;
+    }
+
     if (streakTextEl) {
-        streakTextEl.textContent = typeof lm.streakLabel === 'function' ? lm.streakLabel(streak) : ('Streak: ' + streak + ' days');
+        const labelStr = typeof lm.streakLabel === 'function' ? lm.streakLabel(streak) : ('Streak: ' + streak + ' days');
+        streakTextEl.innerHTML = `<span class="streak-clock-icon">🕒</span> ${labelStr}`;
     }
 
     let displayText = '';
@@ -347,9 +354,24 @@ export function showLoginRewardModal() {
     _renderLoginStreakStrip(streak, lm);
 
     const collectBtn = document.getElementById('login-reward-collect-btn');
-    if (collectBtn) {
+    const collectTextEl = document.getElementById('login-reward-collect-text');
+    if (collectTextEl) {
+        collectTextEl.innerText = lm.collectBtn;
+    } else if (collectBtn) {
         collectBtn.innerText = lm.collectBtn;
+    }
+
+    if (collectBtn) {
         collectBtn.onclick = () => {
+            initSound();
+            modal.classList.remove('active');
+            _applyLoginReward(reward);
+        };
+    }
+
+    const closeXBtn = document.getElementById('login-reward-close-x');
+    if (closeXBtn) {
+        closeXBtn.onclick = () => {
             initSound();
             modal.classList.remove('active');
             _applyLoginReward(reward);

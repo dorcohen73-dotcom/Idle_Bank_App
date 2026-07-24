@@ -89,7 +89,7 @@
 
     <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
          includes what used to be premium_depts.css and premium_managers.css. -->
-    <link rel="stylesheet" href="style.css?v=3a769f86ae">
+    <link rel="stylesheet" href="style.css?v=bb8b7b2b4e">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -517,16 +517,41 @@
     </div>
 
     <!-- Daily Login Reward Modal -->
-    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true"
-        aria-labelledby="login-reward-title">
-        <div class="modal-box">
-            <div class="modal-icon" aria-hidden="true">🎁</div>
-            <h2 class="modal-title" id="login-reward-title">בונוס כניסה יומי!</h2>
-            <p class="modal-text" id="login-reward-streak-text">רצף: 1 ימים</p>
-            <div class="modal-amount" id="login-reward-amount">+$0</div>
-            <p class="modal-text modal-text-muted" id="login-reward-desc"></p>
+    <div class="modal-overlay" id="login-reward-modal" role="dialog" aria-modal="true" aria-labelledby="login-reward-title">
+        <div class="modal-box luxury-daily-modal-box">
+            <button class="daily-modal-close-x" id="login-reward-close-x" aria-label="סגור">✕</button>
+            <div class="daily-reward-hero-header">
+                <div class="daily-confetti-particle dcp-1">✨</div>
+                <div class="daily-confetti-particle dcp-2">🎉</div>
+                <div class="daily-confetti-particle dcp-3">✨</div>
+                <div class="daily-gift-box-icon" aria-hidden="true">🎁</div>
+            </div>
+            
+            <h2 class="modal-title luxury-modal-title" id="login-reward-title">
+                <span class="modal-title-decor">✧</span>
+                <span id="login-reward-title-text">בונוס כניסה יומי!</span>
+                <span class="modal-title-decor">✧</span>
+            </h2>
+            
+            <p class="modal-text luxury-streak-text" id="login-reward-streak-text">
+                <span class="streak-clock-icon">🕒</span> רצף: 1 ימים
+            </p>
+
+            <div class="luxury-reward-hero-card">
+                <div class="modal-amount luxury-green-amount" id="login-reward-amount">+$0</div>
+                <div class="luxury-reward-sublabel">
+                    <span class="modal-title-decor">✦</span>
+                    <span id="login-reward-desc">מזומן לחשבון</span>
+                    <span class="modal-title-decor">✦</span>
+                </div>
+            </div>
+
             <div class="login-streak-strip" id="login-streak-strip"></div>
-            <button class="modal-close-btn login-reward-collect-btn" id="login-reward-collect-btn">אסוף!</button>
+
+            <button class="modal-close-btn login-reward-collect-btn luxury-daily-collect-btn" id="login-reward-collect-btn">
+                <span class="collect-btn-badge">👑</span>
+                <span id="login-reward-collect-text">אסוף!</span>
+            </button>
         </div>
     </div>
 
@@ -868,7 +893,7 @@
     <script src="shop-controller.js?v=20260718_5" defer></script>
     <script src="performance-manager.js?v=2" defer></script>
     <script src="game.js?v=20260718_5" defer></script>
-    <script src="app.bundle.js?v=3a769f86ae" defer></script>
+    <script src="app.bundle.js?v=bb8b7b2b4e" defer></script>
     
 </body>
 
