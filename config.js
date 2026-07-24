@@ -1,8 +1,8 @@
 // Game Configuration Constants for Idle Bank Empire
 const GAME_CONFIG = {
     // Tellers Formulas
-    TELLER_BASE_SPEED: 5.0,
-    TELLER_SPEED_DECAY: 0.93,
+    TELLER_BASE_SPEED: 10.0,
+    TELLER_SPEED_LEVEL_STEP: 0.1, // linear processing-time reduction per teller level
     TELLER_MIN_SPEED: 0.2,
     TELLER_ABSOLUTE_MIN_SPEED: 0.05,
     TELLER_AUTO_SPEED_FACTOR: 0.7,
