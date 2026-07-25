@@ -204,21 +204,11 @@ class EconomyManager {
     getVaultCapacity(level) {
         if (this._cachedVaultCap.has(level)) return this._cachedVaultCap.get(level);
 
-        // Pure per-level formula (matches getTellerCapacity/getGuardCapacity's convention)
-        // — capacity must only move when the player actually pays for a vault upgrade
-        // (or a paid goldUpgrades.vaultCapacityBoost level), never from a live EPS read.
-        //
-        // branchBaseCapacity replaces the flat GAME_CONFIG.VAULT_BASE_CAPACITY as the level-1
-        // starting point. It's set ONCE per branch, at prestige (see PrestigeController.prestige),
-        // to 1.5x that branch's level-1 guard capacity — just enough that a level-1 vault can
-        // always absorb one full guard delivery right after the reset, when branch multiplier can
-        // jump 5x-200x but this formula (by design) doesn't read that multiplier live. It is NOT
-        // recomputed afterward, so leveling the vault (or the guard, or anything else) mid-branch
-        // still behaves as pure per-level investment, same as before.
         const baseCapacity = (this.game.state.vault && this.game.state.vault.branchBaseCapacity >= GAME_CONFIG.VAULT_BASE_CAPACITY)
             ? this.game.state.vault.branchBaseCapacity
             : GAME_CONFIG.VAULT_BASE_CAPACITY;
         let cap = baseCapacity * Math.pow(GAME_CONFIG.VAULT_CAPACITY_GROWTH, level - 1);
+        cap = cap * this.getTotalMultiplier();
 
         if (this.game.state.goldUpgrades && this.game.state.goldUpgrades.vaultCapacityBoost) {
             cap = cap * (1 + 0.10 * this.game.state.goldUpgrades.vaultCapacityBoost); // +10% per level

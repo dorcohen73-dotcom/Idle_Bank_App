@@ -31,26 +31,32 @@
   }
   function formatMoney2(num, noDecimals = false) {
     if (num === null || num === void 0 || isNaN(num)) return "$0";
-    if (num < 1e3) {
-      return "$" + fastFormat(Math.floor(num), cachedLang);
+    const isNegative = num < 0;
+    const absNum = Math.abs(num);
+    const prefix = isNegative ? "-$" : "$";
+    if (absNum < 1e3) {
+      return prefix + fastFormat(Math.floor(absNum), cachedLang);
     }
-    const i = Math.floor(Math.log10(num) / 3);
+    const i = Math.floor(Math.log10(absNum) / 3);
     const suffix = cachedSuffixes[i] !== void 0 ? cachedSuffixes[i] : cachedFallback;
-    const rawVal = num / Math.pow(10, i * 3);
+    const rawVal = absNum / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
-    return "$" + fastFormat(val, cachedLang) + suffix;
+    return prefix + fastFormat(val, cachedLang) + suffix;
   }
-  function formatNumberCompact2(num, noDecimals = false) {
+  function formatNumberCompact(num, noDecimals = false) {
     if (num === null || num === void 0 || isNaN(num)) return "0";
-    if (num < 1e3) {
-      return fastFormat(Math.floor(num), "en");
+    const isNegative = num < 0;
+    const absNum = Math.abs(num);
+    const prefix = isNegative ? "-" : "";
+    if (absNum < 1e3) {
+      return prefix + fastFormat(Math.floor(absNum), "en");
     }
     const englishSuffixes = ["", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
-    const i = Math.floor(Math.log10(num) / 3);
+    const i = Math.floor(Math.log10(absNum) / 3);
     const suffix = englishSuffixes[i] !== void 0 ? englishSuffixes[i] : " monstrous";
-    const rawVal = num / Math.pow(10, i * 3);
+    const rawVal = absNum / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
-    return fastFormat(val, "en") + suffix;
+    return prefix + fastFormat(val, "en") + suffix;
   }
   function getClientSVG(type, seed) {
     if (seed === void 0 || seed === null || isNaN(seed)) {
@@ -448,11 +454,12 @@
         }
         if (cashLabel) {
           let cashIcons = "";
-          let cashText = formatMoney2(tData.cashStored);
-          if (tData.cashStored > 0) {
+          const safeCash = Math.max(0, tData.cashStored || 0);
+          let cashText = formatMoney2(safeCash);
+          if (safeCash > 0) {
             if (tData.fillPercent >= 100) {
               cashIcons = "";
-              cashText = `<span class="teller-full-alert">${tObj.upgrades.tellerFull || "Full Teller"}</span><br/><span style="font-size:0.9rem;">${formatMoney2(tData.cashStored)}</span>`;
+              cashText = `<span class="teller-full-alert">${tObj.upgrades.tellerFull || "Full Teller"}</span><br/><span style="font-size:0.9rem;">${formatMoney2(safeCash)}</span>`;
             } else if (tData.fillPercent >= 80) {
               cashIcons = "\u{1F4B5}\u{1F4B5}\u{1F4B5} ";
             } else if (tData.fillPercent >= 40) {
@@ -461,7 +468,7 @@
               cashIcons = "\u{1F4B5} ";
             }
           }
-          const newCashHtml = `<span style="font-size:0.9rem; margin-left:0.25rem;">${cashIcons}</span>${cashText}`;
+          const newCashHtml = `<span style="font-size:0.85rem; margin-left:0.15rem;">${cashIcons}</span>${cashText}`;
           if (prevTellerCashHtml[tData.id] !== newCashHtml) {
             cashLabel.innerHTML = newCashHtml;
             prevTellerCashHtml[tData.id] = newCashHtml;
@@ -821,12 +828,12 @@
     }
     if (game.state.shares !== lastShares || lang !== lastLang) {
       lastShares = game.state.shares;
-      DOM_CACHE.shares.innerText = formatNumberCompact2(game.state.shares, true);
+      DOM_CACHE.shares.innerText = formatNumberCompact(game.state.shares, true);
     }
     const mult = game.getTotalMultiplier();
     if (mult !== lastMultiplier || lang !== lastLang) {
       lastMultiplier = mult;
-      DOM_CACHE.multiplier.innerText = formatNumberCompact2(mult) + "x";
+      DOM_CACHE.multiplier.innerText = formatNumberCompact(mult) + "x";
     }
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
       lastBranch = game.state.currentBranch;

@@ -32,27 +32,35 @@ export function fastFormat(num, lang) {
 
 export function formatMoney(num, noDecimals = false) {
     if (num === null || num === undefined || isNaN(num)) return '$0';
-    if (num < 1000) {
-        return '$' + fastFormat(Math.floor(num), cachedLang);
+    const isNegative = num < 0;
+    const absNum = Math.abs(num);
+    const prefix = isNegative ? '-$' : '$';
+
+    if (absNum < 1000) {
+        return prefix + fastFormat(Math.floor(absNum), cachedLang);
     }
-    const i = Math.floor(Math.log10(num) / 3);
+    const i = Math.floor(Math.log10(absNum) / 3);
     const suffix = cachedSuffixes[i] !== undefined ? cachedSuffixes[i] : cachedFallback;
-    const rawVal = num / Math.pow(10, i * 3);
+    const rawVal = absNum / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
-    return '$' + fastFormat(val, cachedLang) + suffix;
+    return prefix + fastFormat(val, cachedLang) + suffix;
 }
 
 export function formatNumberCompact(num, noDecimals = false) {
     if (num === null || num === undefined || isNaN(num)) return '0';
-    if (num < 1000) {
-        return fastFormat(Math.floor(num), 'en');
+    const isNegative = num < 0;
+    const absNum = Math.abs(num);
+    const prefix = isNegative ? '-' : '';
+
+    if (absNum < 1000) {
+        return prefix + fastFormat(Math.floor(absNum), 'en');
     }
     const englishSuffixes = ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
-    const i = Math.floor(Math.log10(num) / 3);
+    const i = Math.floor(Math.log10(absNum) / 3);
     const suffix = englishSuffixes[i] !== undefined ? englishSuffixes[i] : ' monstrous';
-    const rawVal = num / Math.pow(10, i * 3);
+    const rawVal = absNum / Math.pow(10, i * 3);
     const val = noDecimals ? Math.ceil(rawVal) : parseFloat(rawVal.toFixed(2));
-    return fastFormat(val, 'en') + suffix;
+    return prefix + fastFormat(val, 'en') + suffix;
 }
 
 export function getClientSVG(type, seed) {

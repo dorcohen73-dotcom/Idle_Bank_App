@@ -505,17 +505,6 @@ class IdleBankGame {
         const teller = this.state.tellers[id];
         if (!teller || !teller.unlocked || teller.cashStored <= 0) return 0;
 
-        let bestGuardLevel = 1;
-        if (this.state.guards && this.state.guards.length > 0) {
-            for (let i = 0; i < this.state.guards.length; i++) {
-                const g = this.state.guards[i];
-                if (g && g.unlocked && g.level > bestGuardLevel) {
-                    bestGuardLevel = g.level;
-                }
-            }
-        }
-        const maxCollect = this.getGuardCapacity(bestGuardLevel);
-        const amountToCollect = Math.min(teller.cashStored, maxCollect);
         const vaultCapacity = this.getVaultCapacity(this.state.vault.level);
         const vaultAvailableSpace = vaultCapacity - this.state.vault.cashStored;
 
@@ -523,8 +512,8 @@ class IdleBankGame {
             return 0; // Vault full
         }
 
-        const transAmount = Math.min(amountToCollect, vaultAvailableSpace);
-        teller.cashStored = Math.round((teller.cashStored - transAmount + Number.EPSILON) * 100) / 100;
+        const transAmount = Math.min(teller.cashStored, vaultAvailableSpace);
+        teller.cashStored = Math.max(0, Math.round((teller.cashStored - transAmount + Number.EPSILON) * 100) / 100);
         this.state.vault.cashStored = Math.round((this.state.vault.cashStored + transAmount + Number.EPSILON) * 100) / 100;
         return transAmount;
     }

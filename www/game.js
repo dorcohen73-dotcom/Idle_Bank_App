@@ -524,7 +524,7 @@ class IdleBankGame {
         }
 
         const transAmount = Math.min(amountToCollect, vaultAvailableSpace);
-        teller.cashStored = Math.round((teller.cashStored - transAmount + Number.EPSILON) * 100) / 100;
+        teller.cashStored = Math.max(0, Math.round((teller.cashStored - transAmount + Number.EPSILON) * 100) / 100);
         this.state.vault.cashStored = Math.round((this.state.vault.cashStored + transAmount + Number.EPSILON) * 100) / 100;
         return transAmount;
     }

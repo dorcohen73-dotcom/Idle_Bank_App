@@ -61,7 +61,8 @@ class GuardController {
             // a guard visibly and predictably shortens the real-world wait between rounds,
             // exactly matching the number shown on the upgrade card.
             const roundCooldown = game.getGuardSpeed(g.level);
-            const walkDuration = GAME_CONFIG.GUARD_WALK_ANIM_DURATION;
+            const speedRatio = Math.max(0.2, roundCooldown / (GAME_CONFIG.GUARD_BASE_SPEED || 10.0));
+            const walkDuration = Math.max(0.1, GAME_CONFIG.GUARD_WALK_ANIM_DURATION * speedRatio);
             const capacity = game.getGuardCapacity(g.level);
             const vaultSpaceLeft = vaultCapacity - game.state.vault.cashStored;
 
@@ -137,8 +138,9 @@ class GuardController {
                     const pendingTaken = (teller && teller.unlocked) ? Math.max(0, Math.min(teller.cashStored, spaceLeft)) : 0;
                     g.pendingCollectAmount = pendingTaken;
                     const loadRatio = capacity > 0 ? pendingTaken / capacity : 0;
-                    g.timer = GAME_CONFIG.GUARD_COLLECT_MIN_DURATION
-                        + loadRatio * (GAME_CONFIG.GUARD_COLLECT_MAX_DURATION - GAME_CONFIG.GUARD_COLLECT_MIN_DURATION);
+                    const collectMin = Math.max(0.05, GAME_CONFIG.GUARD_COLLECT_MIN_DURATION * speedRatio);
+                    const collectMax = Math.max(0.15, GAME_CONFIG.GUARD_COLLECT_MAX_DURATION * speedRatio);
+                    g.timer = collectMin + loadRatio * (collectMax - collectMin);
                 }
                 g.position = g.segmentPosition;
 
@@ -152,16 +154,17 @@ class GuardController {
                     // this guard was dropped straight into a collecting_* state without going
                     // through that transition (old saves, tests, dev tools).
                     const spaceLeft = capacity - g.carriedAmount;
-                    const taken = g.pendingCollectAmount > 0
+                    const rawTaken = g.pendingCollectAmount > 0
                         ? g.pendingCollectAmount
                         : Math.max(0, Math.min(teller && teller.unlocked ? teller.cashStored : 0, spaceLeft));
-                    if (teller && teller.unlocked && taken > 0) {
-                        teller.cashStored = Math.round((teller.cashStored - taken + Number.EPSILON) * 100) / 100;
-                        g.carriedAmount = Math.round((g.carriedAmount + taken + Number.EPSILON) * 100) / 100;
+                    const actualTaken = Math.min(rawTaken, Math.max(0, teller ? teller.cashStored : 0));
+                    if (teller && teller.unlocked && actualTaken > 0) {
+                        teller.cashStored = Math.max(0, Math.round((teller.cashStored - actualTaken + Number.EPSILON) * 100) / 100);
+                        g.carriedAmount = Math.round((g.carriedAmount + actualTaken + Number.EPSILON) * 100) / 100;
                         // Store actual collected amount and source teller so ui-draw can display
                         // the correct floating text and coin animation when this state transition
                         // is detected (prev=collecting_from_teller_N → cur=moving_to_* or moving_to_vault).
-                        g.lastCollectedAmount = taken;
+                        g.lastCollectedAmount = actualTaken;
                         g.lastCollectedTellerIndex = ti;
                     } else {
                         g.lastCollectedAmount = 0;
