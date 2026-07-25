@@ -1,5 +1,6 @@
 import { initSound, playAd, AdService } from './ads.js';
 import { showDiscoveryTip } from './engagement.js';
+import { formatNumberCompact } from '../draw/format.js';
 
 // Re-parenting to <body> plus a forced reflow works around a rendering bug where
 // a .modal-overlay deep in the page's DOM tree gets its `active` class/opacity
@@ -402,8 +403,8 @@ export function _rewardIcon(type) {
 }
 
 export function _rewardShortText(reward) {
-    if (reward.type === 'cash') return '+' + formatMoney(reward.value);
-    if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm x2';
+    if (reward.type === 'cash') return '+$' + formatNumberCompact(reward.value);
+    if (reward.type === 'boost') return '+' + Math.round(reward.value / 60) + 'm';
     return '+' + reward.value;
 }
 

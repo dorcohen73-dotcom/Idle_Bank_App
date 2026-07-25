@@ -1,5 +1,6 @@
 import { initSound, playAd, AdService } from './ads.js';
 import { showDiscoveryTip } from './engagement.js';
+import { formatNumberCompact } from '../draw/format.js';
 
 // Re-parenting to <body> plus a forced reflow works around a rendering bug where
 // a .modal-overlay deep in the page's DOM tree gets its `active` class/opacity
