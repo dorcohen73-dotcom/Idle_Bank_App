@@ -5215,7 +5215,7 @@
           id: 103,
           title: t.notifComebackTitle || "\u{1F634} Your bank misses you",
           body: t.notifComebackBody || "The employees are getting bored \u2014 quick check-in?",
-          schedule: { at: new Date(now + 24 * 3600 * 1e3) }
+          schedule: { at: new Date(now + 72 * 3600 * 1e3) }
         });
         notifications.sort((a, b) => a.schedule.at.getTime() - b.schedule.at.getTime());
         const MIN_GAP_MS = 3 * 3600 * 1e3;
