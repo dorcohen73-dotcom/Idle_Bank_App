@@ -251,9 +251,12 @@ class ShopController {
         if (game.state.shares >= cost) {
             game.state.shares -= cost;
             game.state.goldUpgrades[type]++;
-            if ((type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') && game.economyManager) {
-                game.economyManager._cachedVaultCap = new Map();
-                game.economyManager._cachedTellerCap = null;
+            if (game.economyManager) {
+                game.economyManager.cachedTotalMult = null;
+                if (type === 'vaultCapacityBoost' || type === 'tellerCapacityBoost') {
+                    game.economyManager._cachedVaultCap = new Map();
+                    game.economyManager._cachedTellerCap = null;
+                }
             }
             window.gameAudio.playUnlock();
             game.recalculateEps();
