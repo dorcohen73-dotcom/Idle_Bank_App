@@ -8058,22 +8058,22 @@ header {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
-  height: 38px !important;
-  padding: 0 11px !important;
+  gap: 4px !important;
+  height: 32px !important;
+  padding: 0 8px !important;
   background: linear-gradient(145deg, rgba(26, 20, 42, 0.95) 0%, rgba(12, 10, 24, 0.98) 100%) !important;
   border: 1.5px solid rgba(223, 171, 41, 0.45) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
-  margin: 0 2px !important;
+  margin: 0 1px !important;
   transition: all 0.3s ease !important;
   align-self: center !important;
 }
 
 .boost-live-timer-pill .timer-clock-icon {
-  font-size: 0.95rem !important;
+  font-size: 0.85rem !important;
   line-height: 1 !important;
   display: flex !important;
   align-items: center !important;
@@ -8081,7 +8081,7 @@ header {
 
 .boost-live-timer-pill .timer-countdown-val {
   font-family: "Outfit", "Roboto", monospace, sans-serif !important;
-  font-size: 0.9rem !important;
+  font-size: 0.8rem !important;
   font-weight: 900 !important;
   color: #fbbf24 !important;
   letter-spacing: 0.04em !important;
@@ -8101,7 +8101,7 @@ header {
     box-shadow: 0 0 8px rgba(223, 171, 41, 0.2);
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.55;
     border-color: rgba(223, 171, 41, 0.2);
     box-shadow: 0 0 2px rgba(223, 171, 41, 0.05);
   }
@@ -8131,19 +8131,19 @@ header {
 }
 @media (min-width: 650px) {
   .header-buttons-row {
-    gap: 0.6rem !important;
+    gap: 0.35rem !important;
   }
   .topbar-action-btn,
   .sound-toggle-btn {
-    width: 50px !important;
-    height: 50px !important;
-    min-width: 50px !important;
-    min-height: 50px !important;
-    font-size: 1.45rem !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    font-size: 1.25rem !important;
   }
   .topbar-action-btn span,
   .sound-toggle-btn span {
-    font-size: 1.45rem !important;
+    font-size: 1.25rem !important;
   }
 }
 /* ── Dashboard grid ──
