@@ -343,7 +343,7 @@
     const lang = game.state.language || "en";
     DOM_CACHE.tellersZone.innerHTML = "";
     DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
-    for (let id = 0; id < 4; id++) {
+    for (const id in TELLER_DOM_CACHE) {
       delete TELLER_DOM_CACHE[id];
     }
     game.state.tellers.forEach((t) => {
