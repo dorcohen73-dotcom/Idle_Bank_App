@@ -5495,6 +5495,10 @@
           if (window.gameAudio && typeof window.gameAudio.playClick === "function") window.gameAudio.playClick();
         }
         syncBottomNav(tab);
+        const controlPanel = document.getElementById("control-panel-section") || targetPane;
+        if (controlPanel && (window.innerWidth <= 950 || window.matchMedia("(pointer: coarse)").matches)) {
+          controlPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
     });
     const vaultMiniBtn = document.getElementById("vault-mini-btn");
