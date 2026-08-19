@@ -476,6 +476,11 @@ html[dir="ltr"] .secondary-side-img {
     right: 2% !important;
 }
 
+html[dir="rtl"] .secondary-side-img {
+    right: auto !important;
+    left: 2% !important;
+}
+
 .secondary-side-img.boost-img {
     filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.6)) brightness(1.15); /* Purple aura */
 }
@@ -571,7 +576,24 @@ html[dir="ltr"] .secondary-side-img {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding-left: 100px; /* Protect text from left image */
+    padding-left: 65px; /* Protect text from left image in RTL */
+    padding-right: 0;
+    position: relative;
+    z-index: 2;
+}
+
+html[dir="ltr"] .secondary-card-content {
+    padding-left: 0 !important;
+    padding-right: 65px !important; /* Protect text from right image in LTR */
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+html[dir="rtl"] .secondary-card-content {
+    padding-left: 65px !important;
+    padding-right: 0 !important;
+    align-items: flex-start !important;
+    text-align: right !important;
 }
 
 /* Fix gold shares image white corners specifically */
@@ -772,6 +794,33 @@ html[dir="ltr"] .secondary-side-img {
         min-height: 72px !important;
         padding: 0.5rem 0.6rem !important;
         justify-content: flex-start !important;
+        position: relative !important;
+    }
+
+    .secondary-side-img {
+        max-height: 52px !important;
+        max-width: 52px !important;
+        bottom: 2px !important;
+    }
+
+    html[dir="ltr"] .secondary-side-img {
+        right: 2px !important;
+        left: auto !important;
+    }
+
+    html[dir="rtl"] .secondary-side-img {
+        left: 2px !important;
+        right: auto !important;
+    }
+
+    html[dir="ltr"] .secondary-card-content {
+        padding-right: 50px !important;
+        padding-left: 0 !important;
+    }
+
+    html[dir="rtl"] .secondary-card-content {
+        padding-left: 50px !important;
+        padding-right: 0 !important;
     }
 
     .secondary-label {
