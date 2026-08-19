@@ -559,6 +559,21 @@ class IdleBankGame {
         }
     }
 
+    addBoost2x(hours = 2) {
+        if (this.shopController && typeof this.shopController.addBoost2x === 'function') {
+            return this.shopController.addBoost2x(hours);
+        }
+        const secondsToAdd = hours * 3600;
+        const maxSeconds = 24 * 3600;
+        this.state.boost2xTimeLeft = Math.min(maxSeconds, (this.state.boost2xTimeLeft || 0) + secondsToAdd);
+        if (this.economyManager) this.economyManager.cachedTotalMult = null;
+        if (window.gameAudio && typeof window.gameAudio.playUnlock === 'function') {
+            window.gameAudio.playUnlock();
+        }
+        this.saveGame();
+        return true;
+    }
+
     // --- GAME LOOP UPDATE ---
     update(dt) {
         this.tickTimer('boost2xTimeLeft', dt, () => { if (this.economyManager) this.economyManager.cachedTotalMult = null; });
