@@ -291,6 +291,14 @@ export function showOfflineEarningsModal() {
     if (!window.game || !window.game.offlineEarningsReport || isNaN(window.game.offlineEarningsReport) || window.game.offlineEarningsReport <= 0) return;
 
     const displayFn = () => {
+        const lang = (window.game && window.game.state && window.game.state.language) || 'en';
+        const tObj = (typeof translations !== 'undefined' && translations[lang]) 
+                       ? translations[lang] : translations.he;
+        if (DOM_CACHE.offlineModalTitle)     DOM_CACHE.offlineModalTitle.innerText     = tObj.offlineModalTitle;
+        if (DOM_CACHE.offlineModalText)      DOM_CACHE.offlineModalText.innerText      = tObj.offlineModalText;
+        if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.innerText = tObj.offlineDoubleBtn;
+        if (DOM_CACHE.offlineModalClaimBtn)  DOM_CACHE.offlineModalClaimBtn.innerText  = tObj.offlineClaimBtn;
+
         if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
         if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
         if (DOM_CACHE.offlineModal) activateModal(DOM_CACHE.offlineModal);

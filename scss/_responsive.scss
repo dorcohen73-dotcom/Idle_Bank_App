@@ -37,8 +37,12 @@
         -webkit-overflow-scrolling: touch !important;
     }
 
+    .tab-content, .tab-pane, .control-panel {
+        padding-bottom: calc(130px + env(safe-area-inset-bottom)) !important;
+    }
+
     .app-container {
-        padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
+        padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important;
         padding-top: calc(0.75rem + env(safe-area-inset-top)) !important;
         padding-left: calc(0.75rem + env(safe-area-inset-left)) !important;
         padding-right: calc(0.75rem + env(safe-area-inset-right)) !important;

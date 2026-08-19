@@ -131,18 +131,22 @@
 
 .dept-title-row {
     display: flex !important;
-    align-items: flex-start !important;
-    justify-content: space-between !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.4rem !important;
     width: 100% !important;
+    flex-wrap: wrap !important;
 }
 
 .dept-title-text {
-    font-size: 1.1rem !important;
+    font-size: clamp(0.9rem, 3.2vw, 1.1rem) !important;
     font-weight: 800 !important;
     color: #ffffff !important;
     font-family: var(--font-heading) !important;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
     line-height: 1.2 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
 }
 
 .dept-active-badge {

@@ -4037,8 +4037,11 @@ footer {
     touch-action: pan-y !important;
     -webkit-overflow-scrolling: touch !important;
   }
+  .tab-content, .tab-pane, .control-panel {
+    padding-bottom: calc(130px + env(safe-area-inset-bottom)) !important;
+  }
   .app-container {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important;
     padding-top: calc(0.75rem + env(safe-area-inset-top)) !important;
     padding-left: calc(0.75rem + env(safe-area-inset-left)) !important;
     padding-right: calc(0.75rem + env(safe-area-inset-right)) !important;
@@ -6056,18 +6059,22 @@ header, .control-panel, .bank-floor {
 
 .dept-title-row {
   display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.4rem !important;
   width: 100% !important;
+  flex-wrap: wrap !important;
 }
 
 .dept-title-text {
-  font-size: 1.1rem !important;
+  font-size: clamp(0.9rem, 3.2vw, 1.1rem) !important;
   font-weight: 800 !important;
   color: #ffffff !important;
   font-family: var(--font-heading) !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
   line-height: 1.2 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
 }
 
 .dept-active-badge {
@@ -6836,7 +6843,7 @@ header, .control-panel, .bank-floor {
   .bottom-nav {
     display: flex !important;
     position: fixed !important;
-    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: max(10px + env(safe-area-inset-bottom, 0px), 26px) !important;
     left: 10px !important;
     right: 10px !important;
     width: calc(100% - 20px) !important;
@@ -8258,6 +8265,11 @@ header {
   mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 75%, transparent 100%);
 }
 
+html[dir=ltr] .secondary-side-img {
+  left: auto !important;
+  right: 2% !important;
+}
+
 .secondary-side-img.boost-img {
   filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.6)) brightness(1.15); /* Purple aura */
 }
@@ -8531,8 +8543,14 @@ header {
   }
   .secondary-card {
     min-height: 72px !important;
-    padding: 0.6rem 0.7rem !important;
+    padding: 0.5rem 0.6rem !important;
     justify-content: flex-start !important;
+  }
+  .secondary-label {
+    font-size: 0.72rem !important;
+    letter-spacing: 0 !important;
+    white-space: normal !important;
+    line-height: 1.15 !important;
   }
   .secondary-value {
     font-size: 1.35rem !important;
@@ -11341,8 +11359,9 @@ html[dir=ltr] .upg-v2-stat:not(:last-child) {
 .upg-v2-btn-left {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0 0.6rem;
+  flex-shrink: 0;
 }
 
 .premium-cash-icon {
@@ -11613,16 +11632,19 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   }
   /* Button */
   .upg-v2-buy-btn {
-    border-radius: 6px;
-    padding: 0.2rem;
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
     border-width: 1px;
     min-height: 44px !important;
     height: auto !important;
     flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
   }
   .upg-v2-btn-left {
     padding: 0 0.2rem;
     flex-shrink: 0;
+    justify-content: flex-start !important;
   }
   .upg-v2-btn-right {
     padding: 0 0.2rem;
@@ -11632,11 +11654,19 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     padding: 0.1rem;
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .upg-v2-btn-lbl {
     font-size: 0.75rem;
     gap: 0.15rem;
     white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
   }
   .upg-v2-btn-cost {
     font-size: 0.8rem;
@@ -11646,6 +11676,10 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     text-overflow: ellipsis;
     max-width: 100%;
     display: block;
+    text-align: center;
+  }
+  .upg-v2-btn-sub {
+    display: none !important;
   }
   .upg-v2-btn-amount {
     font-size: 0.65rem;
@@ -12316,9 +12350,9 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
 }
 /* Premium Offline Modal styling */
 .offline-modal-premium {
-  background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(3, 7, 18, 0.99)) !important;
-  border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(251, 191, 36, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  background: linear-gradient(135deg, #090d16 0%, #151c2e 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.4) !important;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(251, 191, 36, 0.05) !important;
   border-radius: 24px !important;
   padding: 32px 24px 24px 24px !important;
   text-align: center;
@@ -12327,7 +12361,6 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   font-family: "Heebo", var(--font-body), sans-serif !important;
   max-width: 420px;
   margin: 0 auto;
-  direction: rtl !important;
 }
 
 .offline-modal-premium::before {
@@ -12367,7 +12400,6 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   font-weight: 900 !important;
   margin: 0 0 10px 0 !important;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
-  direction: rtl;
   font-family: "Heebo", Arial, sans-serif !important;
   letter-spacing: -0.5px;
 }
@@ -12378,7 +12410,6 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   font-weight: 500 !important;
   margin-bottom: 25px !important;
   line-height: 1.4 !important;
-  direction: rtl;
   padding: 0 20px;
   font-family: "Heebo", Arial, sans-serif !important;
 }
@@ -12438,7 +12469,6 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   width: 100% !important;
   font-family: "Heebo", Arial, sans-serif !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-  direction: rtl;
 }
 
 .offline-premium-btn-ad:hover {
@@ -13560,17 +13590,25 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   display: flex;
   flex-direction: column;
   flex: 1;
-  text-align: right;
+  min-width: 0;
+  text-align: left;
+  margin-right: 8px;
   gap: 8px;
   overflow: hidden;
+}
+
+html[dir=rtl] .dept-details {
+  text-align: right;
+  margin-right: 0;
+  margin-left: 8px;
 }
 
 .dept-title-row {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
-  flex-wrap: nowrap;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .dept-title-shield {
@@ -13582,12 +13620,14 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
 }
 
 .dept-title-text {
-  font-size: 1.15rem;
+  font-size: clamp(0.92rem, 3.5vw, 1.15rem);
   font-weight: 800;
   color: #ffffff;
   letter-spacing: 0.2px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
   white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
   line-height: 1.2;
 }
 
@@ -13894,7 +13934,10 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
     font-size: 20px !important;
   }
   .dept-title-text {
-    font-size: 1.1rem !important;
+    font-size: 0.95rem !important;
+  }
+  .dept-card-divider {
+    margin: 0 8px !important;
   }
   .dept-stat-label {
     font-size: 0.75rem !important;

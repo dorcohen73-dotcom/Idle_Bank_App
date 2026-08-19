@@ -88,9 +88,10 @@ try {
   const indexPath = path.join(projectRoot, 'index.html');
   if (fs.existsSync(indexPath)) {
     let indexHtml = fs.readFileSync(indexPath, 'utf8');
-    // Bump version for style.css and app.bundle.js
+    // Bump version for style.css, app.bundle.js, and locales.js
     indexHtml = indexHtml.replace(/(href="style\.css\?v=)[^"]+(")/g, `$1${md5Hash}$2`);
     indexHtml = indexHtml.replace(/(src="app\.bundle\.js\?v=)[^"]+(")/g, `$1${md5Hash}$2`);
+    indexHtml = indexHtml.replace(/(src="locales\.js\?v=)[^"]+(")/g, `$1${md5Hash}$2`);
     fs.writeFileSync(indexPath, indexHtml, 'utf8');
     console.log('Successfully updated index.html cache-buster tags!');
   }

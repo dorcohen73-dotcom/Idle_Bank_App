@@ -71,12 +71,9 @@
 
 /* Premium Offline Modal styling */
 .offline-modal-premium {
-    background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(3, 7, 18, 0.99)) !important;
-    border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.95), 
-        0 0 35px rgba(251, 191, 36, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    background: linear-gradient(135deg, #090d16 0%, #151c2e 100%) !important;
+    border: 1px solid rgba(251, 191, 36, 0.4) !important;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(251, 191, 36, 0.05) !important;
     border-radius: 24px !important;
     padding: 32px 24px 24px 24px !important;
     text-align: center;
@@ -85,7 +82,6 @@
     font-family: 'Heebo', var(--font-body), sans-serif !important;
     max-width: 420px;
     margin: 0 auto;
-    direction: rtl !important;
 }
 
 .offline-modal-premium::before {
@@ -119,7 +115,6 @@
     font-weight: 900 !important;
     margin: 0 0 10px 0 !important;
     text-shadow: 0 2px 5px rgba(0,0,0,0.8) !important;
-    direction: rtl;
     font-family: 'Heebo', Arial, sans-serif !important;
     letter-spacing: -0.5px;
 }
@@ -130,7 +125,6 @@
     font-weight: 500 !important;
     margin-bottom: 25px !important;
     line-height: 1.4 !important;
-    direction: rtl;
     padding: 0 20px;
     font-family: 'Heebo', Arial, sans-serif !important;
 }
@@ -189,7 +183,6 @@
     width: 100% !important;
     font-family: 'Heebo', Arial, sans-serif !important;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
-    direction: rtl;
 }
 .offline-premium-btn-ad:hover {
     transform: scale(1.02) !important;

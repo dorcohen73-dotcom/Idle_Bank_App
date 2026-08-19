@@ -1849,6 +1849,7 @@ Object.assign(translations.he, {
     },
     // VIP Visitor
     vipBannerTitle: "לקוח VIP פנימה!",
+    vipCloseBtn: "המשך כרגיל",
     vipBannerTimer: (s) => `${s} שניות`,
     vipServeBtn: "שרת (פרס כסף)",
     vipPremiumBtn: (amt) => `VIP Premium (פרסומת + ${amt} מניות זהב)`,
@@ -1893,6 +1894,7 @@ Object.assign(translations.en, {
         shares_2: "Shares Vault"
     },
     vipBannerTitle: "VIP Client Inside!",
+    vipCloseBtn: "Continue as usual",
     vipBannerTimer: (s) => `${s} seconds`,
     vipServeBtn: "Serve (Cash Prize)",
     vipPremiumBtn: (amt) => `VIP Premium (Ad + ${amt} Gold Shares)`,
@@ -1936,6 +1938,7 @@ Object.assign(translations.es, {
         shares_2: "Bóveda de Acciones"
     },
     vipBannerTitle: "¡Cliente VIP adentro!",
+    vipCloseBtn: "Continuar normal",
     vipBannerTimer: (s) => `${s} segundos`,
     vipServeBtn: "Atender (Premio en Efectivo)",
     vipPremiumBtn: (amt) => `VIP Premium (Anuncio + ${amt} Acciones)`,
@@ -1979,6 +1982,7 @@ Object.assign(translations.ru, {
         shares_2: "Хранилище акций"
     },
     vipBannerTitle: "VIP-клиент внутри!",
+    vipCloseBtn: "Продолжить как обычно",
     vipBannerTimer: (s) => `${s} секунд`,
     vipServeBtn: "Обслужить (Наличные)",
     vipPremiumBtn: (amt) => `VIP Премиум (Реклама + ${amt} акций)`,

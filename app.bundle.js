@@ -1285,7 +1285,7 @@
             </div>
             <div class="daily-header-box">
                 <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || "3 \u05D0\u05EA\u05D2\u05E8\u05D9\u05DD \u05E7\u05E9\u05D9\u05DD \u05E9\u05DE\u05EA\u05D0\u05E4\u05E1\u05D9\u05DD \u05D1\u05D7\u05E6\u05D5\u05EA"}</span>
-                <span class="daily-reset-timer">\u05DE\u05EA\u05D0\u05E4\u05E1 \u05D1\u05E2\u05D5\u05D3 ${resetText}</span>
+                <span class="daily-reset-timer">${resetText}</span>
             </div>
         `;
     container.appendChild(headerEl);
@@ -1416,10 +1416,10 @@
   }
   var DISCOVERY_TIPS = {
     start: {
-      he: { icon: "\u{1F3E6}", title: "\u05D1\u05E8\u05D5\u05DB\u05D9\u05DD \u05D4\u05D1\u05D0\u05D9\u05DD \u05DC\u05D1\u05E0\u05E7 \u05E9\u05DC\u05DA!", body: '\u05DC\u05D7\u05E5 "\u05D0\u05E1\u05D5\u05E3" \u05E2\u05DC \u05D4\u05D3\u05DC\u05E4\u05E7 \u05DB\u05D3\u05D9 \u05DC\u05D0\u05E1\u05D5\u05E3 \u05DB\u05E1\u05E3 \u05DE\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA. \u05DC\u05D0\u05D7\u05E8 \u05DE\u05DB\u05DF \u05DC\u05D7\u05E5 "\u05E8\u05D5\u05E7\u05DF \u05DB\u05E1\u05E4\u05EA" \u05DC\u05D4\u05D5\u05E1\u05D9\u05E3 \u05D0\u05EA \u05D4\u05DB\u05E1\u05E3 \u05DC\u05D9\u05EA\u05E8\u05D4 \u05E9\u05DC\u05DA.' },
-      en: { icon: "\u{1F3E6}", title: "Welcome to your bank!", body: 'Tap "Collect" on a teller desk to gather cash from customers. Then tap "Empty Vault" to add it to your balance.' },
-      es: { icon: "\u{1F3E6}", title: "\xA1Bienvenido a tu banco!", body: 'Toca "Cobrar" en una caja para recolectar dinero. Luego toca "Vaciar B\xF3veda" para a\xF1adirlo a tu saldo.' },
-      ru: { icon: "\u{1F3E6}", title: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C \u0432 \u0431\u0430\u043D\u043A!", body: "\u041D\u0430\u0436\u043C\u0438 \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C\xBB \u0443 \u043A\u0430\u0441\u0441\u044B, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438. \u041F\u043E\u0442\u043E\u043C \u043D\u0430\u0436\u043C\u0438 \xAB\u041E\u043F\u0443\u0441\u0442\u043E\u0448\u0438\u0442\u044C \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435\xBB, \u0447\u0442\u043E\u0431\u044B \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0438\u0445 \u043D\u0430 \u0441\u0447\u0451\u0442." }
+      he: { icon: "\u{1F3E6}", title: "\u05D1\u05E8\u05D5\u05DB\u05D9\u05DD \u05D4\u05D1\u05D0\u05D9\u05DD \u05DC\u05D1\u05E0\u05E7 \u05E9\u05DC\u05DA!", body: '\u05D4\u05DE\u05D8\u05E8\u05D4: \u05DC\u05D1\u05E0\u05D5\u05EA \u05D0\u05D9\u05DE\u05E4\u05E8\u05D9\u05D9\u05EA \u05D1\u05E0\u05E7\u05D9\u05DD \u05D5\u05DC\u05D4\u05E8\u05D5\u05D5\u05D9\u05D7 \u05DB\u05E1\u05E3 \u2014 \u05D2\u05DD \u05DB\u05E9\u05D0\u05EA\u05D4 \u05DE\u05D7\u05D5\u05E5 \u05DC\u05DE\u05E9\u05D7\u05E7. \u05DB\u05D3\u05D9 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC: \u05DC\u05D7\u05E5 "\u05D0\u05E1\u05D5\u05E3" \u05E2\u05DC \u05D4\u05D3\u05DC\u05E4\u05E7 \u05DB\u05D3\u05D9 \u05DC\u05D0\u05E1\u05D5\u05E3 \u05DB\u05E1\u05E3 \u05DE\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA, \u05D5\u05D0\u05D6 "\u05E8\u05D5\u05E7\u05DF \u05DB\u05E1\u05E4\u05EA" \u05DB\u05D3\u05D9 \u05DC\u05D4\u05D5\u05E1\u05D9\u05E3 \u05D0\u05D5\u05EA\u05D5 \u05DC\u05D9\u05EA\u05E8\u05D4 \u05E9\u05DC\u05DA.' },
+      en: { icon: "\u{1F3E6}", title: "Welcome to your bank!", body: 'Your goal: build a banking empire and earn money \u2014 even while you are away. To start: tap "Collect" on a teller desk to gather cash, then tap "Empty Vault" to add it to your balance.' },
+      es: { icon: "\u{1F3E6}", title: "\xA1Bienvenido a tu banco!", body: 'Tu objetivo: construir un imperio bancario y ganar dinero, incluso cuando no est\xE1s jugando. Para empezar: toca "Cobrar" en una caja para recolectar dinero y luego "Vaciar B\xF3veda" para a\xF1adirlo a tu saldo.' },
+      ru: { icon: "\u{1F3E6}", title: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C \u0432 \u0431\u0430\u043D\u043A!", body: "\u0422\u0432\u043E\u044F \u0446\u0435\u043B\u044C: \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0431\u0430\u043D\u043A\u043E\u0432\u0441\u043A\u0443\u044E \u0438\u043C\u043F\u0435\u0440\u0438\u044E \u0438 \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438 \u2014 \u0434\u0430\u0436\u0435 \u043A\u043E\u0433\u0434\u0430 \u0442\u044B \u043D\u0435 \u0432 \u0438\u0433\u0440\u0435. \u041D\u0430\u0447\u043D\u0438 \u0442\u0430\u043A: \u043D\u0430\u0436\u043C\u0438 \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C\xBB \u0443 \u043A\u0430\u0441\u0441\u044B, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438, \u0437\u0430\u0442\u0435\u043C \xAB\u041E\u043F\u0443\u0441\u0442\u043E\u0448\u0438\u0442\u044C \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435\xBB, \u0447\u0442\u043E\u0431\u044B \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0438\u0445 \u043D\u0430 \u0441\u0447\u0451\u0442." }
     },
     vault: {
       he: { icon: "\u{1F510}", title: "\u05D4\u05DB\u05E1\u05E4\u05EA \u05DE\u05D7\u05DB\u05D4 \u05DC\u05DA!", body: '\u05D4\u05D3\u05DC\u05E4\u05E7\u05D9\u05DD \u05E9\u05DC\u05D7\u05D5 \u05DB\u05E1\u05E3 \u05DC\u05DB\u05E1\u05E4\u05EA. \u05DC\u05D7\u05E5 "\u05E8\u05D5\u05E7\u05DF \u05DB\u05E1\u05E4\u05EA" \u05DC\u05D4\u05D5\u05E1\u05D9\u05E3 \u05D0\u05D5\u05EA\u05D5 \u05DC\u05D9\u05EA\u05E8\u05D4. \u05E9\u05D3\u05E8\u05D2 \u05D0\u05EA \u05D4\u05DB\u05E1\u05E4\u05EA \u05DB\u05D3\u05D9 \u05E9\u05EA\u05D7\u05D6\u05D9\u05E7 \u05D9\u05D5\u05EA\u05E8 \u05DB\u05E1\u05E3.' },
@@ -1517,7 +1517,7 @@
     if (!window.game || !window.game.state) return;
     if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
     var tips = window.game.state.discoveredTips;
-    var isNew = !tips.start && window.game.state.lifetimeCash <= 300 && !window.game.state.shares && !(window.game.state.missionsCompleted > 0);
+    var isNew = !tips.start && !window.game.state.shares && !(window.game.state.missionsCompleted > 0);
     if (isNew) setTimeout(function() {
       var tryShow = function() {
         if (document.querySelector(".modal-overlay.active")) {
@@ -1775,6 +1775,12 @@
   function showOfflineEarningsModal() {
     if (!window.game || !window.game.offlineEarningsReport || isNaN(window.game.offlineEarningsReport) || window.game.offlineEarningsReport <= 0) return;
     const displayFn = () => {
+      const lang = window.game && window.game.state && window.game.state.language || "en";
+      const tObj = typeof translations !== "undefined" && translations[lang] ? translations[lang] : translations.he;
+      if (DOM_CACHE.offlineModalTitle) DOM_CACHE.offlineModalTitle.innerText = tObj.offlineModalTitle;
+      if (DOM_CACHE.offlineModalText) DOM_CACHE.offlineModalText.innerText = tObj.offlineModalText;
+      if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.innerText = tObj.offlineDoubleBtn;
+      if (DOM_CACHE.offlineModalClaimBtn) DOM_CACHE.offlineModalClaimBtn.innerText = tObj.offlineClaimBtn;
       if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
       if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = typeof AdService !== "undefined" && AdService.isInCooldown() ? "none" : "";
       if (DOM_CACHE.offlineModal) activateModal(DOM_CACHE.offlineModal);
@@ -3532,18 +3538,15 @@
             <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? "" : "disabled"}" id="upgrade-vault-btn" ${vCanBuy ? "" : "disabled"} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} \u2014 ${formatMoney(vCost)}">
                 <div class="upg-v2-btn-left">
                     <div class="upg-v2-btn-sparkles">\u2728</div>
+                </div>
+                <div class="upg-v2-btn-center">
                     <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel} <span class="upg-v2-btn-amount">${vLevelsToBuy > 1 ? "+" + vLevelsToBuy : ""}</span></div>
-                    <div class="upg-v2-btn-cost">
-                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        ${formatMoney(vCost)}
-                    </div>
+                    <div class="upg-v2-btn-cost">${formatMoney(vCost)}</div>
                 </div>
                 <div class="upg-v2-btn-right">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <div class="dark-circle-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
                 </div>
             </button>
         </div>
@@ -3606,18 +3609,15 @@
             <button class="upg-v2-buy-btn buy-btn ${qCanBuy ? "" : "disabled"}" id="upgrade-queue-btn" ${qCanBuy ? "" : "disabled"}>
                 <div class="upg-v2-btn-left">
                     <div class="upg-v2-btn-sparkles">\u2728</div>
-                    <div class="upg-v2-btn-lbl">${tObj.queueUpgradeBtn || "\u05E9\u05D3\u05E8\u05D2"} <span class="upg-v2-btn-amount">${qLevelsToBuy > 1 ? "+" + qLevelsToBuy : ""}</span></div>
-                    <div class="upg-v2-btn-cost">
-                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        ${formatMoney(qCost)}
-                    </div>
+                </div>
+                <div class="upg-v2-btn-center">
+                    <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel || "\u05E9\u05D3\u05E8\u05D2"} <span class="upg-v2-btn-amount">${qLevelsToBuy > 1 ? "+" + qLevelsToBuy : ""}</span></div>
+                    <div class="upg-v2-btn-cost">${formatMoney(qCost)}</div>
                 </div>
                 <div class="upg-v2-btn-right">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <div class="dark-circle-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
                 </div>
             </button>
         </div>
@@ -5465,6 +5465,13 @@
         }
       });
     });
+    const BNAV_RENDERERS = {
+      upgrades: "renderUpgradesTab",
+      managers: "renderManagersTab",
+      departments: "renderDepartmentsTab",
+      missions: "renderMissionsTab",
+      branches: "renderBranchesTab"
+    };
     document.querySelectorAll(".bottom-nav-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         try {
@@ -5475,6 +5482,17 @@
         const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
         if (existingTabBtn) {
           existingTabBtn.click();
+        }
+        const targetPane = document.getElementById(`tab-${tab}`);
+        if (targetPane && !targetPane.classList.contains("active")) {
+          document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
+          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          targetPane.classList.add("active");
+          if (existingTabBtn) existingTabBtn.classList.add("active");
+          const rid = BNAV_RENDERERS[tab];
+          if (rid && typeof window[rid] === "function") window[rid]();
+          if (typeof window.invalidateTabHashes === "function") window.invalidateTabHashes();
+          if (window.gameAudio && typeof window.gameAudio.playClick === "function") window.gameAudio.playClick();
         }
         syncBottomNav(tab);
       });
@@ -6057,11 +6075,16 @@ ${stack}` : String(message);
           window.dailyChallengeController.checkAndReset();
         }
         initUIEvents();
-        const chosenLang = window.game.state.language || "en";
+        let defaultLang = "en";
+        const navLang = (navigator.language || navigator.userLanguage || "").toLowerCase();
+        if (navLang.startsWith("he")) defaultLang = "he";
+        else if (navLang.startsWith("es")) defaultLang = "es";
+        else if (navLang.startsWith("ru")) defaultLang = "ru";
+        const chosenLang = window.game.state.language || defaultLang;
         const isFirstTime = !window.localStorage.getItem("idle_bank_language_chosen");
         if (isFirstTime) {
-          window.game.setLanguage("en");
-          applyLanguage("en");
+          window.game.setLanguage(defaultLang);
+          applyLanguage(defaultLang);
           if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = "none";
           const showLangModal = () => {
             if (DOM_CACHE.langModal) window.activateModal(DOM_CACHE.langModal);

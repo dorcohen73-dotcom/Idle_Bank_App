@@ -111,17 +111,25 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    text-align: right;
+    min-width: 0;
+    text-align: left;
+    margin-right: 8px;
     gap: 8px;
     overflow: hidden;
+}
+
+html[dir="rtl"] .dept-details {
+    text-align: right;
+    margin-right: 0;
+    margin-left: 8px;
 }
 
 .dept-title-row {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
-    flex-wrap: nowrap;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .dept-title-shield {
@@ -133,12 +141,14 @@
 }
 
 .dept-title-text {
-    font-size: 1.15rem;
+    font-size: clamp(0.92rem, 3.5vw, 1.15rem);
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 0.2px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
     line-height: 1.2;
 }
 
@@ -446,7 +456,10 @@
         font-size: 20px !important;
     }
     .dept-title-text {
-        font-size: 1.1rem !important;
+        font-size: 0.95rem !important;
+    }
+    .dept-card-divider {
+        margin: 0 8px !important;
     }
     .dept-stat-label {
         font-size: 0.75rem !important;

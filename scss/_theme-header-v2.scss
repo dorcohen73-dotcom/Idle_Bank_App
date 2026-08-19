@@ -471,6 +471,11 @@ header {
     mask-image: radial-gradient(ellipse 95% 95% at 50% 50%, black 75%, transparent 100%);
 }
 
+html[dir="ltr"] .secondary-side-img {
+    left: auto !important;
+    right: 2% !important;
+}
+
 .secondary-side-img.boost-img {
     filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.6)) brightness(1.15); /* Purple aura */
 }
@@ -765,8 +770,15 @@ header {
 
     .secondary-card {
         min-height: 72px !important;
-        padding: 0.6rem 0.7rem !important;
+        padding: 0.5rem 0.6rem !important;
         justify-content: flex-start !important;
+    }
+
+    .secondary-label {
+        font-size: 0.72rem !important;
+        letter-spacing: 0 !important;
+        white-space: normal !important;
+        line-height: 1.15 !important;
     }
 
     .secondary-value {

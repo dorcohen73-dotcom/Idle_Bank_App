@@ -75,18 +75,15 @@ export function renderUpgradesTab() {
             <button class="upg-v2-buy-btn buy-btn ${vCanBuy ? '' : 'disabled'}" id="upgrade-vault-btn" ${vCanBuy ? '' : 'disabled'} aria-label="${translations[lang].upgradeLabel} ${translations[lang].vaultTitle} — ${formatMoney(vCost)}">
                 <div class="upg-v2-btn-left">
                     <div class="upg-v2-btn-sparkles">✨</div>
+                </div>
+                <div class="upg-v2-btn-center">
                     <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel} <span class="upg-v2-btn-amount">${vLevelsToBuy > 1 ? '+'+vLevelsToBuy : ''}</span></div>
-                    <div class="upg-v2-btn-cost">
-                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        ${formatMoney(vCost)}
-                    </div>
+                    <div class="upg-v2-btn-cost">${formatMoney(vCost)}</div>
                 </div>
                 <div class="upg-v2-btn-right">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <div class="dark-circle-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
                 </div>
             </button>
         </div>
@@ -156,18 +153,15 @@ export function renderUpgradesTab() {
             <button class="upg-v2-buy-btn buy-btn ${qCanBuy ? '' : 'disabled'}" id="upgrade-queue-btn" ${qCanBuy ? '' : 'disabled'}>
                 <div class="upg-v2-btn-left">
                     <div class="upg-v2-btn-sparkles">✨</div>
-                    <div class="upg-v2-btn-lbl">${tObj.queueUpgradeBtn || 'שדרג'} <span class="upg-v2-btn-amount">${qLevelsToBuy > 1 ? '+'+qLevelsToBuy : ''}</span></div>
-                    <div class="upg-v2-btn-cost">
-                        <svg class="upg-v2-coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                        <span class="upg-v2-btn-sub">${(statLabels[lang] || statLabels.en).totalUpgrade}</span>
-                        ${formatMoney(qCost)}
-                    </div>
+                </div>
+                <div class="upg-v2-btn-center">
+                    <div class="upg-v2-btn-lbl">${translations[lang].upgradeLabel || 'שדרג'} <span class="upg-v2-btn-amount">${qLevelsToBuy > 1 ? '+'+qLevelsToBuy : ''}</span></div>
+                    <div class="upg-v2-btn-cost">${formatMoney(qCost)}</div>
                 </div>
                 <div class="upg-v2-btn-right">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffe066" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <div class="dark-circle-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
                 </div>
             </button>
         </div>

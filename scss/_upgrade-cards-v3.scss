@@ -263,8 +263,9 @@ html[dir="ltr"] .upg-v2-stat:not(:last-child) {
 .upg-v2-btn-left {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 0 0.6rem;
+    flex-shrink: 0;
 }
 
 .premium-cash-icon {
@@ -504,12 +505,13 @@ html[dir="ltr"] .upgrade-card.premium-upg-card .recommended-badge {
     .val-next { padding: 0 0.25rem; border-radius: 4px; font-size: 0.7rem; }
     
     /* Button */
-    .upg-v2-buy-btn { border-radius: 6px; padding: 0.2rem; border-width: 1px; min-height: 44px !important; height: auto !important; flex-wrap: nowrap; }
-    .upg-v2-btn-left { padding: 0 0.2rem; flex-shrink: 0; }
+    .upg-v2-buy-btn { border-radius: 8px; padding: 0.25rem 0.4rem; border-width: 1px; min-height: 44px !important; height: auto !important; flex-wrap: nowrap; align-items: center; justify-content: space-between; }
+    .upg-v2-btn-left { padding: 0 0.2rem; flex-shrink: 0; justify-content: flex-start !important; }
     .upg-v2-btn-right { padding: 0 0.2rem; flex-shrink: 0; }
-    .upg-v2-btn-center { padding: 0.1rem; flex: 1; min-width: 0; }
-    .upg-v2-btn-lbl { font-size: 0.75rem; gap: 0.15rem; white-space: nowrap; }
-    .upg-v2-btn-cost { font-size: 0.8rem; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; }
+    .upg-v2-btn-center { padding: 0.1rem; flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .upg-v2-btn-lbl { font-size: 0.75rem; gap: 0.15rem; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .upg-v2-btn-cost { font-size: 0.8rem; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block; text-align: center; }
+    .upg-v2-btn-sub { display: none !important; }
     .upg-v2-btn-amount { font-size: 0.65rem; padding: 0.1rem 0.2rem; }
     .premium-cash-icon { width: 20px; height: 20px; }
     .dark-circle-arrow { width: 16px; height: 16px; border-width: 1px; }

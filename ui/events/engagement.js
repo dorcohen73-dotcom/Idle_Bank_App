@@ -178,7 +178,7 @@ let vipBannerCountdownInterval = null;
             </div>
             <div class="daily-header-box">
                 <span class="daily-subtitle">${tObj.dailyChallengesSubtitle || '3 אתגרים קשים שמתאפסים בחצות'}</span>
-                <span class="daily-reset-timer">מתאפס בעוד ${resetText}</span>
+                <span class="daily-reset-timer">${resetText}</span>
             </div>
         `;
         container.appendChild(headerEl);
@@ -327,10 +327,10 @@ let vipBannerCountdownInterval = null;
 
     const DISCOVERY_TIPS = {
         start: {
-            he: { icon: '🏦', title: 'ברוכים הבאים לבנק שלך!', body: 'לחץ "אסוף" על הדלפק כדי לאסוף כסף מלקוחות. לאחר מכן לחץ "רוקן כספת" להוסיף את הכסף ליתרה שלך.' },
-            en: { icon: '🏦', title: 'Welcome to your bank!', body: 'Tap "Collect" on a teller desk to gather cash from customers. Then tap "Empty Vault" to add it to your balance.' },
-            es: { icon: '🏦', title: '¡Bienvenido a tu banco!', body: 'Toca "Cobrar" en una caja para recolectar dinero. Luego toca "Vaciar Bóveda" para añadirlo a tu saldo.' },
-            ru: { icon: '🏦', title: 'Добро пожаловать в банк!', body: 'Нажми «Собрать» у кассы, чтобы собрать деньги. Потом нажми «Опустошить хранилище», чтобы добавить их на счёт.' }
+            he: { icon: '🏦', title: 'ברוכים הבאים לבנק שלך!', body: 'המטרה: לבנות אימפריית בנקים ולהרוויח כסף — גם כשאתה מחוץ למשחק. כדי להתחיל: לחץ "אסוף" על הדלפק כדי לאסוף כסף מלקוחות, ואז "רוקן כספת" כדי להוסיף אותו ליתרה שלך.' },
+            en: { icon: '🏦', title: 'Welcome to your bank!', body: 'Your goal: build a banking empire and earn money — even while you are away. To start: tap "Collect" on a teller desk to gather cash, then tap "Empty Vault" to add it to your balance.' },
+            es: { icon: '🏦', title: '¡Bienvenido a tu banco!', body: 'Tu objetivo: construir un imperio bancario y ganar dinero, incluso cuando no estás jugando. Para empezar: toca "Cobrar" en una caja para recolectar dinero y luego "Vaciar Bóveda" para añadirlo a tu saldo.' },
+            ru: { icon: '🏦', title: 'Добро пожаловать в банк!', body: 'Твоя цель: построить банковскую империю и зарабатывать деньги — даже когда ты не в игре. Начни так: нажми «Собрать» у кассы, чтобы собрать деньги, затем «Опустошить хранилище», чтобы добавить их на счёт.' }
         },
         vault: {
             he: { icon: '🔐', title: 'הכספת מחכה לך!', body: 'הדלפקים שלחו כסף לכספת. לחץ "רוקן כספת" להוסיף אותו ליתרה. שדרג את הכספת כדי שתחזיק יותר כסף.' },
@@ -430,10 +430,7 @@ let _discoveryActive = false;
         if (!window.game || !window.game.state) return;
         if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
         var tips = window.game.state.discoveredTips;
-        var isNew = !tips.start &&
-                    window.game.state.lifetimeCash <= 300 &&
-                    !window.game.state.shares &&
-                    !(window.game.state.missionsCompleted > 0);
+        var isNew = !tips.start && !window.game.state.shares && !(window.game.state.missionsCompleted > 0);
         if (isNew) setTimeout(function() {
             // Wait for the language/offline/login-reward modal cascade to clear before showing the first tip
             var tryShow = function() {
