@@ -1293,14 +1293,12 @@
       playAd(() => {
         let hourlyProfit = typeof game.getEarningsPerSecond === "function" ? game.getEarningsPerSecond() * 3600 : 0;
         let cashReward = Math.ceil(hourlyProfit * 0.3);
-        game.state.cash = Math.round((game.state.cash + cashReward + Number.EPSILON) * 100) / 100;
-        game.state.lifetimeCash = Math.round((game.state.lifetimeCash + cashReward + Number.EPSILON) * 100) / 100;
+        game.addCash(cashReward);
         const msg = `\u{1F4B5} +${formatMoney(cashReward)} \u{1F4B5}`;
         spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, "green");
         for (let i = 0; i < 20; i++) {
           setTimeout(() => spawnFloating("\u{1F4B5}", window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), "green"), Math.random() * 800);
         }
-        game.saveGame();
         draw();
       }, "short");
     } else {

@@ -132,14 +132,12 @@ let vipBannerCountdownInterval = null;
                 let hourlyProfit = typeof game.getEarningsPerSecond === 'function' ? game.getEarningsPerSecond() * 3600 : 0;
                 let cashReward = Math.ceil(hourlyProfit * 0.30);
 
-                game.state.cash = Math.round((game.state.cash + cashReward + Number.EPSILON) * 100) / 100;
-                game.state.lifetimeCash = Math.round((game.state.lifetimeCash + cashReward + Number.EPSILON) * 100) / 100;
+                game.addCash(cashReward);
                 const msg = `💵 +${formatMoney(cashReward)} 💵`;
                 spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'green');
                 for (let i = 0; i < 20; i++) {
                     setTimeout(() => spawnFloating('💵', window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), 'green'), Math.random() * 800);
                 }
-                game.saveGame();
                 draw();
             }, 'short');
         } else {
