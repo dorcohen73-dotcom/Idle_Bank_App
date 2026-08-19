@@ -773,7 +773,7 @@
     const branchTab = DOM_CACHE.tabBranches;
     if (branchTab && branchTab.classList.contains("active")) {
       const currentCanPrestige = game.state.cash >= game.branches[game.state.currentBranch].minCashToPrestige;
-      const prestigeBtns = branchTab.querySelectorAll(".prestige-btn");
+      const prestigeBtns = branchTab.querySelectorAll(".main-prestige-btn, .branch-action-btn[data-prestige-branch]");
       const prestigeReq = game.branches[game.state.currentBranch].minCashToPrestige;
       prestigeBtns.forEach((btn) => {
         if (currentCanPrestige) {
