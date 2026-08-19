@@ -115,16 +115,16 @@ let vipBannerCountdownInterval = null;
         if (rewardType === 'shares') {
             playAd(() => {
                 let prestigeAmount = typeof game.calculatePrestigeShares === 'function' ? game.calculatePrestigeShares() : 10;
-                let shareReward = Math.max(1, Math.ceil(prestigeAmount * 0.30));
+                let ownedShares = (game.state && game.state.shares) ? game.state.shares : 0;
+                let totalEffectiveShares = ownedShares + prestigeAmount;
+                let shareReward = Math.max(3, Math.ceil(prestigeAmount * 0.30), Math.ceil(totalEffectiveShares * 0.05));
                 
-                game.state.shares = Math.min((game.state.shares || 0) + shareReward, 1000000000);
-                if (game.economyManager) game.economyManager.cachedTotalMult = null;
+                game.addShares(shareReward);
                 const msg = `⭐ ${shareReward} VIP Shares ⭐`;
                 spawnFloating(msg, window.innerWidth / 2, window.innerHeight / 2 - 40, 'gold');
                 for (let i = 0; i < 20; i++) {
                     setTimeout(() => spawnFloating('💎', window.innerWidth / 2 + (Math.random() * 160 - 80), window.innerHeight / 2 + (Math.random() * 160 - 80), 'gold'), Math.random() * 800);
                 }
-                game.saveGame();
                 draw();
             }, 'short');
         } else if (rewardType === 'cash') {
