@@ -3774,7 +3774,7 @@
       let bodyHtml = "";
       let footerHtml = "";
       if (!isUnlocked) {
-        const deptName = type === "finance" ? translations[lang].departments.names[1] : type === "service" ? translations[lang].departments.names[2] : type === "vip" ? translations[lang].departments.names[3] : type === "marketing" ? translations[lang].departments.names[4] : "";
+        const deptName = type === "finance" ? translations[lang].departments.names[GAME_CONFIG.DEPT_ID_LOANS] : type === "vip" ? translations[lang].departments.names[GAME_CONFIG.DEPT_ID_VIP] : type === "service" ? translations[lang].departments.names[GAME_CONFIG.DEPT_ID_STOCK] : type === "marketing" ? translations[lang].departments.names[GAME_CONFIG.DEPT_ID_LAUNDERING] : "";
         bodyHtml = `
                 <div class="mgr-card-bg"></div>
                 <div class="mgr-layout-wrapper">
