@@ -857,6 +857,15 @@
     }
     updateAdvDisplay(game.state.advBudget || 0);
   }
+  function formatCompactTime(sec) {
+    const hours = Math.floor(sec / 3600);
+    const mins = Math.floor(sec % 3600 / 60);
+    const secs = Math.floor(sec % 60);
+    if (hours > 0) {
+      return `${hours}h${mins.toString().padStart(2, "0")}m`;
+    }
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
   function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
       let timerBadge = DOM_CACHE.boostBtn.querySelector(".boost-timer-badge");
@@ -864,10 +873,11 @@
         DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">\u26A1</span><span class="boost-timer-badge" id="boost-timer-badge">2x</span>';
         timerBadge = DOM_CACHE.boostBtn.querySelector(".boost-timer-badge");
       }
-      if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
-        const secs = game.state.boost2xTimeLeft;
-        const timeStr = formatTime(secs);
-        const activeText = tObj && typeof tObj.boostActive === "function" ? tObj.boostActive(timeStr) : `\u26A1 Boost: ${timeStr}`;
+      const secs = game.state.boost2xTimeLeft || 0;
+      if (secs > 0) {
+        const timeStr = formatCompactTime(secs);
+        const fullTimeStr = formatTime(secs);
+        const activeText = tObj && typeof tObj.boostActive === "function" ? tObj.boostActive(fullTimeStr) : `\u26A1 Boost: ${fullTimeStr}`;
         DOM_CACHE.boostBtn.title = activeText;
         DOM_CACHE.boostBtn.setAttribute("data-time", timeStr);
         DOM_CACHE.boostBtn.classList.add("active");
@@ -884,7 +894,7 @@
         }
       } else {
         DOM_CACHE.boostBtn.removeAttribute("data-time");
-        DOM_CACHE.boostBtn.classList.remove("urgent-boost");
+        DOM_CACHE.boostBtn.classList.remove("urgent-boost", "active");
         const nowMs = Date.now();
         const offerEnd = window._boostOfferEndTime || 0;
         if (offerEnd > nowMs) {
@@ -894,18 +904,13 @@
           const offerText = typeof boostOfferFn === "function" ? boostOfferFn(timeStr) : `\u26A1 OFFER! ${timeStr}`;
           DOM_CACHE.boostBtn.title = offerText;
           DOM_CACHE.boostBtn.classList.add("offer");
-          DOM_CACHE.boostBtn.classList.remove("active");
-          if (timerBadge) {
-            timerBadge.textContent = "2x";
-            timerBadge.classList.remove("urgent");
-          }
         } else {
           DOM_CACHE.boostBtn.title = tObj && tObj.boostBtn || "\u26A1 BOOST x2";
-          DOM_CACHE.boostBtn.classList.remove("active", "offer");
-          if (timerBadge) {
-            timerBadge.textContent = "2x";
-            timerBadge.classList.remove("urgent");
-          }
+          DOM_CACHE.boostBtn.classList.remove("offer");
+        }
+        if (timerBadge) {
+          timerBadge.textContent = "2x";
+          timerBadge.classList.remove("urgent");
         }
       }
     }
