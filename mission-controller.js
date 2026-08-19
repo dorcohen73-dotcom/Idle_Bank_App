@@ -245,10 +245,10 @@ class MissionController {
 
         // 10. department_grind — upgrade a specific unlocked department's manager N times
         const deptMgrMap = [
-            { mgrType: 'finance',   deptIdx: 1 },
-            { mgrType: 'service',   deptIdx: 2 },
-            { mgrType: 'vip',       deptIdx: 3 },
-            { mgrType: 'marketing', deptIdx: 4 }
+            { mgrType: 'finance',   deptIdx: GAME_CONFIG.DEPT_ID_LOANS },
+            { mgrType: 'vip',       deptIdx: GAME_CONFIG.DEPT_ID_VIP },
+            { mgrType: 'service',   deptIdx: GAME_CONFIG.DEPT_ID_STOCK },
+            { mgrType: 'marketing', deptIdx: GAME_CONFIG.DEPT_ID_LAUNDERING }
         ];
         const availableDeptMgrs = deptMgrMap.filter(({ mgrType, deptIdx }) => {
             const deptUnlocked = this.game.state.departments[deptIdx] && this.game.state.departments[deptIdx].unlocked;
