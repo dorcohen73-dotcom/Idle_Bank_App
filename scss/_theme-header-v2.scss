@@ -167,6 +167,78 @@ header {
     color: #fb923c !important;
 }
 
+/* Live Boost Timer Capsule Pill (Desktop & Mobile) */
+.boost-live-timer-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    height: 38px !important;
+    padding: 0 11px !important;
+    background: linear-gradient(145deg, rgba(26, 20, 42, 0.95) 0%, rgba(12, 10, 24, 0.98) 100%) !important;
+    border: 1.5px solid rgba(223, 171, 41, 0.45) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    margin: 0 2px !important;
+    transition: all 0.3s ease !important;
+    align-self: center !important;
+}
+
+.boost-live-timer-pill .timer-clock-icon {
+    font-size: 0.95rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.boost-live-timer-pill .timer-countdown-val {
+    font-family: 'Outfit', 'Roboto', monospace, sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 900 !important;
+    color: #fbbf24 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1 !important;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.6) !important;
+}
+
+/* Gentle, subtle idle blink at 00:00 */
+.boost-live-timer-pill.idle-blink {
+    animation: gentle-idle-blink 3s linear infinite !important;
+}
+
+@keyframes gentle-idle-blink {
+    0%, 100% {
+        opacity: 1;
+        border-color: rgba(223, 171, 41, 0.45);
+        box-shadow: 0 0 8px rgba(223, 171, 41, 0.2);
+    }
+    50% {
+        opacity: 0.5;
+        border-color: rgba(223, 171, 41, 0.2);
+        box-shadow: 0 0 2px rgba(223, 171, 41, 0.05);
+    }
+}
+
+/* Urgent state when <= 60 seconds left */
+.boost-live-timer-pill.urgent {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    border-color: #fca5a5 !important;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.8) !important;
+    animation: urgent-pill-pulse 0.7s ease-in-out infinite !important;
+}
+
+.boost-live-timer-pill.urgent .timer-countdown-val {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9) !important;
+}
+
+@keyframes urgent-pill-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(239, 68, 68, 0.7); }
+    50% { transform: scale(1.06); box-shadow: 0 0 24px rgba(239, 68, 68, 1); }
+}
+
 @media (min-width: 650px) {
     .header-buttons-row {
         gap: 0.6rem !important;

@@ -99,6 +99,7 @@ export function updateBoostButtonDisplay(tObj) {
                 liveTimerVal.textContent = timeStr;
             }
             if (liveTimerPill) {
+                liveTimerPill.classList.remove('idle-blink');
                 if (secs <= 60) {
                     liveTimerPill.classList.add('urgent');
                     DOM_CACHE.boostBtn.classList.add('urgent-boost');
@@ -120,6 +121,7 @@ export function updateBoostButtonDisplay(tObj) {
             }
             if (liveTimerPill) {
                 liveTimerPill.classList.remove('urgent');
+                liveTimerPill.classList.add('idle-blink');
             }
 
             const nowMs = Date.now();
