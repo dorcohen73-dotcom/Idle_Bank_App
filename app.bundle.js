@@ -2178,8 +2178,7 @@
             const timeAmount = 3600 * eps * prize.value;
             const pctAmount = Math.round(game.state.cash * (prize.label === "cash_small" ? 0.1 : prize.label === "cash_medium" ? 0.2 : 0.3));
             const amount = Math.max(timeAmount, pctAmount);
-            game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
-            game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+            game.addCash(amount);
             prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
             spawnFloating(`+${formatMoney(amount)}`, window.innerWidth / 2, window.innerHeight / 2 - 60, "green");
           } else if (prize.type === "boost") {
@@ -2190,8 +2189,7 @@
             const isSmall = prize.label === "gold_1" || prize.label === "shares_1";
             let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.5)));
             sharesAmount = Math.min(1e4, sharesAmount);
-            game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 1e5);
-            if (game.economyManager) game.economyManager.cachedTotalMult = null;
+            game.addShares(sharesAmount);
             const sharesLabel = `+${sharesAmount}`;
             prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || "Gold Shares"}`;
             const icon = prize.type === "gold" ? "\u{1F947}" : "\u{1F4C8}";
