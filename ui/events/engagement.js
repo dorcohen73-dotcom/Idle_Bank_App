@@ -446,7 +446,8 @@ let _discoveryActive = false;
         if (!window.game || !window.game.state) return;
         if (!window.game.state.discoveredTips) window.game.state.discoveredTips = {};
         if (window.game.state.discoveredTips.prestige) return;
-        var branch = window.game.branches && window.game.branches[window.game.state.currentBranch];
+        var branches = (window.game && window.game.branches) || (typeof GAME_CONFIG !== 'undefined' && GAME_CONFIG.BRANCHES);
+        var branch = branches && branches[window.game.state.currentBranch];
         if (branch && window.game.state.cash >= branch.minCashToPrestige) {
             showDiscoveryTip('prestige');
         }
