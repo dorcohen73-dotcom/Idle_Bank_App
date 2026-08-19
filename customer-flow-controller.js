@@ -251,21 +251,21 @@ class CustomerFlowController {
                     }
                     game.missionsDirty = true;
 
-                    // boost_run tracking: accumulate cash earned while boost is active
-                    if (game.state.boost2xTimeLeft > 0) {
-                        game.state.boost2xUsedEver = true;
-                        game.state.missions.forEach(m => {
-                            if (m.type === 'boost_run' && !m.completed) {
-                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + finalRewardForTick;
-                            }
-                        });
-                    }
-
                     let thisTickReward = finalRewardForTick;
                     if (t.customerType === 'vip') {
                         thisTickReward *= 3.0;
                     } else if (t.customerType === 'rich') {
                         thisTickReward *= 1.8;
+                    }
+
+                    // boost_run tracking: accumulate cash earned while boost is active
+                    if (game.state.boost2xTimeLeft > 0) {
+                        game.state.boost2xUsedEver = true;
+                        game.state.missions.forEach(m => {
+                            if (m.type === 'boost_run' && !m.completed) {
+                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + thisTickReward;
+                            }
+                        });
                     }
 
                     game.state.totalIncome += thisTickReward;
