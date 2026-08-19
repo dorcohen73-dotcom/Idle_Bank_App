@@ -876,6 +876,9 @@
       const secs = game.state.boost2xTimeLeft || 0;
       const liveTimerPill = DOM_CACHE.boostLiveTimerPill || document.getElementById("boost-live-timer-pill");
       const liveTimerVal = DOM_CACHE.boostLiveTimerVal || document.getElementById("boost-live-timer-val");
+      if (liveTimerPill) {
+        liveTimerPill.style.display = "inline-flex";
+      }
       if (secs > 0) {
         const timeStr = formatCompactTime(secs);
         const fullTimeStr = formatTime(secs);
@@ -884,9 +887,10 @@
         DOM_CACHE.boostBtn.setAttribute("data-time", timeStr);
         DOM_CACHE.boostBtn.classList.add("active");
         DOM_CACHE.boostBtn.classList.remove("offer");
-        if (liveTimerPill && liveTimerVal) {
+        if (liveTimerVal) {
           liveTimerVal.textContent = timeStr;
-          liveTimerPill.style.display = "inline-flex";
+        }
+        if (liveTimerPill) {
           if (secs <= 60) {
             liveTimerPill.classList.add("urgent");
             DOM_CACHE.boostBtn.classList.add("urgent-boost");
@@ -902,8 +906,10 @@
       } else {
         DOM_CACHE.boostBtn.removeAttribute("data-time");
         DOM_CACHE.boostBtn.classList.remove("urgent-boost", "active");
+        if (liveTimerVal) {
+          liveTimerVal.textContent = "00:00";
+        }
         if (liveTimerPill) {
-          liveTimerPill.style.display = "none";
           liveTimerPill.classList.remove("urgent");
         }
         const nowMs = Date.now();

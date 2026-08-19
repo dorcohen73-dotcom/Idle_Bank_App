@@ -7581,7 +7581,7 @@ header, .control-panel, .bank-floor {
   }
   /* --- Live Timer Capsule Pill on the left of Boost Btn --- */
   .boost-live-timer-pill {
-    display: none;
+    display: inline-flex !important;
     align-items: center;
     gap: 4px;
     background: linear-gradient(135deg, rgba(26, 20, 42, 0.95), rgba(12, 10, 24, 0.98)) !important;
