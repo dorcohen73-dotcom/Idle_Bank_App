@@ -2546,6 +2546,7 @@
       }
       AdService._isShowing = true;
       let interval = null;
+      let timeoutId = null;
       let settled = false;
       const removeOverlay = () => {
         const el = document.querySelector(".ad-playing-overlay");
@@ -2555,6 +2556,7 @@
         if (settled) return;
         settled = true;
         if (interval) clearInterval(interval);
+        if (timeoutId) clearTimeout(timeoutId);
         AdService._isShowing = false;
         removeOverlay();
         if (grantReward) {
@@ -2563,7 +2565,7 @@
           if (callback) callback();
         }
       };
-      setTimeout(() => complete(true), 15e3);
+      timeoutId = setTimeout(() => complete(true), 15e3);
       try {
         const overlay = document.createElement("div");
         overlay.className = "ad-playing-overlay";
