@@ -5647,7 +5647,7 @@
         if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove("active");
         playAd(() => {
           if (game.offlineEarningsReport && game.offlineEarningsReport > 0) {
-            const extra = game.offlineEarningsReport * 2;
+            const extra = game.offlineEarningsReport;
             game.state.cash = Math.round((game.state.cash + extra + Number.EPSILON) * 100) / 100;
             game.state.lifetimeCash = Math.round((game.state.lifetimeCash + extra + Number.EPSILON) * 100) / 100;
             if (window.gameAudio && typeof window.gameAudio.playChaChing === "function") {
