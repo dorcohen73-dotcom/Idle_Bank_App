@@ -8053,6 +8053,27 @@ header {
   background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
   box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
   color: #fb923c !important;
+  overflow: visible !important;
+}
+
+.boost-timer-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: rgba(15, 18, 28, 0.95) !important;
+  border: 1px solid #fbbf24 !important;
+  color: #fbbf24 !important;
+  font-size: 0.55rem !important;
+  font-weight: 900 !important;
+  padding: 0 4px !important;
+  height: 14px !important;
+  line-height: 13px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
 }
 
 /* Live Boost Timer Capsule Pill (Desktop & Mobile) */
