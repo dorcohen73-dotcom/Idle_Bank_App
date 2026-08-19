@@ -62,20 +62,34 @@ export function updateAdCampaignDisplay() {
 // Refresh the 2x boost button — active countdown, offer countdown, or idle label.
 export function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
-        // Strictly reset innerHTML so no extra text or duplicate icons can ever exist inside boostBtn
-        if (DOM_CACHE.boostBtn.innerHTML !== '<span aria-hidden="true">⚡</span>') {
-            DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">⚡</span>';
+        let timerBadge = DOM_CACHE.boostBtn.querySelector('.boost-timer-badge');
+        if (!timerBadge) {
+            DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">⚡</span><span class="boost-timer-badge" id="boost-timer-badge">2x</span>';
+            timerBadge = DOM_CACHE.boostBtn.querySelector('.boost-timer-badge');
         }
 
         if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
-            const timeStr = formatTime(game.state.boost2xTimeLeft);
+            const secs = game.state.boost2xTimeLeft;
+            const timeStr = formatTime(secs);
             const activeText = (tObj && typeof tObj.boostActive === 'function') ? tObj.boostActive(timeStr) : `⚡ Boost: ${timeStr}`;
             DOM_CACHE.boostBtn.title = activeText;
             DOM_CACHE.boostBtn.setAttribute('data-time', timeStr);
             DOM_CACHE.boostBtn.classList.add('active');
             DOM_CACHE.boostBtn.classList.remove('offer');
+
+            if (timerBadge) {
+                timerBadge.textContent = timeStr;
+                if (secs <= 60) {
+                    timerBadge.classList.add('urgent');
+                    DOM_CACHE.boostBtn.classList.add('urgent-boost');
+                } else {
+                    timerBadge.classList.remove('urgent');
+                    DOM_CACHE.boostBtn.classList.remove('urgent-boost');
+                }
+            }
         } else {
             DOM_CACHE.boostBtn.removeAttribute('data-time');
+            DOM_CACHE.boostBtn.classList.remove('urgent-boost');
             const nowMs = Date.now();
             const offerEnd = window._boostOfferEndTime || 0;
             if (offerEnd > nowMs) {
@@ -86,9 +100,17 @@ export function updateBoostButtonDisplay(tObj) {
                 DOM_CACHE.boostBtn.title = offerText;
                 DOM_CACHE.boostBtn.classList.add('offer');
                 DOM_CACHE.boostBtn.classList.remove('active');
+                if (timerBadge) {
+                    timerBadge.textContent = '2x';
+                    timerBadge.classList.remove('urgent');
+                }
             } else {
                 DOM_CACHE.boostBtn.title = (tObj && tObj.boostBtn) || "⚡ BOOST x2";
                 DOM_CACHE.boostBtn.classList.remove('active', 'offer');
+                if (timerBadge) {
+                    timerBadge.textContent = '2x';
+                    timerBadge.classList.remove('urgent');
+                }
             }
         }
     }
