@@ -837,7 +837,8 @@
     }
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
       lastBranch = game.state.currentBranch;
-      DOM_CACHE.branchName.innerText = (tObj.bankPrefix || "") + tObj.branches.names[game.state.currentBranch];
+      const branchName = tObj.branches && tObj.branches.names && tObj.branches.names[game.state.currentBranch] || game.branches && game.branches[game.state.currentBranch] && game.branches[game.state.currentBranch].name || (tObj.branchLabel || "Branch") + " " + (game.state.currentBranch + 1);
+      DOM_CACHE.branchName.innerText = (tObj.bankPrefix || "") + branchName;
     }
     lastLang = lang;
   }
