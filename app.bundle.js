@@ -869,27 +869,16 @@
   function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
       let timerBadge = DOM_CACHE.boostBtn.querySelector(".boost-timer-badge");
-      let liveTimerPill = DOM_CACHE.boostLiveTimerPill || document.getElementById("boost-live-timer-pill");
-      let liveTimerVal = DOM_CACHE.boostLiveTimerVal || document.getElementById("boost-live-timer-val");
-      if (!timerBadge || !liveTimerPill || !liveTimerVal) {
-        DOM_CACHE.boostBtn.innerHTML = `
-                <div class="boost-pill-timer" id="boost-live-timer-pill">
-                    <span class="timer-clock-icon" aria-hidden="true">\u23F1\uFE0F</span>
-                    <span class="timer-countdown-val" id="boost-live-timer-val">00:00</span>
-                </div>
-                <div class="boost-pill-divider"></div>
-                <div class="boost-pill-icon-zone">
-                    <span class="boost-icon-flash" aria-hidden="true">\u26A1</span>
-                    <span class="boost-timer-badge" id="boost-timer-badge">2x</span>
-                </div>
-            `;
+      if (!timerBadge) {
+        DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">\u26A1</span><span class="boost-timer-badge" id="boost-timer-badge">2x</span>';
         timerBadge = DOM_CACHE.boostBtn.querySelector(".boost-timer-badge");
-        liveTimerPill = DOM_CACHE.boostBtn.querySelector("#boost-live-timer-pill");
-        liveTimerVal = DOM_CACHE.boostBtn.querySelector("#boost-live-timer-val");
-        DOM_CACHE.boostLiveTimerPill = liveTimerPill;
-        DOM_CACHE.boostLiveTimerVal = liveTimerVal;
       }
       const secs = game.state.boost2xTimeLeft || 0;
+      const liveTimerPill = DOM_CACHE.boostLiveTimerPill || document.getElementById("boost-live-timer-pill");
+      const liveTimerVal = DOM_CACHE.boostLiveTimerVal || document.getElementById("boost-live-timer-val");
+      if (liveTimerPill) {
+        liveTimerPill.style.display = "inline-flex";
+      }
       if (secs > 0) {
         const timeStr = formatCompactTime(secs);
         const fullTimeStr = formatTime(secs);

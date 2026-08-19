@@ -89,7 +89,7 @@
 
     <!-- Application Styles — compiled from scss/main.scss (npm run css), which also
          includes what used to be premium_depts.css and premium_managers.css. -->
-    <link rel="stylesheet" href="style.css?v=9ebe9008d8">
+    <link rel="stylesheet" href="style.css?v=d7126493ba">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -195,18 +195,12 @@
                 <div class="header-buttons-row">
                     <button class="topbar-action-btn sound-toggle-btn" id="analytics-btn" title="מדדים ואנליטיקה"
                         aria-label="דוח ביצועים ואנליטיקה"><span aria-hidden="true">📊</span></button>
-                    <button class="topbar-action-btn boost-toggle-btn boost-master-pill ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
-                        aria-label="מאיץ הכנסות פי 2">
-                        <div class="boost-pill-timer" id="boost-live-timer-pill">
-                            <span class="timer-clock-icon" aria-hidden="true">⏱️</span>
-                            <span class="timer-countdown-val" id="boost-live-timer-val">00:00</span>
-                        </div>
-                        <div class="boost-pill-divider"></div>
-                        <div class="boost-pill-icon-zone">
-                            <span class="boost-icon-flash" aria-hidden="true">⚡</span>
-                            <span class="boost-timer-badge" id="boost-timer-badge">2x</span>
-                        </div>
-                    </button>
+                    <div class="boost-live-timer-pill" id="boost-live-timer-pill" title="זמן מאיץ נותר">
+                        <span class="timer-clock-icon" aria-hidden="true">⏱️</span>
+                        <span class="timer-countdown-val" id="boost-live-timer-val">00:00</span>
+                    </div>
+                    <button class="topbar-action-btn sound-toggle-btn boost-toggle-btn ad-pulse-button" id="boost-btn" title="מאיץ הכנסות פי 2"
+                        aria-label="מאיץ הכנסות פי 2"><span aria-hidden="true">⚡</span><span class="boost-timer-badge" id="boost-timer-badge">2x</span></button>
                     <button class="topbar-action-btn sound-toggle-btn header-daily-btn" id="header-daily-btn" data-tab="daily" title="הישגים"
                         aria-label="הישגים"><span aria-hidden="true">🏆</span></button>
                     <button class="topbar-action-btn sound-toggle-btn fortune-wheel-header-btn" id="fortune-wheel-btn"
@@ -892,7 +886,7 @@
     </div>
 
     <script src="config.js?v=20260724_3" defer></script>
-    <script src="locales.js?v=9ebe9008d8" defer></script>
+    <script src="locales.js?v=d7126493ba" defer></script>
     <script src="economy-manager.js?v=20260724_1" defer></script>
     <script src="save-manager.js?v=20260724_2" defer></script>
     <script src="mission-controller.js?v=20260718_1" defer></script>
@@ -903,7 +897,7 @@
     <script src="shop-controller.js?v=20260718_5" defer></script>
     <script src="performance-manager.js?v=2" defer></script>
     <script src="game.js?v=20260718_5" defer></script>
-    <script src="app.bundle.js?v=9ebe9008d8" defer></script>
+    <script src="app.bundle.js?v=d7126493ba" defer></script>
     
 </body>
 
