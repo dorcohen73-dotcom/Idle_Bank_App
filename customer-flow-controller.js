@@ -42,7 +42,7 @@ class CustomerFlowController {
     sanitizeQueueAndTellers() {
         const game = this.game;
         if (!game.state || !game.state.departments) return;
-        const richDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
+        const richDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_STOCK);
         const vipDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
         const richUnlocked = richDept ? richDept.unlocked : false;
         const vipUnlocked = vipDept ? vipDept.unlocked : false;
@@ -152,11 +152,11 @@ class CustomerFlowController {
                     richThreshold -= (normalizedBudget * 0.30);
                 }
 
-                const deptLaundering = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
+                const deptStock = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_STOCK);
                 const deptVip = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
                 if (deptVip && deptVip.unlocked && rand > vipThreshold) {
                     type = 'vip';
-                } else if (deptLaundering && deptLaundering.unlocked && rand > richThreshold) {
+                } else if (deptStock && deptStock.unlocked && rand > richThreshold) {
                     type = 'rich';
                 }
                 
