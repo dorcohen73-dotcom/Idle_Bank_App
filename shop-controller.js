@@ -366,6 +366,7 @@ class ShopController {
     }
 
     addBoost2x(hours) {
+        const game = this.game;
         const secondsToAdd = hours * 3600;
         const maxSeconds = 8 * 3600;
         game.state.boost2xTimeLeft = Math.min(maxSeconds, (game.state.boost2xTimeLeft || 0) + secondsToAdd);
