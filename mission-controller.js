@@ -531,14 +531,12 @@ class MissionController {
         if (reward && typeof reward === 'object' && reward.type) {
             // Shares / gold reward
             const shareAmt = reward.amount || 1;
-            this.game.state.shares = Math.min(100000, (this.game.state.shares || 0) + shareAmt);
-            if (this.game.economyManager) this.game.economyManager.cachedTotalMult = null;
+            this.game.addShares(shareAmt);
             result = { type: reward.type, amount: shareAmt };
         } else {
             // Cash reward (legacy: reward is a number)
             const rewardAmt = typeof reward === 'number' ? reward : 0;
-            this.game.state.cash = Math.round((this.game.state.cash + rewardAmt + Number.EPSILON) * 100) / 100;
-            this.game.state.lifetimeCash = Math.round((this.game.state.lifetimeCash + rewardAmt + Number.EPSILON) * 100) / 100;
+            this.game.addCash(rewardAmt);
             result = { type: 'cash', amount: rewardAmt };
         }
 
