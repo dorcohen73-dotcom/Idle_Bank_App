@@ -146,6 +146,8 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         window.DOM_CACHE.advSlider = document.getElementById('adv-budget-slider');
         window.DOM_CACHE.advDisplay = document.getElementById('adv-budget-display');
         window.DOM_CACHE.boostBtn = document.getElementById('boost-btn');
+        window.DOM_CACHE.boostLiveTimerPill = document.getElementById('boost-live-timer-pill');
+        window.DOM_CACHE.boostLiveTimerVal = document.getElementById('boost-live-timer-val');
         window.DOM_CACHE.analyticsBtn = document.getElementById('analytics-btn');
         window.DOM_CACHE.vaultInfoBtn = document.getElementById('vault-info-btn');
         window.DOM_CACHE.fortuneWheelBtn = document.getElementById('fortune-wheel-btn');

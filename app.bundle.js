@@ -874,6 +874,8 @@
         timerBadge = DOM_CACHE.boostBtn.querySelector(".boost-timer-badge");
       }
       const secs = game.state.boost2xTimeLeft || 0;
+      const liveTimerPill = DOM_CACHE.boostLiveTimerPill || document.getElementById("boost-live-timer-pill");
+      const liveTimerVal = DOM_CACHE.boostLiveTimerVal || document.getElementById("boost-live-timer-val");
       if (secs > 0) {
         const timeStr = formatCompactTime(secs);
         const fullTimeStr = formatTime(secs);
@@ -882,19 +884,28 @@
         DOM_CACHE.boostBtn.setAttribute("data-time", timeStr);
         DOM_CACHE.boostBtn.classList.add("active");
         DOM_CACHE.boostBtn.classList.remove("offer");
-        if (timerBadge) {
-          timerBadge.textContent = timeStr;
+        if (liveTimerPill && liveTimerVal) {
+          liveTimerVal.textContent = timeStr;
+          liveTimerPill.style.display = "inline-flex";
           if (secs <= 60) {
-            timerBadge.classList.add("urgent");
+            liveTimerPill.classList.add("urgent");
             DOM_CACHE.boostBtn.classList.add("urgent-boost");
           } else {
-            timerBadge.classList.remove("urgent");
+            liveTimerPill.classList.remove("urgent");
             DOM_CACHE.boostBtn.classList.remove("urgent-boost");
           }
+        }
+        if (timerBadge) {
+          timerBadge.textContent = "2x";
+          timerBadge.classList.remove("urgent");
         }
       } else {
         DOM_CACHE.boostBtn.removeAttribute("data-time");
         DOM_CACHE.boostBtn.classList.remove("urgent-boost", "active");
+        if (liveTimerPill) {
+          liveTimerPill.style.display = "none";
+          liveTimerPill.classList.remove("urgent");
+        }
         const nowMs = Date.now();
         const offerEnd = window._boostOfferEndTime || 0;
         if (offerEnd > nowMs) {
@@ -6015,6 +6026,8 @@ ${stack}` : String(message);
         window.DOM_CACHE.advSlider = document.getElementById("adv-budget-slider");
         window.DOM_CACHE.advDisplay = document.getElementById("adv-budget-display");
         window.DOM_CACHE.boostBtn = document.getElementById("boost-btn");
+        window.DOM_CACHE.boostLiveTimerPill = document.getElementById("boost-live-timer-pill");
+        window.DOM_CACHE.boostLiveTimerVal = document.getElementById("boost-live-timer-val");
         window.DOM_CACHE.analyticsBtn = document.getElementById("analytics-btn");
         window.DOM_CACHE.vaultInfoBtn = document.getElementById("vault-info-btn");
         window.DOM_CACHE.fortuneWheelBtn = document.getElementById("fortune-wheel-btn");
