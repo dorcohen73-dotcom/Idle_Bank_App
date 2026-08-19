@@ -8047,43 +8047,61 @@ header {
   box-shadow: 0 0 16px rgba(245, 158, 11, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Boost Button Accent (Circular, Matching the Set!) */
-.boost-toggle-btn {
-  border: 2px solid #fb923c !important;
-  background: linear-gradient(145deg, rgba(67, 30, 15, 0.95) 0%, rgba(30, 12, 5, 0.98) 100%) !important;
-  box-shadow: 0 0 16px rgba(251, 146, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-  color: #fb923c !important;
-}
-
-/* Live Boost Timer Capsule Pill (Desktop & Mobile) */
-.boost-live-timer-pill {
+/* ── Unified Boost Master Pill ── */
+.boost-master-pill {
+  width: auto !important;
+  height: 38px !important;
+  min-width: 106px !important;
+  padding: 0 8px 0 10px !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(38, 20, 48, 0.95) 0%, rgba(18, 10, 26, 0.98) 100%) !important;
+  border: 1.5px solid rgba(223, 171, 41, 0.5) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 3px !important;
-  height: 28px !important;
-  padding: 0 6px !important;
-  background: linear-gradient(145deg, rgba(26, 20, 42, 0.95) 0%, rgba(12, 10, 24, 0.98) 100%) !important;
-  border: 1.5px solid rgba(223, 171, 41, 0.45) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
-  box-sizing: border-box !important;
+  gap: 6px !important;
+  cursor: pointer !important;
   flex-shrink: 0 !important;
-  margin: 0 !important;
-  transition: all 0.3s ease !important;
-  align-self: center !important;
+  box-sizing: border-box !important;
+  transition: all 0.25s ease !important;
+  position: relative !important;
+  overflow: visible !important;
 }
 
-.boost-live-timer-pill .timer-clock-icon {
-  font-size: 0.8rem !important;
-  line-height: 1 !important;
-  display: flex !important;
+.boost-master-pill:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(234, 179, 8, 0.85) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 16px rgba(234, 179, 8, 0.4) !important;
+}
+
+.boost-master-pill.active {
+  background: linear-gradient(145deg, rgba(88, 28, 135, 0.95) 0%, rgba(46, 16, 101, 0.98) 100%) !important;
+  border-color: #c084fc !important;
+  box-shadow: 0 0 16px rgba(192, 132, 252, 0.5), 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+}
+
+.boost-master-pill.urgent-boost {
+  background: linear-gradient(145deg, #b91c1c 0%, #7f1d1d 100%) !important;
+  border-color: #fca5a5 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.8) !important;
+  animation: boost-urgent-pulse 0.7s ease-in-out infinite !important;
+}
+
+.boost-pill-timer {
+  display: inline-flex !important;
   align-items: center !important;
+  gap: 4px !important;
 }
 
-.boost-live-timer-pill .timer-countdown-val {
+.boost-pill-timer .timer-clock-icon {
+  font-size: 0.85rem !important;
+  line-height: 1 !important;
+}
+
+.boost-pill-timer .timer-countdown-val {
   font-family: "Outfit", "Roboto", monospace, sans-serif !important;
-  font-size: 0.76rem !important;
+  font-size: 0.8rem !important;
   font-weight: 900 !important;
   color: #fbbf24 !important;
   letter-spacing: 0.03em !important;
@@ -8091,9 +8109,48 @@ header {
   text-shadow: 0 0 8px rgba(251, 191, 36, 0.6) !important;
 }
 
-/* Gentle, subtle idle blink at 00:00 */
-.boost-live-timer-pill.idle-blink {
+.boost-pill-timer.idle-blink {
   animation: gentle-idle-blink 3s linear infinite !important;
+}
+
+.boost-pill-divider {
+  width: 1px !important;
+  height: 16px !important;
+  background: rgba(251, 191, 36, 0.3) !important;
+  flex-shrink: 0 !important;
+}
+
+.boost-pill-icon-zone {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.boost-pill-icon-zone .boost-icon-flash {
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+  color: #fb923c !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) !important;
+}
+
+.boost-master-pill .boost-timer-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  background: rgba(15, 18, 28, 0.95) !important;
+  border: 1px solid #fbbf24 !important;
+  color: #fbbf24 !important;
+  font-size: 0.52rem !important;
+  font-weight: 900 !important;
+  padding: 0 3px !important;
+  height: 12px !important;
+  line-height: 11px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
 }
 
 @keyframes gentle-idle-blink {
@@ -8108,17 +8165,8 @@ header {
     box-shadow: 0 0 2px rgba(223, 171, 41, 0.05);
   }
 }
-/* Urgent state when <= 60 seconds left */
-.boost-live-timer-pill.urgent {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
-  border-color: #fca5a5 !important;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.8) !important;
-  animation: urgent-pill-pulse 0.7s ease-in-out infinite !important;
-}
-
-.boost-live-timer-pill.urgent .timer-countdown-val {
+.boost-pill-timer.urgent {
   color: #ffffff !important;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.9) !important;
 }
 
 @keyframes urgent-pill-pulse {
