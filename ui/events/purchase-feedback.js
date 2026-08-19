@@ -81,7 +81,7 @@ export function handlePurchaseFeedback(btn, e, beforeCash, beforeLevelOrUnlocked
     }
     
     if (spent > 0) {
-        spawnFloating(`-$${formatMoney(spent)}`, x, y, 'red');
+        spawnFloating(`-${formatMoney(spent)}`, x, y, 'red');
         if (typeof spawnParticles === 'function') {
             spawnParticles(x, y, 8, 'sparkle');
         }

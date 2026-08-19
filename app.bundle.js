@@ -3033,7 +3033,7 @@
       card.classList.add("sparkle-flash");
     }
     if (spent > 0) {
-      spawnFloating(`-$${formatMoney(spent)}`, x, y, "red");
+      spawnFloating(`-${formatMoney(spent)}`, x, y, "red");
       if (typeof spawnParticles === "function") {
         spawnParticles(x, y, 8, "sparkle");
       }
