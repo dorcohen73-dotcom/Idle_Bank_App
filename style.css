@@ -13708,11 +13708,12 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
 }
 /* 
  * Premium Departments Tab Styles 
- * Ultra-premium 2-tier design for maximum clarity and spaciousness
+ * Restored original clean layout — fully ordered and aligned
  */
 .department-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   background: linear-gradient(180deg, #111a2f 0%, #080d1a 100%);
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -13725,24 +13726,27 @@ html[dir=ltr] .upgrade-card.premium-upg-card .recommended-badge {
   overflow: hidden;
 }
 
-.dept-card-top {
+html[dir=rtl] .department-card {
+  direction: rtl;
+}
+
+.dept-card-body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  gap: 10px;
+  gap: 12px;
 }
 
-html[dir=rtl] .dept-card-top {
-  flex-direction: row;
+html[dir=rtl] .dept-card-body {
+  direction: rtl;
 }
 
-/* --- THE ICON FRAME --- */
+/* --- ICON FRAME --- */
 .dept-icon-frame {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13806,13 +13810,18 @@ html[dir=rtl] .dept-card-top {
   fill: currentColor;
 }
 
-/* --- HEADER INFO --- */
-.dept-header-info {
+/* --- DETAILS AREA --- */
+.dept-details {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
   gap: 4px;
+}
+
+html[dir=rtl] .dept-details {
+  text-align: right;
+  direction: rtl;
 }
 
 .dept-title-row {
@@ -13831,7 +13840,7 @@ html[dir=rtl] .dept-card-top {
 }
 
 .dept-title-text {
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #ffffff;
   line-height: 1.2;
@@ -13863,66 +13872,48 @@ html[dir=rtl] .dept-card-top {
   box-shadow: 0 0 8px #4ade80;
 }
 
+/* --- STATS LINES --- */
+.dept-stats-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.dept-stat-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.dept-stat-label {
+  color: #8b9bb4;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dept-stat-val {
+  color: #ffd700;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dept-stat-val.highlight {
+  color: #ffd700;
+  font-weight: 800;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
+}
+
 /* --- ACTION AREA --- */
 .dept-card-action {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  width: 80px;
   position: relative;
   z-index: 2;
-}
-
-/* --- HORIZONTAL LASER DIVIDER --- */
-.dept-card-divider-h {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(251, 191, 36, 0.35) 50%, transparent 100%);
-  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-  margin: 10px 0 8px 0;
-}
-
-/* --- STATS PILL ROW --- */
-.dept-stats-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.dept-stat-box {
-  flex: 1;
-  min-width: 0;
-  background: #030712;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px 10px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.dept-stat-box.highlight {
-  border-color: rgba(251, 191, 36, 0.3);
-  background: linear-gradient(180deg, #091224 0%, #030712 100%);
-}
-
-.dept-stat-label {
-  font-size: 0.76rem;
-  color: #8b9bb4;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.dept-stat-val {
-  color: #ffd700;
-  font-size: 0.9rem;
-  font-weight: 900;
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-  white-space: nowrap;
 }
 
 /* --- PREMIUM MANAGERS CSS --- */
