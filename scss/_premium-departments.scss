@@ -1,6 +1,6 @@
 /* 
  * Premium Departments Tab Styles 
- * Restored original clean layout — fully ordered and aligned
+ * Exact original visual design restored — neat, unclipped, and perfectly ordered
  */
 
 .department-card {
@@ -30,19 +30,21 @@ html[dir="rtl"] .department-card {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     gap: 12px;
+    z-index: 2;
 }
 
 html[dir="rtl"] .dept-card-body {
     direction: rtl;
 }
 
-/* --- ICON FRAME --- */
+/* --- THE LEFT ICON FRAME --- */
 .dept-icon-frame {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -94,8 +96,8 @@ html[dir="rtl"] .dept-card-body {
     position: relative;
     z-index: 2;
     color: #fff4bd;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,7 +116,8 @@ html[dir="rtl"] .dept-card-body {
     flex-direction: column;
     flex: 1;
     min-width: 0;
-    gap: 4px;
+    gap: 6px;
+    overflow: hidden;
 }
 
 html[dir="rtl"] .dept-details {
@@ -138,7 +141,7 @@ html[dir="rtl"] .dept-details {
 }
 
 .dept-title-text {
-    font-size: 0.95rem;
+    font-size: 0.94rem;
     font-weight: 800;
     color: #ffffff;
     line-height: 1.2;
@@ -170,37 +173,57 @@ html[dir="rtl"] .dept-details {
     box-shadow: 0 0 8px #4ade80;
 }
 
-/* --- STATS LINES --- */
-.dept-stats-block {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 2px;
+/* --- STATS GRID --- */
+.dept-stats-row {
+    display: grid;
+    grid-template-columns: max-content auto;
+    row-gap: 5px;
+    column-gap: 8px;
+    align-items: center;
 }
 
-.dept-stat-line {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
+.dept-stat-item {
+    display: contents;
 }
 
 .dept-stat-label {
+    font-size: 0.76rem;
     color: #8b9bb4;
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
 }
 
-.dept-stat-val {
+.dept-stat-value-box {
+    background: #030712;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    width: fit-content;
+}
+
+.dept-stat-value-box span {
     color: #ffd700;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5), 0 2px 4px rgba(0,0,0,0.9);
     white-space: nowrap;
 }
 
-.dept-stat-val.highlight {
-    color: #ffd700;
-    font-weight: 800;
-    text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
+/* --- VERTICAL GLOWING DIVIDER --- */
+.dept-card-divider {
+    width: 2px;
+    height: 64px;
+    background: linear-gradient(180deg, transparent 0%, #fbbf24 50%, transparent 100%);
+    box-shadow: 0 0 12px 1px rgba(251, 191, 36, 0.7);
+    margin: 0 10px;
+    z-index: 2;
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
 /* --- ACTION AREA --- */
@@ -209,7 +232,7 @@ html[dir="rtl"] .dept-details {
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    width: 80px;
+    width: 88px;
     position: relative;
     z-index: 2;
 }

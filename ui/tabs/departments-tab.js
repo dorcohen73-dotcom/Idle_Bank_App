@@ -103,16 +103,20 @@ export function renderDepartmentsTab() {
         const descLbl = tObj.descLabel || (lang === 'he' ? 'רווח בסיסי' : (lang === 'ru' ? 'Базовый доход' : (lang === 'es' ? 'Beneficio base' : 'Base Income')));
         const statsLbl = tObj.statsLabel || (lang === 'he' ? 'רווח מותאם' : (lang === 'ru' ? 'Итоговый доход' : (lang === 'es' ? 'Beneficio ajustado' : 'Adjusted Income')));
 
-                const baseProfitHtml = `
-            <div class="dept-stat-line">
+                        const baseProfitHtml = `
+            <div class="dept-stat-item">
                 <span class="dept-stat-label" dir="auto">${descLbl}:</span>
-                <span class="dept-stat-val">${formatMoney(d.baseReward)}</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(d.baseReward)}</span>
+                </div>
             </div>
         `;
         const adjustedProfitHtml = isUnlocked ? `
-            <div class="dept-stat-line">
+            <div class="dept-stat-item">
                 <span class="dept-stat-label" dir="auto">${statsLbl}:</span>
-                <span class="dept-stat-val highlight">${formatMoney(reward)}</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(reward)}</span>
+                </div>
             </div>
         ` : '';
 
@@ -134,14 +138,14 @@ export function renderDepartmentsTab() {
                             <div class="jewel-text">MAX</div>
                         </div>
                     </div>
-                    
+                    <div class="max-jewel-label">${(statLabels[lang] || statLabels.en).maxLabel}</div>
                 </div>
             `;
         }
 
         const titleShieldHtml = isUnlocked ? `<span class="dept-title-shield"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 13.5 10.5 16 11 14 13 14.5 15.5 12 14.5 9.5 15.5 10 13 8 11 10.5 10.5 12 8" fill="currentColor" stroke="none"/></svg></span>` : '';
 
-                card.innerHTML = `
+        card.innerHTML = `
             <div class="dept-card-body">
                 <div class="dept-icon-frame">
                     <div class="dept-ring dept-ring-1"></div>
@@ -157,14 +161,15 @@ export function renderDepartmentsTab() {
                         <span class="dept-title-text">${tObj.names[d.id]}</span>
                         ${activeBadgeHtml}
                     </div>
-                    <div class="dept-stats-block">
+                    <div class="dept-stats-row">
                         ${baseProfitHtml}
                         ${adjustedProfitHtml}
                     </div>
                 </div>
-                <div class="dept-card-action">
-                    ${actionBtnHtml}
-                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                ${actionBtnHtml}
             </div>
         `;
         container.appendChild(card);

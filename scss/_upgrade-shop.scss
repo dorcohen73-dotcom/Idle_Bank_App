@@ -278,19 +278,19 @@
 }
 
 .max-jewel-container {
-    width: 100%;
-    height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    gap: 4px;
+    width: 100%;
     filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.4));
 }
 
 .max-jewel {
     position: relative;
-    width: 58px;
-    height: 66px;
+    width: 60px;
+    height: 68px;
     background: radial-gradient(circle at 30% 30%, rgba(110, 231, 183, 1) 0%, rgba(4, 120, 87, 1) 80%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     display: flex;

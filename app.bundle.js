@@ -4065,15 +4065,19 @@
       const descLbl = tObj.descLabel || (lang === "he" ? "\u05E8\u05D5\u05D5\u05D7 \u05D1\u05E1\u05D9\u05E1\u05D9" : lang === "ru" ? "\u0411\u0430\u0437\u043E\u0432\u044B\u0439 \u0434\u043E\u0445\u043E\u0434" : lang === "es" ? "Beneficio base" : "Base Income");
       const statsLbl = tObj.statsLabel || (lang === "he" ? "\u05E8\u05D5\u05D5\u05D7 \u05DE\u05D5\u05EA\u05D0\u05DD" : lang === "ru" ? "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0439 \u0434\u043E\u0445\u043E\u0434" : lang === "es" ? "Beneficio ajustado" : "Adjusted Income");
       const baseProfitHtml = `
-            <div class="dept-stat-line">
+            <div class="dept-stat-item">
                 <span class="dept-stat-label" dir="auto">${descLbl}:</span>
-                <span class="dept-stat-val">${formatMoney(d.baseReward)}</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(d.baseReward)}</span>
+                </div>
             </div>
         `;
       const adjustedProfitHtml = isUnlocked ? `
-            <div class="dept-stat-line">
+            <div class="dept-stat-item">
                 <span class="dept-stat-label" dir="auto">${statsLbl}:</span>
-                <span class="dept-stat-val highlight">${formatMoney(reward)}</span>
+                <div class="dept-stat-value-box">
+                    <span>${formatMoney(reward)}</span>
+                </div>
             </div>
         ` : "";
       let actionBtnHtml = "";
@@ -4094,7 +4098,7 @@
                             <div class="jewel-text">MAX</div>
                         </div>
                     </div>
-                    
+                    <div class="max-jewel-label">${(statLabels[lang] || statLabels.en).maxLabel}</div>
                 </div>
             `;
       }
@@ -4115,14 +4119,15 @@
                         <span class="dept-title-text">${tObj.names[d.id]}</span>
                         ${activeBadgeHtml}
                     </div>
-                    <div class="dept-stats-block">
+                    <div class="dept-stats-row">
                         ${baseProfitHtml}
                         ${adjustedProfitHtml}
                     </div>
                 </div>
-                <div class="dept-card-action">
-                    ${actionBtnHtml}
-                </div>
+            </div>
+            <div class="dept-card-divider"></div>
+            <div class="dept-card-action">
+                ${actionBtnHtml}
             </div>
         `;
       container.appendChild(card);
