@@ -4094,7 +4094,7 @@
                             <div class="jewel-text">MAX</div>
                         </div>
                     </div>
-                    <div class="max-jewel-label">${(statLabels[lang] || statLabels.en).maxLabel}</div>
+                    
                 </div>
             `;
       }

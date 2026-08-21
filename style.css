@@ -6208,8 +6208,8 @@ header, .control-panel, .bank-floor {
 
 .max-jewel {
   position: relative;
-  width: 80px;
-  height: 92px;
+  width: 58px;
+  height: 66px;
   background: radial-gradient(circle at 30% 30%, rgb(110, 231, 183) 0%, rgb(4, 120, 87) 80%);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   display: flex;
@@ -6254,7 +6254,7 @@ header, .control-panel, .bank-floor {
 }
 
 .max-jewel .jewel-check {
-  font-size: 2.2rem;
+  font-size: 1.5rem;
   color: #fff;
   font-weight: 900;
   line-height: 1;
@@ -6262,7 +6262,7 @@ header, .control-panel, .bank-floor {
 }
 
 .max-jewel .jewel-text {
-  font-size: 1.1rem;
+  font-size: 0.78rem;
   color: #fff;
   font-weight: 900;
   letter-spacing: 2px;
@@ -6682,7 +6682,7 @@ header, .control-panel, .bank-floor {
 }
 
 .gold-max-text {
-  font-size: 1.1rem;
+  font-size: 0.78rem;
   font-weight: 900;
   color: var(--primary-gold);
   text-transform: uppercase;
