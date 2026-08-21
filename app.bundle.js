@@ -4066,7 +4066,7 @@
       const statsLbl = tObj.statsLabel || (lang === "he" ? "\u05E8\u05D5\u05D5\u05D7 \u05DE\u05D5\u05EA\u05D0\u05DD" : lang === "ru" ? "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0439 \u0434\u043E\u0445\u043E\u0434" : lang === "es" ? "Beneficio ajustado" : "Adjusted Income");
       const baseProfitHtml = `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${descLbl}:</span>
+                <span class="dept-stat-label" dir="auto">${descLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(d.baseReward)}</span>
                 </div>
@@ -4074,7 +4074,7 @@
         `;
       const adjustedProfitHtml = isUnlocked ? `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${statsLbl}:</span>
+                <span class="dept-stat-label" dir="auto">${statsLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(reward)}</span>
                 </div>

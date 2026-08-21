@@ -105,7 +105,7 @@ export function renderDepartmentsTab() {
 
         const baseProfitHtml = `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${descLbl}:</span>
+                <span class="dept-stat-label" dir="auto">${descLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(d.baseReward)}</span>
                 </div>
@@ -113,7 +113,7 @@ export function renderDepartmentsTab() {
         `;
         const adjustedProfitHtml = isUnlocked ? `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${statsLbl}:</span>
+                <span class="dept-stat-label" dir="auto">${statsLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(reward)}</span>
                 </div>
