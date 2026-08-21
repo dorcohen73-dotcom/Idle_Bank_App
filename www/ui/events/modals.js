@@ -291,6 +291,14 @@ export function showOfflineEarningsModal() {
     if (!window.game || !window.game.offlineEarningsReport || isNaN(window.game.offlineEarningsReport) || window.game.offlineEarningsReport <= 0) return;
 
     const displayFn = () => {
+        const lang = (window.game && window.game.state && window.game.state.language) || 'en';
+        const tObj = (typeof translations !== 'undefined' && translations[lang]) 
+                       ? translations[lang] : translations.he;
+        if (DOM_CACHE.offlineModalTitle)     DOM_CACHE.offlineModalTitle.innerText     = tObj.offlineModalTitle;
+        if (DOM_CACHE.offlineModalText)      DOM_CACHE.offlineModalText.innerText      = tObj.offlineModalText;
+        if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.innerText = tObj.offlineDoubleBtn;
+        if (DOM_CACHE.offlineModalClaimBtn)  DOM_CACHE.offlineModalClaimBtn.innerText  = tObj.offlineClaimBtn;
+
         if (DOM_CACHE.offlineModalAmount) DOM_CACHE.offlineModalAmount.innerText = formatMoney(window.game.offlineEarningsReport);
         if (DOM_CACHE.offlineModalDoubleBtn) DOM_CACHE.offlineModalDoubleBtn.style.display = (typeof AdService !== 'undefined' && AdService.isInCooldown()) ? 'none' : '';
         if (DOM_CACHE.offlineModal) activateModal(DOM_CACHE.offlineModal);
@@ -708,8 +716,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                         const timeAmount = 3600 * eps * prize.value; // value is now 1 or 4 hours
                         const pctAmount = Math.round(game.state.cash * (prize.label === 'cash_small' ? 0.10 : (prize.label === 'cash_medium' ? 0.20 : 0.30)));
                         const amount = Math.max(timeAmount, pctAmount);
-                        game.state.cash = Math.round((game.state.cash + amount + Number.EPSILON) * 100) / 100;
-                        game.state.lifetimeCash = Math.round((game.state.lifetimeCash + amount + Number.EPSILON) * 100) / 100;
+                        game.addCash(amount);
                         prizeText = `${prizeLabel}: +${formatMoney(amount)}`;
                         spawnFloating(`+${formatMoney(amount)}`, window.innerWidth / 2, window.innerHeight / 2 - 60, 'green');
                     } else if (prize.type === 'boost') {
@@ -720,8 +727,7 @@ GAME_CONFIG.WHEEL_PRIZES.forEach((p, index) => {
                         const isSmall = (prize.label === 'gold_1' || prize.label === 'shares_1');
                         let sharesAmount = Math.max(prize.value, Math.floor((game.state.shares || 0) * (isSmall ? 0.25 : 0.50)));
                         sharesAmount = Math.min(10000, sharesAmount); // Max 10,000 per spin
-                        game.state.shares = Math.min((game.state.shares || 0) + sharesAmount, 100000);
-                        if (game.economyManager) game.economyManager.cachedTotalMult = null;
+                        game.addShares(sharesAmount);
                         const sharesLabel = `+${sharesAmount}`;
                         prizeText = `${prizeLabel}: ${sharesLabel} ${tObj2.goldSharesLabel || 'Gold Shares'}`;
 

@@ -394,10 +394,10 @@ class IdleBankGame {
         // 'operations' (Alon) is also unlocked by default (and starts hired to automate guards).
         // Other managers unlock only when their corresponding department is unlocked.
         if (type === 'customer' || type === 'operations' || type === 'accountant') return true;
-        if (type === 'finance') return this.state.departments[1] && this.state.departments[1].unlocked;
-        if (type === 'service') return this.state.departments[2] && this.state.departments[2].unlocked;
-        if (type === 'vip') return !!(this.state.departments && this.state.departments.find(d => d.id === 3)?.unlocked);
-        if (type === 'marketing') return !!(this.state.departments && this.state.departments.find(d => d.id === 4)?.unlocked);
+        if (type === 'finance') return !!(this.state.departments && this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LOANS)?.unlocked);
+        if (type === 'vip') return !!(this.state.departments && this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP)?.unlocked);
+        if (type === 'service') return !!(this.state.departments && this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_STOCK)?.unlocked);
+        if (type === 'marketing') return !!(this.state.departments && this.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING)?.unlocked);
         return false;
     }
 

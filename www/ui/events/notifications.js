@@ -84,12 +84,12 @@ export const NotificationService = {
                 schedule: { at: new Date(now + (24 * 3600 * 1000)) }
             });
 
-            // 3. Comeback (103)
+            // 3. Comeback (103) - 72 hours (3 days) of inactivity
             notifications.push({
                 id: 103,
                 title: t.notifComebackTitle || '😴 Your bank misses you',
                 body: t.notifComebackBody || 'The employees are getting bored — quick check-in?',
-                schedule: { at: new Date(now + (24 * 3600 * 1000)) } 
+                schedule: { at: new Date(now + (72 * 3600 * 1000)) } 
             });
 
             // Sort by scheduled time and enforce a minimum gap of 3 hours

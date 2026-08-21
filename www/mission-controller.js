@@ -245,10 +245,10 @@ class MissionController {
 
         // 10. department_grind — upgrade a specific unlocked department's manager N times
         const deptMgrMap = [
-            { mgrType: 'finance',   deptIdx: 1 },
-            { mgrType: 'service',   deptIdx: 2 },
-            { mgrType: 'vip',       deptIdx: 3 },
-            { mgrType: 'marketing', deptIdx: 4 }
+            { mgrType: 'finance',   deptIdx: GAME_CONFIG.DEPT_ID_LOANS },
+            { mgrType: 'vip',       deptIdx: GAME_CONFIG.DEPT_ID_VIP },
+            { mgrType: 'service',   deptIdx: GAME_CONFIG.DEPT_ID_STOCK },
+            { mgrType: 'marketing', deptIdx: GAME_CONFIG.DEPT_ID_LAUNDERING }
         ];
         const availableDeptMgrs = deptMgrMap.filter(({ mgrType, deptIdx }) => {
             const deptUnlocked = this.game.state.departments[deptIdx] && this.game.state.departments[deptIdx].unlocked;
@@ -531,14 +531,12 @@ class MissionController {
         if (reward && typeof reward === 'object' && reward.type) {
             // Shares / gold reward
             const shareAmt = reward.amount || 1;
-            this.game.state.shares = Math.min(100000, (this.game.state.shares || 0) + shareAmt);
-            if (this.game.economyManager) this.game.economyManager.cachedTotalMult = null;
+            this.game.addShares(shareAmt);
             result = { type: reward.type, amount: shareAmt };
         } else {
             // Cash reward (legacy: reward is a number)
             const rewardAmt = typeof reward === 'number' ? reward : 0;
-            this.game.state.cash = Math.round((this.game.state.cash + rewardAmt + Number.EPSILON) * 100) / 100;
-            this.game.state.lifetimeCash = Math.round((this.game.state.lifetimeCash + rewardAmt + Number.EPSILON) * 100) / 100;
+            this.game.addCash(rewardAmt);
             result = { type: 'cash', amount: rewardAmt };
         }
 

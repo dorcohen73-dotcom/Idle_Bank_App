@@ -34,7 +34,10 @@ export function updateHeaderStats(lang, tObj) {
 
     if (game.state.currentBranch !== lastBranch || lang !== lastLang) {
         lastBranch = game.state.currentBranch;
-        DOM_CACHE.branchName.innerText = (tObj.bankPrefix || '') + tObj.branches.names[game.state.currentBranch];
+        const branchName = (tObj.branches && tObj.branches.names && tObj.branches.names[game.state.currentBranch])
+            || (game.branches && game.branches[game.state.currentBranch] && game.branches[game.state.currentBranch].name)
+            || ((tObj.branchLabel || 'Branch') + ' ' + (game.state.currentBranch + 1));
+        DOM_CACHE.branchName.innerText = (tObj.bankPrefix || '') + branchName;
     }
 
     lastLang = lang;
@@ -59,23 +62,71 @@ export function updateAdCampaignDisplay() {
     updateAdvDisplay(game.state.advBudget || 0);
 }
 
+function formatCompactTime(sec) {
+    const hours = Math.floor(sec / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = Math.floor(sec % 60);
+    if (hours > 0) {
+        return `${hours}h${mins.toString().padStart(2, '0')}m`;
+    }
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 // Refresh the 2x boost button — active countdown, offer countdown, or idle label.
 export function updateBoostButtonDisplay(tObj) {
     if (DOM_CACHE.boostBtn) {
-        // Strictly reset innerHTML so no extra text or duplicate icons can ever exist inside boostBtn
-        if (DOM_CACHE.boostBtn.innerHTML !== '<span aria-hidden="true">⚡</span>') {
-            DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">⚡</span>';
+        let timerBadge = DOM_CACHE.boostBtn.querySelector('.boost-timer-badge');
+        if (!timerBadge) {
+            DOM_CACHE.boostBtn.innerHTML = '<span aria-hidden="true">⚡</span><span class="boost-timer-badge" id="boost-timer-badge">2x</span>';
+            timerBadge = DOM_CACHE.boostBtn.querySelector('.boost-timer-badge');
         }
 
-        if (game.state.boost2xTimeLeft && game.state.boost2xTimeLeft > 0) {
-            const timeStr = formatTime(game.state.boost2xTimeLeft);
-            const activeText = (tObj && typeof tObj.boostActive === 'function') ? tObj.boostActive(timeStr) : `⚡ Boost: ${timeStr}`;
+        const secs = game.state.boost2xTimeLeft || 0;
+        const liveTimerPill = DOM_CACHE.boostLiveTimerPill || document.getElementById('boost-live-timer-pill');
+        const liveTimerVal = DOM_CACHE.boostLiveTimerVal || document.getElementById('boost-live-timer-val');
+
+        if (liveTimerPill) {
+            liveTimerPill.style.display = 'inline-flex';
+        }
+
+        if (secs > 0) {
+            const timeStr = formatCompactTime(secs);
+            const fullTimeStr = formatTime(secs);
+            const activeText = (tObj && typeof tObj.boostActive === 'function') ? tObj.boostActive(fullTimeStr) : `⚡ Boost: ${fullTimeStr}`;
             DOM_CACHE.boostBtn.title = activeText;
             DOM_CACHE.boostBtn.setAttribute('data-time', timeStr);
             DOM_CACHE.boostBtn.classList.add('active');
             DOM_CACHE.boostBtn.classList.remove('offer');
+
+            if (liveTimerVal) {
+                liveTimerVal.textContent = timeStr;
+            }
+            if (liveTimerPill) {
+                liveTimerPill.classList.remove('idle-blink');
+                if (secs <= 60) {
+                    liveTimerPill.classList.add('urgent');
+                    DOM_CACHE.boostBtn.classList.add('urgent-boost');
+                } else {
+                    liveTimerPill.classList.remove('urgent');
+                    DOM_CACHE.boostBtn.classList.remove('urgent-boost');
+                }
+            }
+
+            if (timerBadge) {
+                timerBadge.textContent = '2x';
+                timerBadge.classList.remove('urgent');
+            }
         } else {
             DOM_CACHE.boostBtn.removeAttribute('data-time');
+            DOM_CACHE.boostBtn.classList.remove('urgent-boost', 'active');
+            if (liveTimerVal) {
+                liveTimerVal.textContent = '00:00';
+            }
+            if (liveTimerPill) {
+                liveTimerPill.classList.remove('urgent');
+                liveTimerPill.classList.add('idle-blink');
+            }
+
             const nowMs = Date.now();
             const offerEnd = window._boostOfferEndTime || 0;
             if (offerEnd > nowMs) {
@@ -85,10 +136,13 @@ export function updateBoostButtonDisplay(tObj) {
                 const offerText = typeof boostOfferFn === 'function' ? boostOfferFn(timeStr) : `⚡ OFFER! ${timeStr}`;
                 DOM_CACHE.boostBtn.title = offerText;
                 DOM_CACHE.boostBtn.classList.add('offer');
-                DOM_CACHE.boostBtn.classList.remove('active');
             } else {
                 DOM_CACHE.boostBtn.title = (tObj && tObj.boostBtn) || "⚡ BOOST x2";
-                DOM_CACHE.boostBtn.classList.remove('active', 'offer');
+                DOM_CACHE.boostBtn.classList.remove('offer');
+            }
+            if (timerBadge) {
+                timerBadge.textContent = '2x';
+                timerBadge.classList.remove('urgent');
             }
         }
     }

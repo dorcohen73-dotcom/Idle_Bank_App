@@ -42,7 +42,7 @@ class CustomerFlowController {
     sanitizeQueueAndTellers() {
         const game = this.game;
         if (!game.state || !game.state.departments) return;
-        const richDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
+        const richDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_STOCK);
         const vipDept = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
         const richUnlocked = richDept ? richDept.unlocked : false;
         const vipUnlocked = vipDept ? vipDept.unlocked : false;
@@ -152,11 +152,11 @@ class CustomerFlowController {
                     richThreshold -= (normalizedBudget * 0.30);
                 }
 
-                const deptLaundering = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_LAUNDERING);
+                const deptStock = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_STOCK);
                 const deptVip = game.state.departments.find(d => d.id === GAME_CONFIG.DEPT_ID_VIP);
                 if (deptVip && deptVip.unlocked && rand > vipThreshold) {
                     type = 'vip';
-                } else if (deptLaundering && deptLaundering.unlocked && rand > richThreshold) {
+                } else if (deptStock && deptStock.unlocked && rand > richThreshold) {
                     type = 'rich';
                 }
                 
@@ -251,21 +251,21 @@ class CustomerFlowController {
                     }
                     game.missionsDirty = true;
 
-                    // boost_run tracking: accumulate cash earned while boost is active
-                    if (game.state.boost2xTimeLeft > 0) {
-                        game.state.boost2xUsedEver = true;
-                        game.state.missions.forEach(m => {
-                            if (m.type === 'boost_run' && !m.completed) {
-                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + finalRewardForTick;
-                            }
-                        });
-                    }
-
                     let thisTickReward = finalRewardForTick;
                     if (t.customerType === 'vip') {
                         thisTickReward *= 3.0;
                     } else if (t.customerType === 'rich') {
                         thisTickReward *= 1.8;
+                    }
+
+                    // boost_run tracking: accumulate cash earned while boost is active
+                    if (game.state.boost2xTimeLeft > 0) {
+                        game.state.boost2xUsedEver = true;
+                        game.state.missions.forEach(m => {
+                            if (m.type === 'boost_run' && !m.completed) {
+                                m.boostCashAccumulator = (m.boostCashAccumulator || 0) + thisTickReward;
+                            }
+                        });
                     }
 
                     game.state.totalIncome += thisTickReward;

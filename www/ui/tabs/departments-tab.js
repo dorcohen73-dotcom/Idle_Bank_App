@@ -100,9 +100,12 @@ export function renderDepartmentsTab() {
             </span>
         ` : '';
 
+        const descLbl = tObj.descLabel || (lang === 'he' ? 'רווח בסיסי' : (lang === 'ru' ? 'Базовый доход' : (lang === 'es' ? 'Beneficio base' : 'Base Income')));
+        const statsLbl = tObj.statsLabel || (lang === 'he' ? 'רווח מותאם' : (lang === 'ru' ? 'Итоговый доход' : (lang === 'es' ? 'Beneficio ajustado' : 'Adjusted Income')));
+
         const baseProfitHtml = `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${translations[lang].departments.descLabel}:</span>
+                <span class="dept-stat-label">${descLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(d.baseReward)}</span>
                 </div>
@@ -110,7 +113,7 @@ export function renderDepartmentsTab() {
         `;
         const adjustedProfitHtml = isUnlocked ? `
             <div class="dept-stat-item">
-                <span class="dept-stat-label">${translations[lang].departments.statsLabel}:</span>
+                <span class="dept-stat-label">${statsLbl}:</span>
                 <div class="dept-stat-value-box">
                     <span>${formatMoney(reward)}</span>
                 </div>

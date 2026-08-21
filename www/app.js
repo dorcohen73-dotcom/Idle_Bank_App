@@ -146,6 +146,8 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         window.DOM_CACHE.advSlider = document.getElementById('adv-budget-slider');
         window.DOM_CACHE.advDisplay = document.getElementById('adv-budget-display');
         window.DOM_CACHE.boostBtn = document.getElementById('boost-btn');
+        window.DOM_CACHE.boostLiveTimerPill = document.getElementById('boost-live-timer-pill');
+        window.DOM_CACHE.boostLiveTimerVal = document.getElementById('boost-live-timer-val');
         window.DOM_CACHE.analyticsBtn = document.getElementById('analytics-btn');
         window.DOM_CACHE.vaultInfoBtn = document.getElementById('vault-info-btn');
         window.DOM_CACHE.fortuneWheelBtn = document.getElementById('fortune-wheel-btn');
@@ -249,12 +251,18 @@ import { refreshAllTabs } from './ui/tabs/index.js';
         initUIEvents();
 
         // Set up language choice on load
-        const chosenLang = window.game.state.language || 'en';
+        let defaultLang = 'en';
+        const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (navLang.startsWith('he')) defaultLang = 'he';
+        else if (navLang.startsWith('es')) defaultLang = 'es';
+        else if (navLang.startsWith('ru')) defaultLang = 'ru';
+
+        const chosenLang = window.game.state.language || defaultLang;
         const isFirstTime = !window.localStorage.getItem('idle_bank_language_chosen');
         
         if (isFirstTime) {
-            window.game.setLanguage('en');
-            applyLanguage('en');
+            window.game.setLanguage(defaultLang);
+            applyLanguage(defaultLang);
             if (DOM_CACHE.langModalClose) DOM_CACHE.langModalClose.style.display = 'none'; // Force choice first time
             const showLangModal = () => { if (DOM_CACHE.langModal) window.activateModal(DOM_CACHE.langModal); };
             if (window.NotificationQueue) {

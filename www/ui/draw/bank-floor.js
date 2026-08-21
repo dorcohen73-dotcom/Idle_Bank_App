@@ -11,7 +11,7 @@ export function rebuildTellersDOM() {
     DOM_CACHE.tellersZone.className = `tellers-zone count-${game.state.tellers.length}`;
 
     // Reset cached teller elements
-    for (let id = 0; id < 4; id++) {
+    for (const id in TELLER_DOM_CACHE) {
         delete TELLER_DOM_CACHE[id];
     }
 

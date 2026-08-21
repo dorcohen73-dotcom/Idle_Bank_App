@@ -284,16 +284,42 @@ function initUIEvents() {
     });
 
     // Bottom Nav click handlers
+    const BNAV_RENDERERS = {
+        upgrades: 'renderUpgradesTab',
+        managers: 'renderManagersTab',
+        departments: 'renderDepartmentsTab',
+        missions: 'renderMissionsTab',
+        branches: 'renderBranchesTab',
+    };
     document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             try { navigator.vibrate && navigator.vibrate(5); } catch (e) { /* vibration unsupported */ }
             const tab = btn.dataset.tab;
-            // מפעיל את הלוגיקה הקיימת של הטאבים
+            // מפעיל את הלוגיקה הקיימת של הטאבים (נתיב הדסקטופ)
             const existingTabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
             if (existingTabBtn) {
                 existingTabBtn.click();
             }
+            // Fallback: במובייל כפתור הדסקטופ מוסתר (display:none) — אם למרות ה-click()
+            // הטאב לא התחלף, מבצעים את ההחלפה ישירות כדי שלא ייראה "שום דבר לא קורה".
+            const targetPane = document.getElementById(`tab-${tab}`);
+            if (targetPane && !targetPane.classList.contains('active')) {
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                targetPane.classList.add('active');
+                if (existingTabBtn) existingTabBtn.classList.add('active');
+                const rid = BNAV_RENDERERS[tab];
+                if (rid && typeof window[rid] === 'function') window[rid]();
+                if (typeof window.invalidateTabHashes === 'function') window.invalidateTabHashes();
+                if (window.gameAudio && typeof window.gameAudio.playClick === 'function') window.gameAudio.playClick();
+            }
             syncBottomNav(tab);
+
+            // גלילה חלקה במובייל לאזור התוכן של הטאב שנפתח
+            const controlPanel = document.getElementById('control-panel-section') || targetPane;
+            if (controlPanel && (window.innerWidth <= 950 || window.matchMedia('(pointer: coarse)').matches)) {
+                controlPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
     });
 
@@ -402,7 +428,7 @@ function initUIEvents() {
             if (DOM_CACHE.offlineModal) DOM_CACHE.offlineModal.classList.remove('active');
             playAd(() => {
                 if (game.offlineEarningsReport && game.offlineEarningsReport > 0) {
-                    const extra = game.offlineEarningsReport * 2;
+                    const extra = game.offlineEarningsReport;
                     game.state.cash = Math.round((game.state.cash + extra + Number.EPSILON) * 100) / 100;
                     game.state.lifetimeCash = Math.round((game.state.lifetimeCash + extra + Number.EPSILON) * 100) / 100;
                     if (window.gameAudio && typeof window.gameAudio.playChaChing === 'function') {

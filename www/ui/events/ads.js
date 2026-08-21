@@ -109,6 +109,7 @@ export var AdService = {
         // --- FALLBACK MOCK AD (For Web / Errors) ---
         AdService._isShowing = true;
         let interval = null;
+        let timeoutId = null;
         let settled = false;
 
         const removeOverlay = () => {
@@ -120,6 +121,7 @@ export var AdService = {
             if (settled) return;
             settled = true;
             if (interval) clearInterval(interval);
+            if (timeoutId) clearTimeout(timeoutId);
             AdService._isShowing = false;
             removeOverlay();
             if (grantReward) {
@@ -129,7 +131,7 @@ export var AdService = {
             }
         };
 
-        setTimeout(() => complete(true), 15000);
+        timeoutId = setTimeout(() => complete(true), 15000);
 
         try {
             const overlay = document.createElement('div');
