@@ -104,19 +104,15 @@ export function renderDepartmentsTab() {
         const statsLbl = tObj.statsLabel || (lang === 'he' ? 'רווח מותאם' : (lang === 'ru' ? 'Итоговый доход' : (lang === 'es' ? 'Beneficio ajustado' : 'Adjusted Income')));
 
         const baseProfitHtml = `
-            <div class="dept-stat-item">
+            <div class="dept-stat-box">
                 <span class="dept-stat-label" dir="auto">${descLbl}:</span>
-                <div class="dept-stat-value-box">
-                    <span>${formatMoney(d.baseReward)}</span>
-                </div>
+                <span class="dept-stat-val">${formatMoney(d.baseReward)}</span>
             </div>
         `;
         const adjustedProfitHtml = isUnlocked ? `
-            <div class="dept-stat-item">
+            <div class="dept-stat-box highlight">
                 <span class="dept-stat-label" dir="auto">${statsLbl}:</span>
-                <div class="dept-stat-value-box">
-                    <span>${formatMoney(reward)}</span>
-                </div>
+                <span class="dept-stat-val">${formatMoney(reward)}</span>
             </div>
         ` : '';
 
@@ -146,7 +142,7 @@ export function renderDepartmentsTab() {
         const titleShieldHtml = isUnlocked ? `<span class="dept-title-shield"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 13.5 10.5 16 11 14 13 14.5 15.5 12 14.5 9.5 15.5 10 13 8 11 10.5 10.5 12 8" fill="currentColor" stroke="none"/></svg></span>` : '';
 
         card.innerHTML = `
-            <div class="dept-card-body">
+            <div class="dept-card-top">
                 <div class="dept-icon-frame">
                     <div class="dept-ring dept-ring-1"></div>
                     <div class="dept-ring dept-ring-2"></div>
@@ -155,21 +151,21 @@ export function renderDepartmentsTab() {
                         ${iconSvg}
                     </div>
                 </div>
-                <div class="dept-details">
+                <div class="dept-header-info">
                     <div class="dept-title-row">
                         ${titleShieldHtml}
                         <span class="dept-title-text">${tObj.names[d.id]}</span>
-                        ${activeBadgeHtml}
                     </div>
-                    <div class="dept-stats-row">
-                        ${baseProfitHtml}
-                        ${adjustedProfitHtml}
-                    </div>
+                    ${activeBadgeHtml}
+                </div>
+                <div class="dept-card-action">
+                    ${actionBtnHtml}
                 </div>
             </div>
-            <div class="dept-card-divider"></div>
-            <div class="dept-card-action">
-                ${actionBtnHtml}
+            <div class="dept-card-divider-h"></div>
+            <div class="dept-stats-row">
+                ${baseProfitHtml}
+                ${adjustedProfitHtml}
             </div>
         `;
         container.appendChild(card);
